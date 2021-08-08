@@ -1,0 +1,1 @@
+exports.productHandler = require('./productHandler');
