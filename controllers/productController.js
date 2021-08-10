@@ -1,13 +1,33 @@
 const { productHandler } = require('../handlers');
-const { responseManger } = require('../lib');
+const { responseManager } = require('../lib');
 
 const productController = {
 	getHomeCategories: async (req, res) => {
 		try {
 			let response = await productHandler.getHomeCategories();
-			responseManger.sendSuccessResponse(response, res);
+			responseManager.sendSuccessResponse(response, res);
 		} catch (err) {
-			responseManger.sendErrorResponse(err, res);
+			responseManager.sendErrorResponse(err, res);
+		}
+	},
+
+	getSubCategoryItems: async (req, res) => {
+		try {
+			let payload = req.query;
+			let response = await productHandler.getSubCategoryItems(payload);
+			responseManager.sendSuccessResponse(response, res);
+		} catch (err) {
+			responseManager.sendErrorResponse(err, res);
+		}
+	},
+
+	getProducts: async (req, res) => {
+		try {
+			let payload = req.query;
+			let response = await productHandler.getProducts(payload);
+			responseManager.sendSuccessResponse(response, res);
+		} catch (err) {
+			responseManager.sendErrorResponse(err, res);
 		}
 	},
 };

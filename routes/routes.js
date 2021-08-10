@@ -7,5 +7,9 @@ module.exports = () => {
 
 	router.get('/homeCategories', productController.getHomeCategories);
 
+	router.get('/subCategory', productController.getSubCategoryItems);
+
+	router.get('/products', productController.getProducts);
+
 	return router;
 };
