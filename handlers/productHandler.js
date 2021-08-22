@@ -3,7 +3,8 @@ const { connection } = require('../db');
 const productHandler = {
 	getHomeCategories: async () => {
 		try {
-			let sqlQuery = 'SELECT id,name,image from categories where status = ?';
+			let sqlQuery =
+				'SELECT id,name,image,isSubCategory FROM categories WHERE status = ?';
 			let categoryDetails = await connection.executeQuery(sqlQuery, ['ACTIVE']);
 
 			return {
@@ -18,7 +19,7 @@ const productHandler = {
 	getSubCategoryItems: async (payload) => {
 		try {
 			let sqlQuery =
-				'SELECT sc.id,sc.name,sc.image,c.name as categoryName from sub_categories sc join categories c on c.id = sc.categoryId where sc.categoryId = ? and sc.status = ?';
+				'SELECT sc.id,sc.name,sc.image,c.name as categoryName FROM sub_categories sc join categories c on c.id = sc.categoryId WHERE sc.categoryId = ? and sc.status = ?';
 			let subCategoryDetails = await connection.executeQuery(sqlQuery, [
 				payload.categoryId,
 				'ACTIVE',
@@ -35,16 +36,40 @@ const productHandler = {
 
 	getProducts: async (payload) => {
 		try {
-			let sqlQuery =
-				'SELECT p.id, p.name, p.image,p.price, p.maxQuantity, p.purchaseLimit,sc.name as subCategoryName from products p join sub_categories sc on sc.id = p.subCategoryId where p.subCategoryId = ? and p.status = ?';
+			let sqlQuery;
+			if (payload.subCategoryId) {
+				sqlQuery = `SELECT p.id, p.name, p.image,p.price, p.maxQuantity, p.purchaseLimit,sc.name as subCategoryName,mu.symbol FROM products p join 
+							sub_categories sc on sc.id = p.subCategoryId join measuring_units mu on mu.id = p.measuring_unit WHERE p.subCategoryId = ? and p.status = ?`;
+			} else {
+				sqlQuery = `SELECT p.id, p.name, p.image,p.price, p.maxQuantity, p.purchaseLimit,c.name as subCategoryName, mu.symbol FROM products p join categories c on p.categoryId = c.id join measuring_units mu on mu.id = p.measuring_unit WHERE p.categoryId = ? AND p.status = ?`;
+			}
+
 			let products = await connection.executeQuery(sqlQuery, [
-				payload.subCategoryId,
+				payload.subCategoryId ? payload.subCategoryId : payload.categoryId,
 				'ACTIVE',
 			]);
 
 			return {
 				response: { STATUS_CODE: 200, MSG: '' },
 				finalData: { products },
+			};
+		} catch (err) {
+			throw err;
+		}
+	},
+
+	getProductDetails: async (payload) => {
+		try {
+			let sqlQuery =
+				'SELECT p.name,p.image,p.purchaseLimit,p.price, p.description FROM products p WHERE p.id = ? ';
+
+			let productDetails = await connection.executeQuery(sqlQuery, [
+				payload.productId,
+			]);
+
+			return {
+				response: { STATUS_CODE: 200, MSG: '' },
+				finalData: { productDetails: productDetails[0] },
 			};
 		} catch (err) {
 			throw err;

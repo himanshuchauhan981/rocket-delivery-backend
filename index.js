@@ -1,5 +1,6 @@
 const express = require('express');
 const dotenv = require('dotenv');
+const bodyParser = require('body-parser');
 
 const app = express();
 dotenv.config();
@@ -11,6 +12,8 @@ sqlLib.connect().then(() => {
 	console.log('Db connection is succcessfull');
 	app.use('/', routes());
 });
+
+app.use(bodyParser.json());
 
 app.listen(process.env.PORT, (err) => {
 	if (err) console.log('Server error', err);

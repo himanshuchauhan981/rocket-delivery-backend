@@ -24,9 +24,10 @@ let connect = (cb) => {
 let executeQuery = (query, params) => {
 	return new Promise((resolve, reject) => {
 		try {
-			pool.query(
+			let st = pool.query(
 				{ sql: query, values: params, timeout: 60000 },
 				(err, data) => {
+					console.log('>>>>>>>>>sql query', st.sql);
 					if (err) {
 						reject(err);
 					} else {
