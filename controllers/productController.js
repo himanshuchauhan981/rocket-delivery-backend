@@ -40,6 +40,16 @@ const productController = {
 			responseManager.sendErrorResponse(err, res);
 		}
 	},
+
+	getCartProductDetails: async (req, res) => {
+		try {
+			let payload = req.query;
+			let response = await productHandler.getCartProductDetails(payload);
+			responseManager.sendSuccessResponse(response, res);
+		} catch (err) {
+			responseManager.sendErrorResponse(err, res);
+		}
+	},
 };
 
 module.exports = productController;

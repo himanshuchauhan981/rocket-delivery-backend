@@ -75,6 +75,23 @@ const productHandler = {
 			throw err;
 		}
 	},
+
+	getCartProductDetails: async (payload) => {
+		try {
+			let sqlQuery =
+				'SELECT p.id,p.name,p.image,p.price from products p where p.id IN (?)';
+			let cartProductDetails = await connection.executeQuery(sqlQuery, [
+				payload.productIds,
+			]);
+
+			return {
+				response: { STATUS_CODE: 200, MSG: 'Success' },
+				finalData: { cartProductDetails },
+			};
+		} catch (err) {
+			throw err;
+		}
+	},
 };
 
 module.exports = productHandler;
