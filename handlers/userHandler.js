@@ -88,6 +88,52 @@ const userHandler = {
 			throw err;
 		}
 	},
+	addNewAddress: async (payload, userDetails) => {
+		console.log(userDetails);
+		try {
+			let newAddressQuery =
+				'INSERT into address (userId,fullName,pinCode,houseNo,area,city,state,landmark,latitude,longitude,countryCode,mobileNumber) values(?,?,?,?,?,?,?,?,?,?,?,?)';
+			await connection.executeQuery(newAddressQuery, [
+				userDetails.id,
+				payload.fullName,
+				payload.pinCode,
+				payload.houseNo,
+				payload.area,
+				payload.city,
+				payload.state,
+				payload.landmark,
+				payload.latitude,
+				payload.longitude,
+				payload.countryCode,
+				payload.mobileNumber,
+			]);
+
+			return {
+				response: { STATUS_CODE: 200, MSG: 'New address saved' },
+				finalData: {},
+			};
+		} catch (err) {
+			throw err;
+		}
+	},
+
+	viewUserAddress: async (userDetails) => {
+		try {
+			let addressQuery =
+				'SELECT * from address where userId = ? and isDeleted = ?';
+			let userAddressesDetails = await connection.executeQuery(addressQuery, [
+				userDetails.id,
+				0,
+			]);
+
+			return {
+				response: { STATUS_CODE: 200, MSG: '' },
+				finalData: { userAddressesDetails },
+			};
+		} catch (err) {
+			throw err;
+		}
+	},
 };
 
 module.exports = userHandler;

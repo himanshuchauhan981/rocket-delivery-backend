@@ -21,6 +21,27 @@ const userController = {
 			responseManager.sendErrorResponse(err, res);
 		}
 	},
+
+	addNewAddress: async (req, res) => {
+		try {
+			let payload = req.body;
+			let userDetails = req.user;
+			let response = await userHandler.addNewAddress(payload, userDetails);
+			responseManager.sendSuccessResponse(response, res);
+		} catch (err) {
+			responseManager.sendErrorResponse(err, res);
+		}
+	},
+
+	viewUserAddress: async (req, res) => {
+		try {
+			let userDetails = req.user;
+			let response = await userHandler.viewUserAddress(userDetails);
+			responseManager.sendSuccessResponse(response, res);
+		} catch (err) {
+			responseManager.sendErrorResponse(err, res);
+		}
+	},
 };
 
 module.exports = userController;

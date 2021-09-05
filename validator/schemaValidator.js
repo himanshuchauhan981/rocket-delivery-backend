@@ -12,6 +12,8 @@ module.exports = {
 			city: Joi.string().required(),
 			state: Joi.string().required(),
 			countryCode: Joi.string().required(),
+			latitude: Joi.string().required(),
+			longitude: Joi.string().required(),
 		}),
 	},
 };

@@ -24,8 +24,11 @@ module.exports = () => {
 	router.post(
 		'/addNewAddress',
 		schemaMiddleware(schemaValidator.ADD_NEW_ADDRESS),
-		authMiddleware
+		authMiddleware,
+		userController.addNewAddress
 	);
+
+	router.get('/viewAddress', authMiddleware, userController.viewUserAddress);
 
 	return router;
 };
