@@ -1,6 +1,10 @@
 const express = require('express');
 
-const { productController, userController } = require('../controllers');
+const {
+	productController,
+	userController,
+	orderController,
+} = require('../controllers');
 const { authMiddleware, schemaMiddleware } = require('../middlewares');
 const { schemaValidator } = require('../validator');
 
@@ -29,6 +33,12 @@ module.exports = () => {
 	);
 
 	router.get('/viewAddress', authMiddleware, userController.viewUserAddress);
+
+	router.post(
+		'/generateOrder',
+		authMiddleware,
+		orderController.generateNewOrder
+	);
 
 	return router;
 };
