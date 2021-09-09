@@ -4,7 +4,6 @@ const authMiddleware = (req, res, next) => {
 	if (req.headers.authorization) {
 		let authorization = req.headers.authorization;
 		let token = authorization.split('Bearer ')[1];
-		console.log('>>>>>>>>>token', token);
 		if (token) {
 			try {
 				let decodedToken = jwt.verify(token, process.env.JWT_KEY);

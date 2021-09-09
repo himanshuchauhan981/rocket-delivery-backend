@@ -12,6 +12,29 @@ const orderController = {
 			responseManager.sendErrorResponse(err, res);
 		}
 	},
+
+	addToWishlist: async (req, res) => {
+		try {
+			let payload = req.body;
+			let userDetails = req.user;
+			let responseDetails = await orderHandler.addToWishlist(
+				payload,
+				userDetails
+			);
+			responseManager.sendSuccessResponse(responseDetails, res);
+		} catch (err) {
+			responseManager.sendErrorResponse(err, res);
+		}
+	},
+	viewUserWishlist: async (req, res) => {
+		try {
+			let userDetails = req.user;
+			let responseDetails = await orderHandler.viewUserWishlist(userDetails);
+			responseManager.sendSuccessResponse(responseDetails, res);
+		} catch (err) {
+			responseManager.sendErrorResponse(err, res);
+		}
+	},
 };
 
 module.exports = orderController;

@@ -89,7 +89,6 @@ const userHandler = {
 		}
 	},
 	addNewAddress: async (payload, userDetails) => {
-		console.log(userDetails);
 		try {
 			let newAddressQuery =
 				'INSERT into address (userId,fullName,pinCode,houseNo,area,city,state,landmark,latitude,longitude,countryCode,mobileNumber) values(?,?,?,?,?,?,?,?,?,?,?,?)';

@@ -16,4 +16,9 @@ module.exports = {
 			longitude: Joi.string().required(),
 		}),
 	},
+	ADD_NEW_WISHLIST_ITEM: {
+		body: Joi.object({
+			productId: Joi.number().required(),
+		}),
+	},
 };

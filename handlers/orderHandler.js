@@ -70,6 +70,53 @@ const orderHandler = {
 			throw err;
 		}
 	},
+
+	addToWishlist: async (payload, userDetails) => {
+		try {
+			let existingWishlistQuery =
+				'SELECT id from wishlist where productId  = ? and userId = ?';
+			let existingWishlistItem = await connection.executeQuery(
+				existingWishlistQuery,
+				[payload.productId, userDetails.id]
+			);
+
+			if (existingWishlistItem && existingWishlistItem.length === 0) {
+				let newWishlistQuery =
+					'INSERT into wishlist (productId,userId) VALUES (?,?)';
+
+				await connection.executeQuery(newWishlistQuery, [
+					payload.productId,
+					userDetails.id,
+				]);
+				return { response: responseMessages.NEW_WISHLIST_ITEM, finalData: {} };
+			} else {
+				return {
+					response: responseMessages.EXISTING_WISHLIST_ITEM,
+					finalData: {},
+				};
+			}
+		} catch (err) {
+			throw err;
+		}
+	},
+
+	viewUserWishlist: async (userDetails) => {
+		try {
+			let userWishlistQuery =
+				'SELECT wl.id, wl.productId, p.name, p.image FROM wishlist wl join products p on p.id = wl.productId WHERE wl.userId = ? and wl.isDeleted= ?';
+			let userWishlist = await connection.executeQuery(userWishlistQuery, [
+				userDetails.id,
+				0,
+			]);
+
+			return {
+				response: { STATUS_CODE: 200, MSG: '' },
+				finalData: { userWishlist },
+			};
+		} catch (err) {
+			throw err;
+		}
+	},
 };
 
 module.exports = orderHandler;

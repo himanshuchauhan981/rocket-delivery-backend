@@ -40,5 +40,14 @@ module.exports = () => {
 		orderController.generateNewOrder
 	);
 
+	router.post(
+		'/addToWishlist',
+		schemaMiddleware(schemaValidator.ADD_NEW_WISHLIST_ITEM),
+		authMiddleware,
+		orderController.addToWishlist
+	);
+
+	router.get('/viewWishlist', authMiddleware, orderController.viewUserWishlist);
+
 	return router;
 };
