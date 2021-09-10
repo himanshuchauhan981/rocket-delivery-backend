@@ -13,17 +13,37 @@ module.exports = () => {
 
 	router.get('/homeCategories', productController.getHomeCategories);
 
-	router.get('/subCategory', productController.getSubCategoryItems);
+	router.get(
+		'/subCategory',
+		schemaMiddleware(schemaValidator.GET_SUB_CATEGORY_ITEMS),
+		productController.getSubCategoryItems
+	);
 
-	router.get('/products', productController.getProducts);
+	router.get(
+		'/products',
+		schemaMiddleware(schemaValidator.GET_PRODUCTS),
+		productController.getProducts
+	);
 
-	router.get('/product', productController.getProductDetails);
+	router.get(
+		'/product',
+		schemaMiddleware(schemaValidator.PRODUCT_DETAILS),
+		productController.getProductDetails
+	);
 
-	router.post('/signup', userController.createNewUser);
+	router.post(
+		'/signup',
+		schemaMiddleware(schemaValidator.SIGNUP),
+		userController.createNewUser
+	);
 
-	router.post('/login', userController.loginExistingUser);
+	router.post(
+		'/login',
+		schemaMiddleware(schemaValidator.LOGIN),
+		userController.loginExistingUser
+	);
 
-	router.get('/cartProductDetails', productController.getCartProductDetails);
+	router.post('/cartProductDetails', productController.getCartProductDetails);
 
 	router.post(
 		'/addNewAddress',
@@ -48,6 +68,13 @@ module.exports = () => {
 	);
 
 	router.get('/viewWishlist', authMiddleware, orderController.viewUserWishlist);
+
+	router.post(
+		'/updateUserWishlist',
+		schemaMiddleware(schemaValidator.UPDATE_USER_WISHLIST),
+		authMiddleware,
+		orderController.updateUserWishlist
+	);
 
 	return router;
 };

@@ -35,6 +35,20 @@ const orderController = {
 			responseManager.sendErrorResponse(err, res);
 		}
 	},
+	updateUserWishlist: async (req, res) => {
+		try {
+			let userDetails = req.user;
+			let payload = req.body;
+
+			let responseDetails = await orderHandler.updateUserWishlist(
+				userDetails,
+				payload
+			);
+			responseManager.sendSuccessResponse(responseDetails, res);
+		} catch (err) {
+			responseManager.sendErrorResponse(err, res);
+		}
+	},
 };
 
 module.exports = orderController;

@@ -78,15 +78,39 @@ const productHandler = {
 
 	getCartProductDetails: async (payload) => {
 		try {
+			let cartItems = payload.cartItems;
+			let productIds = cartItems.map((items) => items.id);
 			let sqlQuery =
-				'SELECT p.id,p.name,p.image,p.price from products p where p.id IN (?)';
+				'SELECT p.id,p.name,p.image,p.price,p.maxQuantity,p.status from products p where p.id IN (?)';
 			let cartProductDetails = await connection.executeQuery(sqlQuery, [
-				payload.productIds,
+				productIds,
 			]);
+			let tempCartProductDetails = [];
+
+			for (let i = 0; i < cartProductDetails.length; i++) {
+				let productQuantity = cartItems.filter(
+					(item) => item.id === cartProductDetails[i].id
+				)[0].quantity;
+
+				if (
+					productQuantity < cartProductDetails[i].maxQuantity &&
+					payload.removeCartItem === true
+				) {
+					tempCartProductDetails.push({
+						...cartProductDetails[i],
+						quantity: productQuantity,
+					});
+				} else if (payload.removeCartItem === false) {
+					tempCartProductDetails.push({
+						...cartProductDetails[i],
+						quantity: productQuantity,
+					});
+				}
+			}
 
 			return {
 				response: { STATUS_CODE: 200, MSG: 'Success' },
-				finalData: { cartProductDetails },
+				finalData: { cartProductDetails: tempCartProductDetails },
 			};
 		} catch (err) {
 			throw err;

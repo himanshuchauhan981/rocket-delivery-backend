@@ -43,7 +43,7 @@ const productController = {
 
 	getCartProductDetails: async (req, res) => {
 		try {
-			let payload = req.query;
+			let payload = req.body;
 			let response = await productHandler.getCartProductDetails(payload);
 			responseManager.sendSuccessResponse(response, res);
 		} catch (err) {

@@ -1,6 +1,7 @@
 const { connection } = require('../db');
 const Handlebar = require('handlebars');
 const { responseMessages } = require('../lib');
+const { connect } = require('../db/connection');
 
 const orderHandler = {
 	generateNewOrder: async (payload, userDetails) => {
@@ -112,6 +113,24 @@ const orderHandler = {
 			return {
 				response: { STATUS_CODE: 200, MSG: '' },
 				finalData: { userWishlist },
+			};
+		} catch (err) {
+			throw err;
+		}
+	},
+
+	updateUserWishlist: async (userDetails, payload) => {
+		try {
+			let updateWishlistQuery =
+				'UPDATE wishlist SET isDeleted = ? where id = ? and userid  = ?';
+			await connection.executeQuery(updateWishlistQuery, [
+				1,
+				payload.wishlist,
+				userDetails.id,
+			]);
+			return {
+				response: responseMessages.REMOVE_WISHLIST_ITEM,
+				finalData: {},
 			};
 		} catch (err) {
 			throw err;
