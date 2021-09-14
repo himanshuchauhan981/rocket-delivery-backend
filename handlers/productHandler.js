@@ -61,7 +61,7 @@ const productHandler = {
 	getProductDetails: async (payload) => {
 		try {
 			let sqlQuery =
-				'SELECT p.name,p.image,p.purchaseLimit,p.price, p.description FROM products p WHERE p.id = ? ';
+				'SELECT p.name,p.image,p.maxQuantity,p.purchaseLimit,p.price, p.description FROM products p WHERE p.id = ? ';
 
 			let productDetails = await connection.executeQuery(sqlQuery, [
 				payload.productId,
@@ -79,6 +79,7 @@ const productHandler = {
 	getCartProductDetails: async (payload) => {
 		try {
 			let cartItems = payload.cartItems;
+			console.log(cartItems);
 			let productIds = cartItems.map((items) => items.id);
 			let sqlQuery =
 				'SELECT p.id,p.name,p.image,p.price,p.maxQuantity,p.status from products p where p.id IN (?)';

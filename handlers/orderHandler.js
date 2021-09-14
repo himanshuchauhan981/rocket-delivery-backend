@@ -136,6 +136,32 @@ const orderHandler = {
 			throw err;
 		}
 	},
+
+	getUserOrders: async (userDetails) => {
+		try {
+			let orderDetailsQuery =
+				'SELECT id, orderNumber, netAmount, paymentMethod, userAddress, deliveryDate, createdOn from orders o where userId = ?';
+			let userOrderDetails = await connection.executeQuery(orderDetailsQuery, [
+				userDetails.id,
+			]);
+
+			for (let i = 0; i < userOrderDetails.length; i++) {
+				let orderProductsQuery =
+					'SELECT p.image,p.id from order_products op join orders o on o.id = op.orderId join products p on p.id = op.productId where o.id = ?';
+				let orderProducts = await connection.executeQuery(orderProductsQuery, [
+					userOrderDetails[i].id,
+				]);
+				userOrderDetails[i].orderProducts = orderProducts;
+			}
+
+			return {
+				response: { STATUS_CODE: 200, MSG: '' },
+				finalData: { userOrderDetails },
+			};
+		} catch (err) {
+			throw err;
+		}
+	},
 };
 
 module.exports = orderHandler;

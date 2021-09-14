@@ -76,5 +76,7 @@ module.exports = () => {
 		orderController.updateUserWishlist
 	);
 
+	router.get('/userOrders', authMiddleware, orderController.getUserOrders);
+
 	return router;
 };

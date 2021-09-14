@@ -49,6 +49,17 @@ const orderController = {
 			responseManager.sendErrorResponse(err, res);
 		}
 	},
+
+	getUserOrders: async (req, res) => {
+		try {
+			let userDetails = req.user;
+
+			let responseDetails = await orderHandler.getUserOrders(userDetails);
+			responseManager.sendSuccessResponse(responseDetails, res);
+		} catch (err) {
+			responseManager.sendErrorResponse(err, res);
+		}
+	},
 };
 
 module.exports = orderController;

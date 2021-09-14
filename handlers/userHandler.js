@@ -52,7 +52,7 @@ const userHandler = {
 	},
 	loginExistingUser: async (payload) => {
 		try {
-			let existingUserQuery = `select id,password, isActive from users where email = ?`;
+			let existingUserQuery = `select id,password,name, isActive from users where email = ?`;
 			let existingUser = await connection.executeQuery(existingUserQuery, [
 				payload.email,
 			]);
@@ -70,7 +70,7 @@ const userHandler = {
 
 					return {
 						response: { STATUS_CODE: 200, MSG: 'Success' },
-						finalData: { token },
+						finalData: { token, name: existingUser[0].name },
 					};
 				} else {
 					return {
