@@ -60,6 +60,17 @@ const orderController = {
 			responseManager.sendErrorResponse(err, res);
 		}
 	},
+
+	specificOrderDetails: async (req, res) => {
+		try {
+			let payload = req.query;
+
+			let responseDetails = await orderHandler.specificOrderDetails(payload);
+			responseManager.sendSuccessResponse(responseDetails, res);
+		} catch (err) {
+			responseManager.sendErrorResponse(err, res);
+		}
+	},
 };
 
 module.exports = orderController;

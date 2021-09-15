@@ -1,7 +1,6 @@
 const { connection } = require('../db');
 const Handlebar = require('handlebars');
 const { responseMessages } = require('../lib');
-const { connect } = require('../db/connection');
 
 const orderHandler = {
 	generateNewOrder: async (payload, userDetails) => {
@@ -140,7 +139,7 @@ const orderHandler = {
 	getUserOrders: async (userDetails) => {
 		try {
 			let orderDetailsQuery =
-				'SELECT id, orderNumber, netAmount, paymentMethod, userAddress, deliveryDate, createdOn from orders o where userId = ?';
+				'SELECT id, orderNumber,status, netAmount, paymentMethod, userAddress, deliveryDate, createdOn from orders o where userId = ? ORDER BY createdOn DESC';
 			let userOrderDetails = await connection.executeQuery(orderDetailsQuery, [
 				userDetails.id,
 			]);
@@ -157,6 +156,36 @@ const orderHandler = {
 			return {
 				response: { STATUS_CODE: 200, MSG: '' },
 				finalData: { userOrderDetails },
+			};
+		} catch (err) {
+			throw err;
+		}
+	},
+
+	specificOrderDetails: async (payload) => {
+		try {
+			let specificOrderQuery =
+				'SELECT o.id, a.fullName, a.houseNo, a.area, a.city, a.state, a.landmark, a.countryCode, a.mobileNumber, o.paymentMethod, o.deliveryCharges, o.amount, o.userAddress, o.deliveryDate, o.createdOn from orders o join address a on a.id = o.userAddress where o.id = ?';
+
+			let specificOrderDetails = await connection.executeQuery(
+				specificOrderQuery,
+				[payload.orderId]
+			);
+
+			for (let i = 0; i < specificOrderDetails.length; i++) {
+				let orderProductsQuery =
+					'select id, productId, productName,productImage, price, quantity, price from order_products where orderId = ?';
+
+				let orderProductsDetails = await connection.executeQuery(
+					orderProductsQuery,
+					[payload.orderId]
+				);
+				specificOrderDetails[i].orderProducts = orderProductsDetails;
+			}
+
+			return {
+				response: { STATUS_CODE: 200, MSG: '' },
+				finalData: { orderDetails: specificOrderDetails[0] },
 			};
 		} catch (err) {
 			throw err;

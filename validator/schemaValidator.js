@@ -58,4 +58,9 @@ module.exports = {
 			wishlistId: Joi.number().required(),
 		}),
 	},
+	SPECIFIC_ORDER_DETAILS: {
+		query: Joi.object({
+			orderId: Joi.string().required(),
+		}),
+	},
 };

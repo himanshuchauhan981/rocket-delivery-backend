@@ -78,5 +78,13 @@ module.exports = () => {
 
 	router.get('/userOrders', authMiddleware, orderController.getUserOrders);
 
+	router.get(
+		'/order',
+		authMiddleware,
+		schemaMiddleware(schemaValidator.SPECIFIC_ORDER_DETAILS),
+		authMiddleware,
+		orderController.specificOrderDetails
+	);
+
 	return router;
 };
