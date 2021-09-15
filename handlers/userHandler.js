@@ -133,6 +133,23 @@ const userHandler = {
 			throw err;
 		}
 	},
+
+	viewUserDetails: async (userDetails) => {
+		try {
+			let userDetailsQuery =
+				'SELECT name, email, countryCode, mobileNumber from users where id = ?';
+			let userDetail = await connection.executeQuery(userDetailsQuery, [
+				userDetails.id,
+			]);
+
+			return {
+				response: { STATUS_CODE: 200, MSG: '' },
+				finalData: { userDetails: userDetail[0] },
+			};
+		} catch (err) {
+			throw err;
+		}
+	},
 };
 
 module.exports = userHandler;

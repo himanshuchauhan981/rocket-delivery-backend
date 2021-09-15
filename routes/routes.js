@@ -86,5 +86,7 @@ module.exports = () => {
 		orderController.specificOrderDetails
 	);
 
+	router.get('/userDetails', authMiddleware, userController.viewUserDetails);
+
 	return router;
 };

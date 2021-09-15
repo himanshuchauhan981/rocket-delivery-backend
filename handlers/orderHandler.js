@@ -1,5 +1,6 @@
 const { connection } = require('../db');
 const Handlebar = require('handlebars');
+const moment = require('moment');
 const { responseMessages } = require('../lib');
 
 const orderHandler = {
@@ -38,7 +39,7 @@ const orderHandler = {
 			}
 
 			let newOrderQuery =
-				'INSERT into orders (userId, deliveryCharges, paymentMethod, amount, userAddress) VALUES (?,?,?,?,?)';
+				'INSERT into orders (userId, deliveryCharges, paymentMethod, amount, userAddress, status, netAmount) VALUES (?,?,?,?,?,?,?)';
 
 			let newOrder = await connection.executeQuery(newOrderQuery, [
 				userDetails.id,
@@ -46,6 +47,8 @@ const orderHandler = {
 				payload.paymentMethod,
 				subTotal,
 				payload.orderAddress,
+				1,
+				subTotal + payload.deliveryCharges,
 			]);
 			let orderId = newOrder.insertId;
 
@@ -64,6 +67,32 @@ const orderHandler = {
 					'UPDATE products SET maxQuantity = maxQuantity - 1 where id = ?';
 				await connection.executeQuery(updateQuantityQuery, [cartItems[i].id]);
 			}
+
+			let orderDetailsQuery = 'SELECT createdOn from orders where id = ?';
+			let orderDetails = await connection.executeQuery(orderDetailsQuery, [
+				orderId,
+			]);
+
+			let orderNumber = orderId.toLocaleString('en-US', {
+				minimumIntegerDigits: 3,
+				useGrouping: false,
+			});
+
+			orderNumber = `${orderNumber}-${moment(
+				orderDetails[0].createdOn
+			).valueOf()}`;
+
+			let deliveryDate = moment(orderDetails[0].createdOn)
+				.add(2, 'days')
+				.format('YYYY-MM-DD');
+
+			let updateOrderQuery =
+				'UPDATE orders SET orderNumber = ?, deliveryDate = ? where id = ?';
+			await connection.executeQuery(updateOrderQuery, [
+				orderNumber,
+				deliveryDate,
+				orderId,
+			]);
 
 			return { response: { STATUS_CODE: 200, MSG: '' }, finalData: {} };
 		} catch (err) {
