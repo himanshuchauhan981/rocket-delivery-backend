@@ -70,4 +70,10 @@ module.exports = {
 			touchedEmail: Joi.boolean().optional(),
 		}),
 	},
+	CHANGE_ORDER_STATUS: {
+		body: Joi.object({
+			orderId: Joi.number().required(),
+			status: Joi.number().required(),
+		}),
+	},
 };

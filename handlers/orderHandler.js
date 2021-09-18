@@ -220,6 +220,35 @@ const orderHandler = {
 			throw err;
 		}
 	},
+
+	changeOrderStatus: async (payload) => {
+		try {
+			let orderDetailsQuery = 'SELECT id,status from orders where id = ?';
+			let orderDetails = await connection.executeQuery(orderDetailsQuery, [
+				payload.orderId,
+			]);
+			console.log(orderDetails);
+			if (orderDetails && orderDetails.length !== 0) {
+				if (payload.status == 3) {
+					if (orderDetails[0].status == 1) {
+						let updateOrderStatusQuery =
+							'UPDATE orders SET status  = ? where id = ?';
+						await connection.executeQuery(updateOrderStatusQuery, [
+							payload.status,
+							payload.orderId,
+						]);
+
+						return {
+							response: responseMessages.ORDER_CANCELLED,
+							finalData: {},
+						};
+					}
+				}
+			}
+		} catch (err) {
+			throw err;
+		}
+	},
 };
 
 module.exports = orderHandler;

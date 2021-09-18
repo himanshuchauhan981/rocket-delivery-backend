@@ -94,5 +94,12 @@ module.exports = () => {
 		userController.updateUserDetails
 	);
 
+	router.patch(
+		'/order/changeStatus',
+		schemaMiddleware(schemaValidator.CHANGE_ORDER_STATUS),
+		authMiddleware,
+		orderController.changeOrderStatus
+	);
+
 	return router;
 };

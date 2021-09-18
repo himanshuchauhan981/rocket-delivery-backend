@@ -71,6 +71,21 @@ const orderController = {
 			responseManager.sendErrorResponse(err, res);
 		}
 	},
+
+	changeOrderStatus: async (req, res) => {
+		try {
+			let payload = req.body;
+			let userDetails = req.user;
+
+			let responseDetails = await orderHandler.changeOrderStatus(
+				payload,
+				userDetails
+			);
+			responseManager.sendSuccessResponse(responseDetails, res);
+		} catch (err) {
+			responseManager.sendErrorResponse(err, res);
+		}
+	},
 };
 
 module.exports = orderController;
