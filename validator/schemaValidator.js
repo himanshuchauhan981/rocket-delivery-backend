@@ -63,4 +63,11 @@ module.exports = {
 			orderId: Joi.string().required(),
 		}),
 	},
+	UPDATE_USER_DETAILS: {
+		body: Joi.object({
+			email: Joi.string().optional().allow(''),
+			name: Joi.string().optional(),
+			touchedEmail: Joi.boolean().optional(),
+		}),
+	},
 };

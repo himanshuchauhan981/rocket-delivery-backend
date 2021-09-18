@@ -1,5 +1,5 @@
 const { connection } = require('../db');
-const { commonFunctions } = require('../lib');
+const { responseMessages, commonFunctions } = require('../lib');
 
 const userHandler = {
 	createNewUser: async (payload) => {
@@ -37,12 +37,12 @@ const userHandler = {
 				});
 
 				return {
-					response: { STATUS_CODE: 200, MSG: 'Success' },
+					response: responseMessages.SUCCESS,
 					finalData: { token },
 				};
 			} else {
 				return {
-					response: { STATUS_CODE: 409, MSG: 'User already existed' },
+					response: responseMessages.EXISTED_USER,
 					finalData: {},
 				};
 			}
@@ -69,18 +69,18 @@ const userHandler = {
 					});
 
 					return {
-						response: { STATUS_CODE: 200, MSG: 'Success' },
+						response: responseMessages.SUCCESS,
 						finalData: { token, name: existingUser[0].name },
 					};
 				} else {
 					return {
-						response: { STATUS_CODE: 401, MSG: 'Invalid email or passsword' },
+						response: responseMessages.INVALID_EMAIL_PASSWORD,
 						finalData: {},
 					};
 				}
 			} else {
 				return {
-					response: { STATUS_CODE: 401, MSG: 'Invalid email or passsword' },
+					response: responseMessages.INVALID_EMAIL_PASSWORD,
 					finalData: {},
 				};
 			}
@@ -108,7 +108,7 @@ const userHandler = {
 			]);
 
 			return {
-				response: { STATUS_CODE: 200, MSG: 'New address saved' },
+				response: responseMessages.NEW_ADDRESS,
 				finalData: {},
 			};
 		} catch (err) {
@@ -126,7 +126,7 @@ const userHandler = {
 			]);
 
 			return {
-				response: { STATUS_CODE: 200, MSG: '' },
+				response: responseMessages.SUCCESS,
 				finalData: { userAddressesDetails },
 			};
 		} catch (err) {
@@ -143,9 +143,62 @@ const userHandler = {
 			]);
 
 			return {
-				response: { STATUS_CODE: 200, MSG: '' },
+				response: responseMessages.SUCCESS,
 				finalData: { userDetails: userDetail[0] },
 			};
+		} catch (err) {
+			throw err;
+		}
+	},
+
+	updateUserDetails: async (payload, userDetails) => {
+		try {
+			if (payload.password) {
+			} else {
+				let existingEmailQuery =
+					'SELECT email, name from users where email = ?';
+				let existingEmailDetails = await connection.executeQuery(
+					existingEmailQuery,
+					[payload.email]
+				);
+
+				if (existingEmailDetails && existingEmailDetails.length === 0) {
+					let emailUpdate = '';
+					let params = [];
+					if (payload.touchedEmail) {
+						emailUpdate = 'email = ?,';
+						params.push(payload.email);
+					}
+
+					let updateUserDetailQuery = `UPDATE users set ${emailUpdate} name = ? where id = ?`;
+					params.push(payload.name, userDetails.id);
+
+					await connection.executeQuery(updateUserDetailQuery, params);
+
+					let userDetailsQuery = 'SELECT email, name from users where id = ?';
+					let userData = await connection.executeQuery(userDetailsQuery, [
+						userDetails.id,
+					]);
+
+					return {
+						response: responseMessages.UPDATED_USER_DETAILS,
+						finalData: { email: userData[0].email, name: userData[0].name },
+					};
+				} else {
+					let updateUserDetailQuery = `UPDATE users set name = ? where id = ?`;
+
+					await connection.executeQuery(updateUserDetailQuery, [
+						payload.name,
+						userDetails.id,
+					]);
+					return {
+						response: payload.touchedEmail
+							? responseMessages.EXISTING_USER_EMAIL
+							: responseMessages.SUCCESS,
+						finalData: payload,
+					};
+				}
+			}
 		} catch (err) {
 			throw err;
 		}

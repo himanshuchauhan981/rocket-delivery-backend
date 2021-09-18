@@ -82,11 +82,17 @@ module.exports = () => {
 		'/order',
 		authMiddleware,
 		schemaMiddleware(schemaValidator.SPECIFIC_ORDER_DETAILS),
-		authMiddleware,
 		orderController.specificOrderDetails
 	);
 
 	router.get('/userDetails', authMiddleware, userController.viewUserDetails);
+
+	router.patch(
+		'/updateUserDetails',
+		schemaMiddleware(schemaValidator.UPDATE_USER_DETAILS),
+		authMiddleware,
+		userController.updateUserDetails
+	);
 
 	return router;
 };

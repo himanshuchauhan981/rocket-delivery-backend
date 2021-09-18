@@ -52,6 +52,20 @@ const userController = {
 			responseManager.sendErrorResponse(err, res);
 		}
 	},
+
+	updateUserDetails: async (req, res) => {
+		try {
+			let payload = req.body;
+			let userDetails = req.user;
+			let responseDetails = await userHandler.updateUserDetails(
+				payload,
+				userDetails
+			);
+			responseManager.sendSuccessResponse(responseDetails, res);
+		} catch (err) {
+			responseManager.sendErrorResponse(err, res);
+		}
+	},
 };
 
 module.exports = userController;
