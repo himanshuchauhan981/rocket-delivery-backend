@@ -11,13 +11,14 @@ const orderHandler = {
 
 			for (let i = 0; i < cartItems.length; i++) {
 				let productQuery =
-					'SELECT name, price,maxQuantity from products where id = ?';
+					'SELECT name, price,maxQuantity,image from products where id = ?';
 				let productDetails = await connection.executeQuery(productQuery, [
 					cartItems[i].id,
 				]);
 
 				cartItems[i].productName = productDetails[0].name;
 				cartItems[i].price = productDetails[0].price;
+				cartItems[i].image = productDetails[0].image;
 				subTotal =
 					subTotal +
 					parseFloat(cartItems[i].price) * parseInt(cartItems[i].quantity, 10);
@@ -40,7 +41,7 @@ const orderHandler = {
 
 			let newOrderQuery =
 				'INSERT into orders (userId, deliveryCharges, paymentMethod, amount, userAddress, status, netAmount) VALUES (?,?,?,?,?,?,?)';
-
+			console.log(cartItems[0]);
 			let newOrder = await connection.executeQuery(newOrderQuery, [
 				userDetails.id,
 				payload.deliveryCharges,
@@ -54,13 +55,14 @@ const orderHandler = {
 
 			for (let i = 0; i < cartItems.length; i++) {
 				let orderProductsQuery =
-					'INSERT into order_products (orderId, productId, productName, quantity, price) VALUES (?,?,?,?,?)';
+					'INSERT into order_products (orderId, productId, productName, quantity, price,productImage) VALUES (?,?,?,?,?,?)';
 				await connection.executeQuery(orderProductsQuery, [
 					orderId,
 					cartItems[i].id,
 					cartItems[i].productName,
 					cartItems[i].quantity,
 					cartItems[i].price,
+					cartItems[i].image,
 				]);
 
 				let updateQuantityQuery =
@@ -194,7 +196,7 @@ const orderHandler = {
 	specificOrderDetails: async (payload) => {
 		try {
 			let specificOrderQuery =
-				'SELECT o.id, a.fullName, a.houseNo, a.area, a.city, a.state, a.landmark, a.countryCode, a.mobileNumber, o.paymentMethod, o.deliveryCharges, o.amount, o.userAddress, o.deliveryDate, o.createdOn from orders o join address a on a.id = o.userAddress where o.id = ?';
+				'SELECT o.id, a.fullName, a.houseNo, a.area, a.city, a.state, a.landmark, a.countryCode, a.mobileNumber, o.paymentMethod, o.deliveryCharges, o.amount, o.userAddress, o.deliveryDate, o.createdOn,o.netAmount from orders o join address a on a.id = o.userAddress where o.id = ?';
 
 			let specificOrderDetails = await connection.executeQuery(
 				specificOrderQuery,
