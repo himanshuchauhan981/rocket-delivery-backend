@@ -101,5 +101,11 @@ module.exports = () => {
 		orderController.changeOrderStatus
 	);
 
+	router.post(
+		'/forgetPassword',
+		schemaMiddleware(schemaValidator.FORGET_PASSWORD),
+		userController.forgetPassword
+	);
+
 	return router;
 };

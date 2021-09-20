@@ -76,4 +76,9 @@ module.exports = {
 			status: Joi.number().required(),
 		}),
 	},
+	FORGET_PASSWORD: {
+		body: Joi.object({
+			email: Joi.string().required(),
+		}),
+	},
 };
