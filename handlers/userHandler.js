@@ -221,8 +221,6 @@ const userHandler = {
 				.add(10, 'minutes')
 				.format('YYYY-MM-DD HH:mm:ss');
 
-			let text = `OTP for the email ${otp}`;
-
 			let updateUserOTPQuery =
 				'UPDATE users set otp = ?, otpValidity = ? where email = ?';
 			await connection.executeQuery(updateUserOTPQuery, [
@@ -247,8 +245,26 @@ const userHandler = {
 			);
 			return {
 				response: responseMessages.RESET_PASSWORD_SUCCESS,
-				finalData: {},
+				finalData: { otpValidity },
 			};
+		} catch (err) {
+			throw err;
+		}
+	},
+
+	verifyOTP: async (payload) => {
+		try {
+			let userDetailsQuery =
+				'SELECT otp, otpValidity from users where email = ?';
+			let userDetails = await connection.executeQuery(userDetailsQuery, [
+				payload.email,
+			]);
+			let otp = parseInt(payload.otp, 10);
+			if (otp === userDetails[0].otp) {
+				return { response: responseMessages.VERIFIED_OTP, finalData: {} };
+			} else {
+				return { response: responseMessages.INVALID_OTP, finalData: {} };
+			}
 		} catch (err) {
 			throw err;
 		}

@@ -81,4 +81,10 @@ module.exports = {
 			email: Joi.string().required(),
 		}),
 	},
+	VERIFY_OTP: {
+		body: Joi.object({
+			email: Joi.string().required(),
+			otp: Joi.string().required(),
+		}),
+	},
 };

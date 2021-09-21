@@ -107,5 +107,11 @@ module.exports = () => {
 		userController.forgetPassword
 	);
 
+	router.post(
+		'/verifyOTP',
+		schemaMiddleware(schemaValidator.VERIFY_OTP),
+		userController.verifyOTP
+	);
+
 	return router;
 };

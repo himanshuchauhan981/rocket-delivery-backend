@@ -76,6 +76,16 @@ const userController = {
 			responseManager.sendErrorResponse(err, res);
 		}
 	},
+
+	verifyOTP: async (req, res) => {
+		try {
+			let payload = req.body;
+			let responseDetails = await userHandler.verifyOTP(payload);
+			responseManager.sendSuccessResponse(responseDetails, res);
+		} catch (err) {
+			responseManager.sendErrorResponse(err, res);
+		}
+	},
 };
 
 module.exports = userController;
