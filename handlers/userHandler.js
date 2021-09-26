@@ -1,4 +1,4 @@
-const otpGenerator = require('otp-generator');
+const e = require('express');
 const moment = require('moment');
 
 const { connection } = require('../db');
@@ -209,43 +209,65 @@ const userHandler = {
 
 	forgetPassword: async (payload) => {
 		try {
-			let subject = 'Recover you password';
-
-			let otp = otpGenerator.generate(6, {
-				digits: true,
-				alphabets: false,
-				upperCase: false,
-				specialChars: false,
-			});
-			let otpValidity = moment()
-				.add(10, 'minutes')
-				.format('YYYY-MM-DD HH:mm:ss');
-
-			let updateUserOTPQuery =
-				'UPDATE users set otp = ?, otpValidity = ? where email = ?';
-			await connection.executeQuery(updateUserOTPQuery, [
-				otp,
-				otpValidity,
-				payload.email,
-			]);
-
-			let userDetailsQuery = 'select name from users where email = ?';
+			let userDetailsQuery =
+				'select name, otp, otpValidity from users where email = ?';
 			let userDetails = await connection.executeQuery(userDetailsQuery, [
 				payload.email,
 			]);
+			let finalData = {};
 
-			let resetPasswordTemplate = emailTemplates.resetPassword(
-				userDetails[0].name,
-				otp
-			);
-			await commonFunctions.sendEmailThroughSMTP(
-				payload.email,
-				subject,
-				resetPasswordTemplate
-			);
+			if (userDetails.length > 0) {
+				let existingOTP = userDetails[0].otp;
+				let existingOTPValidity = userDetails[0].otpValidity;
+
+				if (existingOTP !== null && existingOTPValidity !== null) {
+					let currentDate = moment().toISOString();
+
+					let validityStatus =
+						moment(existingOTPValidity).isBefore(currentDate);
+					if (validityStatus) {
+						let otp = commonFunctions.generateOTP();
+						let otpValidity = moment()
+							.add(2, 'minutes')
+							.format('YYYY-MM-DD HH:mm:ss');
+
+						let updateUserOTPQuery =
+							'UPDATE users set otp = ?, otpValidity = ? where email = ?';
+						await connection.executeQuery(updateUserOTPQuery, [
+							otp,
+							otpValidity,
+							payload.email,
+						]);
+						finalData = { otpValidity };
+					} else {
+						finalData = { otpValidity: existingOTPValidity };
+					}
+				} else {
+					let otp = commonFunctions.generateOTP();
+					let otpValidity = moment()
+						.add(2, 'minutes')
+						.format('YYYY-MM-DD HH:mm:ss');
+
+					let updateUserOTPQuery =
+						'UPDATE users set otp = ?, otpValidity = ? where email = ?';
+					await connection.executeQuery(updateUserOTPQuery, [
+						otp,
+						otpValidity,
+						payload.email,
+					]);
+					await connection.executeQuery(updateUserOTPQuery, [
+						otp,
+						otpValidity,
+						payload.email,
+					]);
+
+					finalData = { otpValidity };
+				}
+			}
+
 			return {
 				response: responseMessages.RESET_PASSWORD_SUCCESS,
-				finalData: { otpValidity },
+				finalData,
 			};
 		} catch (err) {
 			throw err;
