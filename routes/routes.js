@@ -119,5 +119,7 @@ module.exports = () => {
 		userController.updateUserPassword
 	);
 
+	router.get('/productsOffer', productController.getProductOffers);
+
 	return router;
 };

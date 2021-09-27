@@ -1,4 +1,6 @@
 const { connection } = require('../db');
+const moment = require('moment');
+const { responseMessages } = require('../lib');
 
 const productHandler = {
 	getHomeCategories: async () => {
@@ -111,6 +113,26 @@ const productHandler = {
 			return {
 				response: { STATUS_CODE: 200, MSG: 'Success' },
 				finalData: { cartProductDetails: tempCartProductDetails },
+			};
+		} catch (err) {
+			throw err;
+		}
+	},
+
+	getProductOffers: async () => {
+		try {
+			let currentDate = moment().format('YYYY-MM-DD HH:mm:ss');
+			let productOffersQuery =
+				'SELECT p.name, pp.actualPrice as price, pp.discountPercent, p.image from products p join product_price pp on pp.productId = p.id where pp.discountStartDate <= ? and pp.discountEndDate >= ? and discountPercent != ? ';
+			let productDetails = await connection.executeQuery(productOffersQuery, [
+				currentDate,
+				currentDate,
+				'null',
+			]);
+
+			return {
+				response: responseMessages.SUCCESS,
+				finalData: { productDetails },
 			};
 		} catch (err) {
 			throw err;
