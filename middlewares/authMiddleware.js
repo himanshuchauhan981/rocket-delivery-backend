@@ -10,8 +10,7 @@ const authMiddleware = (req, res, next) => {
 
 				req.user = decodedToken;
 			} catch (err) {
-				console.log('some error is');
-				res.status(401).send({ msg: 'Invalid token' });
+				return res.status(401).send({ msg: 'Invalid token' });
 			}
 			next();
 		} else {

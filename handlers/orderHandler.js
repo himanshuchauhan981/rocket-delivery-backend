@@ -41,7 +41,7 @@ const orderHandler = {
 
 			let newOrderQuery =
 				'INSERT into orders (userId, deliveryCharges, paymentMethod, amount, userAddress, status, netAmount) VALUES (?,?,?,?,?,?,?)';
-			console.log(cartItems[0]);
+
 			let newOrder = await connection.executeQuery(newOrderQuery, [
 				userDetails.id,
 				payload.deliveryCharges,
@@ -229,7 +229,6 @@ const orderHandler = {
 			let orderDetails = await connection.executeQuery(orderDetailsQuery, [
 				payload.orderId,
 			]);
-			console.log(orderDetails);
 			if (orderDetails && orderDetails.length !== 0) {
 				if (payload.status == 3) {
 					if (orderDetails[0].status == 1) {

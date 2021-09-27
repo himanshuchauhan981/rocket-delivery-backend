@@ -156,51 +156,47 @@ const userHandler = {
 
 	updateUserDetails: async (payload, userDetails) => {
 		try {
-			if (payload.password) {
-			} else {
-				let existingEmailQuery =
-					'SELECT email, name from users where email = ?';
-				let existingEmailDetails = await connection.executeQuery(
-					existingEmailQuery,
-					[payload.email]
-				);
+			let existingEmailQuery = 'SELECT email, name from users where email = ?';
+			let existingEmailDetails = await connection.executeQuery(
+				existingEmailQuery,
+				[payload.email]
+			);
 
-				if (existingEmailDetails && existingEmailDetails.length === 0) {
-					let emailUpdate = '';
-					let params = [];
-					if (payload.touchedEmail) {
-						emailUpdate = 'email = ?,';
-						params.push(payload.email);
-					}
-
-					let updateUserDetailQuery = `UPDATE users set ${emailUpdate} name = ? where id = ?`;
-					params.push(payload.name, userDetails.id);
-
-					await connection.executeQuery(updateUserDetailQuery, params);
-
-					let userDetailsQuery = 'SELECT email, name from users where id = ?';
-					let userData = await connection.executeQuery(userDetailsQuery, [
-						userDetails.id,
-					]);
-
-					return {
-						response: responseMessages.UPDATED_USER_DETAILS,
-						finalData: { email: userData[0].email, name: userData[0].name },
-					};
-				} else {
-					let updateUserDetailQuery = `UPDATE users set name = ? where id = ?`;
-
-					await connection.executeQuery(updateUserDetailQuery, [
-						payload.name,
-						userDetails.id,
-					]);
-					return {
-						response: payload.touchedEmail
-							? responseMessages.EXISTING_USER_EMAIL
-							: responseMessages.SUCCESS,
-						finalData: payload,
-					};
+			if (existingEmailDetails && existingEmailDetails.length === 0) {
+				let emailUpdate = '';
+				let params = [];
+				if (payload.touchedEmail) {
+					emailUpdate = 'email = ?,';
+					params.push(payload.email);
 				}
+
+				let updateUserDetailQuery = `UPDATE users set ${emailUpdate} name = ? where id = ?`;
+				params.push(payload.name, userDetails.id);
+
+				await connection.executeQuery(updateUserDetailQuery, params);
+
+				let userDetailsQuery = 'SELECT email, name from users where id = ?';
+				let userData = await connection.executeQuery(userDetailsQuery, [
+					userDetails.id,
+				]);
+
+				return {
+					response: responseMessages.UPDATED_USER_DETAILS,
+					finalData: { email: userData[0].email, name: userData[0].name },
+				};
+			} else {
+				let updateUserDetailQuery = `UPDATE users set name = ? where id = ?`;
+
+				await connection.executeQuery(updateUserDetailQuery, [
+					payload.name,
+					userDetails.id,
+				]);
+				return {
+					response: payload.touchedEmail
+						? responseMessages.EXISTING_USER_EMAIL
+						: responseMessages.SUCCESS,
+					finalData: payload,
+				};
 			}
 		} catch (err) {
 			throw err;
@@ -214,6 +210,8 @@ const userHandler = {
 			let userDetails = await connection.executeQuery(userDetailsQuery, [
 				payload.email,
 			]);
+			let subject = 'Recover you password';
+
 			let finalData = {};
 
 			if (userDetails.length > 0) {
@@ -238,6 +236,17 @@ const userHandler = {
 							otpValidity,
 							payload.email,
 						]);
+
+						let resetPasswordTemplate = emailTemplates.resetPassword(
+							userDetails[0].name,
+							otp
+						);
+						await commonFunctions.sendEmailThroughSMTP(
+							payload.email,
+							subject,
+							resetPasswordTemplate
+						);
+
 						finalData = { otpValidity };
 					} else {
 						finalData = { otpValidity: existingOTPValidity };
@@ -255,20 +264,27 @@ const userHandler = {
 						otpValidity,
 						payload.email,
 					]);
-					await connection.executeQuery(updateUserOTPQuery, [
-						otp,
-						otpValidity,
+
+					let resetPasswordTemplate = emailTemplates.resetPassword(
+						userDetails[0].name,
+						otp
+					);
+					await commonFunctions.sendEmailThroughSMTP(
 						payload.email,
-					]);
+						subject,
+						resetPasswordTemplate
+					);
 
 					finalData = { otpValidity };
 				}
-			}
 
-			return {
-				response: responseMessages.RESET_PASSWORD_SUCCESS,
-				finalData,
-			};
+				return {
+					response: responseMessages.RESET_PASSWORD_SUCCESS,
+					finalData,
+				};
+			} else {
+				return { response: responseMessages.NON_EXISTED_EMAIL, finalData: {} };
+			}
 		} catch (err) {
 			throw err;
 		}
@@ -282,11 +298,28 @@ const userHandler = {
 				payload.email,
 			]);
 			let otp = parseInt(payload.otp, 10);
-			if (otp === userDetails[0].otp) {
+
+			if (payload.otp === userDetails[0].otp) {
 				return { response: responseMessages.VERIFIED_OTP, finalData: {} };
 			} else {
 				return { response: responseMessages.INVALID_OTP, finalData: {} };
 			}
+		} catch (err) {
+			throw err;
+		}
+	},
+	updateUserPassword: async (payload) => {
+		try {
+			let hashedPassword = commonFunctions.generateHashPassword(
+				payload.newPassword
+			);
+			let updatePasswordQuery = 'UPDATE users SET password = ? where email = ?';
+			await connection.executeQuery(updatePasswordQuery, [
+				hashedPassword,
+				payload.email,
+			]);
+
+			return { response: responseMessages.SUCCESS, finalData: {} };
 		} catch (err) {
 			throw err;
 		}

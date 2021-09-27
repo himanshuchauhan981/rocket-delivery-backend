@@ -89,8 +89,8 @@ module.exports = () => {
 
 	router.patch(
 		'/updateUserDetails',
-		schemaMiddleware(schemaValidator.UPDATE_USER_DETAILS),
 		authMiddleware,
+		schemaMiddleware(schemaValidator.UPDATE_USER_DETAILS),
 		userController.updateUserDetails
 	);
 
@@ -111,6 +111,12 @@ module.exports = () => {
 		'/verifyOTP',
 		schemaMiddleware(schemaValidator.VERIFY_OTP),
 		userController.verifyOTP
+	);
+
+	router.patch(
+		'/updatePassword',
+		schemaMiddleware(schemaValidator.UPDATE_PASSWORD),
+		userController.updateUserPassword
 	);
 
 	return router;

@@ -68,6 +68,7 @@ module.exports = {
 			email: Joi.string().optional().allow(''),
 			name: Joi.string().optional(),
 			touchedEmail: Joi.boolean().optional(),
+			newPassword: Joi.string().optional(),
 		}),
 	},
 	CHANGE_ORDER_STATUS: {
@@ -85,6 +86,12 @@ module.exports = {
 		body: Joi.object({
 			email: Joi.string().required(),
 			otp: Joi.string().required(),
+		}),
+	},
+	UPDATE_PASSWORD: {
+		body: Joi.object({
+			email: Joi.string().required(),
+			newPassword: Joi.string().required(),
 		}),
 	},
 };
