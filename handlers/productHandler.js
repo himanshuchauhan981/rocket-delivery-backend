@@ -38,10 +38,10 @@ const productHandler = {
 		try {
 			let sqlQuery;
 			if (payload.subCategoryId) {
-				sqlQuery = `SELECT p.id, p.name, p.image,p.price, p.maxQuantity, p.purchaseLimit,sc.name as subCategoryName,mu.symbol FROM products p join 
-							sub_categories sc on sc.id = p.subCategoryId join measuring_units mu on mu.id = p.measuring_unit WHERE p.subCategoryId = ? and p.status = ?`;
+				sqlQuery = `SELECT p.id, p.name, p.image,pp.actualPrice as price, p.maxQuantity, p.purchaseLimit,sc.name as subCategoryName,mu.symbol FROM products p join 
+							sub_categories sc on sc.id = p.subCategoryId join measuring_units mu on mu.id = p.measuring_unit join product_price pp on pp.productId = p.id WHERE p.subCategoryId = ? and p.status = ?`;
 			} else {
-				sqlQuery = `SELECT p.id, p.name, p.image,p.price, p.maxQuantity, p.purchaseLimit,c.name as subCategoryName, mu.symbol FROM products p join categories c on p.categoryId = c.id join measuring_units mu on mu.id = p.measuring_unit WHERE p.categoryId = ? AND p.status = ?`;
+				sqlQuery = `SELECT p.id, p.name, p.image,p.image, pp.actualPrice as price, p.maxQuantity, p.purchaseLimit,c.name as subCategoryName, mu.symbol FROM products p join categories c on p.categoryId = c.id join measuring_units mu on mu.id = p.measuring_unit join product_price pp on pp.productId = p.id WHERE p.categoryId = ? AND p.status = ?`;
 			}
 
 			let products = await connection.executeQuery(sqlQuery, [
@@ -61,7 +61,7 @@ const productHandler = {
 	getProductDetails: async (payload) => {
 		try {
 			let sqlQuery =
-				'SELECT p.name,p.image,p.maxQuantity,p.purchaseLimit,p.price, p.description FROM products p WHERE p.id = ? ';
+				'SELECT p.name,p.image,p.maxQuantity,p.purchaseLimit,pp.actualPrice as price, p.description FROM products p join product_price pp on pp.productId = p.id WHERE p.id = ? ';
 
 			let productDetails = await connection.executeQuery(sqlQuery, [
 				payload.productId,
@@ -81,7 +81,7 @@ const productHandler = {
 			let cartItems = payload.cartItems;
 			let productIds = cartItems.map((items) => items.id);
 			let sqlQuery =
-				'SELECT p.id,p.name,p.image,p.price,p.maxQuantity,p.status from products p where p.id IN (?)';
+				'SELECT p.id,p.name,p.image,pp.actualPrice as price,p.maxQuantity,p.status from products p join product_price pp on pp.productId = p.id where p.id IN (?)';
 			let cartProductDetails = await connection.executeQuery(sqlQuery, [
 				productIds,
 			]);

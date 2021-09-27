@@ -11,7 +11,7 @@ const orderHandler = {
 
 			for (let i = 0; i < cartItems.length; i++) {
 				let productQuery =
-					'SELECT name, price,maxQuantity,image from products where id = ?';
+					'SELECT p.name,pp.actualPrice as price,p.maxQuantity,p.image from products p join product_price on p.id = pp.productId where id = ?';
 				let productDetails = await connection.executeQuery(productQuery, [
 					cartItems[i].id,
 				]);
