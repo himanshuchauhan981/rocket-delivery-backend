@@ -63,11 +63,36 @@ const productHandler = {
 	getProductDetails: async (payload) => {
 		try {
 			let sqlQuery =
-				'SELECT p.name,p.image,p.maxQuantity,p.purchaseLimit,pp.actualPrice as price, p.description FROM products p join product_price pp on pp.productId = p.id WHERE p.id = ? ';
+				'SELECT p.name,p.image,p.maxQuantity,p.purchaseLimit,pp.actualPrice as price,pp.discountPercent,pp.discountStartDate, pp.discountEndDate, p.description FROM products p join product_price pp on pp.productId = p.id WHERE p.id = ? ';
 
 			let productDetails = await connection.executeQuery(sqlQuery, [
 				payload.productId,
 			]);
+
+			let currentDate = moment().format('YYYY-MM-DD HH:mm:ss');
+
+			for (let i = 0; i < productDetails.length; i++) {
+				let discountStartDate = moment(
+					productDetails[i].discountStartDate
+				).format('YYYY-MM-DD HH:mm:ss');
+
+				let discountEndDate = moment(productDetails[i].discountEndDate).format(
+					'YYYY-MM-DD HH:mm:ss'
+				);
+
+				if (
+					discountStartDate <= currentDate &&
+					discountEndDate >= currentDate
+				) {
+					productDetails[i].discountStatus = true;
+					let discountPrice =
+						(productDetails[i].discountPercent / 100) * productDetails[i].price;
+					discountPrice = productDetails[i].price - discountPrice;
+					productDetails[i].discountPrice = discountPrice;
+				} else {
+					productDetails[i].discountStatus = false;
+				}
+			}
 
 			return {
 				response: { STATUS_CODE: 200, MSG: '' },
@@ -83,13 +108,33 @@ const productHandler = {
 			let cartItems = payload.cartItems;
 			let productIds = cartItems.map((items) => items.id);
 			let sqlQuery =
-				'SELECT p.id,p.name,p.image,pp.actualPrice as price,p.maxQuantity,p.status from products p join product_price pp on pp.productId = p.id where p.id IN (?)';
+				'SELECT p.id,p.name,p.image,pp.actualPrice as price,pp.discountPercent,pp.discountStartDate, pp.discountEndDate,p.maxQuantity,p.status from products p join product_price pp on pp.productId = p.id where p.id IN (?)';
 			let cartProductDetails = await connection.executeQuery(sqlQuery, [
 				productIds,
 			]);
 			let tempCartProductDetails = [];
 
+			let currentDate = moment().format('YYYY-MM-DD HH:mm:ss');
+
 			for (let i = 0; i < cartProductDetails.length; i++) {
+				let discountStartDate = moment(
+					cartProductDetails[i].discountStartDate
+				).format('YYYY-MM-DD HH:mm:ss');
+
+				let discountEndDate = moment(
+					cartProductDetails[i].discountEndDate
+				).format('YYYY-MM-DD HH:mm:ss');
+
+				if (
+					discountStartDate <= currentDate &&
+					discountEndDate >= currentDate
+				) {
+					let discountPrice =
+						(cartProductDetails[i].discountPercent / 100) *
+						cartProductDetails[i].price;
+					discountPrice = cartProductDetails[i].price - discountPrice;
+					cartProductDetails[i].price = discountPrice;
+				}
 				let productQuantity = cartItems.filter(
 					(item) => item.id === cartProductDetails[i].id
 				)[0].quantity;
@@ -123,12 +168,20 @@ const productHandler = {
 		try {
 			let currentDate = moment().format('YYYY-MM-DD HH:mm:ss');
 			let productOffersQuery =
-				'SELECT p.name, pp.actualPrice as price, pp.discountPercent, p.image from products p join product_price pp on pp.productId = p.id where pp.discountStartDate <= ? and pp.discountEndDate >= ? and discountPercent != ? ';
+				'SELECT p.id, p.name, pp.actualPrice, pp.discountPercent, p.image from products p join product_price pp on pp.productId = p.id where pp.discountStartDate <= ? and pp.discountEndDate >= ? and discountPercent != ? LIMIT 4';
 			let productDetails = await connection.executeQuery(productOffersQuery, [
 				currentDate,
 				currentDate,
 				'null',
 			]);
+
+			for (let i = 0; i < productDetails.length; i++) {
+				let discountPrice =
+					(productDetails[i].discountPercent / 100) *
+					productDetails[i].actualPrice;
+				discountPrice = productDetails[i].actualPrice - discountPrice;
+				productDetails[i].discountPrice = discountPrice;
+			}
 
 			return {
 				response: responseMessages.SUCCESS,

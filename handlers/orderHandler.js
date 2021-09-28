@@ -8,16 +8,39 @@ const orderHandler = {
 		try {
 			let cartItems = payload.cartItems;
 			let subTotal = 0;
+			let currentDate = moment().format('YYYY-MM-DD HH:mm:ss');
 
 			for (let i = 0; i < cartItems.length; i++) {
 				let productQuery =
-					'SELECT p.name,pp.actualPrice as price,p.maxQuantity,p.image from products p join product_price on p.id = pp.productId where id = ?';
+					'SELECT p.name,pp.actualPrice as price,p.maxQuantity,p.image,pp.discountPercent,pp.discountEndDate,pp.discountStartDate from products p join product_price pp on p.id = pp.productId where p.id = ?';
 				let productDetails = await connection.executeQuery(productQuery, [
 					cartItems[i].id,
 				]);
 
+				let discountStartDate = moment(
+					productDetails[i].discountStartDate
+				).format('YYYY-MM-DD HH:mm:ss');
+
+				let discountEndDate = moment(productDetails[i].discountEndDate).format(
+					'YYYY-MM-DD HH:mm:ss'
+				);
+
+				if (
+					discountStartDate <= currentDate &&
+					discountEndDate >= currentDate
+				) {
+					let discountPrice =
+						(productDetails[0].discountPercent / 100) * productDetails[i].price;
+					discountPrice = productDetails[0].price - discountPrice;
+					cartItems[i].price = discountPrice;
+				} else {
+					cartItems[i].price = productDetails[0].price;
+				}
+
+				console.log(cartItems[i].price);
+
 				cartItems[i].productName = productDetails[0].name;
-				cartItems[i].price = productDetails[0].price;
+
 				cartItems[i].image = productDetails[0].image;
 				subTotal =
 					subTotal +
