@@ -121,5 +121,12 @@ module.exports = () => {
 
 	router.get('/productsOffer', productController.getProductOffers);
 
+	router.post(
+		'/addToHistory',
+		schemaMiddleware(schemaValidator.ADD_TO_PRODUCT_HISTORY),
+		authMiddleware,
+		productController.addToProductHistory
+	);
+
 	return router;
 };

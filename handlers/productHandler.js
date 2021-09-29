@@ -168,7 +168,7 @@ const productHandler = {
 		try {
 			let currentDate = moment().format('YYYY-MM-DD HH:mm:ss');
 			let productOffersQuery =
-				'SELECT p.id, p.name, pp.actualPrice, pp.discountPercent, p.image from products p join product_price pp on pp.productId = p.id where pp.discountStartDate <= ? and pp.discountEndDate >= ? and discountPercent != ? LIMIT 4';
+				'SELECT p.id, p.name, pp.actualPrice, pp.discountPercent,pp.discountEndDate, p.image from products p join product_price pp on pp.productId = p.id where pp.discountStartDate <= ? and pp.discountEndDate >= ? and discountPercent != ? LIMIT 4';
 			let productDetails = await connection.executeQuery(productOffersQuery, [
 				currentDate,
 				currentDate,
@@ -187,6 +187,30 @@ const productHandler = {
 				response: responseMessages.SUCCESS,
 				finalData: { productDetails },
 			};
+		} catch (err) {
+			throw err;
+		}
+	},
+
+	addToProductHistory: async (payload, userDetails) => {
+		try {
+			let existingProductHistoryQuery =
+				'SELECT id from product_history where userId = ? and productId = ?';
+			let existingProductHistory = await connection.executeQuery(
+				existingProductHistoryQuery,
+				[payload.productId, userDetails.id]
+			);
+
+			if (existingProductHistory.length === 0) {
+				let productHistoryQuery =
+					'INSERT into product_history (userId,productId) VALUES (?,?)';
+				await connection.executeQuery(productHistoryQuery, [
+					userDetails.id,
+					payload.productId,
+				]);
+			}
+
+			return { response: responseMessages.SUCCESS, finalData: {} };
 		} catch (err) {
 			throw err;
 		}

@@ -59,6 +59,20 @@ const productController = {
 			responseManager.sendErrorResponse(err, res);
 		}
 	},
+
+	addToProductHistory: async (req, res) => {
+		try {
+			let payload = req.body;
+			let userDetails = req.user;
+			let response = await productHandler.addToProductHistory(
+				payload,
+				userDetails
+			);
+			responseManager.sendSuccessResponse(response, res);
+		} catch (err) {
+			responseManager.sendErrorResponse(err, res);
+		}
+	},
 };
 
 module.exports = productController;

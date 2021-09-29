@@ -94,4 +94,10 @@ module.exports = {
 			newPassword: Joi.string().required(),
 		}),
 	},
+
+	ADD_TO_PRODUCT_HISTORY: {
+		body: Joi.object({
+			productId: Joi.number().required(),
+		}),
+	},
 };
