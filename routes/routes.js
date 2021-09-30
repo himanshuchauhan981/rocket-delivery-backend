@@ -128,5 +128,11 @@ module.exports = () => {
 		productController.addToProductHistory
 	);
 
+	router.get(
+		'/viewHistory',
+		authMiddleware,
+		productController.viewUserProductHistory
+	);
+
 	return router;
 };

@@ -73,6 +73,16 @@ const productController = {
 			responseManager.sendErrorResponse(err, res);
 		}
 	},
+
+	viewUserProductHistory: async (req, res) => {
+		try {
+			let userDetails = req.user;
+			let response = await productHandler.viewUserProductHistory(userDetails);
+			responseManager.sendSuccessResponse(response, res);
+		} catch (err) {
+			responseManager.sendErrorResponse(err, res);
+		}
+	},
 };
 
 module.exports = productController;

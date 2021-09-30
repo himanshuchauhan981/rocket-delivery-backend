@@ -215,6 +215,48 @@ const productHandler = {
 			throw err;
 		}
 	},
+
+	viewUserProductHistory: async (userDetails) => {
+		try {
+			let userProductHistoryQuery =
+				'SELECT ph.productId, p.image, p.name, pp.actualPrice as price, pp.discountPercent, pp.discountStartDate, pp.discountEndDate from product_history ph join products p on p.id = ph.productId join product_price pp on pp.productId = p.id where ph.userId = ? and ph.isDeleted = ?';
+
+			let userProductHistory = await connection.executeQuery(
+				userProductHistoryQuery,
+				[userDetails.id, 0]
+			);
+
+			let currentDate = moment().format('YYYY-MM-DD HH:mm:ss');
+
+			for (let i = 0; i < userProductHistory.length; i++) {
+				let discountStartDate = moment(
+					userProductHistory[i].discountStartDate
+				).format('YYYY-MM-DD HH:mm:ss');
+
+				let discountEndDate = moment(
+					userProductHistory[i].discountEndDate
+				).format('YYYY-MM-DD HH:mm:ss');
+
+				if (
+					discountStartDate <= currentDate &&
+					discountEndDate >= currentDate
+				) {
+					let discountPrice =
+						(userProductHistory[i].discountPercent / 100) *
+						userProductHistory[i].price;
+					discountPrice = userProductHistory[i].price - discountPrice;
+					userProductHistory[i].price = discountPrice;
+				}
+			}
+
+			return {
+				response: responseMessages.SUCCESS,
+				finalData: { userProductHistory },
+			};
+		} catch (err) {
+			throw err;
+		}
+	},
 };
 
 module.exports = productHandler;
