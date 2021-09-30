@@ -100,4 +100,9 @@ module.exports = {
 			productId: Joi.number().required(),
 		}),
 	},
+	REMOVE_PRODUCT_HISTORY: {
+		body: Joi.object({
+			productHistoryId: Joi.number().required(),
+		}),
+	},
 };

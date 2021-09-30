@@ -257,6 +257,30 @@ const productHandler = {
 			throw err;
 		}
 	},
+
+	removeFromProductHistory: async (payload) => {
+		try {
+			let existingProductHistoryQuery =
+				'SELECT id from product_history where id = ?';
+			let existingProductHistory = await connection.executeQuery(
+				existingProductHistoryQuery,
+				[payload.productHistoryId]
+			);
+
+			if (existingProductHistory && existingProductHistory.length > 0) {
+				let updateProductHistoryQuery =
+					'UPDATE product_history SET isDeleted = ? where id = ?';
+				await connection.executeQuery(updateProductHistoryQuery, [
+					1,
+					payload.productHistoryId,
+				]);
+
+				return { response: responseMessages.SUCCESS, finalData: {} };
+			}
+		} catch (err) {
+			throw err;
+		}
+	},
 };
 
 module.exports = productHandler;

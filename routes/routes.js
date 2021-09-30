@@ -134,5 +134,12 @@ module.exports = () => {
 		productController.viewUserProductHistory
 	);
 
+	router.delete(
+		'/removeProductHistory',
+		schemaMiddleware(schemaValidator.REMOVE_PRODUCT_HISTORY),
+		authMiddleware,
+		productController.removeFromProductHistory
+	);
+
 	return router;
 };
