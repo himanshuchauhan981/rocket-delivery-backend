@@ -219,7 +219,7 @@ const productHandler = {
 	viewUserProductHistory: async (userDetails) => {
 		try {
 			let userProductHistoryQuery =
-				'SELECT ph.productId, p.image, p.name, pp.actualPrice as price, pp.discountPercent, pp.discountStartDate, pp.discountEndDate from product_history ph join products p on p.id = ph.productId join product_price pp on pp.productId = p.id where ph.userId = ? and ph.isDeleted = ?';
+				'SELECT ph.id, ph.productId, p.image, p.name, pp.actualPrice as price, pp.discountPercent, pp.discountStartDate, pp.discountEndDate from product_history ph join products p on p.id = ph.productId join product_price pp on pp.productId = p.id where ph.userId = ? and ph.isDeleted = ?';
 
 			let userProductHistory = await connection.executeQuery(
 				userProductHistoryQuery,
