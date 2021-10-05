@@ -2,7 +2,6 @@ const moment = require('moment');
 const sequelize = require('sequelize');
 const Op = sequelize.Op;
 
-const { connection } = require('../db');
 const { responseMessages, commonFunctions, emailTemplates } = require('../lib');
 const { Users, Address } = require('../models');
 
@@ -246,52 +245,64 @@ const userHandler = {
 	},
 
 	updateUserDetails: async (payload, userDetails) => {
-		try {
-			let existingEmailQuery = 'SELECT email, name from users where email = ?';
-			let existingEmailDetails = await connection.executeQuery(
-				existingEmailQuery,
-				[payload.email]
-			);
+		return new Promise((resolve, reject) => {
+			try {
+				Users.findAll({
+					where: { email: payload.email },
+					attributes: ['email', 'name'],
+				})
+					.then(async (existingEmailDetails) => {
+						let updateUserDetails = {};
+						if (existingEmailDetails.length > 0) {
+							updateUserDetails['name'] = payload.name;
+							if (payload.touchedEmail) {
+								updateUserDetails['email'] = payload.emaill;
+							}
+							await Users.update(updateUserDetails, {
+								where: { id: userDetails.id },
+							});
 
-			if (existingEmailDetails && existingEmailDetails.length === 0) {
-				let emailUpdate = '';
-				let params = [];
-				if (payload.touchedEmail) {
-					emailUpdate = 'email = ?,';
-					params.push(payload.email);
-				}
+							let updatedUserDetails = await Users.findOne(
+								{
+									where: { id: userDetails.id },
+								},
+								{ attributes: ['email', 'name'] }
+							);
 
-				let updateUserDetailQuery = `UPDATE users set ${emailUpdate} name = ? where id = ?`;
-				params.push(payload.name, userDetails.id);
+							resolve({
+								response: responseMessages.UPDATED_USER_DETAILS,
+								finalData: {
+									email: updatedUserDetails.email,
+									name: updatedUserDetails.name,
+								},
+							});
+						} else {
+							await Users.update(
+								{ name: payload.name },
+								{ where: { id: userDetails.id } }
+							);
 
-				await connection.executeQuery(updateUserDetailQuery, params);
-
-				let userDetailsQuery = 'SELECT email, name from users where id = ?';
-				let userData = await connection.executeQuery(userDetailsQuery, [
-					userDetails.id,
-				]);
-
-				return {
-					response: responseMessages.UPDATED_USER_DETAILS,
-					finalData: { email: userData[0].email, name: userData[0].name },
-				};
-			} else {
-				let updateUserDetailQuery = `UPDATE users set name = ? where id = ?`;
-
-				await connection.executeQuery(updateUserDetailQuery, [
-					payload.name,
-					userDetails.id,
-				]);
-				return {
-					response: payload.touchedEmail
-						? responseMessages.EXISTING_USER_EMAIL
-						: responseMessages.SUCCESS,
-					finalData: payload,
-				};
+							resolve({
+								response: payload.touchedEmail
+									? responseMessages.EXISTING_USER_EMAIL
+									: responseMessages.SUCCESS,
+								finalData: { name: payload.name },
+							});
+						}
+					})
+					.catch((err) => {
+						reject({
+							response: responseMessages.SERVER_ERROR,
+							finalData: {},
+						});
+					});
+			} catch (err) {
+				reject({
+					response: responseMessages.SERVER_ERROR,
+					finalData: {},
+				});
 			}
-		} catch (err) {
-			throw err;
-		}
+		});
 	},
 
 	forgetPassword: async (payload) => {
