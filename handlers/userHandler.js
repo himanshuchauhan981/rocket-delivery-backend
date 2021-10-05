@@ -4,7 +4,7 @@ const Op = sequelize.Op;
 
 const { connection } = require('../db');
 const { responseMessages, commonFunctions, emailTemplates } = require('../lib');
-const { Users } = require('../models');
+const { Users, Address } = require('../models');
 
 let findExistingUser = (payload) => {
 	return new Promise((resolve, reject) => {
@@ -19,7 +19,7 @@ let findExistingUser = (payload) => {
 
 		Users.findAll({
 			where: existingUserQuery,
-			attributes: ['email', 'password', 'mobile_number', 'name'],
+			attributes: ['email', 'password', 'mobile_number', 'name', 'id'],
 		})
 			.then((existingUser) => {
 				resolve(existingUser);
@@ -113,66 +113,114 @@ const userHandler = {
 	},
 
 	addNewAddress: async (payload, userDetails) => {
-		try {
-			let newAddressQuery =
-				'INSERT into address (userId,fullName,pinCode,houseNo,area,city,state,landmark,latitude,longitude,countryCode,mobileNumber) values(?,?,?,?,?,?,?,?,?,?,?,?)';
-			await connection.executeQuery(newAddressQuery, [
-				userDetails.id,
-				payload.fullName,
-				payload.pinCode,
-				payload.houseNo,
-				payload.area,
-				payload.city,
-				payload.state,
-				payload.landmark,
-				payload.latitude,
-				payload.longitude,
-				payload.countryCode,
-				payload.mobileNumber,
-			]);
-
-			return {
-				response: responseMessages.NEW_ADDRESS,
-				finalData: {},
-			};
-		} catch (err) {
-			throw err;
-		}
+		return new Promise((resolve, reject) => {
+			try {
+				Address.create({
+					user_id: userDetails.id,
+					full_name: payload.fullName,
+					pincode: parseInt(payload.pinCode),
+					house_no: payload.houseNo,
+					area: payload.area,
+					city: payload.city,
+					state: payload.state,
+					landmark: payload.landmark,
+					latitude: parseFloat(payload.latitude),
+					longitude: parseFloat(payload.longitude),
+					country_code: payload.countryCode,
+					mobile_number: payload.mobileNumber,
+				})
+					.then((newAddress) => {
+						resolve({
+							response: responseMessages.NEW_ADDRESS,
+							finalData: {},
+						});
+					})
+					.catch((err) => {
+						console.log('>>>>>>>>Err', err);
+						reject({
+							response: responseMessages.SERVER_ERROR,
+							finalData: {},
+						});
+					});
+			} catch (err) {
+				reject({
+					response: responseMessages.SERVER_ERROR,
+					finalData: {},
+				});
+			}
+		});
 	},
 
 	viewUserAddress: async (userDetails) => {
-		try {
-			let addressQuery =
-				'SELECT * from address where userId = ? and isDeleted = ?';
-			let userAddressesDetails = await connection.executeQuery(addressQuery, [
-				userDetails.id,
-				0,
-			]);
+		return new Promise((resolve, reject) => {
+			try {
+				let addressCondition = {
+					[Op.and]: [{ user_id: userDetails.id }, { is_deleted: 0 }],
+				};
 
-			return {
-				response: responseMessages.SUCCESS,
-				finalData: { userAddressesDetails },
-			};
-		} catch (err) {
-			throw err;
-		}
+				Address.findAll({
+					where: addressCondition,
+					attributes: [
+						'id',
+						'user_id',
+						'full_name',
+						'pincode',
+						'house_no',
+						'area',
+						'city',
+						'state',
+						'landmark',
+						'country_code',
+						'mobile_number',
+					],
+				})
+					.then((userAddressesDetails) => {
+						resolve({
+							response: responseMessages.SUCCESS,
+							finalData: { userAddressesDetails },
+						});
+					})
+					.catch((err) =>
+						reject({
+							response: responseMessages.SERVER_ERROR,
+							finalData: {},
+						})
+					);
+			} catch (err) {
+				reject({
+					response: responseMessages.SERVER_ERROR,
+					finalData: {},
+				});
+			}
+		});
 	},
 
 	viewUserDetails: async (userDetails) => {
-		try {
-			let userDetailsQuery =
-				'SELECT name, email, countryCode, mobileNumber from users where id = ?';
-			let userDetail = await connection.executeQuery(userDetailsQuery, [
-				userDetails.id,
-			]);
-
-			return {
-				response: responseMessages.SUCCESS,
-				finalData: { userDetails: userDetail[0] },
-			};
-		} catch (err) {
-			throw err;
-		}
+		return new Promise((resolve, reject) => {
+			try {
+				Users.findOne({
+					where: { id: userDetails.id },
+					attributes: ['name', 'email', 'country_code', 'mobile_number'],
+				})
+					.then((userDetails) => {
+						resolve({
+							response: responseMessages.SUCCESS,
+							finalData: { userDetails },
+						});
+					})
+					.catch((err) => {
+						reject({
+							response: responseMessages.SERVER_ERROR,
+							finalData: {},
+						});
+					});
+			} catch (err) {
+				reject({
+					response: responseMessages.SERVER_ERROR,
+					finalData: {},
+				});
+			}
+		});
 	},
 
 	updateUserDetails: async (payload, userDetails) => {
