@@ -8,10 +8,12 @@ dotenv.config();
 const sqlLib = require('./db/connection');
 const { routes } = require('./routes');
 
-sqlLib.connect().then(() => {
-	console.log('Db connection is succcessfull');
-	app.use('/', routes());
-});
+sqlLib.sequelize.sync();
+
+// sqlLib.connect().then(() => {
+// 	console.log('Db connection is succcessfull');
+// 	app.use('/', routes());
+// });
 
 app.use(bodyParser.json());
 
