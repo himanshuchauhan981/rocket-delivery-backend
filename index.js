@@ -16,6 +16,7 @@ sqlLib.sequelize.sync();
 // });
 
 app.use(bodyParser.json());
+app.use('/', routes());
 
 app.listen(process.env.PORT, (err) => {
 	if (err) console.log('Server error', err);
