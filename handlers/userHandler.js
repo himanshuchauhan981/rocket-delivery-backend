@@ -28,6 +28,29 @@ let findExistingUser = (payload) => {
 	});
 };
 
+const updateUserOTP = (email) => {
+	return new Promise(async (resolve, reject) => {
+		try {
+			let otp = commonFunctions.generateOTP();
+			let otpValidity = moment()
+				.add(2, 'minutes')
+				.format('YYYY-MM-DD HH:mm:ss');
+			Users.update(
+				{ otp: otp, otp_validity: otpValidity },
+				{ where: { email: email } }
+			)
+				.then((data) => {
+					resolve({});
+				})
+				.catch((err) => {
+					reject({});
+				});
+		} catch (err) {
+			reject({});
+		}
+	});
+};
+
 const userHandler = {
 	createNewUser: async (payload) => {
 		return new Promise(async (resolve, reject) => {
@@ -136,7 +159,6 @@ const userHandler = {
 						});
 					})
 					.catch((err) => {
-						console.log('>>>>>>>>Err', err);
 						reject({
 							response: responseMessages.SERVER_ERROR,
 							finalData: {},
@@ -273,125 +295,145 @@ const userHandler = {
 	},
 
 	forgetPassword: async (payload) => {
-		try {
-			let userDetailsQuery =
-				'select name, otp, otpValidity from users where email = ?';
-			let userDetails = await connection.executeQuery(userDetailsQuery, [
-				payload.email,
-			]);
-			let subject = 'Recover you password';
+		return new Promise((resolve, reject) => {
+			try {
+				Users.findAll({
+					where: { email: payload.email },
+					attributes: ['name', 'otp', 'otp_validity'],
+				})
+					.then(async (userDetails) => {
+						let subject = 'Recover you password';
+						let finalData = {};
+						if (userDetails.length > 0) {
+							let existingOTP = userDetails[0].otp;
+							let existingOTPValidity = userDetails[0].otp_validity;
 
-			let finalData = {};
+							if (existingOTP !== null && existingOTPValidity !== null) {
+								let currentDate = moment().toISOString();
+								let validityStatus =
+									moment(existingOTPValidity).isBefore(currentDate);
+								if (validityStatus) {
+									await updateUserOTP(payload.email);
 
-			if (userDetails.length > 0) {
-				let existingOTP = userDetails[0].otp;
-				let existingOTPValidity = userDetails[0].otpValidity;
+									let resetPasswordTemplate = emailTemplates.resetPassword(
+										userDetails[0].name,
+										otp
+									);
+									await commonFunctions.sendEmailThroughSMTP(
+										payload.email,
+										subject,
+										resetPasswordTemplate
+									);
 
-				if (existingOTP !== null && existingOTPValidity !== null) {
-					let currentDate = moment().toISOString();
+									finalData = { otpValidity };
+								} else {
+									finalData = { otpValidity: existingOTPValidity };
+								}
+							} else {
+								await updateUserOTP(payload.email);
 
-					let validityStatus =
-						moment(existingOTPValidity).isBefore(currentDate);
-					if (validityStatus) {
-						let otp = commonFunctions.generateOTP();
-						let otpValidity = moment()
-							.add(2, 'minutes')
-							.format('YYYY-MM-DD HH:mm:ss');
+								let resetPasswordTemplate = emailTemplates.resetPassword(
+									userDetails[0].name,
+									otp
+								);
+								await commonFunctions.sendEmailThroughSMTP(
+									payload.email,
+									subject,
+									resetPasswordTemplate
+								);
 
-						let updateUserOTPQuery =
-							'UPDATE users set otp = ?, otpValidity = ? where email = ?';
-						await connection.executeQuery(updateUserOTPQuery, [
-							otp,
-							otpValidity,
-							payload.email,
-						]);
+								finalData = { otpValidity };
+							}
 
-						let resetPasswordTemplate = emailTemplates.resetPassword(
-							userDetails[0].name,
-							otp
-						);
-						await commonFunctions.sendEmailThroughSMTP(
-							payload.email,
-							subject,
-							resetPasswordTemplate
-						);
-
-						finalData = { otpValidity };
-					} else {
-						finalData = { otpValidity: existingOTPValidity };
-					}
-				} else {
-					let otp = commonFunctions.generateOTP();
-					let otpValidity = moment()
-						.add(2, 'minutes')
-						.format('YYYY-MM-DD HH:mm:ss');
-
-					let updateUserOTPQuery =
-						'UPDATE users set otp = ?, otpValidity = ? where email = ?';
-					await connection.executeQuery(updateUserOTPQuery, [
-						otp,
-						otpValidity,
-						payload.email,
-					]);
-
-					let resetPasswordTemplate = emailTemplates.resetPassword(
-						userDetails[0].name,
-						otp
-					);
-					await commonFunctions.sendEmailThroughSMTP(
-						payload.email,
-						subject,
-						resetPasswordTemplate
-					);
-
-					finalData = { otpValidity };
-				}
-
-				return {
-					response: responseMessages.RESET_PASSWORD_SUCCESS,
-					finalData,
-				};
-			} else {
-				return { response: responseMessages.NON_EXISTED_EMAIL, finalData: {} };
+							resolve({
+								response: responseMessages.RESET_PASSWORD_SUCCESS,
+								finalData,
+							});
+						} else {
+							resolve({
+								response: responseMessages.NON_EXISTED_EMAIL,
+								finalData: {},
+							});
+						}
+					})
+					.catch((err) => {
+						reject({
+							response: responseMessages.SERVER_ERROR,
+							finalData: {},
+						});
+					});
+			} catch (err) {
+				reject({
+					response: responseMessages.SERVER_ERROR,
+					finalData: {},
+				});
 			}
-		} catch (err) {
-			throw err;
-		}
+		});
 	},
 
 	verifyOTP: async (payload) => {
-		try {
-			let userDetailsQuery =
-				'SELECT otp, otpValidity from users where email = ?';
-			let userDetails = await connection.executeQuery(userDetailsQuery, [
-				payload.email,
-			]);
-			let otp = parseInt(payload.otp, 10);
-
-			if (payload.otp === userDetails[0].otp) {
-				return { response: responseMessages.VERIFIED_OTP, finalData: {} };
-			} else {
-				return { response: responseMessages.INVALID_OTP, finalData: {} };
+		return new Promise((resolve, reject) => {
+			try {
+				Users.findAll({
+					where: { email: payload.email },
+					attributes: ['otp', 'otp_validity'],
+				})
+					.then((userDetails) => {
+						if (userDetails.length > 0) {
+							if (payload.otp === userDetails[0].otp) {
+								resolve({
+									response: responseMessages.VERIFIED_OTP,
+									finalData: {},
+								});
+							} else {
+								resolve({
+									response: responseMessages.INVALID_OTP,
+									finalData: {},
+								});
+							}
+						}
+					})
+					.catch((err) => {
+						reject({
+							response: responseMessages.SERVER_ERROR,
+							finalData: {},
+						});
+					});
+			} catch (err) {
+				reject({
+					response: responseMessages.SERVER_ERROR,
+					finalData: {},
+				});
 			}
-		} catch (err) {
-			throw err;
-		}
+		});
 	},
 	updateUserPassword: async (payload) => {
-		try {
-			let hashedPassword = commonFunctions.generateHashPassword(
-				payload.newPassword
-			);
-			let updatePasswordQuery = 'UPDATE users SET password = ? where email = ?';
-			await connection.executeQuery(updatePasswordQuery, [
-				hashedPassword,
-				payload.email,
-			]);
+		return new Promise(async (resolve, reject) => {
+			try {
+				let hashedPassword = commonFunctions.generateHashPassword(
+					payload.newPassword
+				);
 
-			return { response: responseMessages.SUCCESS, finalData: {} };
-		} catch (err) {
-			throw err;
-		}
+				await Users.update(
+					{ password: hashedPassword },
+					{ where: { email: payload.email } }
+				)
+					.then((data) => {
+						resolve({ response: responseMessages.SUCCESS, finalData: {} });
+					})
+					.catch((err) => {
+						reject({
+							response: responseMessages.SERVER_ERROR,
+							finalData: {},
+						});
+					});
+			} catch (err) {
+				reject({
+					response: responseMessages.SERVER_ERROR,
+					finalData: {},
+				});
+			}
+		});
 	},
 };
 
