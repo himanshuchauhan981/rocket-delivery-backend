@@ -1,24 +1,19 @@
 module.exports = (sequelize, Sequelize) => {
-	const SubCategories = sequelize.define(
-		'sub_categories',
+	const MeasuringUnits = sequelize.define(
+		'measuring_units',
 		{
 			id: {
 				type: Sequelize.INTEGER,
 				primaryKey: true,
 				autoIncrement: true,
 			},
-			name: {
+			measuring_type: {
 				type: Sequelize.STRING,
 				required: true,
 				allowNull: false,
 			},
-			image: {
+			symbol: {
 				type: Sequelize.STRING,
-				required: true,
-				allowNull: false,
-			},
-			category_id: {
-				type: Sequelize.INTEGER,
 				required: true,
 				allowNull: false,
 			},
@@ -33,8 +28,8 @@ module.exports = (sequelize, Sequelize) => {
 				allowNull: false,
 			},
 		},
-		{ timestamps: false, tableName: 'sub_categories' }
+		{ timestamps: false, tableName: 'measuring_units' }
 	);
 
-	return SubCategories;
+	return MeasuringUnits;
 };
