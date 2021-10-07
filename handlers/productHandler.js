@@ -1,106 +1,209 @@
-const { connection } = require('../db');
 const moment = require('moment');
+const sequelize = require('sequelize');
+const Op = sequelize.Op;
+
+const { connection } = require('../db');
 const { responseMessages } = require('../lib');
+const {
+	Categories,
+	SubCategories,
+	Products,
+	ProductPrice,
+	MeasuringUnits,
+} = require('../models');
 
 const productHandler = {
 	getHomeCategories: async () => {
-		try {
-			let sqlQuery =
-				'SELECT id,name,image,isSubCategory FROM categories WHERE status = ?';
-			let categoryDetails = await connection.executeQuery(sqlQuery, ['ACTIVE']);
-
-			return {
-				response: { STATUS_CODE: 200, MSG: '' },
-				finalData: { categoryDetails },
-			};
-		} catch (err) {
-			throw err;
-		}
+		return new Promise((resolve, reject) => {
+			try {
+				Categories.findAll({
+					where: { status: 'ACTIVE' },
+					attributes: ['id', 'name', 'is_sub_category'],
+				})
+					.then((categoryDetails) => {
+						resolve({
+							response: responseMessages.SUCCESS,
+							finalData: { categoryDetails },
+						});
+					})
+					.catch((err) => {
+						reject({
+							response: responseMessages.SERVER_ERROR,
+							finalData: {},
+						});
+					});
+			} catch (err) {
+				reject({
+					response: responseMessages.SERVER_ERROR,
+					finalData: {},
+				});
+			}
+		});
 	},
 
 	getSubCategoryItems: async (payload) => {
-		try {
-			let sqlQuery =
-				'SELECT sc.id,sc.name,sc.image,c.name as categoryName FROM sub_categories sc join categories c on c.id = sc.categoryId WHERE sc.categoryId = ? and sc.status = ?';
-			let subCategoryDetails = await connection.executeQuery(sqlQuery, [
-				payload.categoryId,
-				'ACTIVE',
-			]);
-
-			return {
-				response: { STATUS_CODE: 200, MSG: '' },
-				finalData: { subCategoryDetails },
-			};
-		} catch (err) {
-			throw err;
-		}
+		return new Promise(async (resolve, reject) => {
+			try {
+				SubCategories.findAll({
+					where: {
+						[Op.and]: [{ category_id: payload.categoryId, status: 'ACTIVE' }],
+					},
+					include: [{ model: Categories, attributes: [] }],
+					attributes: [
+						'id',
+						'image',
+						'name',
+						[sequelize.col('category.name'), 'categoryName'],
+					],
+					raw: true,
+				})
+					.then((subCategoryDetails) => {
+						resolve({
+							response: responseMessages.SUCCESS,
+							finalData: { subCategoryDetails },
+						});
+					})
+					.catch((err) => {
+						reject({
+							response: responseMessages.SERVER_ERROR,
+							finalData: {},
+						});
+					});
+			} catch (err) {
+				reject({
+					response: responseMessages.SERVER_ERROR,
+					finalData: {},
+				});
+			}
+		});
 	},
 
 	getProducts: async (payload) => {
-		try {
-			let sqlQuery;
-			if (payload.subCategoryId) {
-				sqlQuery = `SELECT p.id, p.name, p.image,pp.actualPrice as price, p.maxQuantity, p.purchaseLimit,sc.name as subCategoryName,mu.symbol FROM products p join 
-							sub_categories sc on sc.id = p.subCategoryId join measuring_units mu on mu.id = p.measuring_unit join product_price pp on pp.productId = p.id WHERE p.subCategoryId = ? and p.status = ?`;
-			} else {
-				sqlQuery = `SELECT p.id, p.name, p.image,p.image, pp.actualPrice as price, p.maxQuantity, p.purchaseLimit,c.name as subCategoryName, mu.symbol FROM products p join categories c on p.categoryId = c.id join measuring_units mu on mu.id = p.measuring_unit join product_price pp on pp.productId = p.id WHERE p.categoryId = ? AND p.status = ?`;
+		return new Promise((resolve, reject) => {
+			try {
+				Products.findAll({
+					where: payload.subCategoryId
+						? { status: 'ACTIVE' }
+						: { category_id: payload.categoryId, status: 'ACTIVE' },
+					include: [
+						{ model: ProductPrice, attributes: [] },
+						{ model: MeasuringUnits, attributes: [] },
+						payload.subCategoryId
+							? {
+									model: SubCategories,
+									where: { id: payload.subCategoryId },
+									attributes: [],
+							  }
+							: { model: Categories, attributes: [] },
+					],
+
+					attributes: [
+						'id',
+						'name',
+						'image',
+						'max_quantity',
+						'purchase_limit',
+						[sequelize.col('product_price.actual_price'), 'price'],
+						[sequelize.col('measuring_unit.symbol'), 'symbol'],
+						payload.subCategoryId
+							? [sequelize.col('sub_category.name'), 'subCategoryName']
+							: [sequelize.col('category.name'), 'subCategoryNames'],
+					],
+					raw: true,
+				})
+					.then((products) => {
+						resolve({
+							response: responseMessages.SUCCESS,
+							finalData: { products },
+						});
+					})
+					.catch((err) => {
+						reject({
+							response: responseMessages.SERVER_ERROR,
+							finalData: {},
+						});
+					});
+			} catch (err) {
+				reject({
+					response: responseMessages.SERVER_ERROR,
+					finalData: {},
+				});
 			}
-
-			let products = await connection.executeQuery(sqlQuery, [
-				payload.subCategoryId ? payload.subCategoryId : payload.categoryId,
-				'ACTIVE',
-			]);
-
-			return {
-				response: { STATUS_CODE: 200, MSG: '' },
-				finalData: { products },
-			};
-		} catch (err) {
-			throw err;
-		}
+		});
 	},
 
 	getProductDetails: async (payload) => {
-		try {
-			let sqlQuery =
-				'SELECT p.name,p.image,p.maxQuantity,p.purchaseLimit,pp.actualPrice as price,pp.discountPercent,pp.discountStartDate, pp.discountEndDate, p.description FROM products p join product_price pp on pp.productId = p.id WHERE p.id = ? ';
+		return new Promise((resolve, reject) => {
+			try {
+				Products.findAll({
+					where: { id: payload.productId },
+					include: [{ model: ProductPrice, attributes: [] }],
+					attributes: [
+						'name',
+						'image',
+						[sequelize.col('max_quantity'), 'maxQuantity'],
+						[sequelize.col('purchase_limit'), 'purchaseLimit'],
+						'description',
+						[
+							sequelize.col('product_price.discount_percent'),
+							'discountPercent',
+						],
+						[
+							sequelize.col('product_price.discount_start_date'),
+							'discountStartDate',
+						],
+						[
+							sequelize.col('product_price.discount_end_date'),
+							'discountEndDate',
+						],
+					],
+					raw: true,
+				})
+					.then((productDetails) => {
+						let currentDate = moment().format('YYYY-MM-DD HH:mm:ss');
 
-			let productDetails = await connection.executeQuery(sqlQuery, [
-				payload.productId,
-			]);
+						for (let i = 0; i < productDetails.length; i++) {
+							let discountStartDate = moment(
+								productDetails[i].discountStartDate
+							).format('YYYY-MM-DD HH:mm:ss');
 
-			let currentDate = moment().format('YYYY-MM-DD HH:mm:ss');
+							let discountEndDate = moment(
+								productDetails[i].discountEndDate
+							).format('YYYY-MM-DD HH:mm:ss');
 
-			for (let i = 0; i < productDetails.length; i++) {
-				let discountStartDate = moment(
-					productDetails[i].discountStartDate
-				).format('YYYY-MM-DD HH:mm:ss');
+							if (
+								discountStartDate <= currentDate &&
+								discountEndDate >= currentDate
+							) {
+								productDetails[i].discountStatus = true;
+								let discountPrice =
+									(productDetails[i].discountPercent / 100) *
+									productDetails[i].price;
+								discountPrice = productDetails[i].price - discountPrice;
+								productDetails[i].discountPrice = discountPrice;
+							} else {
+								productDetails[i].discountStatus = false;
+							}
+						}
 
-				let discountEndDate = moment(productDetails[i].discountEndDate).format(
-					'YYYY-MM-DD HH:mm:ss'
-				);
-
-				if (
-					discountStartDate <= currentDate &&
-					discountEndDate >= currentDate
-				) {
-					productDetails[i].discountStatus = true;
-					let discountPrice =
-						(productDetails[i].discountPercent / 100) * productDetails[i].price;
-					discountPrice = productDetails[i].price - discountPrice;
-					productDetails[i].discountPrice = discountPrice;
-				} else {
-					productDetails[i].discountStatus = false;
-				}
+						resolve({
+							response: responseMessages.SUCCESS,
+							finalData: { productDetails: productDetails[0] },
+						});
+					})
+					.catch((err) => {
+						reject({
+							response: responseMessages.SERVER_ERROR,
+							finalData: {},
+						});
+					});
+			} catch (err) {
+				reject({
+					response: responseMessages.SERVER_ERROR,
+					finalData: {},
+				});
 			}
-
-			return {
-				response: { STATUS_CODE: 200, MSG: '' },
-				finalData: { productDetails: productDetails[0] },
-			};
-		} catch (err) {
-			throw err;
-		}
+		});
 	},
 
 	getCartProductDetails: async (payload) => {
