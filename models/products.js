@@ -68,7 +68,7 @@ module.exports = (sequelize, Sequelize) => {
 				allowNull: false,
 			},
 		},
-		{ timestamps: false, tableName: 'sub_categories' }
+		{ timestamps: false, tableName: 'products' }
 	);
 
 	return Products;
