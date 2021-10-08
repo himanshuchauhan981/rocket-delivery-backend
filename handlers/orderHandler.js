@@ -11,157 +11,206 @@ const {
 	OrderProducts,
 	Wishlist,
 	Products,
+	ProductPrice,
 } = require('../models');
 
 const orderHandler = {
 	generateNewOrder: async (payload, userDetails) => {
-		try {
-			let cartItems = payload.cartItems;
-			let subTotal = 0;
-			let currentDate = moment().format('YYYY-MM-DD HH:mm:ss');
+		return new Promise((resolve, reject) => {
+			try {
+				let cartItems = payload.cartItems;
+				let subTotal = 0;
+				let currentDate = moment().format('YYYY-MM-DD HH:mm:ss');
 
-			for (let i = 0; i < cartItems.length; i++) {
-				let productQuery =
-					'SELECT p.name,pp.actualPrice as price,p.maxQuantity,p.image,pp.discountPercent,pp.discountEndDate,pp.discountStartDate from products p join product_price pp on p.id = pp.productId where p.id = ?';
-				let productDetails = await connection.executeQuery(productQuery, [
-					cartItems[i].id,
-				]);
+				let cartItemsId = cartItems.map((item) => item.id);
+				Products.findAll({
+					where: { id: { [Op.in]: cartItemsId } },
+					include: [{ model: ProductPrice, attributes: [] }],
+					attributes: [
+						'name',
+						'image',
+						[sequelize.col('max_quantity'), 'maxQuantity'],
+						[sequelize.col('product_price.actualPrice'), 'price'],
+						[
+							sequelize.col('product_price.discount_percent'),
+							'discountPercent',
+						],
+						[
+							sequelize.col('product_price.discount_end_date'),
+							'discountEndDate',
+						],
+						[
+							sequelize.col('product_price.discount_start_date'),
+							'discountStartDate',
+						],
+					],
+					raw: true,
+				})
+					.then(async (productDetails) => {
+						for (let i = 0; i < productDetails.length; i++) {
+							let discountStartDate = moment(
+								productDetails[i].discountStartDate
+							).format('YYYY-MM-DD HH:mm:ss');
 
-				let discountStartDate = moment(
-					productDetails[i].discountStartDate
-				).format('YYYY-MM-DD HH:mm:ss');
+							let discountEndDate = moment(
+								productDetails[i].discountEndDate
+							).format('YYYY-MM-DD HH:mm:ss');
 
-				let discountEndDate = moment(productDetails[i].discountEndDate).format(
-					'YYYY-MM-DD HH:mm:ss'
-				);
+							if (
+								discountStartDate <= currentDate &&
+								discountEndDate >= currentDate
+							) {
+								let discountPrice =
+									(productDetails[0].discountPercent / 100) *
+									productDetails[i].price;
+								discountPrice = productDetails[0].price - discountPrice;
+								cartItems[i].price = discountPrice;
+							} else {
+								cartItems[i].price = productDetails[0].price;
+							}
 
-				if (
-					discountStartDate <= currentDate &&
-					discountEndDate >= currentDate
-				) {
-					let discountPrice =
-						(productDetails[0].discountPercent / 100) * productDetails[i].price;
-					discountPrice = productDetails[0].price - discountPrice;
-					cartItems[i].price = discountPrice;
-				} else {
-					cartItems[i].price = productDetails[0].price;
-				}
+							cartItems[i].productName = productDetails[0].name;
 
-				console.log(cartItems[i].price);
+							cartItems[i].image = productDetails[0].image;
+							subTotal =
+								subTotal +
+								parseFloat(cartItems[i].price) *
+									parseInt(cartItems[i].quantity, 10);
 
-				cartItems[i].productName = productDetails[0].name;
+							if (productDetails[0].maxQuantity < cartItems[i].quantity) {
+								let template = Handlebar.compile(
+									responseMessages.INSUFFICIENT_QUANTITY.MSG
+								);
+								let msg = template({ productName: productDetails[i].name });
 
-				cartItems[i].image = productDetails[0].image;
-				subTotal =
-					subTotal +
-					parseFloat(cartItems[i].price) * parseInt(cartItems[i].quantity, 10);
+								resolve({
+									response: {
+										STATUS_CODE:
+											responseMessages.INSUFFICIENT_QUANTITY.STATUS_CODE,
+										MSG: msg,
+									},
+									finalData: {},
+								});
+							}
+						}
 
-				if (productDetails[0].maxQuantity < cartItems[i].quantity) {
-					let template = Handlebar.compile(
-						responseMessages.INSUFFICIENT_QUANTITY.MSG
-					);
-					let msg = template({ productName: productDetails[i].name });
+						let newOrder = await Orders.create({
+							user_id: userDetails.id,
+							delivery_charges: payload.deliveryCharges,
+							payment_method: payload.paymentMethod,
+							amount: subTotal,
+							user_address: payload.orderAddress,
+							status: 1,
+							netAmount: subTotal + payload.deliveryCharges,
+						});
 
-					return {
-						response: {
-							STATUS_CODE: responseMessages.INSUFFICIENT_QUANTITY.STATUS_CODE,
-							MSG: msg,
-						},
-						finalData: {},
-					};
-				}
+						let orderId = newOrder.id;
+
+						for (let i = 0; i < cartItems.length; i++) {
+							await OrderProducts.create({
+								order_id: orderId,
+								product_id: cartItems[i].id,
+								product_name: cartItems[i].productName,
+								quantity: cartItems[i].quantity,
+								price: cartItems[i].price,
+								product_image: cartItems[i].image,
+							});
+
+							await Products.decrement('max_quantity', {
+								by: 1,
+								where: { id: cartItems[i].id },
+							});
+						}
+
+						let orderDetails = await Orders.findOne({
+							where: { id: orderId },
+							attributes: ['created_at'],
+						});
+
+						let orderNumber = orderId.toLocaleString('en-US', {
+							minimumIntegerDigits: 3,
+							useGrouping: false,
+						});
+
+						orderNumber = `${orderNumber}-${moment(
+							orderDetails.created_at
+						).valueOf()}`;
+
+						let deliveryDate = moment(orderDetails.created_at)
+							.add(2, 'days')
+							.format('YYYY-MM-DD');
+
+						await Orders.update(
+							{
+								order_number: orderNumber,
+								delivery_date: deliveryDate,
+							},
+							{ where: { id: orderId } }
+						);
+
+						resolve({
+							response: responseMessages.SUCCESS,
+							finalData: {},
+						});
+					})
+					.catch((err) => {
+						reject({
+							response: responseMessages.SERVER_ERROR,
+							finalData: {},
+						});
+					});
+			} catch (err) {
+				reject({
+					response: responseMessages.SERVER_ERROR,
+					finalData: {},
+				});
 			}
-
-			let newOrderQuery =
-				'INSERT into orders (userId, deliveryCharges, paymentMethod, amount, userAddress, status, netAmount) VALUES (?,?,?,?,?,?,?)';
-
-			let newOrder = await connection.executeQuery(newOrderQuery, [
-				userDetails.id,
-				payload.deliveryCharges,
-				payload.paymentMethod,
-				subTotal,
-				payload.orderAddress,
-				1,
-				subTotal + payload.deliveryCharges,
-			]);
-			let orderId = newOrder.insertId;
-
-			for (let i = 0; i < cartItems.length; i++) {
-				let orderProductsQuery =
-					'INSERT into order_products (orderId, productId, productName, quantity, price,productImage) VALUES (?,?,?,?,?,?)';
-				await connection.executeQuery(orderProductsQuery, [
-					orderId,
-					cartItems[i].id,
-					cartItems[i].productName,
-					cartItems[i].quantity,
-					cartItems[i].price,
-					cartItems[i].image,
-				]);
-
-				let updateQuantityQuery =
-					'UPDATE products SET maxQuantity = maxQuantity - 1 where id = ?';
-				await connection.executeQuery(updateQuantityQuery, [cartItems[i].id]);
-			}
-
-			let orderDetailsQuery = 'SELECT createdOn from orders where id = ?';
-			let orderDetails = await connection.executeQuery(orderDetailsQuery, [
-				orderId,
-			]);
-
-			let orderNumber = orderId.toLocaleString('en-US', {
-				minimumIntegerDigits: 3,
-				useGrouping: false,
-			});
-
-			orderNumber = `${orderNumber}-${moment(
-				orderDetails[0].createdOn
-			).valueOf()}`;
-
-			let deliveryDate = moment(orderDetails[0].createdOn)
-				.add(2, 'days')
-				.format('YYYY-MM-DD');
-
-			let updateOrderQuery =
-				'UPDATE orders SET orderNumber = ?, deliveryDate = ? where id = ?';
-			await connection.executeQuery(updateOrderQuery, [
-				orderNumber,
-				deliveryDate,
-				orderId,
-			]);
-
-			return { response: { STATUS_CODE: 200, MSG: '' }, finalData: {} };
-		} catch (err) {
-			throw err;
-		}
+		});
 	},
 
 	addToWishlist: async (payload, userDetails) => {
-		try {
-			let existingWishlistQuery =
-				'SELECT id from wishlist where productId  = ? and userId = ?';
-			let existingWishlistItem = await connection.executeQuery(
-				existingWishlistQuery,
-				[payload.productId, userDetails.id]
-			);
+		return new Promise(async (resolve, reject) => {
+			try {
+				let existingWishlistItem = await Wishlist.findAll({
+					where: {
+						[Op.and]: [
+							{ product_id: payload.productId },
+							{ user_id: userDetails.id },
+						],
+					},
+					attributes: ['id'],
+				});
 
-			if (existingWishlistItem && existingWishlistItem.length === 0) {
-				let newWishlistQuery =
-					'INSERT into wishlist (productId,userId) VALUES (?,?)';
-
-				await connection.executeQuery(newWishlistQuery, [
-					payload.productId,
-					userDetails.id,
-				]);
-				return { response: responseMessages.NEW_WISHLIST_ITEM, finalData: {} };
-			} else {
-				return {
-					response: responseMessages.EXISTING_WISHLIST_ITEM,
+				if (existingWishlistItem && existingWishlistItem.length > 0) {
+					Wishlist.create({
+						product_id: payload.productId,
+						user_id: userDetails.id,
+					})
+						.then(() => {
+							resolve({
+								response: responseMessages.NEW_WISHLIST_ITEM,
+								finalData: {},
+							});
+						})
+						.catch((err) => {
+							reject({
+								response: responseMessages.SERVER_ERROR,
+								finalData: {},
+							});
+						});
+				} else {
+					resolve({
+						response: responseMessages.EXISTING_WISHLIST_ITEM,
+						finalData: {},
+					});
+				}
+			} catch (err) {
+				reject({
+					response: responseMessages.SERVER_ERROR,
 					finalData: {},
-				};
+				});
 			}
-		} catch (err) {
-			throw err;
-		}
+		});
 	},
 
 	viewUserWishlist: async (userDetails) => {
