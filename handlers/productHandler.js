@@ -2,7 +2,6 @@ const moment = require('moment');
 const sequelize = require('sequelize');
 const Op = sequelize.Op;
 
-const { connection } = require('../db');
 const { responseMessages } = require('../lib');
 const {
 	Categories,

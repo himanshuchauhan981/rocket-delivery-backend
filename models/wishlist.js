@@ -1,6 +1,6 @@
 module.exports = (sequelize, Sequelize) => {
-	const OrderProducts = sequelize.define(
-		'order_products',
+	const Wishlist = sequelize.define(
+		'wishlist',
 		{
 			id: {
 				type: Sequelize.INTEGER,
@@ -12,28 +12,13 @@ module.exports = (sequelize, Sequelize) => {
 				required: true,
 				allowNull: false,
 			},
-			order_id: {
+			user_id: {
 				type: Sequelize.INTEGER,
 				required: true,
 				allowNull: false,
 			},
-			product_name: {
-				type: Sequelize.STRING,
-				required: true,
-				allowNull: false,
-			},
-			product_image: {
-				type: Sequelize.STRING,
-				required: true,
-				allowNull: false,
-			},
-			quantity: {
+			is_deleted: {
 				type: Sequelize.INTEGER,
-				required: true,
-				allowNull: false,
-			},
-			price: {
-				type: Sequelize.FLOAT(20, 2),
 				required: true,
 				allowNull: false,
 			},
@@ -43,8 +28,8 @@ module.exports = (sequelize, Sequelize) => {
 				allowNull: false,
 			},
 		},
-		{ timestamps: false, tableName: 'order_products' }
+		{ timestamps: false, tableName: 'wishlist' }
 	);
 
-	return OrderProducts;
+	return Wishlist;
 };

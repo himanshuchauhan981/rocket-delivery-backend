@@ -10,6 +10,7 @@ const ProductPrice = require('./productPrice')(sequelize, Sequelize);
 const ProductHistory = require('./productHistory')(sequelize, Sequelize);
 const Orders = require('./orders')(sequelize, Sequelize);
 const OrderProducts = require('./orderProducts')(sequelize, Sequelize);
+const Wishlist = require('./wishlist')(sequelize, Sequelize);
 
 SubCategories.belongsTo(Categories, { foreignKey: 'category_id' });
 
@@ -27,8 +28,10 @@ ProductHistory.belongsTo(ProductPrice, {
 
 Orders.belongsTo(Users, { foreignKey: 'user_id' });
 Orders.belongsTo(Address, { foreignKey: 'user_address' });
+Orders.hasMany(OrderProducts, { foreignKey: 'order_id' });
 
-OrderProducts.belongsTo(Orders, { foreignKey: 'order_id' });
+Wishlist.belongsTo(Products, { foreignKey: 'product_id' });
+Wishlist.belongsTo(Users, { foreignKey: 'user_id' });
 
 exports.Users = Users;
 exports.Address = Address;
@@ -40,3 +43,4 @@ exports.MeasuringUnits = MeasuringUnits;
 exports.ProductHistory = ProductHistory;
 exports.Orders = Orders;
 exports.OrderProducts = OrderProducts;
+exports.Wishlist = Wishlist;
