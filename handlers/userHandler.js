@@ -1,328 +1,450 @@
-const e = require('express');
 const moment = require('moment');
+const sequelize = require('sequelize');
+const Op = sequelize.Op;
 
-const { connection } = require('../db');
 const { responseMessages, commonFunctions, emailTemplates } = require('../lib');
+const { Users, Address } = require('../models');
+
+let findExistingUser = (payload) => {
+	return new Promise((resolve, reject) => {
+		let existingUserQuery = {
+			[Op.or]: [
+				{ email: payload.email },
+				{
+					mobile_number: payload.mobileNumber ? payload.mobileNumber : null,
+				},
+			],
+		};
+
+		Users.findAll({
+			where: existingUserQuery,
+			attributes: ['email', 'password', 'mobile_number', 'name', 'id'],
+		})
+			.then((existingUser) => {
+				resolve(existingUser);
+			})
+			.catch((err) => reject({}));
+	});
+};
+
+const updateUserOTP = (email) => {
+	return new Promise(async (resolve, reject) => {
+		try {
+			let otp = commonFunctions.generateOTP();
+			let otpValidity = moment()
+				.add(2, 'minutes')
+				.format('YYYY-MM-DD HH:mm:ss');
+			Users.update(
+				{ otp: otp, otp_validity: otpValidity },
+				{ where: { email: email } }
+			)
+				.then((data) => {
+					resolve({});
+				})
+				.catch((err) => {
+					reject({});
+				});
+		} catch (err) {
+			reject({});
+		}
+	});
+};
 
 const userHandler = {
 	createNewUser: async (payload) => {
-		try {
-			let insertUserQuery = `INSERT INTO users (name,email,password,countryCode,mobileNumber,type) VALUES (?,?,?,?,?,?)`;
+		return new Promise(async (resolve, reject) => {
+			try {
+				let existingUser = await findExistingUser(payload);
 
-			let existingUserQuery =
-				'SELECT * FROM users WHERE email = ? OR mobileNumber = ?';
+				if (existingUser.length === 0) {
+					let hashedPassword = commonFunctions.generateHashPassword(
+						payload.password
+					);
 
-			let existingUser = await connection.executeQuery(existingUserQuery, [
-				payload.email,
-				payload.mobileNo,
-			]);
+					Users.create({
+						name: payload.name,
+						email: payload.email,
+						password: hashedPassword,
+						country_code: payload.countryCode,
+						mobile_number: payload.mobileNumber,
+						type: payload.type,
+					}).then((newUser) => {
+						let token = commonFunctions.generateJWTToken({
+							id: newUser.id,
+							type: newUser.type,
+						});
 
-			if (existingUser.length === 0) {
-				let hashedPassword = commonFunctions.generateHashPassword(
-					payload.password
-				);
-				let newUser = await connection.executeQuery(insertUserQuery, [
-					payload.name,
-					payload.email,
-					hashedPassword,
-					payload.countryCode,
-					payload.mobileNo,
-					payload.type,
-				]);
-				let newUserQuery = 'SELECT id,type FROM users where id = ?';
-				let newUserDetails = await connection.executeQuery(newUserQuery, [
-					newUser.insertId,
-				]);
-
-				let token = commonFunctions.generateJWTToken({
-					id: newUserDetails[0].id,
-					type: newUserDetails[0].type,
-				});
-
-				return {
-					response: responseMessages.SUCCESS,
-					finalData: { token },
-				};
-			} else {
-				return {
-					response: responseMessages.EXISTED_USER,
-					finalData: {},
-				};
-			}
-		} catch (err) {
-			throw err;
-		}
-	},
-	loginExistingUser: async (payload) => {
-		try {
-			let existingUserQuery = `select id,password,name, isActive from users where email = ?`;
-			let existingUser = await connection.executeQuery(existingUserQuery, [
-				payload.email,
-			]);
-
-			if (existingUser.length !== 0) {
-				let comparedPassword = commonFunctions.compareHashedPassword(
-					payload.password,
-					existingUser[0].password
-				);
-				if (comparedPassword) {
-					let token = commonFunctions.generateJWTToken({
-						id: existingUser[0].id,
-						type: existingUser[0].type,
+						resolve({
+							response: responseMessages.SUCCESS,
+							finalData: { token },
+						});
 					});
-
-					return {
-						response: responseMessages.SUCCESS,
-						finalData: { token, name: existingUser[0].name },
-					};
 				} else {
-					return {
+					reject({
+						response: responseMessages.EXISTED_USER,
+						finalData: {},
+					});
+				}
+			} catch (err) {
+				reject({
+					response: responseMessages.SERVER_ERROR,
+					finalData: {},
+				});
+			}
+		});
+	},
+
+	loginExistingUser: async (payload) => {
+		return new Promise((resolve, reject) => {
+			findExistingUser(payload).then((existingUser) => {
+				if (existingUser.length !== 0) {
+					let comparedPassword = commonFunctions.compareHashedPassword(
+						payload.password,
+						existingUser[0].password
+					);
+
+					if (comparedPassword) {
+						let token = commonFunctions.generateJWTToken({
+							id: existingUser[0].id,
+							type: existingUser[0].type,
+						});
+
+						resolve({
+							response: responseMessages.SUCCESS,
+							finalData: { token, name: existingUser[0].name },
+						});
+					} else {
+						resolve({
+							response: responseMessages.INVALID_EMAIL_PASSWORD,
+							finalData: {},
+						});
+					}
+				} else {
+					reject({
 						response: responseMessages.INVALID_EMAIL_PASSWORD,
 						finalData: {},
-					};
+					});
 				}
-			} else {
-				return {
-					response: responseMessages.INVALID_EMAIL_PASSWORD,
-					finalData: {},
-				};
-			}
-		} catch (err) {
-			throw err;
-		}
-	},
-	addNewAddress: async (payload, userDetails) => {
-		try {
-			let newAddressQuery =
-				'INSERT into address (userId,fullName,pinCode,houseNo,area,city,state,landmark,latitude,longitude,countryCode,mobileNumber) values(?,?,?,?,?,?,?,?,?,?,?,?)';
-			await connection.executeQuery(newAddressQuery, [
-				userDetails.id,
-				payload.fullName,
-				payload.pinCode,
-				payload.houseNo,
-				payload.area,
-				payload.city,
-				payload.state,
-				payload.landmark,
-				payload.latitude,
-				payload.longitude,
-				payload.countryCode,
-				payload.mobileNumber,
-			]);
-
-			return {
-				response: responseMessages.NEW_ADDRESS,
+			});
+		}).catch((err) => {
+			reject({
+				response: responseMessages.SERVER_ERROR,
 				finalData: {},
-			};
-		} catch (err) {
-			throw err;
-		}
+			});
+		});
+	},
+
+	addNewAddress: async (payload, userDetails) => {
+		return new Promise((resolve, reject) => {
+			try {
+				Address.create({
+					user_id: userDetails.id,
+					full_name: payload.fullName,
+					pincode: parseInt(payload.pinCode),
+					house_no: payload.houseNo,
+					area: payload.area,
+					city: payload.city,
+					state: payload.state,
+					landmark: payload.landmark,
+					latitude: parseFloat(payload.latitude),
+					longitude: parseFloat(payload.longitude),
+					country_code: payload.countryCode,
+					mobile_number: payload.mobileNumber,
+				})
+					.then((newAddress) => {
+						resolve({
+							response: responseMessages.NEW_ADDRESS,
+							finalData: {},
+						});
+					})
+					.catch((err) => {
+						reject({
+							response: responseMessages.SERVER_ERROR,
+							finalData: {},
+						});
+					});
+			} catch (err) {
+				reject({
+					response: responseMessages.SERVER_ERROR,
+					finalData: {},
+				});
+			}
+		});
 	},
 
 	viewUserAddress: async (userDetails) => {
-		try {
-			let addressQuery =
-				'SELECT * from address where userId = ? and isDeleted = ?';
-			let userAddressesDetails = await connection.executeQuery(addressQuery, [
-				userDetails.id,
-				0,
-			]);
+		return new Promise((resolve, reject) => {
+			try {
+				let addressCondition = {
+					[Op.and]: [{ user_id: userDetails.id }, { is_deleted: 0 }],
+				};
 
-			return {
-				response: responseMessages.SUCCESS,
-				finalData: { userAddressesDetails },
-			};
-		} catch (err) {
-			throw err;
-		}
+				Address.findAll({
+					where: addressCondition,
+					attributes: [
+						'id',
+						[sequelize.col('user_id'), 'userId'],
+						[sequelize.col('full_name'), 'fullName'],
+						'pincode',
+						[sequelize.col('house_no'), 'houseNo'],
+						'area',
+						'city',
+						'state',
+						'landmark',
+						[sequelize.col('country_code'), 'countryCode'],
+						[sequelize.col('mobile_number'), 'mobileNumber'],
+					],
+				})
+					.then((userAddressesDetails) => {
+						resolve({
+							response: responseMessages.SUCCESS,
+							finalData: { userAddressesDetails },
+						});
+					})
+					.catch((err) =>
+						reject({
+							response: responseMessages.SERVER_ERROR,
+							finalData: {},
+						})
+					);
+			} catch (err) {
+				reject({
+					response: responseMessages.SERVER_ERROR,
+					finalData: {},
+				});
+			}
+		});
 	},
 
 	viewUserDetails: async (userDetails) => {
-		try {
-			let userDetailsQuery =
-				'SELECT name, email, countryCode, mobileNumber from users where id = ?';
-			let userDetail = await connection.executeQuery(userDetailsQuery, [
-				userDetails.id,
-			]);
-
-			return {
-				response: responseMessages.SUCCESS,
-				finalData: { userDetails: userDetail[0] },
-			};
-		} catch (err) {
-			throw err;
-		}
+		return new Promise((resolve, reject) => {
+			try {
+				Users.findOne({
+					where: { id: userDetails.id },
+					attributes: ['name', 'email', 'country_code', 'mobile_number'],
+				})
+					.then((userDetails) => {
+						resolve({
+							response: responseMessages.SUCCESS,
+							finalData: { userDetails },
+						});
+					})
+					.catch((err) => {
+						reject({
+							response: responseMessages.SERVER_ERROR,
+							finalData: {},
+						});
+					});
+			} catch (err) {
+				reject({
+					response: responseMessages.SERVER_ERROR,
+					finalData: {},
+				});
+			}
+		});
 	},
 
 	updateUserDetails: async (payload, userDetails) => {
-		try {
-			let existingEmailQuery = 'SELECT email, name from users where email = ?';
-			let existingEmailDetails = await connection.executeQuery(
-				existingEmailQuery,
-				[payload.email]
-			);
+		return new Promise((resolve, reject) => {
+			try {
+				Users.findAll({
+					where: { email: payload.email },
+					attributes: ['email', 'name'],
+				})
+					.then(async (existingEmailDetails) => {
+						let updateUserDetails = {};
+						if (existingEmailDetails.length > 0) {
+							updateUserDetails['name'] = payload.name;
+							if (payload.touchedEmail) {
+								updateUserDetails['email'] = payload.emaill;
+							}
+							await Users.update(updateUserDetails, {
+								where: { id: userDetails.id },
+							});
 
-			if (existingEmailDetails && existingEmailDetails.length === 0) {
-				let emailUpdate = '';
-				let params = [];
-				if (payload.touchedEmail) {
-					emailUpdate = 'email = ?,';
-					params.push(payload.email);
-				}
+							let updatedUserDetails = await Users.findOne(
+								{
+									where: { id: userDetails.id },
+								},
+								{ attributes: ['email', 'name'] }
+							);
 
-				let updateUserDetailQuery = `UPDATE users set ${emailUpdate} name = ? where id = ?`;
-				params.push(payload.name, userDetails.id);
+							resolve({
+								response: responseMessages.UPDATED_USER_DETAILS,
+								finalData: {
+									email: updatedUserDetails.email,
+									name: updatedUserDetails.name,
+								},
+							});
+						} else {
+							await Users.update(
+								{ name: payload.name },
+								{ where: { id: userDetails.id } }
+							);
 
-				await connection.executeQuery(updateUserDetailQuery, params);
-
-				let userDetailsQuery = 'SELECT email, name from users where id = ?';
-				let userData = await connection.executeQuery(userDetailsQuery, [
-					userDetails.id,
-				]);
-
-				return {
-					response: responseMessages.UPDATED_USER_DETAILS,
-					finalData: { email: userData[0].email, name: userData[0].name },
-				};
-			} else {
-				let updateUserDetailQuery = `UPDATE users set name = ? where id = ?`;
-
-				await connection.executeQuery(updateUserDetailQuery, [
-					payload.name,
-					userDetails.id,
-				]);
-				return {
-					response: payload.touchedEmail
-						? responseMessages.EXISTING_USER_EMAIL
-						: responseMessages.SUCCESS,
-					finalData: payload,
-				};
+							resolve({
+								response: payload.touchedEmail
+									? responseMessages.EXISTING_USER_EMAIL
+									: responseMessages.SUCCESS,
+								finalData: { name: payload.name },
+							});
+						}
+					})
+					.catch((err) => {
+						reject({
+							response: responseMessages.SERVER_ERROR,
+							finalData: {},
+						});
+					});
+			} catch (err) {
+				reject({
+					response: responseMessages.SERVER_ERROR,
+					finalData: {},
+				});
 			}
-		} catch (err) {
-			throw err;
-		}
+		});
 	},
 
 	forgetPassword: async (payload) => {
-		try {
-			let userDetailsQuery =
-				'select name, otp, otpValidity from users where email = ?';
-			let userDetails = await connection.executeQuery(userDetailsQuery, [
-				payload.email,
-			]);
-			let subject = 'Recover you password';
+		return new Promise((resolve, reject) => {
+			try {
+				Users.findAll({
+					where: { email: payload.email },
+					attributes: ['name', 'otp', 'otp_validity'],
+				})
+					.then(async (userDetails) => {
+						let subject = 'Recover you password';
+						let finalData = {};
+						if (userDetails.length > 0) {
+							let existingOTP = userDetails[0].otp;
+							let existingOTPValidity = userDetails[0].otp_validity;
 
-			let finalData = {};
+							if (existingOTP !== null && existingOTPValidity !== null) {
+								let currentDate = moment().toISOString();
+								let validityStatus =
+									moment(existingOTPValidity).isBefore(currentDate);
+								if (validityStatus) {
+									await updateUserOTP(payload.email);
 
-			if (userDetails.length > 0) {
-				let existingOTP = userDetails[0].otp;
-				let existingOTPValidity = userDetails[0].otpValidity;
+									let resetPasswordTemplate = emailTemplates.resetPassword(
+										userDetails[0].name,
+										otp
+									);
+									await commonFunctions.sendEmailThroughSMTP(
+										payload.email,
+										subject,
+										resetPasswordTemplate
+									);
 
-				if (existingOTP !== null && existingOTPValidity !== null) {
-					let currentDate = moment().toISOString();
+									finalData = { otpValidity };
+								} else {
+									finalData = { otpValidity: existingOTPValidity };
+								}
+							} else {
+								await updateUserOTP(payload.email);
 
-					let validityStatus =
-						moment(existingOTPValidity).isBefore(currentDate);
-					if (validityStatus) {
-						let otp = commonFunctions.generateOTP();
-						let otpValidity = moment()
-							.add(2, 'minutes')
-							.format('YYYY-MM-DD HH:mm:ss');
+								let resetPasswordTemplate = emailTemplates.resetPassword(
+									userDetails[0].name,
+									otp
+								);
+								await commonFunctions.sendEmailThroughSMTP(
+									payload.email,
+									subject,
+									resetPasswordTemplate
+								);
 
-						let updateUserOTPQuery =
-							'UPDATE users set otp = ?, otpValidity = ? where email = ?';
-						await connection.executeQuery(updateUserOTPQuery, [
-							otp,
-							otpValidity,
-							payload.email,
-						]);
+								finalData = { otpValidity };
+							}
 
-						let resetPasswordTemplate = emailTemplates.resetPassword(
-							userDetails[0].name,
-							otp
-						);
-						await commonFunctions.sendEmailThroughSMTP(
-							payload.email,
-							subject,
-							resetPasswordTemplate
-						);
-
-						finalData = { otpValidity };
-					} else {
-						finalData = { otpValidity: existingOTPValidity };
-					}
-				} else {
-					let otp = commonFunctions.generateOTP();
-					let otpValidity = moment()
-						.add(2, 'minutes')
-						.format('YYYY-MM-DD HH:mm:ss');
-
-					let updateUserOTPQuery =
-						'UPDATE users set otp = ?, otpValidity = ? where email = ?';
-					await connection.executeQuery(updateUserOTPQuery, [
-						otp,
-						otpValidity,
-						payload.email,
-					]);
-
-					let resetPasswordTemplate = emailTemplates.resetPassword(
-						userDetails[0].name,
-						otp
-					);
-					await commonFunctions.sendEmailThroughSMTP(
-						payload.email,
-						subject,
-						resetPasswordTemplate
-					);
-
-					finalData = { otpValidity };
-				}
-
-				return {
-					response: responseMessages.RESET_PASSWORD_SUCCESS,
-					finalData,
-				};
-			} else {
-				return { response: responseMessages.NON_EXISTED_EMAIL, finalData: {} };
+							resolve({
+								response: responseMessages.RESET_PASSWORD_SUCCESS,
+								finalData,
+							});
+						} else {
+							resolve({
+								response: responseMessages.NON_EXISTED_EMAIL,
+								finalData: {},
+							});
+						}
+					})
+					.catch((err) => {
+						reject({
+							response: responseMessages.SERVER_ERROR,
+							finalData: {},
+						});
+					});
+			} catch (err) {
+				reject({
+					response: responseMessages.SERVER_ERROR,
+					finalData: {},
+				});
 			}
-		} catch (err) {
-			throw err;
-		}
+		});
 	},
 
 	verifyOTP: async (payload) => {
-		try {
-			let userDetailsQuery =
-				'SELECT otp, otpValidity from users where email = ?';
-			let userDetails = await connection.executeQuery(userDetailsQuery, [
-				payload.email,
-			]);
-			let otp = parseInt(payload.otp, 10);
-
-			if (payload.otp === userDetails[0].otp) {
-				return { response: responseMessages.VERIFIED_OTP, finalData: {} };
-			} else {
-				return { response: responseMessages.INVALID_OTP, finalData: {} };
+		return new Promise((resolve, reject) => {
+			try {
+				Users.findAll({
+					where: { email: payload.email },
+					attributes: ['otp', 'otp_validity'],
+				})
+					.then((userDetails) => {
+						if (userDetails.length > 0) {
+							if (payload.otp === userDetails[0].otp) {
+								resolve({
+									response: responseMessages.VERIFIED_OTP,
+									finalData: {},
+								});
+							} else {
+								resolve({
+									response: responseMessages.INVALID_OTP,
+									finalData: {},
+								});
+							}
+						}
+					})
+					.catch((err) => {
+						reject({
+							response: responseMessages.SERVER_ERROR,
+							finalData: {},
+						});
+					});
+			} catch (err) {
+				reject({
+					response: responseMessages.SERVER_ERROR,
+					finalData: {},
+				});
 			}
-		} catch (err) {
-			throw err;
-		}
+		});
 	},
 	updateUserPassword: async (payload) => {
-		try {
-			let hashedPassword = commonFunctions.generateHashPassword(
-				payload.newPassword
-			);
-			let updatePasswordQuery = 'UPDATE users SET password = ? where email = ?';
-			await connection.executeQuery(updatePasswordQuery, [
-				hashedPassword,
-				payload.email,
-			]);
+		return new Promise(async (resolve, reject) => {
+			try {
+				let hashedPassword = commonFunctions.generateHashPassword(
+					payload.newPassword
+				);
 
-			return { response: responseMessages.SUCCESS, finalData: {} };
-		} catch (err) {
-			throw err;
-		}
+				await Users.update(
+					{ password: hashedPassword },
+					{ where: { email: payload.email } }
+				)
+					.then((data) => {
+						resolve({ response: responseMessages.SUCCESS, finalData: {} });
+					})
+					.catch((err) => {
+						reject({
+							response: responseMessages.SERVER_ERROR,
+							finalData: {},
+						});
+					});
+			} catch (err) {
+				reject({
+					response: responseMessages.SERVER_ERROR,
+					finalData: {},
+				});
+			}
+		});
 	},
 };
 

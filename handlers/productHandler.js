@@ -1,285 +1,502 @@
-const { connection } = require('../db');
 const moment = require('moment');
+const sequelize = require('sequelize');
+const Op = sequelize.Op;
+
 const { responseMessages } = require('../lib');
+const {
+	Categories,
+	SubCategories,
+	Products,
+	ProductPrice,
+	MeasuringUnits,
+	ProductHistory,
+} = require('../models');
 
 const productHandler = {
 	getHomeCategories: async () => {
-		try {
-			let sqlQuery =
-				'SELECT id,name,image,isSubCategory FROM categories WHERE status = ?';
-			let categoryDetails = await connection.executeQuery(sqlQuery, ['ACTIVE']);
-
-			return {
-				response: { STATUS_CODE: 200, MSG: '' },
-				finalData: { categoryDetails },
-			};
-		} catch (err) {
-			throw err;
-		}
+		return new Promise((resolve, reject) => {
+			try {
+				Categories.findAll({
+					where: { status: 'ACTIVE' },
+					attributes: [
+						'id',
+						'name',
+						[sequelize.col('is_sub_category'), 'isSubCategory'],
+						'image',
+					],
+				})
+					.then((categoryDetails) => {
+						resolve({
+							response: responseMessages.SUCCESS,
+							finalData: { categoryDetails },
+						});
+					})
+					.catch((err) => {
+						reject({
+							response: responseMessages.SERVER_ERROR,
+							finalData: {},
+						});
+					});
+			} catch (err) {
+				reject({
+					response: responseMessages.SERVER_ERROR,
+					finalData: {},
+				});
+			}
+		});
 	},
 
 	getSubCategoryItems: async (payload) => {
-		try {
-			let sqlQuery =
-				'SELECT sc.id,sc.name,sc.image,c.name as categoryName FROM sub_categories sc join categories c on c.id = sc.categoryId WHERE sc.categoryId = ? and sc.status = ?';
-			let subCategoryDetails = await connection.executeQuery(sqlQuery, [
-				payload.categoryId,
-				'ACTIVE',
-			]);
-
-			return {
-				response: { STATUS_CODE: 200, MSG: '' },
-				finalData: { subCategoryDetails },
-			};
-		} catch (err) {
-			throw err;
-		}
+		return new Promise(async (resolve, reject) => {
+			try {
+				SubCategories.findAll({
+					where: {
+						[Op.and]: [{ category_id: payload.categoryId, status: 'ACTIVE' }],
+					},
+					include: [{ model: Categories, attributes: [] }],
+					attributes: [
+						'id',
+						'image',
+						'name',
+						[sequelize.col('category.name'), 'categoryName'],
+					],
+					raw: true,
+				})
+					.then((subCategoryDetails) => {
+						resolve({
+							response: responseMessages.SUCCESS,
+							finalData: { subCategoryDetails },
+						});
+					})
+					.catch((err) => {
+						reject({
+							response: responseMessages.SERVER_ERROR,
+							finalData: {},
+						});
+					});
+			} catch (err) {
+				reject({
+					response: responseMessages.SERVER_ERROR,
+					finalData: {},
+				});
+			}
+		});
 	},
 
 	getProducts: async (payload) => {
-		try {
-			let sqlQuery;
-			if (payload.subCategoryId) {
-				sqlQuery = `SELECT p.id, p.name, p.image,pp.actualPrice as price, p.maxQuantity, p.purchaseLimit,sc.name as subCategoryName,mu.symbol FROM products p join 
-							sub_categories sc on sc.id = p.subCategoryId join measuring_units mu on mu.id = p.measuring_unit join product_price pp on pp.productId = p.id WHERE p.subCategoryId = ? and p.status = ?`;
-			} else {
-				sqlQuery = `SELECT p.id, p.name, p.image,p.image, pp.actualPrice as price, p.maxQuantity, p.purchaseLimit,c.name as subCategoryName, mu.symbol FROM products p join categories c on p.categoryId = c.id join measuring_units mu on mu.id = p.measuring_unit join product_price pp on pp.productId = p.id WHERE p.categoryId = ? AND p.status = ?`;
+		return new Promise((resolve, reject) => {
+			try {
+				Products.findAll({
+					where: payload.subCategoryId
+						? { status: 'ACTIVE' }
+						: { category_id: payload.categoryId, status: 'ACTIVE' },
+					include: [
+						{ model: ProductPrice, attributes: [] },
+						{ model: MeasuringUnits, attributes: [] },
+						payload.subCategoryId
+							? {
+									model: SubCategories,
+									where: { id: payload.subCategoryId },
+									attributes: [],
+							  }
+							: { model: Categories, attributes: [] },
+					],
+
+					attributes: [
+						'id',
+						'name',
+						'image',
+						'max_quantity',
+						'purchase_limit',
+						[sequelize.col('product_price.actual_price'), 'price'],
+						[sequelize.col('measuring_unit.symbol'), 'symbol'],
+						payload.subCategoryId
+							? [sequelize.col('sub_category.name'), 'subCategoryName']
+							: [sequelize.col('category.name'), 'subCategoryNames'],
+					],
+					raw: true,
+				})
+					.then((products) => {
+						resolve({
+							response: responseMessages.SUCCESS,
+							finalData: { products },
+						});
+					})
+					.catch((err) => {
+						reject({
+							response: responseMessages.SERVER_ERROR,
+							finalData: {},
+						});
+					});
+			} catch (err) {
+				reject({
+					response: responseMessages.SERVER_ERROR,
+					finalData: {},
+				});
 			}
-
-			let products = await connection.executeQuery(sqlQuery, [
-				payload.subCategoryId ? payload.subCategoryId : payload.categoryId,
-				'ACTIVE',
-			]);
-
-			return {
-				response: { STATUS_CODE: 200, MSG: '' },
-				finalData: { products },
-			};
-		} catch (err) {
-			throw err;
-		}
+		});
 	},
 
 	getProductDetails: async (payload) => {
-		try {
-			let sqlQuery =
-				'SELECT p.name,p.image,p.maxQuantity,p.purchaseLimit,pp.actualPrice as price,pp.discountPercent,pp.discountStartDate, pp.discountEndDate, p.description FROM products p join product_price pp on pp.productId = p.id WHERE p.id = ? ';
+		return new Promise((resolve, reject) => {
+			try {
+				Products.findAll({
+					where: { id: payload.productId },
+					include: [{ model: ProductPrice, attributes: [] }],
+					attributes: [
+						'name',
+						'image',
+						[sequelize.col('max_quantity'), 'maxQuantity'],
+						[sequelize.col('purchase_limit'), 'purchaseLimit'],
+						'description',
+						[
+							sequelize.col('product_price.discount_percent'),
+							'discountPercent',
+						],
+						[
+							sequelize.col('product_price.discount_start_date'),
+							'discountStartDate',
+						],
+						[
+							sequelize.col('product_price.discount_end_date'),
+							'discountEndDate',
+						],
+						[sequelize.col('product_price.actual_price'), 'price'],
+					],
+					raw: true,
+				})
+					.then((productDetails) => {
+						let currentDate = moment().format('YYYY-MM-DD HH:mm:ss');
 
-			let productDetails = await connection.executeQuery(sqlQuery, [
-				payload.productId,
-			]);
+						for (let i = 0; i < productDetails.length; i++) {
+							let discountStartDate = moment(
+								productDetails[i].discountStartDate
+							).format('YYYY-MM-DD HH:mm:ss');
 
-			let currentDate = moment().format('YYYY-MM-DD HH:mm:ss');
+							let discountEndDate = moment(
+								productDetails[i].discountEndDate
+							).format('YYYY-MM-DD HH:mm:ss');
 
-			for (let i = 0; i < productDetails.length; i++) {
-				let discountStartDate = moment(
-					productDetails[i].discountStartDate
-				).format('YYYY-MM-DD HH:mm:ss');
+							if (
+								discountStartDate <= currentDate &&
+								discountEndDate >= currentDate
+							) {
+								productDetails[i].discountStatus = true;
+								let discountPrice =
+									(productDetails[i].discountPercent / 100) *
+									productDetails[i].price;
+								discountPrice = productDetails[i].price - discountPrice;
+								productDetails[i].discountPrice = discountPrice;
+							} else {
+								productDetails[i].discountStatus = false;
+							}
+						}
 
-				let discountEndDate = moment(productDetails[i].discountEndDate).format(
-					'YYYY-MM-DD HH:mm:ss'
-				);
-
-				if (
-					discountStartDate <= currentDate &&
-					discountEndDate >= currentDate
-				) {
-					productDetails[i].discountStatus = true;
-					let discountPrice =
-						(productDetails[i].discountPercent / 100) * productDetails[i].price;
-					discountPrice = productDetails[i].price - discountPrice;
-					productDetails[i].discountPrice = discountPrice;
-				} else {
-					productDetails[i].discountStatus = false;
-				}
+						resolve({
+							response: responseMessages.SUCCESS,
+							finalData: { productDetails: productDetails[0] },
+						});
+					})
+					.catch((err) => {
+						reject({
+							response: responseMessages.SERVER_ERROR,
+							finalData: {},
+						});
+					});
+			} catch (err) {
+				reject({
+					response: responseMessages.SERVER_ERROR,
+					finalData: {},
+				});
 			}
-
-			return {
-				response: { STATUS_CODE: 200, MSG: '' },
-				finalData: { productDetails: productDetails[0] },
-			};
-		} catch (err) {
-			throw err;
-		}
+		});
 	},
 
 	getCartProductDetails: async (payload) => {
-		try {
-			let cartItems = payload.cartItems;
-			let productIds = cartItems.map((items) => items.id);
-			let sqlQuery =
-				'SELECT p.id,p.name,p.image,pp.actualPrice as price,pp.discountPercent,pp.discountStartDate, pp.discountEndDate,p.maxQuantity,p.status from products p join product_price pp on pp.productId = p.id where p.id IN (?)';
-			let cartProductDetails = await connection.executeQuery(sqlQuery, [
-				productIds,
-			]);
-			let tempCartProductDetails = [];
+		return new Promise((resolve, reject) => {
+			try {
+				let cartItems = payload.cartItems;
+				let productIds = cartItems.map((items) => items.id);
+				Products.findAll({
+					where: { id: { [Op.in]: productIds } },
+					include: [{ model: ProductPrice, attributes: [] }],
+					attributes: [
+						'id',
+						'name',
+						'image',
+						'status',
+						'max_quantity',
+						[sequelize.col('product_price.actual_price'), 'price'],
+						[
+							sequelize.col('product_price.discount_percent'),
+							'discountPercent',
+						],
+						[
+							sequelize.col('product_price.discount_start_date'),
+							'discountStartDate',
+						],
+						[
+							sequelize.col('product_price.discount_end_date'),
+							'discountEndDate',
+						],
+					],
+					raw: true,
+				}).then((cartProductDetails) => {
+					let tempCartProductDetails = [];
+					let currentDate = moment().format('YYYY-MM-DD HH:mm:ss');
 
-			let currentDate = moment().format('YYYY-MM-DD HH:mm:ss');
+					for (let i = 0; i < cartProductDetails.length; i++) {
+						let discountStartDate = moment(
+							cartProductDetails[i].discountStartDate
+						).format('YYYY-MM-DD HH:mm:ss');
+						let discountEndDate = moment(
+							cartProductDetails[i].discountEndDate
+						).format('YYYY-MM-DD HH:mm:ss');
+						if (
+							discountStartDate <= currentDate &&
+							discountEndDate >= currentDate
+						) {
+							let discountPrice =
+								(cartProductDetails[i].discountPercent / 100) *
+								cartProductDetails[i].price;
+							discountPrice = cartProductDetails[i].price - discountPrice;
+							cartProductDetails[i].price = discountPrice;
+						}
+						let productQuantity = cartItems.filter(
+							(item) => item.id === cartProductDetails[i].id
+						)[0].quantity;
+						if (
+							productQuantity < cartProductDetails[i].max_quantity &&
+							payload.removeCartItem === true
+						) {
+							tempCartProductDetails.push({
+								...cartProductDetails[i],
+								quantity: productQuantity,
+							});
+						} else if (payload.removeCartItem === false) {
+							tempCartProductDetails.push({
+								...cartProductDetails[i],
+								quantity: productQuantity,
+							});
+						}
+					}
 
-			for (let i = 0; i < cartProductDetails.length; i++) {
-				let discountStartDate = moment(
-					cartProductDetails[i].discountStartDate
-				).format('YYYY-MM-DD HH:mm:ss');
-
-				let discountEndDate = moment(
-					cartProductDetails[i].discountEndDate
-				).format('YYYY-MM-DD HH:mm:ss');
-
-				if (
-					discountStartDate <= currentDate &&
-					discountEndDate >= currentDate
-				) {
-					let discountPrice =
-						(cartProductDetails[i].discountPercent / 100) *
-						cartProductDetails[i].price;
-					discountPrice = cartProductDetails[i].price - discountPrice;
-					cartProductDetails[i].price = discountPrice;
-				}
-				let productQuantity = cartItems.filter(
-					(item) => item.id === cartProductDetails[i].id
-				)[0].quantity;
-
-				if (
-					productQuantity < cartProductDetails[i].maxQuantity &&
-					payload.removeCartItem === true
-				) {
-					tempCartProductDetails.push({
-						...cartProductDetails[i],
-						quantity: productQuantity,
+					resolve({
+						response: responseMessages.SUCCESS,
+						finalData: { cartProductDetails: tempCartProductDetails },
 					});
-				} else if (payload.removeCartItem === false) {
-					tempCartProductDetails.push({
-						...cartProductDetails[i],
-						quantity: productQuantity,
-					});
-				}
+				});
+			} catch (err) {
+				reject({
+					response: responseMessages.SERVER_ERROR,
+					finalData: {},
+				});
 			}
-
-			return {
-				response: { STATUS_CODE: 200, MSG: 'Success' },
-				finalData: { cartProductDetails: tempCartProductDetails },
-			};
-		} catch (err) {
-			throw err;
-		}
+		}).catch((err) => {
+			reject({
+				response: responseMessages.SERVER_ERROR,
+				finalData: {},
+			});
+		});
 	},
 
 	getProductOffers: async () => {
-		try {
-			let currentDate = moment().format('YYYY-MM-DD HH:mm:ss');
-			let productOffersQuery =
-				'SELECT p.id, p.name, pp.actualPrice, pp.discountPercent,pp.discountEndDate, p.image from products p join product_price pp on pp.productId = p.id where pp.discountStartDate <= ? and pp.discountEndDate >= ? and discountPercent != ? LIMIT 4';
-			let productDetails = await connection.executeQuery(productOffersQuery, [
-				currentDate,
-				currentDate,
-				'null',
-			]);
-
-			for (let i = 0; i < productDetails.length; i++) {
-				let discountPrice =
-					(productDetails[i].discountPercent / 100) *
-					productDetails[i].actualPrice;
-				discountPrice = productDetails[i].actualPrice - discountPrice;
-				productDetails[i].discountPrice = discountPrice;
+		return new Promise((resolve, reject) => {
+			try {
+				let currentDate = moment().format('YYYY-MM-DD HH:mm:ss');
+				Products.findAll({
+					where: {},
+					include: [
+						{
+							model: ProductPrice,
+							where: {
+								[Op.and]: [
+									{ discount_start_date: { [Op.lt]: currentDate } },
+									{ discount_end_date: { [Op.gt]: currentDate } },
+								],
+							},
+							attributes: [],
+						},
+					],
+					attributes: [
+						'id',
+						'name',
+						'image',
+						[sequelize.col('product_price.actual_price'), 'actualPrice'],
+						[
+							sequelize.col('product_price.discount_percent'),
+							'discountPercent',
+						],
+						[
+							sequelize.col('product_price.discount_end_date'),
+							'discountEndDate',
+						],
+					],
+					raw: true,
+				})
+					.then((productDetails) => {
+						for (let i = 0; i < productDetails.length; i++) {
+							let discountPrice =
+								(productDetails[i].discountPercent / 100) *
+								productDetails[i].actualPrice;
+							discountPrice = productDetails[i].actualPrice - discountPrice;
+							productDetails[i].discountPrice = discountPrice;
+						}
+						resolve({
+							response: responseMessages.SUCCESS,
+							finalData: { productDetails },
+						});
+					})
+					.catch((err) => {
+						reject({
+							response: responseMessages.SERVER_ERROR,
+							finalData: {},
+						});
+					});
+			} catch (err) {
+				reject({
+					response: responseMessages.SERVER_ERROR,
+					finalData: {},
+				});
 			}
-
-			return {
-				response: responseMessages.SUCCESS,
-				finalData: { productDetails },
-			};
-		} catch (err) {
-			throw err;
-		}
+		});
 	},
 
 	addToProductHistory: async (payload, userDetails) => {
-		try {
-			let existingProductHistoryQuery =
-				'SELECT id from product_history where userId = ? and productId = ?';
-			let existingProductHistory = await connection.executeQuery(
-				existingProductHistoryQuery,
-				[payload.productId, userDetails.id]
-			);
+		return new Promise(async (resolve, reject) => {
+			try {
+				let existingProductHistory = await ProductHistory.findAll({
+					where: { id: payload.productId },
+				});
 
-			if (existingProductHistory.length === 0) {
-				let productHistoryQuery =
-					'INSERT into product_history (userId,productId) VALUES (?,?)';
-				await connection.executeQuery(productHistoryQuery, [
-					userDetails.id,
-					payload.productId,
-				]);
+				if (existingProductHistory && existingProductHistory.length === 0) {
+					await ProductHistory.create({
+						user_id: userDetails.id,
+						product_id: payload.productId,
+					});
+				}
+
+				resolve({
+					response: responseMessages.SUCCESS,
+					finalData: {},
+				});
+			} catch (err) {
+				reject({
+					response: responseMessages.SERVER_ERROR,
+					finalData: {},
+				});
 			}
-
-			return { response: responseMessages.SUCCESS, finalData: {} };
-		} catch (err) {
-			throw err;
-		}
+		});
 	},
 
 	viewUserProductHistory: async (userDetails) => {
-		try {
-			let userProductHistoryQuery =
-				'SELECT ph.id, ph.productId, p.image, p.name, pp.actualPrice as price, pp.discountPercent, pp.discountStartDate, pp.discountEndDate from product_history ph join products p on p.id = ph.productId join product_price pp on pp.productId = p.id where ph.userId = ? and ph.isDeleted = ?';
+		return new Promise((resolve, reject) => {
+			try {
+				ProductHistory.findAll({
+					where: { [Op.and]: [{ user_id: userDetails.id }, { is_deleted: 0 }] },
+					include: [
+						{
+							model: Products,
+							attributes: [],
+							include: [{ model: ProductPrice, attributes: [] }],
+						},
+					],
 
-			let userProductHistory = await connection.executeQuery(
-				userProductHistoryQuery,
-				[userDetails.id, 0]
-			);
+					attributes: [
+						'id',
+						[sequelize.col('product.image'), 'image'],
+						[sequelize.col('product.id'), 'productId'],
+						[sequelize.col('product.name'), 'name'],
+						[
+							sequelize.col('product.product_price.actual_price'),
+							'actualPrice',
+						],
+						[
+							sequelize.col('product.product_price.discount_percent'),
+							'discountPercent',
+						],
+						[
+							sequelize.col('product.product_price.discount_start_date'),
+							'discountStartDate',
+						],
+					],
+					raw: true,
+				})
+					.then((userProductHistory) => {
+						let currentDate = moment().format('YYYY-MM-DD HH:mm:ss');
 
-			let currentDate = moment().format('YYYY-MM-DD HH:mm:ss');
+						for (let i = 0; i < userProductHistory.length; i++) {
+							let discountStartDate = moment(
+								userProductHistory[i].discountStartDate
+							).format('YYYY-MM-DD HH:mm:ss');
 
-			for (let i = 0; i < userProductHistory.length; i++) {
-				let discountStartDate = moment(
-					userProductHistory[i].discountStartDate
-				).format('YYYY-MM-DD HH:mm:ss');
+							let discountEndDate = moment(
+								userProductHistory[i].discountEndDate
+							).format('YYYY-MM-DD HH:mm:ss');
 
-				let discountEndDate = moment(
-					userProductHistory[i].discountEndDate
-				).format('YYYY-MM-DD HH:mm:ss');
+							if (
+								discountStartDate <= currentDate &&
+								discountEndDate >= currentDate
+							) {
+								let discountPrice =
+									(userProductHistory[i].discountPercent / 100) *
+									userProductHistory[i].price;
+								discountPrice = userProductHistory[i].price - discountPrice;
+								userProductHistory[i].price = discountPrice;
+							}
+						}
 
-				if (
-					discountStartDate <= currentDate &&
-					discountEndDate >= currentDate
-				) {
-					let discountPrice =
-						(userProductHistory[i].discountPercent / 100) *
-						userProductHistory[i].price;
-					discountPrice = userProductHistory[i].price - discountPrice;
-					userProductHistory[i].price = discountPrice;
-				}
+						resolve({
+							response: responseMessages.SUCCESS,
+							finalData: { userProductHistory },
+						});
+					})
+					.catch((err) => {
+						console.log(err);
+						reject({
+							response: responseMessages.SERVER_ERROR,
+							finalData: {},
+						});
+					});
+			} catch (err) {
+				reject({
+					response: responseMessages.SERVER_ERROR,
+					finalData: {},
+				});
 			}
-
-			return {
-				response: responseMessages.SUCCESS,
-				finalData: { userProductHistory },
-			};
-		} catch (err) {
-			throw err;
-		}
+		});
 	},
 
 	removeFromProductHistory: async (payload) => {
-		try {
-			let existingProductHistoryQuery =
-				'SELECT id from product_history where id = ?';
-			let existingProductHistory = await connection.executeQuery(
-				existingProductHistoryQuery,
-				[payload.productHistoryId]
-			);
+		return new Promise(async (resolve, reject) => {
+			try {
+				let existingProductHistory = await ProductHistory.findAll({
+					where: { id: payload.productHistoryId },
+				});
 
-			if (existingProductHistory && existingProductHistory.length > 0) {
-				let updateProductHistoryQuery =
-					'UPDATE product_history SET isDeleted = ? where id = ?';
-				await connection.executeQuery(updateProductHistoryQuery, [
-					1,
-					payload.productHistoryId,
-				]);
+				if (existingProductHistory && existingProductHistory.length > 0) {
+					await ProductHistory.update(
+						{ is_deleted: 1 },
+						{ where: { id: payload.productHistoryId } }
+					);
 
-				return { response: responseMessages.SUCCESS, finalData: {} };
+					resolve({
+						response: responseMessages.SUCCESS,
+						finalData: {},
+					});
+				} else {
+					reject({
+						response: responseMessages.INVALID_PRODUCT_HISTORY_ID,
+						finalData: {},
+					});
+				}
+			} catch (err) {
+				reject({
+					response: responseMessages.SERVER_ERROR,
+					finalData: {},
+				});
 			}
-		} catch (err) {
-			throw err;
-		}
+		});
 	},
 };
 
