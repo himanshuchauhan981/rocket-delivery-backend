@@ -30,7 +30,7 @@ const orderHandler = {
 						'name',
 						'image',
 						[sequelize.col('max_quantity'), 'maxQuantity'],
-						[sequelize.col('product_price.actualPrice'), 'price'],
+						[sequelize.col('product_price.actual_price'), 'price'],
 						[
 							sequelize.col('product_price.discount_percent'),
 							'discountPercent',
@@ -154,12 +154,14 @@ const orderHandler = {
 						});
 					})
 					.catch((err) => {
+						console.log('>>>>>>>Err', err);
 						reject({
 							response: responseMessages.SERVER_ERROR,
 							finalData: {},
 						});
 					});
 			} catch (err) {
+				console.log('>>>>>>>>>>>err', err);
 				reject({
 					response: responseMessages.SERVER_ERROR,
 					finalData: {},
@@ -219,7 +221,7 @@ const orderHandler = {
 				Wishlist.findAll({
 					where: { [Op.and]: [{ user_id: userDetails.id }, { is_deleted: 0 }] },
 					include: [{ model: Products, attributes: ['id', 'name', 'image'] }],
-					attributes: ['id', 'product_id'],
+					attributes: ['id', [sequelize.col('product_id'), 'productId']],
 				})
 					.then((userWishlist) => {
 						resolve({
@@ -243,6 +245,7 @@ const orderHandler = {
 	},
 
 	updateUserWishlist: async (userDetails, payload) => {
+		console.log(payload);
 		return new Promise(async (resolve, reject) => {
 			try {
 				Wishlist.update(

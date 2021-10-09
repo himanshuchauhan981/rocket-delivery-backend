@@ -10,7 +10,7 @@ module.exports = (sequelize, Sequelize) => {
 			order_number: {
 				type: Sequelize.STRING,
 				required: true,
-				allowNull: false,
+				allowNull: true,
 			},
 			user_id: {
 				type: Sequelize.INTEGER,
@@ -25,7 +25,7 @@ module.exports = (sequelize, Sequelize) => {
 			delivery_charges: {
 				type: Sequelize.FLOAT(20, 2),
 				required: true,
-				allowNull: false,
+				allowNull: true,
 			},
 			payment_method: {
 				type: Sequelize.INTEGER,
@@ -40,7 +40,7 @@ module.exports = (sequelize, Sequelize) => {
 			net_amount: {
 				type: Sequelize.FLOAT(20, 2),
 				required: true,
-				allowNull: false,
+				allowNull: true,
 			},
 			user_address: {
 				type: Sequelize.INTEGER,
@@ -49,7 +49,7 @@ module.exports = (sequelize, Sequelize) => {
 			},
 			delivery_date: {
 				type: 'TIMESTAMP',
-				allowNull: false,
+				allowNull: true,
 			},
 			created_at: {
 				type: 'TIMESTAMP',

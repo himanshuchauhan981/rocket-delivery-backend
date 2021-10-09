@@ -18,7 +18,12 @@ const productHandler = {
 			try {
 				Categories.findAll({
 					where: { status: 'ACTIVE' },
-					attributes: ['id', 'name', 'is_sub_category'],
+					attributes: [
+						'id',
+						'name',
+						[sequelize.col('is_sub_category'), 'isSubCategory'],
+						'image',
+					],
 				})
 					.then((categoryDetails) => {
 						resolve({
@@ -156,6 +161,7 @@ const productHandler = {
 							sequelize.col('product_price.discount_end_date'),
 							'discountEndDate',
 						],
+						[sequelize.col('product_price.actual_price'), 'price'],
 					],
 					raw: true,
 				})
@@ -219,7 +225,7 @@ const productHandler = {
 						'name',
 						'image',
 						'status',
-						['max_quantity', 'maxQuantity'],
+						'max_quantity',
 						[sequelize.col('product_price.actual_price'), 'price'],
 						[
 							sequelize.col('product_price.discount_percent'),
@@ -234,8 +240,8 @@ const productHandler = {
 							'discountEndDate',
 						],
 					],
+					raw: true,
 				}).then((cartProductDetails) => {
-					console.log(cartProductDetails);
 					let tempCartProductDetails = [];
 					let currentDate = moment().format('YYYY-MM-DD HH:mm:ss');
 
@@ -243,11 +249,9 @@ const productHandler = {
 						let discountStartDate = moment(
 							cartProductDetails[i].discountStartDate
 						).format('YYYY-MM-DD HH:mm:ss');
-
 						let discountEndDate = moment(
 							cartProductDetails[i].discountEndDate
 						).format('YYYY-MM-DD HH:mm:ss');
-
 						if (
 							discountStartDate <= currentDate &&
 							discountEndDate >= currentDate
@@ -261,9 +265,8 @@ const productHandler = {
 						let productQuantity = cartItems.filter(
 							(item) => item.id === cartProductDetails[i].id
 						)[0].quantity;
-
 						if (
-							productQuantity < cartProductDetails[i].maxQuantity &&
+							productQuantity < cartProductDetails[i].max_quantity &&
 							payload.removeCartItem === true
 						) {
 							tempCartProductDetails.push({
@@ -360,34 +363,30 @@ const productHandler = {
 	},
 
 	addToProductHistory: async (payload, userDetails) => {
-		try {
-			return new Promise(async (resolve, reject) => {
-				try {
-					let existingProductHistory = await ProductHistory.findAll({
-						where: { id: payload.productHistoryId },
-					});
+		return new Promise(async (resolve, reject) => {
+			try {
+				let existingProductHistory = await ProductHistory.findAll({
+					where: { id: payload.productId },
+				});
 
-					if (existingProductHistory && existingProductHistory.length === 0) {
-						await ProductHistory.create({
-							user_id: userDetails.id,
-							product_id: payload.productId,
-						});
-					}
-
-					resolve({
-						response: responseMessages.SUCCESS,
-						finalData: {},
-					});
-				} catch (err) {
-					reject({
-						response: responseMessages.SERVER_ERROR,
-						finalData: {},
+				if (existingProductHistory && existingProductHistory.length === 0) {
+					await ProductHistory.create({
+						user_id: userDetails.id,
+						product_id: payload.productId,
 					});
 				}
-			});
-		} catch (err) {
-			throw err;
-		}
+
+				resolve({
+					response: responseMessages.SUCCESS,
+					finalData: {},
+				});
+			} catch (err) {
+				reject({
+					response: responseMessages.SERVER_ERROR,
+					finalData: {},
+				});
+			}
+		});
 	},
 
 	viewUserProductHistory: async (userDetails) => {

@@ -183,16 +183,16 @@ const userHandler = {
 					where: addressCondition,
 					attributes: [
 						'id',
-						'user_id',
-						'full_name',
+						[sequelize.col('user_id'), 'userId'],
+						[sequelize.col('full_name'), 'fullName'],
 						'pincode',
-						'house_no',
+						[sequelize.col('house_no'), 'houseNo'],
 						'area',
 						'city',
 						'state',
 						'landmark',
-						'country_code',
-						'mobile_number',
+						[sequelize.col('country_code'), 'countryCode'],
+						[sequelize.col('mobile_number'), 'mobileNumber'],
 					],
 				})
 					.then((userAddressesDetails) => {
