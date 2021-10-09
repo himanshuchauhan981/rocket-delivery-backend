@@ -10,11 +10,6 @@ const { routes } = require('./routes');
 
 sqlLib.sequelize.sync();
 
-// sqlLib.connect().then(() => {
-// 	console.log('Db connection is succcessfull');
-// 	app.use('/', routes());
-// });
-
 app.use(bodyParser.json());
 app.use('/', routes());
 
