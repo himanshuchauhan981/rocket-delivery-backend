@@ -100,7 +100,7 @@ const orderHandler = {
 							amount: subTotal,
 							user_address: payload.orderAddress,
 							status: 1,
-							netAmount: subTotal + payload.deliveryCharges,
+							net_amount: subTotal + payload.deliveryCharges,
 						});
 
 						let orderId = newOrder.id;
@@ -153,14 +153,12 @@ const orderHandler = {
 						});
 					})
 					.catch((err) => {
-						console.log('>>>>>>>Err', err);
 						reject({
 							response: responseMessages.SERVER_ERROR,
 							finalData: {},
 						});
 					});
 			} catch (err) {
-				console.log('>>>>>>>>>>>err', err);
 				reject({
 					response: responseMessages.SERVER_ERROR,
 					finalData: {},
@@ -244,7 +242,6 @@ const orderHandler = {
 	},
 
 	updateUserWishlist: async (userDetails, payload) => {
-		console.log(payload);
 		return new Promise(async (resolve, reject) => {
 			try {
 				Wishlist.update(

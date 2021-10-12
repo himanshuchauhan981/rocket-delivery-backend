@@ -480,6 +480,9 @@ const productHandler = {
 								productDetails[i].actualPrice;
 							discountPrice = productDetails[i].actualPrice - discountPrice;
 							productDetails[i].discountPrice = discountPrice;
+							productDetails[i].actualPrice = parseFloat(
+								productDetails[i].actualPrice
+							);
 						}
 						resolve({
 							response: responseMessages.SUCCESS,

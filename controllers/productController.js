@@ -53,8 +53,7 @@ const productController = {
 
 	getDiscountOffers: async (req, res) => {
 		try {
-			console.log('ues');
-			let response = await productHandler.getProductOffers();
+			let response = await productHandler.getDiscountOffers();
 			responseManager.sendSuccessResponse(response, res);
 		} catch (err) {
 			responseManager.sendErrorResponse(err, res);
