@@ -22,6 +22,12 @@ module.exports = (sequelize, Sequelize) => {
 				required: true,
 				allowNull: false,
 			},
+			view_count: {
+				type: Sequelize.INTEGER,
+				required: true,
+				defaultValue: 0,
+				allowNull: false,
+			},
 			created_at: {
 				type: 'TIMESTAMP',
 				defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),

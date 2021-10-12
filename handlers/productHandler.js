@@ -76,24 +76,96 @@ const mostBookedProducts = async (userDetails) => {
 						}
 						finalOrderDetails.push(orderObject);
 					}
-					resolve({
-						response: responseMessages.SUCCESS,
-						finalData: { orderDetails: finalOrderDetails },
-					});
+					resolve(finalOrderDetails);
 				})
 				.catch((err) => {
-					reject({
-						response: responseMessages.SERVER_ERROR,
-						finalData: {},
-					});
+					reject(err);
 				});
 		} catch (err) {
-			reject({
-				response: responseMessages.SERVER_ERROR,
-				finalData: {},
-			});
+			reject(err);
 		}
 	});
+};
+
+const mostViewedProducts = async (userDetails, mostViewedHistory) => {
+	return new Promise((resolve, reject) => {
+		console.log(mostViewedHistory);
+		try {
+			ProductHistory.findAll({
+				where: { [Op.and]: [{ user_id: userDetails.id }, { is_deleted: 0 }] },
+				include: [
+					{
+						model: Products,
+						attributes: [],
+						include: [{ model: ProductPrice, attributes: [] }],
+					},
+				],
+
+				attributes: [
+					'id',
+					'view_count',
+					[sequelize.col('product.image'), 'image'],
+					[sequelize.col('product.id'), 'productId'],
+					[sequelize.col('product.name'), 'name'],
+					[sequelize.col('product.product_price.actual_price'), 'actualPrice'],
+					[
+						sequelize.col('product.product_price.discount_percent'),
+						'discountPercent',
+					],
+					[
+						sequelize.col('product.product_price.discount_start_date'),
+						'discountStartDate',
+					],
+					[
+						sequelize.col('product.product_price.discount_end_date'),
+						'discountEndDate',
+					],
+				],
+				raw: true,
+				order: mostViewedHistory ? [['view_count', 'DESC']] : [],
+				limit: mostViewedHistory ? 5 : null,
+			})
+				.then((userProductHistory) => {
+					for (let i = 0; i < userProductHistory.length; i++) {
+						let discountDetails = commonFunctions.calculateDiscountPrice(
+							userProductHistory[i].discountStartDate,
+							userProductHistory[i].discountEndDate,
+							userProductHistory[i].discountPercent,
+							userProductHistory[i].actualPrice
+						);
+						userProductHistory[i].discountPrice = discountDetails.discountPrice;
+						userProductHistory[i].discountStatus =
+							discountDetails.discountStatus;
+					}
+
+					resolve(userProductHistory);
+				})
+				.catch((err) => {
+					console.log(err);
+					reject(err);
+				});
+		} catch (err) {
+			reject(err);
+		}
+	});
+	// return new Promise((resolve, reject) => {
+	// 	try {
+	// 		ProductHistory.findAll({
+	// 			where: {
+	// 				[Op.and]: [{ user_id: userDetails.id }, { is_deleted: '0' }],
+	// 			},
+	// 			order: [['view_count', 'DESC']],
+	// 			limit: 5,
+	// 		}).then((productHistory) => {
+	// 			resolve(productHistory);
+	// 		});
+	// 	} catch (err) {
+	// 		reject({
+	// 			response: responseMessages.SERVER_ERROR,
+	// 			finalData: {},
+	// 		});
+	// 	}
+	// });
 };
 
 const productHandler = {
@@ -457,7 +529,21 @@ const productHandler = {
 					await ProductHistory.create({
 						user_id: userDetails.id,
 						product_id: payload.productId,
+						view_count: 1,
+						is_deleted: 0,
 					});
+				} else {
+					await ProductHistory.increment(
+						{ view_count: +1 },
+						{
+							where: {
+								[Op.and]: [
+									{ user_id: userDetails.id },
+									{ product_id: payload.productId },
+								],
+							},
+						}
+					);
 				}
 
 				resolve({
@@ -474,81 +560,18 @@ const productHandler = {
 	},
 
 	viewUserProductHistory: async (userDetails) => {
-		return new Promise((resolve, reject) => {
-			try {
-				ProductHistory.findAll({
-					where: { [Op.and]: [{ user_id: userDetails.id }, { is_deleted: 0 }] },
-					include: [
-						{
-							model: Products,
-							attributes: [],
-							include: [{ model: ProductPrice, attributes: [] }],
-						},
-					],
-
-					attributes: [
-						'id',
-						[sequelize.col('product.image'), 'image'],
-						[sequelize.col('product.id'), 'productId'],
-						[sequelize.col('product.name'), 'name'],
-						[
-							sequelize.col('product.product_price.actual_price'),
-							'actualPrice',
-						],
-						[
-							sequelize.col('product.product_price.discount_percent'),
-							'discountPercent',
-						],
-						[
-							sequelize.col('product.product_price.discount_start_date'),
-							'discountStartDate',
-						],
-					],
-					raw: true,
-				})
-					.then((userProductHistory) => {
-						let currentDate = moment().format('YYYY-MM-DD HH:mm:ss');
-
-						for (let i = 0; i < userProductHistory.length; i++) {
-							let discountStartDate = moment(
-								userProductHistory[i].discountStartDate
-							).format('YYYY-MM-DD HH:mm:ss');
-
-							let discountEndDate = moment(
-								userProductHistory[i].discountEndDate
-							).format('YYYY-MM-DD HH:mm:ss');
-
-							if (
-								discountStartDate <= currentDate &&
-								discountEndDate >= currentDate
-							) {
-								let discountPrice =
-									(userProductHistory[i].discountPercent / 100) *
-									userProductHistory[i].price;
-								discountPrice = userProductHistory[i].price - discountPrice;
-								userProductHistory[i].price = discountPrice;
-							}
-						}
-
-						resolve({
-							response: responseMessages.SUCCESS,
-							finalData: { userProductHistory },
-						});
-					})
-					.catch((err) => {
-						console.log(err);
-						reject({
-							response: responseMessages.SERVER_ERROR,
-							finalData: {},
-						});
-					});
-			} catch (err) {
-				reject({
-					response: responseMessages.SERVER_ERROR,
-					finalData: {},
-				});
-			}
-		});
+		try {
+			let userProductHistory = await mostViewedProducts(userDetails, false);
+			return {
+				response: responseMessages.SUCCESS,
+				finalData: { userProductHistory },
+			};
+		} catch (err) {
+			reject({
+				response: responseMessages.SERVER_ERROR,
+				finalData: {},
+			});
+		}
 	},
 
 	removeFromProductHistory: async (payload) => {
@@ -586,9 +609,10 @@ const productHandler = {
 	getProductOffers: async (userDetails) => {
 		try {
 			let orderDetails = await mostBookedProducts(userDetails);
+			let viewedProducts = await mostViewedProducts(userDetails, true);
 			return {
 				response: responseMessages.SUCCESS,
-				finalData: { orderDetails },
+				finalData: { orderDetails, viewedProducts },
 			};
 		} catch (err) {
 			return {
