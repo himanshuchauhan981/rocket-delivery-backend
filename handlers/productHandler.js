@@ -126,6 +126,7 @@ const mostViewedProducts = async (userDetails, mostViewedHistory) => {
 				limit: mostViewedHistory ? 5 : null,
 			})
 				.then((userProductHistory) => {
+					console.log(userProductHistory.length);
 					for (let i = 0; i < userProductHistory.length; i++) {
 						let discountDetails = commonFunctions.calculateDiscountPrice(
 							userProductHistory[i].discountStartDate,
@@ -148,24 +149,6 @@ const mostViewedProducts = async (userDetails, mostViewedHistory) => {
 			reject(err);
 		}
 	});
-	// return new Promise((resolve, reject) => {
-	// 	try {
-	// 		ProductHistory.findAll({
-	// 			where: {
-	// 				[Op.and]: [{ user_id: userDetails.id }, { is_deleted: '0' }],
-	// 			},
-	// 			order: [['view_count', 'DESC']],
-	// 			limit: 5,
-	// 		}).then((productHistory) => {
-	// 			resolve(productHistory);
-	// 		});
-	// 	} catch (err) {
-	// 		reject({
-	// 			response: responseMessages.SERVER_ERROR,
-	// 			finalData: {},
-	// 		});
-	// 	}
-	// });
 };
 
 const productHandler = {
@@ -522,7 +505,12 @@ const productHandler = {
 		return new Promise(async (resolve, reject) => {
 			try {
 				let existingProductHistory = await ProductHistory.findAll({
-					where: { id: payload.productId },
+					where: {
+						[Op.and]: [
+							{ product_id: payload.productId },
+							{ user_id: userDetails.id },
+						],
+					},
 				});
 
 				if (existingProductHistory && existingProductHistory.length === 0) {
