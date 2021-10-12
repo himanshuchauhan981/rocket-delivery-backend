@@ -10,7 +10,36 @@ const {
 	ProductPrice,
 	MeasuringUnits,
 	ProductHistory,
+	Orders,
+	OrderProducts,
 } = require('../models');
+
+const calculateDiscountPrice = (
+	start_date,
+	end_date,
+	discount_percent,
+	actual_price
+) => {
+	let currentDate = moment().format('YYYY-MM-DD HH:mm:ss');
+	let discountStartDate = moment(start_date).format('YYYY-MM-DD HH:mm:ss');
+	let discountEndDate = moment(end_date).format('YYYY-MM-DD HH:mm:ss');
+	let discountStatus;
+	let discountPrice;
+
+	if (discountStartDate <= currentDate && discountEndDate >= currentDate) {
+		discountStatus = true;
+		discountPrice = (discount_percent / 100) * actual_price;
+		discountPrice = actual_price - discountPrice;
+		return {
+			discountPrice,
+			discountStatus,
+		};
+	} else {
+		discountStatus = false;
+		discountPrice = 0;
+		return { discountStatus, discountPrice };
+	}
+};
 
 const productHandler = {
 	getHomeCategories: async () => {
@@ -300,7 +329,7 @@ const productHandler = {
 		});
 	},
 
-	getProductOffers: async () => {
+	getDiscountOffers: async () => {
 		return new Promise((resolve, reject) => {
 			try {
 				let currentDate = moment().format('YYYY-MM-DD HH:mm:ss');
@@ -490,6 +519,89 @@ const productHandler = {
 						finalData: {},
 					});
 				}
+			} catch (err) {
+				reject({
+					response: responseMessages.SERVER_ERROR,
+					finalData: {},
+				});
+			}
+		});
+	},
+
+	getProductOffers: async (userDetails) => {
+		return new Promise((resolve, reject) => {
+			try {
+				Orders.findAll({
+					where: { user_id: userDetails.id },
+					include: [
+						{
+							model: OrderProducts,
+							attributes: [],
+						},
+					],
+					attributes: [
+						'order_products.product_id',
+						sequelize.fn('COUNT', sequelize.col('order_products.product_id')),
+					],
+					group: ['order_products.product_id'],
+					order: [['count', 'DESC']],
+					raw: true,
+					subQuery: false,
+					limit: 5,
+				})
+					.then(async (orderDetails) => {
+						let finalOrderDetails = [];
+						for (let i = 0; i < orderDetails.length; i++) {
+							let orderObject = {};
+							let productDetails = await Products.findAll({
+								where: { id: orderDetails[i].product_id },
+								include: [{ model: ProductPrice, attributes: [] }],
+								attributes: [
+									'name',
+									'image',
+									'product_price.actual_price',
+									'product_price.discount_percent',
+									'product_price.discount_start_date',
+									'product_price.discount_end_date',
+								],
+								raw: true,
+							});
+
+							if (productDetails && productDetails.length > 0) {
+								let discountDetails = calculateDiscountPrice(
+									productDetails[0].discount_start_date,
+									productDetails[0].discount_end_date,
+									productDetails[0].discount_percent,
+									productDetails[0].actual_price
+								);
+
+								orderObject.count = orderDetails[i].count;
+								orderObject.product_id = orderDetails[i].product_id;
+								orderObject.product_name = productDetails[0].name;
+								orderObject.product_image = productDetails[0].image;
+								orderObject.actual_price = productDetails[0].actual_price;
+								orderObject.discount_status = discountDetails.discountStatus;
+								orderObject.discount_price = discountDetails.discountPrice;
+								orderObject.discount_start_date =
+									productDetails[0].discount_start_date;
+								orderObject.discount_end_date =
+									productDetails[0].discount_end_date;
+								orderObject.discount_percent =
+									productDetails[0].discount_percent;
+							}
+							finalOrderDetails.push(orderObject);
+						}
+						resolve({
+							response: responseMessages.SUCCESS,
+							finalData: { orderDetails: finalOrderDetails },
+						});
+					})
+					.catch((err) => {
+						reject({
+							response: responseMessages.SERVER_ERROR,
+							finalData: {},
+						});
+					});
 			} catch (err) {
 				reject({
 					response: responseMessages.SERVER_ERROR,

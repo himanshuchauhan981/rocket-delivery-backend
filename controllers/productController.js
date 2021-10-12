@@ -51,8 +51,9 @@ const productController = {
 		}
 	},
 
-	getProductOffers: async (req, res) => {
+	getDiscountOffers: async (req, res) => {
 		try {
+			console.log('ues');
 			let response = await productHandler.getProductOffers();
 			responseManager.sendSuccessResponse(response, res);
 		} catch (err) {
@@ -83,11 +84,23 @@ const productController = {
 			responseManager.sendErrorResponse(err, res);
 		}
 	},
+
 	removeFromProductHistory: async (req, res) => {
 		try {
 			let payload = req.body;
 
 			let response = await productHandler.removeFromProductHistory(payload);
+			responseManager.sendSuccessResponse(response, res);
+		} catch (err) {
+			responseManager.sendErrorResponse(err, res);
+		}
+	},
+
+	getProductOffers: async (req, res) => {
+		try {
+			let userDetails = req.user;
+
+			let response = await productHandler.getProductOffers(userDetails);
 			responseManager.sendSuccessResponse(response, res);
 		} catch (err) {
 			responseManager.sendErrorResponse(err, res);

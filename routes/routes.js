@@ -119,7 +119,7 @@ module.exports = () => {
 		userController.updateUserPassword
 	);
 
-	router.get('/productsOffer', productController.getProductOffers);
+	router.get('/discountOffers', productController.getDiscountOffers);
 
 	router.post(
 		'/addToHistory',
@@ -139,6 +139,12 @@ module.exports = () => {
 		schemaMiddleware(schemaValidator.REMOVE_PRODUCT_HISTORY),
 		authMiddleware,
 		productController.removeFromProductHistory
+	);
+
+	router.get(
+		'/productOffers',
+		authMiddleware,
+		productController.getProductOffers
 	);
 
 	return router;
