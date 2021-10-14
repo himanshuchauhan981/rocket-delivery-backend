@@ -1,9 +1,10 @@
 const Handlebar = require('handlebars');
 const moment = require('moment');
 const sequelize = require('sequelize');
+const Razorpay = require('razorpay');
 const Op = sequelize.Op;
 
-const { responseMessages } = require('../lib');
+const { responseMessages, commonFunctions } = require('../lib');
 const {
 	Orders,
 	Address,
@@ -11,7 +12,35 @@ const {
 	Wishlist,
 	Products,
 	ProductPrice,
+	UserPayments,
 } = require('../models');
+
+const captureOrderPayments = (paymentId, totalPrice, paymentOrderId) => {
+	totalPrice = totalPrice * 100;
+	return new Promise(async (resolve, reject) => {
+		try {
+			let razorpayData = await commonFunctions.getRazorPayKeys();
+
+			let razorpayInstance = new Razorpay({
+				key_id: razorpayData.razorpayKey,
+				key_secret: razorpayData.razorpaySecret,
+			});
+
+			let paymentResult = await razorpayInstance.payments.capture(
+				paymentId,
+				totalPrice
+			);
+
+			await UserPayments.update(
+				{ status: 1, payment_id: paymentId },
+				{ where: { payment_order_id: paymentOrderId } }
+			);
+			resolve(paymentResult);
+		} catch (err) {
+			reject(err);
+		}
+	});
+};
 
 const orderHandler = {
 	generateNewOrder: async (payload, userDetails) => {
@@ -93,6 +122,14 @@ const orderHandler = {
 							}
 						}
 
+						if (payload.paymentMethod == 1) {
+							await captureOrderPayments(
+								payload.paymentId,
+								subTotal + payload.deliveryCharges,
+								payload.paymentOrderId
+							);
+						}
+
 						let newOrder = await Orders.create({
 							user_id: userDetails.id,
 							delivery_charges: payload.deliveryCharges,
@@ -101,6 +138,7 @@ const orderHandler = {
 							user_address: payload.orderAddress,
 							status: 1,
 							net_amount: subTotal + payload.deliveryCharges,
+							payment_id: payload.paymentId,
 						});
 
 						let orderId = newOrder.id;

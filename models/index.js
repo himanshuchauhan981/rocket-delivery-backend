@@ -12,6 +12,7 @@ const Orders = require('./orders')(sequelize, Sequelize);
 const OrderProducts = require('./orderProducts')(sequelize, Sequelize);
 const Wishlist = require('./wishlist')(sequelize, Sequelize);
 const Settings = require('./settings')(sequelize, Sequelize);
+const UserPayments = require('./userPayments')(sequelize, Sequelize);
 
 SubCategories.belongsTo(Categories, { foreignKey: 'category_id' });
 
@@ -46,3 +47,4 @@ exports.Orders = Orders;
 exports.OrderProducts = OrderProducts;
 exports.Wishlist = Wishlist;
 exports.Settings = Settings;
+exports.UserPayments = UserPayments;

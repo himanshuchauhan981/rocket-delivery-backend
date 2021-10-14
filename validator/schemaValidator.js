@@ -121,4 +121,8 @@ module.exports = {
 			longitude: Joi.string().required(),
 		}),
 	},
+
+	GENERATE_ORDER: {
+		body: Joi.object({}),
+	},
 };

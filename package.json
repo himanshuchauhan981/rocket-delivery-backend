@@ -30,6 +30,7 @@
     "nodemailer": "^6.6.3",
     "otp-generator": "^2.0.1",
     "pg": "^8.7.1",
+    "razorpay": "^2.0.7",
     "sequelize": "^6.6.5"
   }
 }
