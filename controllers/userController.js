@@ -33,6 +33,17 @@ const userController = {
 		}
 	},
 
+	editAddress: async (req, res) => {
+		try {
+			let payload = req.body;
+			let userDetails = req.user;
+			let response = await userHandler.editAddress(payload, userDetails);
+			responseManager.sendSuccessResponse(response, res);
+		} catch (err) {
+			responseManager.sendErrorResponse(err, res);
+		}
+	},
+
 	viewUserAddress: async (req, res) => {
 		try {
 			let userDetails = req.user;

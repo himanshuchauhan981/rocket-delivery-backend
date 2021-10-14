@@ -105,4 +105,20 @@ module.exports = {
 			productHistoryId: Joi.number().required(),
 		}),
 	},
+	EDIT_ADDRESS: {
+		body: Joi.object({
+			addressId: Joi.number().required(),
+			fullName: Joi.string().required(),
+			mobileNumber: Joi.string().required().length(10),
+			houseNo: Joi.string().required(),
+			area: Joi.string().required(),
+			pinCode: Joi.string().required(),
+			landmark: Joi.string().required(),
+			city: Joi.string().required(),
+			state: Joi.string().required(),
+			countryCode: Joi.string().required(),
+			latitude: Joi.string().required(),
+			longitude: Joi.string().required(),
+		}),
+	},
 };

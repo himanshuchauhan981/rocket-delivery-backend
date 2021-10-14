@@ -52,6 +52,13 @@ module.exports = () => {
 		userController.addNewAddress
 	);
 
+	router.patch(
+		'/editAddress',
+		schemaMiddleware(schemaValidator.EDIT_ADDRESS),
+		authMiddleware,
+		userController.editAddress
+	);
+
 	router.get('/viewAddress', authMiddleware, userController.viewUserAddress);
 
 	router.post(

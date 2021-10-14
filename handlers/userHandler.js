@@ -172,6 +172,43 @@ const userHandler = {
 		});
 	},
 
+	editAddress: async (payload) => {
+		return new Promise((resolve, reject) => {
+			try {
+				Address.update(
+					{
+						full_name: payload.fullName,
+						mobile_number: payload.mobileNumber,
+						house_no: payload.houseNo,
+						area: payload.area,
+						pin_code: payload.pinCode,
+						landmark: payload.landmark,
+						city: payload.city,
+						state: payload.state,
+						country_code: payload.countryCode,
+						latitude: payload.latitude,
+						longitude: payload.longitude,
+					},
+					{ where: { id: payload.addressId } }
+				)
+					.then(() => {
+						resolve({ response: responseMessages.SUCCESS, finalData: {} });
+					})
+					.catch((err) => {
+						reject({
+							response: responseMessages.SERVER_ERROR,
+							finalData: {},
+						});
+					});
+			} catch (err) {
+				reject({
+					response: responseMessages.SERVER_ERROR,
+					finalData: {},
+				});
+			}
+		});
+	},
+
 	viewUserAddress: async (userDetails) => {
 		return new Promise((resolve, reject) => {
 			try {
@@ -185,7 +222,7 @@ const userHandler = {
 						'id',
 						[sequelize.col('user_id'), 'userId'],
 						[sequelize.col('full_name'), 'fullName'],
-						'pincode',
+						[sequelize.col('pincode'), 'pinCode'],
 						[sequelize.col('house_no'), 'houseNo'],
 						'area',
 						'city',
@@ -194,6 +231,7 @@ const userHandler = {
 						[sequelize.col('country_code'), 'countryCode'],
 						[sequelize.col('mobile_number'), 'mobileNumber'],
 					],
+					order: [['id']],
 				})
 					.then((userAddressesDetails) => {
 						resolve({
