@@ -4,6 +4,7 @@ const {
 	productController,
 	userController,
 	orderController,
+	paymentController,
 } = require('../controllers');
 const { authMiddleware, schemaMiddleware } = require('../middlewares');
 const { schemaValidator } = require('../validator');
@@ -152,6 +153,12 @@ module.exports = () => {
 		'/productOffers',
 		authMiddleware,
 		productController.getProductOffers
+	);
+
+	router.get(
+		'/razorpay/order',
+		authMiddleware,
+		paymentController.createRazorpayOrder
 	);
 
 	return router;

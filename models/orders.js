@@ -32,6 +32,11 @@ module.exports = (sequelize, Sequelize) => {
 				required: true,
 				allowNull: false,
 			},
+			payment_id: {
+				type: Sequelize.STRING,
+				required: false,
+				allowNull: true,
+			},
 			amount: {
 				type: Sequelize.FLOAT(20, 2),
 				required: true,
