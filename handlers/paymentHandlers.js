@@ -90,10 +90,20 @@ const paymentHandler = {
 					key_secret: razorpayData.razorpaySecret,
 				});
 
-				let paymentResult = await razorpayInstance.payments.refund(paymentId, {
+				await razorpayInstance.payments.refund(paymentId.trim(), {
 					amount,
 				});
+
+				await UserPayments.update(
+					{
+						status: 3,
+					},
+					{ where: { payment_id: paymentId.trim() } }
+				);
+
+				resolve({});
 			} catch (err) {
+				console.log(err);
 				reject(err);
 			}
 		});

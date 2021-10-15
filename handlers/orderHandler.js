@@ -390,13 +390,23 @@ const orderHandler = {
 			try {
 				Orders.findAll({
 					where: { id: payload.orderId },
-					attributes: ['id', 'status', 'payment_method'],
+					attributes: [
+						'id',
+						'status',
+						'payment_method',
+						'payment_id',
+						'net_amount',
+					],
 				})
 					.then(async (orderDetails) => {
 						if (orderDetails && orderDetails.length > 0) {
 							if (payload.status == 3) {
 								if (orderDetails[0].status == 1) {
 									if (orderDetails[0].payment_method === 1) {
+										await paymentHandler.refundOrderPayments(
+											orderDetails[0].payment_id,
+											parseFloat(orderDetails[0].net_amount) * 100
+										);
 									}
 									await Orders.update(
 										{ status: payload.status },
@@ -422,6 +432,7 @@ const orderHandler = {
 						});
 					});
 			} catch (err) {
+				console.log(err);
 				reject({
 					response: responseMessages.SERVER_ERROR,
 					finalData: {},
