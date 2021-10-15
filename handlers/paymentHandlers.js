@@ -1,7 +1,7 @@
-const { commonFunctions, responseMessages } = require('../lib');
 const Razorpay = require('razorpay');
 
 const { Users, UserPayments } = require('../models');
+const { commonFunctions, responseMessages } = require('../lib');
 
 const paymentHandler = {
 	createRazorpayOrder: async (payload, userDetails) => {
@@ -48,6 +48,53 @@ const paymentHandler = {
 					response: responseMessages.SERVER_ERROR,
 					finalData: {},
 				});
+			}
+		});
+	},
+
+	captureOrderPayments: (paymentId, totalPrice, paymentOrderId) => {
+		totalPrice = totalPrice * 100;
+		return new Promise(async (resolve, reject) => {
+			try {
+				let razorpayData = await commonFunctions.getRazorPayKeys();
+
+				let razorpayInstance = new Razorpay({
+					key_id: razorpayData.razorpayKey,
+					key_secret: razorpayData.razorpaySecret,
+				});
+
+				let paymentResult = await razorpayInstance.payments.capture(
+					paymentId,
+					totalPrice
+				);
+				console.log('>>>>>>>>>>capture payment', paymentResult);
+
+				await UserPayments.update(
+					{ status: 1, payment_id: paymentId },
+					{ where: { payment_order_id: paymentOrderId } }
+				);
+				resolve(paymentResult);
+			} catch (err) {
+				reject(err);
+			}
+		});
+	},
+
+	refundOrderPayments: (paymentId, amount) => {
+		return new Promise(async (resolve, reject) => {
+			try {
+				let razorpayData = await commonFunctions.getRazorPayKeys();
+
+				let razorpayInstance = new Razorpay({
+					key_id: razorpayData.razorpayKey,
+					key_secret: razorpayData.razorpaySecret,
+				});
+
+				let paymentResult = await razorpayInstance.payments.refund(paymentId, {
+					amount,
+				});
+			} catch (err) {
+				reject(err);
 			}
 		});
 	},

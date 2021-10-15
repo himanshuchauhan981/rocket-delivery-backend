@@ -5,6 +5,7 @@ const Razorpay = require('razorpay');
 const Op = sequelize.Op;
 
 const { responseMessages, commonFunctions } = require('../lib');
+const paymentHandler = require('./paymentHandlers');
 const {
 	Orders,
 	Address,
@@ -12,35 +13,7 @@ const {
 	Wishlist,
 	Products,
 	ProductPrice,
-	UserPayments,
 } = require('../models');
-
-const captureOrderPayments = (paymentId, totalPrice, paymentOrderId) => {
-	totalPrice = totalPrice * 100;
-	return new Promise(async (resolve, reject) => {
-		try {
-			let razorpayData = await commonFunctions.getRazorPayKeys();
-
-			let razorpayInstance = new Razorpay({
-				key_id: razorpayData.razorpayKey,
-				key_secret: razorpayData.razorpaySecret,
-			});
-
-			let paymentResult = await razorpayInstance.payments.capture(
-				paymentId,
-				totalPrice
-			);
-
-			await UserPayments.update(
-				{ status: 1, payment_id: paymentId },
-				{ where: { payment_order_id: paymentOrderId } }
-			);
-			resolve(paymentResult);
-		} catch (err) {
-			reject(err);
-		}
-	});
-};
 
 const orderHandler = {
 	generateNewOrder: async (payload, userDetails) => {
@@ -123,7 +96,7 @@ const orderHandler = {
 						}
 
 						if (payload.paymentMethod == 1) {
-							await captureOrderPayments(
+							await paymentHandler.captureOrderPayments(
 								payload.paymentId,
 								subTotal + payload.deliveryCharges,
 								payload.paymentOrderId
@@ -417,12 +390,14 @@ const orderHandler = {
 			try {
 				Orders.findAll({
 					where: { id: payload.orderId },
-					attributes: ['id', 'status'],
+					attributes: ['id', 'status', 'payment_method'],
 				})
 					.then(async (orderDetails) => {
 						if (orderDetails && orderDetails.length > 0) {
 							if (payload.status == 3) {
 								if (orderDetails[0].status == 1) {
+									if (orderDetails[0].payment_method === 1) {
+									}
 									await Orders.update(
 										{ status: payload.status },
 										{ where: { id: payload.orderId } }
