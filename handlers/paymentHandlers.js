@@ -67,10 +67,14 @@ const paymentHandler = {
 					paymentId,
 					totalPrice
 				);
-				console.log('>>>>>>>>>>capture payment', paymentResult);
 
 				await UserPayments.update(
-					{ status: 1, payment_id: paymentId },
+					{
+						status: 1,
+						payment_id: paymentId,
+						card_number: paymentResult.card.last4,
+						card_type: paymentResult.card.type,
+					},
 					{ where: { payment_order_id: paymentOrderId } }
 				);
 				resolve(paymentResult);
@@ -103,7 +107,6 @@ const paymentHandler = {
 
 				resolve({});
 			} catch (err) {
-				console.log(err);
 				reject(err);
 			}
 		});

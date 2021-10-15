@@ -27,6 +27,16 @@ module.exports = (sequelize, Sequelize) => {
 				defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
 				allowNull: false,
 			},
+			card_number: {
+				type: Sequelize.STRING,
+				required: false,
+				allowNull: true,
+			},
+			card_type: {
+				type: Sequelize.STRING,
+				required: false,
+				allowNull: true,
+			},
 		},
 		{ timestamps: false, tableName: 'user_payments' }
 	);

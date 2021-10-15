@@ -31,6 +31,10 @@ ProductHistory.belongsTo(ProductPrice, {
 Orders.belongsTo(Users, { foreignKey: 'user_id' });
 Orders.belongsTo(Address, { foreignKey: 'user_address' });
 Orders.hasMany(OrderProducts, { foreignKey: 'order_id' });
+Orders.belongsTo(UserPayments, {
+	foreignKey: 'payment_id',
+	targetKey: 'payment_id',
+});
 
 Wishlist.belongsTo(Products, { foreignKey: 'product_id' });
 Wishlist.belongsTo(Users, { foreignKey: 'user_id' });

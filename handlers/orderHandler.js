@@ -1,10 +1,9 @@
 const Handlebar = require('handlebars');
 const moment = require('moment');
 const sequelize = require('sequelize');
-const Razorpay = require('razorpay');
 const Op = sequelize.Op;
 
-const { responseMessages, commonFunctions } = require('../lib');
+const { responseMessages } = require('../lib');
 const paymentHandler = require('./paymentHandlers');
 const {
 	Orders,
@@ -13,6 +12,7 @@ const {
 	Wishlist,
 	Products,
 	ProductPrice,
+	UserPayments,
 } = require('../models');
 
 const orderHandler = {
@@ -294,7 +294,7 @@ const orderHandler = {
 					where: { user_id: userDetails.id },
 					attributes: [
 						'id',
-						'order_number',
+						[sequelize.col('order_number'), 'orderNumber'],
 						'net_amount',
 						'payment_method',
 						'user_address',
@@ -360,9 +360,14 @@ const orderHandler = {
 								'quantity',
 							],
 						},
+						{
+							model: UserPayments,
+							attributes: ['status', 'card_number', 'card_type'],
+						},
 					],
 					attributes: [
 						'id',
+						'status',
 						'payment_method',
 						'delivery_charges',
 						'amount',
