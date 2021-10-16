@@ -308,6 +308,7 @@ const orderHandler = {
 							attributes: ['id', 'product_name', 'product_image'],
 						},
 					],
+					order: [['created_at', 'DESC']],
 				})
 					.then((userOrderDetails) => {
 						resolve({
