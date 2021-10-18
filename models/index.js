@@ -13,6 +13,11 @@ const OrderProducts = require('./orderProducts')(sequelize, Sequelize);
 const Wishlist = require('./wishlist')(sequelize, Sequelize);
 const Settings = require('./settings')(sequelize, Sequelize);
 const UserPayments = require('./userPayments')(sequelize, Sequelize);
+const ProductReview = require('./productReview')(sequelize, Sequelize);
+const ProductReviewImages = require('./productReviewImages')(
+	sequelize,
+	Sequelize
+);
 
 SubCategories.belongsTo(Categories, { foreignKey: 'category_id' });
 
@@ -39,6 +44,9 @@ Orders.belongsTo(UserPayments, {
 Wishlist.belongsTo(Products, { foreignKey: 'product_id' });
 Wishlist.belongsTo(Users, { foreignKey: 'user_id' });
 
+ProductReview.belongsTo(Products, { foreignKey: 'product_id' });
+ProductReview.belongsTo(Users, { foreignKey: 'user_id' });
+
 exports.Users = Users;
 exports.Address = Address;
 exports.Categories = Categories;
@@ -52,3 +60,5 @@ exports.OrderProducts = OrderProducts;
 exports.Wishlist = Wishlist;
 exports.Settings = Settings;
 exports.UserPayments = UserPayments;
+exports.ProductReview = ProductReview;
+exports.ProductReviewImages = ProductReviewImages;
