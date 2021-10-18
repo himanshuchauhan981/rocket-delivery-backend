@@ -5,6 +5,7 @@ const {
 	userController,
 	orderController,
 	paymentController,
+	reviewController,
 } = require('../controllers');
 const { authMiddleware, schemaMiddleware } = require('../middlewares');
 const { schemaValidator } = require('../validator');
@@ -160,6 +161,8 @@ module.exports = () => {
 		authMiddleware,
 		paymentController.createRazorpayOrder
 	);
+
+	router.post('/review', authMiddleware, reviewController.saveNewReview);
 
 	return router;
 };
