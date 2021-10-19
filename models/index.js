@@ -44,8 +44,15 @@ Orders.belongsTo(UserPayments, {
 Wishlist.belongsTo(Products, { foreignKey: 'product_id' });
 Wishlist.belongsTo(Users, { foreignKey: 'user_id' });
 
-ProductReview.belongsTo(Products, { foreignKey: 'product_id' });
+OrderProducts.belongsTo(ProductReview, {
+	foreignKey: 'product_id',
+	targetKey: 'product_id',
+});
+
+// ProductReviewImages.belongsTo(ProductReview, { foreignKey: 'review_id' });
+
 ProductReview.belongsTo(Users, { foreignKey: 'user_id' });
+// ProductReview.hasMany(ProductReviewImages, { foreignKey: 'review_id' });
 
 exports.Users = Users;
 exports.Address = Address;

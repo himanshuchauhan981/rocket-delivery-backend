@@ -22,6 +22,11 @@ module.exports = (sequelize, Sequelize) => {
 				required: true,
 				allowNull: false,
 			},
+			order_id: {
+				type: Sequelize.INTEGER,
+				required: true,
+				allowNull: false,
+			},
 			product_id: {
 				type: Sequelize.INTEGER,
 				required: true,

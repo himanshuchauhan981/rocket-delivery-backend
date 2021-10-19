@@ -162,7 +162,12 @@ module.exports = () => {
 		paymentController.createRazorpayOrder
 	);
 
-	router.post('/review', authMiddleware, reviewController.saveNewReview);
+	router.post(
+		'/review',
+		schemaMiddleware(schemaValidator.ADD_NEW_REVIEW),
+		authMiddleware,
+		reviewController.saveNewReview
+	);
 
 	return router;
 };

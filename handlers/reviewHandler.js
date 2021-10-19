@@ -6,7 +6,6 @@ const { ProductReview, ProductReviewImages } = require('../models');
 
 const ratingHandler = {
 	saveNewReview: (payload, userDetails) => {
-		console.log(payload);
 		return new Promise((resolve, reject) => {
 			try {
 				let productImages = [];
@@ -17,6 +16,7 @@ const ratingHandler = {
 					user_id: userDetails.id,
 					product_id: payload.productId,
 					ratings: payload.ratings,
+					order_id: payload.orderId,
 				}).then(async (newReview) => {
 					payload.reviewImages.forEach((image) =>
 						productImages.push({ image, review_id: newReview.id })

@@ -13,6 +13,8 @@ const {
 	Products,
 	ProductPrice,
 	UserPayments,
+	ProductReview,
+	ProductReviewImages,
 } = require('../models');
 
 const orderHandler = {
@@ -360,6 +362,10 @@ const orderHandler = {
 								'price',
 								'quantity',
 							],
+							include: {
+								model: ProductReview,
+								attributes: ['id', 'headline', 'opinion', 'ratings'],
+							},
 						},
 						{
 							model: UserPayments,
@@ -376,7 +382,23 @@ const orderHandler = {
 						'user_address',
 						'created_at',
 					],
-				}).then((specificOrderDetails) => {
+				}).then(async (specificOrderDetails) => {
+					let order_products = specificOrderDetails.order_products;
+					for (let i = 0; i < order_products.length; i++) {
+						if (order_products[i].product_review != null) {
+							let review_id = order_products[i].product_review.id;
+							let review_images = await ProductReviewImages.findAll({
+								where: {
+									[Op.and]: [{ review_id: review_id }, { is_deleted: 0 }],
+								},
+								attributes: ['id', 'image'],
+							});
+							specificOrderDetails.order_products[
+								i
+							].product_review.review_images = review_images;
+						}
+					}
+
 					resolve({
 						response: responseMessages.SUCCESS,
 						finalData: { orderDetails: specificOrderDetails },
