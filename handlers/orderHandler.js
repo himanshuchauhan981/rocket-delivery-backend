@@ -3,7 +3,7 @@ const moment = require('moment');
 const sequelize = require('sequelize');
 const Op = sequelize.Op;
 
-const { responseMessages } = require('../lib');
+const { responseMessages, commonFunctions } = require('../lib');
 const paymentHandler = require('./paymentHandlers');
 const {
 	Orders,
@@ -23,13 +23,13 @@ const orderHandler = {
 			try {
 				let cartItems = payload.cartItems;
 				let subTotal = 0;
-				let currentDate = moment().format('YYYY-MM-DD HH:mm:ss');
 
 				let cartItemsId = cartItems.map((item) => item.id);
 				Products.findAll({
 					where: { id: { [Op.in]: cartItemsId } },
 					include: [{ model: ProductPrice, attributes: [] }],
 					attributes: [
+						'id',
 						'name',
 						'image',
 						[sequelize.col('max_quantity'), 'maxQuantity'],
@@ -51,36 +51,35 @@ const orderHandler = {
 				})
 					.then(async (productDetails) => {
 						for (let i = 0; i < productDetails.length; i++) {
-							let discountStartDate = moment(
-								productDetails[i].discountStartDate
-							).format('YYYY-MM-DD HH:mm:ss');
+							let discountDetails = commonFunctions.calculateDiscountPrice(
+								productDetails[i].discountStartDate,
+								productDetails[i].discountEndDate,
+								productDetails[i].discountPercent,
+								productDetails[i].price
+							);
 
-							let discountEndDate = moment(
-								productDetails[i].discountEndDate
-							).format('YYYY-MM-DD HH:mm:ss');
+							let cartItemIndex = cartItems.findIndex(
+								(item) => item.id == productDetails[i].id
+							);
 
-							if (
-								discountStartDate <= currentDate &&
-								discountEndDate >= currentDate
-							) {
-								let discountPrice =
-									(productDetails[0].discountPercent / 100) *
-									productDetails[i].price;
-								discountPrice = productDetails[0].price - discountPrice;
-								cartItems[i].price = discountPrice;
+							if (discountDetails.discountStatus) {
+								cartItems[cartItemIndex].price = discountDetails.discountPrice;
 							} else {
-								cartItems[i].price = productDetails[0].price;
+								cartItems[cartItemIndex].price = productDetails[i].price;
 							}
 
-							cartItems[i].productName = productDetails[0].name;
+							cartItems[cartItemIndex].productName = productDetails[i].name;
+							cartItems[cartItemIndex].image = productDetails[i].image;
 
-							cartItems[i].image = productDetails[0].image;
 							subTotal =
 								subTotal +
 								parseFloat(cartItems[i].price) *
 									parseInt(cartItems[i].quantity, 10);
 
-							if (productDetails[0].maxQuantity < cartItems[i].quantity) {
+							if (
+								productDetails[i].maxQuantity <
+								cartItems[cartItemIndex].quantity
+							) {
 								let template = Handlebar.compile(
 									responseMessages.INSUFFICIENT_QUANTITY.MSG
 								);
@@ -117,7 +116,6 @@ const orderHandler = {
 						});
 
 						let orderId = newOrder.id;
-
 						for (let i = 0; i < cartItems.length; i++) {
 							await OrderProducts.create({
 								order_id: orderId,
@@ -460,7 +458,6 @@ const orderHandler = {
 						});
 					});
 			} catch (err) {
-				console.log(err);
 				reject({
 					response: responseMessages.SERVER_ERROR,
 					finalData: {},
