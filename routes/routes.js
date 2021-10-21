@@ -169,5 +169,7 @@ module.exports = () => {
 		reviewController.saveNewReview
 	);
 
+	router.patch('/review', authMiddleware, reviewController.updateReview);
+
 	return router;
 };

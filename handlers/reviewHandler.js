@@ -38,6 +38,59 @@ const ratingHandler = {
 			}
 		});
 	},
+
+	updateReview: async (payload) => {
+		return new Promise((resolve, reject) => {
+			try {
+				ProductReview.update(
+					{
+						headline: payload.headline,
+						opinion: payload.opinion,
+						ratings: payload.ratings,
+					},
+					{ where: { id: payload.reviewId } }
+				)
+					.then(async () => {
+						let productImages = [];
+
+						for (let i = 0; i < payload.removeImageId.length; i++) {
+							console.log(i);
+							await ProductReviewImages.update(
+								{ is_deleted: 1 },
+								{ where: { id: payload.removeImageId[i] } }
+							);
+						}
+
+						payload.reviewImages.forEach((item) => {
+							if (item.id === undefined) {
+								productImages.push({
+									image: item.downloadURL,
+									review_id: payload.reviewId,
+								});
+							}
+						});
+						if (productImages.length !== 0) {
+							await ProductReviewImages.bulkCreate(productImages);
+						}
+						resolve({
+							response: responseMessages.SUCCESS,
+							finalData: {},
+						});
+					})
+					.catch((err) => {
+						reject({
+							response: responseMessages.SERVER_ERROR,
+							finalData: {},
+						});
+					});
+			} catch (err) {
+				reject({
+					response: responseMessages.SERVER_ERROR,
+					finalData: {},
+				});
+			}
+		});
+	},
 };
 
 module.exports = ratingHandler;

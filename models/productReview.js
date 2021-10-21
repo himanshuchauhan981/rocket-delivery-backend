@@ -48,6 +48,7 @@ module.exports = (sequelize, Sequelize) => {
 				defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
 				allowNull: false,
 			},
+			review_images: { type: Sequelize.VIRTUAL },
 		},
 		{ timestamps: false, tableName: 'product_review' }
 	);
