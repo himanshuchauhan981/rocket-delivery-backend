@@ -3,7 +3,7 @@ const moment = require('moment');
 const sequelize = require('sequelize');
 const Op = sequelize.Op;
 
-const { responseMessages } = require('../lib');
+const { responseMessages, commonFunctions } = require('../lib');
 const paymentHandler = require('./paymentHandlers');
 const {
 	Orders,
@@ -13,6 +13,8 @@ const {
 	Products,
 	ProductPrice,
 	UserPayments,
+	ProductReview,
+	ProductReviewImages,
 } = require('../models');
 
 const orderHandler = {
@@ -21,13 +23,13 @@ const orderHandler = {
 			try {
 				let cartItems = payload.cartItems;
 				let subTotal = 0;
-				let currentDate = moment().format('YYYY-MM-DD HH:mm:ss');
 
 				let cartItemsId = cartItems.map((item) => item.id);
 				Products.findAll({
 					where: { id: { [Op.in]: cartItemsId } },
 					include: [{ model: ProductPrice, attributes: [] }],
 					attributes: [
+						'id',
 						'name',
 						'image',
 						[sequelize.col('max_quantity'), 'maxQuantity'],
@@ -49,36 +51,35 @@ const orderHandler = {
 				})
 					.then(async (productDetails) => {
 						for (let i = 0; i < productDetails.length; i++) {
-							let discountStartDate = moment(
-								productDetails[i].discountStartDate
-							).format('YYYY-MM-DD HH:mm:ss');
+							let discountDetails = commonFunctions.calculateDiscountPrice(
+								productDetails[i].discountStartDate,
+								productDetails[i].discountEndDate,
+								productDetails[i].discountPercent,
+								productDetails[i].price
+							);
 
-							let discountEndDate = moment(
-								productDetails[i].discountEndDate
-							).format('YYYY-MM-DD HH:mm:ss');
+							let cartItemIndex = cartItems.findIndex(
+								(item) => item.id == productDetails[i].id
+							);
 
-							if (
-								discountStartDate <= currentDate &&
-								discountEndDate >= currentDate
-							) {
-								let discountPrice =
-									(productDetails[0].discountPercent / 100) *
-									productDetails[i].price;
-								discountPrice = productDetails[0].price - discountPrice;
-								cartItems[i].price = discountPrice;
+							if (discountDetails.discountStatus) {
+								cartItems[cartItemIndex].price = discountDetails.discountPrice;
 							} else {
-								cartItems[i].price = productDetails[0].price;
+								cartItems[cartItemIndex].price = productDetails[i].price;
 							}
 
-							cartItems[i].productName = productDetails[0].name;
+							cartItems[cartItemIndex].productName = productDetails[i].name;
+							cartItems[cartItemIndex].image = productDetails[i].image;
 
-							cartItems[i].image = productDetails[0].image;
 							subTotal =
 								subTotal +
 								parseFloat(cartItems[i].price) *
 									parseInt(cartItems[i].quantity, 10);
 
-							if (productDetails[0].maxQuantity < cartItems[i].quantity) {
+							if (
+								productDetails[i].maxQuantity <
+								cartItems[cartItemIndex].quantity
+							) {
 								let template = Handlebar.compile(
 									responseMessages.INSUFFICIENT_QUANTITY.MSG
 								);
@@ -115,7 +116,6 @@ const orderHandler = {
 						});
 
 						let orderId = newOrder.id;
-
 						for (let i = 0; i < cartItems.length; i++) {
 							await OrderProducts.create({
 								order_id: orderId,
@@ -308,6 +308,7 @@ const orderHandler = {
 							attributes: ['id', 'product_name', 'product_image'],
 						},
 					],
+					order: [['created_at', 'DESC']],
 				})
 					.then((userOrderDetails) => {
 						resolve({
@@ -359,6 +360,28 @@ const orderHandler = {
 								'price',
 								'quantity',
 							],
+							include: {
+								model: ProductReview,
+								on: {
+									col1: sequelize.where(
+										sequelize.col('order_products.product_id'),
+										'=',
+										sequelize.col('order_products.product_review.product_id')
+									),
+									col2: sequelize.where(
+										sequelize.col('order_products.product_review.is_deleted'),
+										'=',
+										0
+									),
+								},
+								attributes: [
+									'id',
+									'headline',
+									'opinion',
+									'ratings',
+									'is_deleted',
+								],
+							},
 						},
 						{
 							model: UserPayments,
@@ -375,7 +398,23 @@ const orderHandler = {
 						'user_address',
 						'created_at',
 					],
-				}).then((specificOrderDetails) => {
+				}).then(async (specificOrderDetails) => {
+					let order_products = specificOrderDetails.order_products;
+					for (let i = 0; i < order_products.length; i++) {
+						if (order_products[i].product_review != null) {
+							let review_id = order_products[i].product_review.id;
+							let review_images = await ProductReviewImages.findAll({
+								where: {
+									[Op.and]: [{ review_id: review_id }, { is_deleted: 0 }],
+								},
+								attributes: ['id', 'image'],
+							});
+							specificOrderDetails.order_products[
+								i
+							].product_review.review_images = review_images;
+						}
+					}
+
 					resolve({
 						response: responseMessages.SUCCESS,
 						finalData: { orderDetails: specificOrderDetails },
@@ -437,7 +476,6 @@ const orderHandler = {
 						});
 					});
 			} catch (err) {
-				console.log(err);
 				reject({
 					response: responseMessages.SERVER_ERROR,
 					finalData: {},

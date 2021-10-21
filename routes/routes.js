@@ -5,6 +5,7 @@ const {
 	userController,
 	orderController,
 	paymentController,
+	reviewController,
 } = require('../controllers');
 const { authMiddleware, schemaMiddleware } = require('../middlewares');
 const { schemaValidator } = require('../validator');
@@ -159,6 +160,22 @@ module.exports = () => {
 		'/razorpay/order',
 		authMiddleware,
 		paymentController.createRazorpayOrder
+	);
+
+	router.post(
+		'/review',
+		schemaMiddleware(schemaValidator.ADD_NEW_REVIEW),
+		authMiddleware,
+		reviewController.saveNewReview
+	);
+
+	router.patch('/review', authMiddleware, reviewController.updateReview);
+
+	router.delete(
+		'/review',
+		authMiddleware,
+		schemaMiddleware(schemaValidator.DELETE_REVIEW),
+		reviewController.deleteReview
 	);
 
 	return router;

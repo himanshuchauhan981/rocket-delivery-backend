@@ -125,4 +125,20 @@ module.exports = {
 	GENERATE_ORDER: {
 		body: Joi.object({}),
 	},
+
+	ADD_NEW_REVIEW: {
+		body: Joi.object({
+			orderId: Joi.number().required(),
+			headline: Joi.string().required(),
+			opinion: Joi.string().required(),
+			reviewImages: Joi.array().optional(),
+			productId: Joi.number().required(),
+			ratings: Joi.number().required(),
+		}),
+	},
+	DELETE_REVIEW: {
+		body: Joi.object({
+			reviewId: Joi.number().required(),
+		}),
+	},
 };
