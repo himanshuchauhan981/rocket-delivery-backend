@@ -12,6 +12,7 @@ const {
 	ProductHistory,
 	Orders,
 	OrderProducts,
+	ProductReview,
 } = require('../models');
 
 const mostBookedProducts = async (userDetails) => {
@@ -279,7 +280,7 @@ const productHandler = {
 	getProductDetails: async (payload) => {
 		return new Promise((resolve, reject) => {
 			try {
-				Products.findAll({
+				Products.findOne({
 					where: { id: payload.productId },
 					include: [{ model: ProductPrice, attributes: [] }],
 					attributes: [
@@ -304,36 +305,40 @@ const productHandler = {
 					],
 					raw: true,
 				})
-					.then((productDetails) => {
-						let currentDate = moment().format('YYYY-MM-DD HH:mm:ss');
+					.then(async (productDetails) => {
+						let discountDetails = commonFunctions.calculateDiscountPrice(
+							productDetails.discountStartDate,
+							productDetails.discountEndDate,
+							productDetails.discountPercent,
+							productDetails.price
+						);
+						productDetails.discountStatus = discountDetails.discountStatus;
+						productDetails.discountPrice = discountDetails.discountPrice;
 
-						for (let i = 0; i < productDetails.length; i++) {
-							let discountStartDate = moment(
-								productDetails[i].discountStartDate
-							).format('YYYY-MM-DD HH:mm:ss');
-
-							let discountEndDate = moment(
-								productDetails[i].discountEndDate
-							).format('YYYY-MM-DD HH:mm:ss');
-
-							if (
-								discountStartDate <= currentDate &&
-								discountEndDate >= currentDate
-							) {
-								productDetails[i].discountStatus = true;
-								let discountPrice =
-									(productDetails[i].discountPercent / 100) *
-									productDetails[i].price;
-								discountPrice = productDetails[i].price - discountPrice;
-								productDetails[i].discountPrice = discountPrice;
-							} else {
-								productDetails[i].discountStatus = false;
-							}
+						let productReviewDetails = await ProductReview.findAll({
+							where: {
+								[Op.and]: [
+									{ product_id: payload.productId },
+									{ is_deleted: 0 },
+								],
+							},
+							attributes: ['id', 'ratings'],
+						});
+						let ratingCount = 0;
+						let totalStars = productReviewDetails.length * 5;
+						for (let i = 0; i < productReviewDetails.length; i++) {
+							ratingCount = ratingCount + productReviewDetails[i].ratings;
 						}
+
+						let avergeRating = ratingCount / productReviewDetails.length;
 
 						resolve({
 							response: responseMessages.SUCCESS,
-							finalData: { productDetails: productDetails[0] },
+							finalData: {
+								productDetails: productDetails,
+								productRatings: avergeRating,
+								totalReviews: productReviewDetails.length,
+							},
 						});
 					})
 					.catch((err) => {
