@@ -91,6 +91,27 @@ const ratingHandler = {
 			}
 		});
 	},
+
+	deleteReview: (payload) => {
+		return new Promise((resolve, reject) => {
+			try {
+				ProductReview.update(
+					{ is_deleted: 1 },
+					{ where: { id: payload.reviewId } }
+				).then(() => {
+					resolve({
+						response: responseMessages.SUCCESS,
+						finalData: {},
+					});
+				});
+			} catch (err) {
+				reject({
+					response: responseMessages.SERVER_ERROR,
+					finalData: {},
+				});
+			}
+		});
+	},
 };
 
 module.exports = ratingHandler;

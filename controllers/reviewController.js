@@ -22,6 +22,16 @@ const ratingController = {
 			responseManager.sendErrorResponse(err, res);
 		}
 	},
+
+	deleteReview: async (req, res) => {
+		try {
+			let payload = req.body;
+			let response = await reviewHandler.deleteReview(payload);
+			responseManager.sendSuccessResponse(response, res);
+		} catch (err) {
+			responseManager.sendErrorResponse(err, res);
+		}
+	},
 };
 
 module.exports = ratingController;

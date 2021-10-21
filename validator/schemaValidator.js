@@ -136,4 +136,9 @@ module.exports = {
 			ratings: Joi.number().required(),
 		}),
 	},
+	DELETE_REVIEW: {
+		body: Joi.object({
+			reviewId: Joi.number().required(),
+		}),
+	},
 };

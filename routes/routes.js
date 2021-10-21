@@ -171,5 +171,12 @@ module.exports = () => {
 
 	router.patch('/review', authMiddleware, reviewController.updateReview);
 
+	router.delete(
+		'/review',
+		authMiddleware,
+		schemaMiddleware(schemaValidator.DELETE_REVIEW),
+		reviewController.deleteReview
+	);
+
 	return router;
 };

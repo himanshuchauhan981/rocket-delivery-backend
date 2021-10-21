@@ -362,7 +362,25 @@ const orderHandler = {
 							],
 							include: {
 								model: ProductReview,
-								attributes: ['id', 'headline', 'opinion', 'ratings'],
+								on: {
+									col1: sequelize.where(
+										sequelize.col('order_products.product_id'),
+										'=',
+										sequelize.col('order_products.product_review.product_id')
+									),
+									col2: sequelize.where(
+										sequelize.col('order_products.product_review.is_deleted'),
+										'=',
+										0
+									),
+								},
+								attributes: [
+									'id',
+									'headline',
+									'opinion',
+									'ratings',
+									'is_deleted',
+								],
 							},
 						},
 						{
