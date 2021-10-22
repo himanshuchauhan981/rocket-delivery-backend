@@ -54,6 +54,10 @@ module.exports = (sequelize, Sequelize) => {
 				defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
 				allowNull: false,
 			},
+			fcm_token: {
+				type: Sequelize.STRING,
+				allowNull: true,
+			},
 		},
 		{ timestamps: false }
 	);

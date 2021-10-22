@@ -31,6 +31,7 @@ module.exports = {
 		body: Joi.object({
 			email: Joi.string().required(),
 			password: Joi.string().required(),
+			fcm_token: Joi.string().required(),
 		}),
 	},
 	ADD_NEW_ADDRESS: {

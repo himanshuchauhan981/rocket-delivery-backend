@@ -96,7 +96,7 @@ const userHandler = {
 
 	loginExistingUser: async (payload) => {
 		return new Promise((resolve, reject) => {
-			findExistingUser(payload).then((existingUser) => {
+			findExistingUser(payload).then(async (existingUser) => {
 				if (existingUser.length !== 0) {
 					let comparedPassword = commonFunctions.compareHashedPassword(
 						payload.password,
@@ -108,6 +108,11 @@ const userHandler = {
 							id: existingUser[0].id,
 							type: existingUser[0].type,
 						});
+
+						await Users.update(
+							{ fcm_token: payload.fcm_token },
+							{ where: { id: existingUser[0].id } }
+						);
 
 						resolve({
 							response: responseMessages.SUCCESS,
