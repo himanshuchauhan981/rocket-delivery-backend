@@ -66,7 +66,7 @@ const userHandler = {
 						email: payload.email,
 						password: hashedPassword,
 						country_code: payload.countryCode,
-						mobile_number: payload.mobileNumber,
+						mobile_number: payload.mobileNo,
 						type: payload.type,
 					}).then((newUser) => {
 						let token = commonFunctions.generateJWTToken({

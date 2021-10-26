@@ -24,7 +24,7 @@ module.exports = {
 			password: Joi.string().required(),
 			countryCode: Joi.string().required(),
 			type: Joi.string().required(),
-			mobileNumber: Joi.string().required(),
+			mobileNo: Joi.string().required(),
 		}),
 	},
 	LOGIN: {

@@ -19,7 +19,6 @@ const mostBookedProducts = async (userDetails) => {
 	return new Promise((resolve, reject) => {
 		try {
 			Orders.findAll({
-				where: { user_id: userDetails.id },
 				include: [
 					{
 						model: OrderProducts,
@@ -34,7 +33,7 @@ const mostBookedProducts = async (userDetails) => {
 				order: [['count', 'DESC']],
 				raw: true,
 				subQuery: false,
-				limit: 5,
+				limit: 4,
 			})
 				.then(async (orderDetails) => {
 					let finalOrderDetails = [];
@@ -175,7 +174,7 @@ const productHandler = {
 		return new Promise((resolve, reject) => {
 			try {
 				Categories.findAll({
-					where: { status: 'ACTIVE' },
+					where: { status: 1 },
 					attributes: [
 						'id',
 						'name',
@@ -246,8 +245,8 @@ const productHandler = {
 			try {
 				Products.findAll({
 					where: payload.subCategoryId
-						? { status: 'ACTIVE' }
-						: { category_id: payload.categoryId, status: 'ACTIVE' },
+						? { status: 1 }
+						: { category_id: payload.categoryId, status: 1 },
 					include: [
 						{ model: ProductPrice, attributes: [] },
 						{ model: MeasuringUnits, attributes: [] },
