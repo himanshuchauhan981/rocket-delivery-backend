@@ -54,7 +54,6 @@ const ratingHandler = {
 						let productImages = [];
 
 						for (let i = 0; i < payload.removeImageId.length; i++) {
-							console.log(i);
 							await ProductReviewImages.update(
 								{ is_deleted: 1 },
 								{ where: { id: payload.removeImageId[i] } }

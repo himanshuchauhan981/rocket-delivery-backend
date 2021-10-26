@@ -44,6 +44,7 @@ const mostBookedProducts = async (userDetails) => {
 							where: { id: orderDetails[i].product_id },
 							include: [{ model: ProductPrice, attributes: [] }],
 							attributes: [
+								'id',
 								'name',
 								'image',
 								'product_price.actual_price',
@@ -62,6 +63,25 @@ const mostBookedProducts = async (userDetails) => {
 								productDetails[0].actual_price
 							);
 
+							let productReviewDetails = await ProductReview.findAll({
+								where: {
+									[Op.and]: [
+										{ product_id: orderDetails[i].product_id },
+										{ is_deleted: 0 },
+									],
+								},
+								attributes: ['id', 'ratings'],
+							});
+							let ratingCount = 0;
+							for (let i = 0; i < productReviewDetails.length; i++) {
+								ratingCount = ratingCount + productReviewDetails[i].ratings;
+							}
+
+							let averageRatings =
+								productReviewDetails.length === 0
+									? 0
+									: ratingCount / productReviewDetails.length;
+
 							orderObject.count = orderDetails[i].count;
 							orderObject.product_id = orderDetails[i].product_id;
 							orderObject.product_name = productDetails[0].name;
@@ -74,6 +94,7 @@ const mostBookedProducts = async (userDetails) => {
 							orderObject.discount_end_date =
 								productDetails[0].discount_end_date;
 							orderObject.discount_percent = productDetails[0].discount_percent;
+							orderObject.averageRatings = averageRatings;
 						}
 						finalOrderDetails.push(orderObject);
 					}
@@ -90,7 +111,6 @@ const mostBookedProducts = async (userDetails) => {
 
 const mostViewedProducts = async (userDetails, mostViewedHistory) => {
 	return new Promise((resolve, reject) => {
-		console.log(mostViewedHistory);
 		try {
 			ProductHistory.findAll({
 				where: { [Op.and]: [{ user_id: userDetails.id }, { is_deleted: 0 }] },
@@ -124,10 +144,9 @@ const mostViewedProducts = async (userDetails, mostViewedHistory) => {
 				],
 				raw: true,
 				order: mostViewedHistory ? [['view_count', 'DESC']] : [],
-				limit: mostViewedHistory ? 5 : null,
+				limit: mostViewedHistory ? 2 : null,
 			})
 				.then((userProductHistory) => {
-					console.log(userProductHistory.length);
 					for (let i = 0; i < userProductHistory.length; i++) {
 						let discountDetails = commonFunctions.calculateDiscountPrice(
 							userProductHistory[i].discountStartDate,
@@ -143,7 +162,6 @@ const mostViewedProducts = async (userDetails, mostViewedHistory) => {
 					resolve(userProductHistory);
 				})
 				.catch((err) => {
-					console.log(err);
 					reject(err);
 				});
 		} catch (err) {
@@ -477,6 +495,8 @@ const productHandler = {
 						],
 					],
 					raw: true,
+					order: [['name']],
+					limit: 5,
 				})
 					.then((productDetails) => {
 						for (let i = 0; i < productDetails.length; i++) {
