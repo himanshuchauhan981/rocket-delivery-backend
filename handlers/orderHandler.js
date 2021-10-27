@@ -186,12 +186,13 @@ const orderHandler = {
 						[Op.and]: [
 							{ product_id: payload.productId },
 							{ user_id: userDetails.id },
+							{ is_deleted: 0 },
 						],
 					},
 					attributes: ['id'],
 				});
 
-				if (existingWishlistItem && existingWishlistItem.length > 0) {
+				if (existingWishlistItem.length == 0) {
 					Wishlist.create({
 						product_id: payload.productId,
 						user_id: userDetails.id,

@@ -20,7 +20,7 @@ module.exports = (sequelize, Sequelize) => {
 			is_deleted: {
 				type: Sequelize.INTEGER,
 				required: true,
-				allowNull: false,
+				defaultValue: 0,
 			},
 			created_at: {
 				type: 'TIMESTAMP',

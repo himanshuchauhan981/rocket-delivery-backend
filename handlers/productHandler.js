@@ -387,6 +387,7 @@ const productHandler = {
 						'image',
 						'status',
 						'max_quantity',
+						'purchase_limit',
 						[sequelize.col('product_price.actual_price'), 'price'],
 						[
 							sequelize.col('product_price.discount_percent'),
