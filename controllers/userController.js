@@ -1,112 +1,136 @@
-const { responseManager } = require('../lib');
-const { userHandler } = require('../handlers');
+import UserHandler from '../handlers/userHandler.js';
+import ResponseManager from '../lib/responseManager.js';
 
-const userController = {
-	createNewUser: async (req, res) => {
+export default class UserController extends UserHandler {
+	responseManager;
+
+	constructor() {
+		super();
+		console.log('>>>>>>>>User controller constructor');
+		this.responseManager = new ResponseManager();
+	}
+
+	async login(req, res) {
 		try {
 			let payload = req.body;
-			let response = await userHandler.createNewUser(payload);
-			responseManager.sendSuccessResponse(response, res);
+			let response = await super.login(payload);
+			this.responseManager.sendSuccessResponse(response, res);
 		} catch (err) {
-			responseManager.sendErrorResponse(err, res);
+			console.log('>>>>.final err', err);
+			this.responseManager.sendErrorResponse(err, res);
+			// this.responseManager.sendErrorResponse(err, res);
 		}
-	},
+	}
+}
+// const { responseManager } = require('../lib');
+// const { userHandler } = require('../handlers');
 
-	loginExistingUser: async (req, res) => {
-		try {
-			let payload = req.body;
-			let response = await userHandler.loginExistingUser(payload);
-			responseManager.sendSuccessResponse(response, res);
-		} catch (err) {
-			responseManager.sendErrorResponse(err, res);
-		}
-	},
+// const userController = {
+// 	createNewUser: async (req, res) => {
+// 		try {
+// 			let payload = req.body;
+// 			let response = await userHandler.createNewUser(payload);
+// 			responseManager.sendSuccessResponse(response, res);
+// 		} catch (err) {
+// 			responseManager.sendErrorResponse(err, res);
+// 		}
+// 	},
 
-	addNewAddress: async (req, res) => {
-		try {
-			let payload = req.body;
-			let userDetails = req.user;
-			let response = await userHandler.addNewAddress(payload, userDetails);
-			responseManager.sendSuccessResponse(response, res);
-		} catch (err) {
-			responseManager.sendErrorResponse(err, res);
-		}
-	},
+// 	loginExistingUser: async (req, res) => {
+// 		try {
+// 			let payload = req.body;
+// 			let response = await userHandler.loginExistingUser(payload);
+// 			responseManager.sendSuccessResponse(response, res);
+// 		} catch (err) {
+// 			responseManager.sendErrorResponse(err, res);
+// 		}
+// 	},
 
-	editAddress: async (req, res) => {
-		try {
-			let payload = req.body;
-			let userDetails = req.user;
-			let response = await userHandler.editAddress(payload, userDetails);
-			responseManager.sendSuccessResponse(response, res);
-		} catch (err) {
-			responseManager.sendErrorResponse(err, res);
-		}
-	},
+// 	addNewAddress: async (req, res) => {
+// 		try {
+// 			let payload = req.body;
+// 			let userDetails = req.user;
+// 			let response = await userHandler.addNewAddress(payload, userDetails);
+// 			responseManager.sendSuccessResponse(response, res);
+// 		} catch (err) {
+// 			responseManager.sendErrorResponse(err, res);
+// 		}
+// 	},
 
-	viewUserAddress: async (req, res) => {
-		try {
-			let userDetails = req.user;
-			let response = await userHandler.viewUserAddress(userDetails);
-			responseManager.sendSuccessResponse(response, res);
-		} catch (err) {
-			responseManager.sendErrorResponse(err, res);
-		}
-	},
+// 	editAddress: async (req, res) => {
+// 		try {
+// 			let payload = req.body;
+// 			let userDetails = req.user;
+// 			let response = await userHandler.editAddress(payload, userDetails);
+// 			responseManager.sendSuccessResponse(response, res);
+// 		} catch (err) {
+// 			responseManager.sendErrorResponse(err, res);
+// 		}
+// 	},
 
-	viewUserDetails: async (req, res) => {
-		try {
-			let userDetails = req.user;
-			let responseDetails = await userHandler.viewUserDetails(userDetails);
-			responseManager.sendSuccessResponse(responseDetails, res);
-		} catch (err) {
-			responseManager.sendErrorResponse(err, res);
-		}
-	},
+// 	viewUserAddress: async (req, res) => {
+// 		try {
+// 			let userDetails = req.user;
+// 			let response = await userHandler.viewUserAddress(userDetails);
+// 			responseManager.sendSuccessResponse(response, res);
+// 		} catch (err) {
+// 			responseManager.sendErrorResponse(err, res);
+// 		}
+// 	},
 
-	updateUserDetails: async (req, res) => {
-		try {
-			let payload = req.body;
-			let userDetails = req.user;
-			let responseDetails = await userHandler.updateUserDetails(
-				payload,
-				userDetails
-			);
-			responseManager.sendSuccessResponse(responseDetails, res);
-		} catch (err) {
-			responseManager.sendErrorResponse(err, res);
-		}
-	},
+// 	viewUserDetails: async (req, res) => {
+// 		try {
+// 			let userDetails = req.user;
+// 			let responseDetails = await userHandler.viewUserDetails(userDetails);
+// 			responseManager.sendSuccessResponse(responseDetails, res);
+// 		} catch (err) {
+// 			responseManager.sendErrorResponse(err, res);
+// 		}
+// 	},
 
-	forgetPassword: async (req, res) => {
-		try {
-			let payload = req.body;
-			let responseDetails = await userHandler.forgetPassword(payload);
-			responseManager.sendSuccessResponse(responseDetails, res);
-		} catch (err) {
-			responseManager.sendErrorResponse(err, res);
-		}
-	},
+// 	updateUserDetails: async (req, res) => {
+// 		try {
+// 			let payload = req.body;
+// 			let userDetails = req.user;
+// 			let responseDetails = await userHandler.updateUserDetails(
+// 				payload,
+// 				userDetails
+// 			);
+// 			responseManager.sendSuccessResponse(responseDetails, res);
+// 		} catch (err) {
+// 			responseManager.sendErrorResponse(err, res);
+// 		}
+// 	},
 
-	verifyOTP: async (req, res) => {
-		try {
-			let payload = req.body;
-			let responseDetails = await userHandler.verifyOTP(payload);
-			responseManager.sendSuccessResponse(responseDetails, res);
-		} catch (err) {
-			responseManager.sendErrorResponse(err, res);
-		}
-	},
+// 	forgetPassword: async (req, res) => {
+// 		try {
+// 			let payload = req.body;
+// 			let responseDetails = await userHandler.forgetPassword(payload);
+// 			responseManager.sendSuccessResponse(responseDetails, res);
+// 		} catch (err) {
+// 			responseManager.sendErrorResponse(err, res);
+// 		}
+// 	},
 
-	updateUserPassword: async (req, res) => {
-		try {
-			let payload = req.body;
-			let responseDetails = await userHandler.updateUserPassword(payload);
-			responseManager.sendSuccessResponse(responseDetails, res);
-		} catch (err) {
-			responseManager.sendErrorResponse(err, res);
-		}
-	},
-};
+// 	verifyOTP: async (req, res) => {
+// 		try {
+// 			let payload = req.body;
+// 			let responseDetails = await userHandler.verifyOTP(payload);
+// 			responseManager.sendSuccessResponse(responseDetails, res);
+// 		} catch (err) {
+// 			responseManager.sendErrorResponse(err, res);
+// 		}
+// 	},
 
-module.exports = userController;
+// 	updateUserPassword: async (req, res) => {
+// 		try {
+// 			let payload = req.body;
+// 			let responseDetails = await userHandler.updateUserPassword(payload);
+// 			responseManager.sendSuccessResponse(responseDetails, res);
+// 		} catch (err) {
+// 			responseManager.sendErrorResponse(err, res);
+// 		}
+// 	},
+// };
+
+// module.exports = userController;

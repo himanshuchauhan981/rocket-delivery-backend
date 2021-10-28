@@ -2,7 +2,9 @@ import UserController from '../controllers/userController.js';
 
 export default class UserRoute {
 	async initiateUserRoutes(apiRouter) {
-		apiRouter.post('/login', UserController.prototype.login);
+		let userController = new UserController();
+
+		apiRouter.post('/login', userController.login);
 
 		return apiRouter;
 	}
