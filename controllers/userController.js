@@ -2,23 +2,13 @@ import UserHandler from '../handlers/userHandler.js';
 import ResponseManager from '../lib/responseManager.js';
 
 export default class UserController extends UserHandler {
-	responseManager;
-
-	constructor() {
-		super();
-		console.log('>>>>>>>>User controller constructor');
-		this.responseManager = new ResponseManager();
-	}
-
 	async login(req, res) {
 		try {
 			let payload = req.body;
 			let response = await super.login(payload);
-			this.responseManager.sendSuccessResponse(response, res);
+			ResponseManager.prototype.sendSuccessResponse(response, res);
 		} catch (err) {
-			console.log('>>>>.final err', err);
-			this.responseManager.sendErrorResponse(err, res);
-			// this.responseManager.sendErrorResponse(err, res);
+			ResponseManager.prototype.sendErrorResponse(err, res);
 		}
 	}
 }

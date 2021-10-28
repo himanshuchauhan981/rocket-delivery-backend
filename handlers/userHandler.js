@@ -1,12 +1,13 @@
 import sequelize from 'sequelize';
 
 import Users from '../models/users.js';
+import Common from '../lib/commonFunctions.js';
+import ResponseMessages from '../lib/responseMessages.js';
 
-const findExistingUser = async (Op, payload) => {
-	console.log(Op);
+const findExistingUser = async (payload) => {
 	return new Promise((resolve, reject) => {
 		let existingUserQuery = {
-			[Op.or]: [
+			[sequelize.Op.or]: [
 				{ email: payload.email },
 				{
 					mobile_number: payload.mobileNumber ? payload.mobileNumber : null,
@@ -19,7 +20,6 @@ const findExistingUser = async (Op, payload) => {
 			attributes: ['email', 'password', 'mobile_number', 'name', 'id'],
 		})
 			.then((existingUser) => {
-				console.log('>>>>>>>>>>>eerr', existingUser);
 				resolve(existingUser);
 			})
 			.catch((err) => reject({}));
@@ -27,21 +27,50 @@ const findExistingUser = async (Op, payload) => {
 };
 
 export default class UserHandler {
-	Op;
-	constructor() {
-		this.Op = sequelize.Op;
-		console.log('>>>>>>user handler constructor called');
-	}
-
 	async login(payload) {
-		let Op = sequelize.Op;
 		return new Promise(async (resolve, reject) => {
 			try {
-				console.log('>>>Oppppp', Op);
-				// let existingUser = await findExistingUser(this.Op, payload);
-				// console.log(existingUser);
+				let existingUser = await findExistingUser(payload);
+
+				if (existingUser.length !== 0) {
+					let common = new Common();
+
+					let comparedPassword = common.compareHashedPassword(
+						payload.password,
+						existingUser[0].password
+					);
+					if (comparedPassword) {
+						let token = common.generateJWTToken({
+							id: existingUser[0].id,
+							type: existingUser[0].type,
+						});
+
+						await Users.update(
+							{ fcm_token: payload.fcm_token },
+							{ where: { id: existingUser[0].id } }
+						);
+
+						resolve({
+							response: ResponseMessages.SUCCESS,
+							finalData: { token, name: existingUser[0].name },
+						});
+					} else {
+						resolve({
+							response: ResponseMessages.INVALID_EMAIL_PASSWORD,
+							finalData: {},
+						});
+					}
+				} else {
+					reject({
+						response: ResponseMessages.INVALID_EMAIL_PASSWORD,
+						finalData: {},
+					});
+				}
 			} catch (err) {
-				console.log('>>>>>>>>>edd1', err);
+				reject({
+					response: ResponseMessages.SERVER_ERROR,
+					finalData: {},
+				});
 			}
 		});
 	}
