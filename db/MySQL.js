@@ -1,5 +1,6 @@
 import Sequelize from 'sequelize';
 
+import Settings from '../models/settings.js';
 import Users from '../models/users.js';
 
 export default class MySQL {
@@ -24,5 +25,6 @@ export default class MySQL {
 
 	static async initiateModels(sequelize) {
 		Users.init(sequelize, Sequelize);
+		Settings.init(sequelize, Sequelize);
 	}
 }

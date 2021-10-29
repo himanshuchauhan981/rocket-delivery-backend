@@ -1,8 +1,10 @@
 import sequelize from 'sequelize';
+import moment from 'moment';
 
 import Users from '../models/users.js';
 import Common from '../lib/commonFunctions.js';
 import ResponseMessages from '../lib/responseMessages.js';
+import EmailTemplates from '../lib/emailTemplates.js';
 
 export default class UserHandler {
 	#findExistingUser = async (payload) => {
@@ -23,6 +25,30 @@ export default class UserHandler {
 					resolve(existingUser);
 				})
 				.catch((err) => reject({}));
+		});
+	};
+
+	#updateUserOTP = (email) => {
+		let common = new Common();
+		return new Promise(async (resolve, reject) => {
+			try {
+				let otp = common.generateOTP();
+				let otpValidity = moment()
+					.add(2, 'minutes')
+					.format('YYYY-MM-DD HH:mm:ss');
+				Users.update(
+					{ otp: otp, otp_validity: otpValidity },
+					{ where: { email: email } }
+				)
+					.then((data) => {
+						resolve({ otp, otpValidity });
+					})
+					.catch((err) => {
+						reject({});
+					});
+			} catch (err) {
+				reject({});
+			}
 		});
 	};
 
@@ -76,7 +102,6 @@ export default class UserHandler {
 				let common = new Common();
 				let existingUser = await this.#findExistingUser(payload);
 
-				console.log(existingUser);
 				if (existingUser.length === 0) {
 					let hashedPassword = common.generateHashPassword(payload.password);
 					Users.create({
@@ -103,9 +128,89 @@ export default class UserHandler {
 					});
 				}
 			} catch (err) {
-				console.log('>>>>>>err', err);
 				reject({
 					response: ResponseMessages.SERVER_ERROR,
+					finalData: {},
+				});
+			}
+		});
+	}
+
+	async forgetPassword(payload) {
+		let emailTemplates = new EmailTemplates();
+		let common = new Common();
+		return new Promise((resolve, reject) => {
+			try {
+				Users.findAll({
+					where: { email: payload.email },
+					attributes: ['name', 'otp', 'otp_validity'],
+				})
+					.then(async (userDetails) => {
+						let subject = 'Recover you password';
+						let finalData = {};
+						if (userDetails.length > 0) {
+							let existingOTP = userDetails[0].otp;
+							let existingOTPValidity = userDetails[0].otp_validity;
+
+							if (existingOTP !== null && existingOTPValidity !== null) {
+								let currentDate = moment().toISOString();
+								let validityStatus =
+									moment(existingOTPValidity).isBefore(currentDate);
+
+								if (validityStatus) {
+									let otpDetails = await this.#updateUserOTP(payload.email);
+
+									let resetPasswordTemplate = emailTemplates.resetPassword(
+										userDetails[0].name,
+										otpDetails.otp
+									);
+									await common.sendEmailThroughSMTP(
+										payload.email,
+										subject,
+										resetPasswordTemplate
+									);
+
+									finalData = { otpValidity: otpDetails.otpValidity };
+								} else {
+									finalData = { otpValidity: existingOTPValidity };
+								}
+							} else {
+								let otpDetails = await this.#updateUserOTP(payload.email);
+
+								let resetPasswordTemplate = emailTemplates.resetPassword(
+									userDetails[0].name,
+									otpDetails.otp
+								);
+								await common.sendEmailThroughSMTP(
+									payload.email,
+									subject,
+									resetPasswordTemplate
+								);
+
+								finalData = { otpValidity: otpDetails.otpValidity };
+							}
+
+							resolve({
+								response: ResponseMessages.RESET_PASSWORD_SUCCESS,
+								finalData,
+							});
+						} else {
+							resolve({
+								response: ResponseMessages.NON_EXISTED_EMAIL,
+								finalData: {},
+							});
+						}
+					})
+					.catch((err) => {
+						console.log(err);
+						reject({
+							response: ResponseMessages.SERVER_ERROR,
+							finalData: {},
+						});
+					});
+			} catch (err) {
+				reject({
+					response: responseMessages.SERVER_ERROR,
 					finalData: {},
 				});
 			}

@@ -27,6 +27,16 @@ export default class UserController extends UserHandler {
 			this.responseManager.sendErrorResponse(err, res);
 		}
 	};
+
+	forgetPassword = async (req, res) => {
+		try {
+			let payload = req.body;
+			let responseDetails = await super.forgetPassword(payload);
+			this.responseManager.sendSuccessResponse(responseDetails, res);
+		} catch (err) {
+			this.responseManager.sendErrorResponse(err, res);
+		}
+	};
 }
 // const { responseManager } = require('../lib');
 // const { userHandler } = require('../handlers');

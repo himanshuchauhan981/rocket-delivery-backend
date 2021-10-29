@@ -1,6 +1,6 @@
-const Joi = require('joi');
+import Joi from 'joi';
 
-module.exports = {
+const SchemaValidator = {
 	GET_SUB_CATEGORY_ITEMS: {
 		query: Joi.object({
 			categoryId: Joi.number().required(),
@@ -143,3 +143,5 @@ module.exports = {
 		}),
 	},
 };
+
+export default SchemaValidator;
