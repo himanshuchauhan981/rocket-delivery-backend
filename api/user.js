@@ -5,6 +5,7 @@ export default class UserRoute {
 		let userController = new UserController();
 
 		apiRouter.post('/login', userController.login);
+		apiRouter.post('/signup', userController.signup);
 
 		return apiRouter;
 	}

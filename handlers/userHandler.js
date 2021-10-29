@@ -4,37 +4,34 @@ import Users from '../models/users.js';
 import Common from '../lib/commonFunctions.js';
 import ResponseMessages from '../lib/responseMessages.js';
 
-const findExistingUser = async (payload) => {
-	return new Promise((resolve, reject) => {
-		let existingUserQuery = {
-			[sequelize.Op.or]: [
-				{ email: payload.email },
-				{
-					mobile_number: payload.mobileNumber ? payload.mobileNumber : null,
-				},
-			],
-		};
-
-		Users.findAll({
-			where: existingUserQuery,
-			attributes: ['email', 'password', 'mobile_number', 'name', 'id'],
-		})
-			.then((existingUser) => {
-				resolve(existingUser);
-			})
-			.catch((err) => reject({}));
-	});
-};
-
 export default class UserHandler {
+	#findExistingUser = async (payload) => {
+		return new Promise((resolve, reject) => {
+			let existingUserQuery = {
+				[sequelize.Op.or]: [
+					{ email: payload.email },
+					{
+						mobile_number: payload.mobileNumber ? payload.mobileNumber : null,
+					},
+				],
+			};
+			Users.findAll({
+				where: existingUserQuery,
+				attributes: ['email', 'password', 'mobile_number', 'name', 'id'],
+			})
+				.then((existingUser) => {
+					resolve(existingUser);
+				})
+				.catch((err) => reject({}));
+		});
+	};
+
 	async login(payload) {
 		return new Promise(async (resolve, reject) => {
 			try {
-				let existingUser = await findExistingUser(payload);
-
+				let existingUser = await this.#findExistingUser(payload);
 				if (existingUser.length !== 0) {
 					let common = new Common();
-
 					let comparedPassword = common.compareHashedPassword(
 						payload.password,
 						existingUser[0].password
@@ -44,12 +41,10 @@ export default class UserHandler {
 							id: existingUser[0].id,
 							type: existingUser[0].type,
 						});
-
 						await Users.update(
 							{ fcm_token: payload.fcm_token },
 							{ where: { id: existingUser[0].id } }
 						);
-
 						resolve({
 							response: ResponseMessages.SUCCESS,
 							finalData: { token, name: existingUser[0].name },
@@ -67,6 +62,48 @@ export default class UserHandler {
 					});
 				}
 			} catch (err) {
+				reject({
+					response: ResponseMessages.SERVER_ERROR,
+					finalData: {},
+				});
+			}
+		});
+	}
+
+	async signup(payload) {
+		return new Promise(async (resolve, reject) => {
+			try {
+				let common = new Common();
+				let existingUser = await this.#findExistingUser(payload);
+
+				console.log(existingUser);
+				if (existingUser.length === 0) {
+					let hashedPassword = common.generateHashPassword(payload.password);
+					Users.create({
+						name: payload.name,
+						email: payload.email,
+						password: hashedPassword,
+						country_code: payload.countryCode,
+						mobile_number: payload.mobileNo,
+						type: payload.type,
+					}).then((newUser) => {
+						let token = common.generateJWTToken({
+							id: newUser.id,
+							type: newUser.type,
+						});
+						resolve({
+							response: ResponseMessages.SUCCESS,
+							finalData: { token },
+						});
+					});
+				} else {
+					reject({
+						response: ResponseMessages.EXISTED_USER,
+						finalData: {},
+					});
+				}
+			} catch (err) {
+				console.log('>>>>>>err', err);
 				reject({
 					response: ResponseMessages.SERVER_ERROR,
 					finalData: {},

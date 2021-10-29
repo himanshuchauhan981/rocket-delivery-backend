@@ -1,16 +1,32 @@
-import UserHandler from '../handlers/userHandler.js';
 import ResponseManager from '../lib/responseManager.js';
+import UserHandler from '../handlers/userHandler.js';
 
 export default class UserController extends UserHandler {
-	async login(req, res) {
+	responseManager;
+	constructor() {
+		super();
+		this.responseManager = new ResponseManager();
+	}
+
+	login = async (req, res) => {
 		try {
 			let payload = req.body;
 			let response = await super.login(payload);
-			ResponseManager.prototype.sendSuccessResponse(response, res);
+			this.responseManager.sendSuccessResponse(response, res);
 		} catch (err) {
-			ResponseManager.prototype.sendErrorResponse(err, res);
+			this.responseManager.sendErrorResponse(err, res);
 		}
-	}
+	};
+
+	signup = async (req, res) => {
+		try {
+			let payload = req.body;
+			let response = await super.signup(payload);
+			this.responseManager.sendSuccessResponse(response, res);
+		} catch (err) {
+			this.responseManager.sendErrorResponse(err, res);
+		}
+	};
 }
 // const { responseManager } = require('../lib');
 // const { userHandler } = require('../handlers');
