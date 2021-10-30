@@ -1,6 +1,7 @@
 import Sequelize from 'sequelize';
 
 import Settings from '../models/settings.js';
+import Address from '../models/userAddress.js';
 import Users from '../models/users.js';
 
 export default class MySQL {
@@ -26,5 +27,8 @@ export default class MySQL {
 	static async initiateModels(sequelize) {
 		Users.init(sequelize, Sequelize);
 		Settings.init(sequelize, Sequelize);
+		Address.init(sequelize, Sequelize);
+
+		Address.belongsTo(Users, { foreignKey: 'user_id' });
 	}
 }
