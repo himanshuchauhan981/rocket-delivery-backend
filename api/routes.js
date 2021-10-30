@@ -1,4 +1,5 @@
 import express from 'express';
+import AddressRoutes from './address.js';
 import UserRoute from './user.js';
 
 export default class Routes extends UserRoute {
@@ -6,10 +7,15 @@ export default class Routes extends UserRoute {
 	static async prepareRoutes(app) {
 		this.apiRouter = express.Router();
 
-		let userRoutes = new UserRoute();
+		const userRoutes = new UserRoute();
+		const addressRoutes = new AddressRoutes();
 
 		const userAPI = await userRoutes.initiateUserRoutes(this.apiRouter);
+		const addressAPI = await addressRoutes.initiateAddressRoutes(
+			this.apiRouter
+		);
 		app.use('/', userAPI);
+		app.use('/address', addressAPI);
 	}
 }
 // const express = require('express');
