@@ -1,35 +1,36 @@
-module.exports = (sequelize, Sequelize) => {
-	const MeasuringUnits = sequelize.define(
-		'measuring_units',
-		{
-			id: {
-				type: Sequelize.INTEGER,
-				primaryKey: true,
-				autoIncrement: true,
-			},
-			measuring_type: {
-				type: Sequelize.STRING,
-				required: true,
-				allowNull: false,
-			},
-			symbol: {
-				type: Sequelize.STRING,
-				required: true,
-				allowNull: false,
-			},
-			status: {
-				type: Sequelize.STRING,
-				required: true,
-				allowNull: false,
-			},
-			created_at: {
-				type: 'TIMESTAMP',
-				defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
-				allowNull: false,
-			},
-		},
-		{ timestamps: false, tableName: 'measuring_units' }
-	);
+import Sequelize from 'sequelize';
 
-	return MeasuringUnits;
-};
+export default class MeasuringUnits extends Sequelize.Model {
+	static init(sequelize, DataTypes) {
+		return super.init(
+			{
+				id: {
+					type: DataTypes.INTEGER,
+					primaryKey: true,
+					autoIncrement: true,
+				},
+				measuring_type: {
+					type: DataTypes.STRING,
+					required: true,
+					allowNull: false,
+				},
+				symbol: {
+					type: DataTypes.STRING,
+					required: true,
+					allowNull: false,
+				},
+				status: {
+					type: DataTypes.STRING,
+					required: true,
+					allowNull: false,
+				},
+				created_at: {
+					type: 'TIMESTAMP',
+					defaultValue: DataTypes.literal('CURRENT_TIMESTAMP'),
+					allowNull: false,
+				},
+			},
+			{ timestamps: false, tableName: 'measuring_units', sequelize }
+		);
+	}
+}
