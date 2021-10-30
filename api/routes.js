@@ -1,5 +1,6 @@
 import express from 'express';
 import AddressRoutes from './address.js';
+import PaymentRoute from './payment.js';
 import UserRoute from './user.js';
 
 export default class Routes extends UserRoute {
@@ -9,13 +10,18 @@ export default class Routes extends UserRoute {
 
 		const userRoutes = new UserRoute();
 		const addressRoutes = new AddressRoutes();
+		const paymentRoutes = new PaymentRoute();
 
 		const userAPI = await userRoutes.initiateUserRoutes(this.apiRouter);
 		const addressAPI = await addressRoutes.initiateAddressRoutes(
 			this.apiRouter
 		);
+		const paymentAPI = await paymentRoutes.initiatePaymentRoutes(
+			this.apiRouter
+		);
 		app.use('/', userAPI);
 		app.use('/address', addressAPI);
+		app.use('/payment', paymentAPI);
 	}
 }
 // const express = require('express');
