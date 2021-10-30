@@ -37,7 +37,28 @@ export default class UserController extends UserHandler {
 			this.responseManager.sendErrorResponse(err, res);
 		}
 	};
+
+	verifyOTP = async (req, res) => {
+		try {
+			let payload = req.body;
+			let responseDetails = await super.verifyOTP(payload);
+			this.responseManager.sendSuccessResponse(responseDetails, res);
+		} catch (err) {
+			responseManager.sendErrorResponse(err, res);
+		}
+	};
+
+	updateUserPassword = async (req, res) => {
+		try {
+			let payload = req.body;
+			let responseDetails = await super.updateUserPassword(payload);
+			this.responseManager.sendSuccessResponse(responseDetails, res);
+		} catch (err) {
+			this.responseManager.sendErrorResponse(err, res);
+		}
+	};
 }
+
 // const { responseManager } = require('../lib');
 // const { userHandler } = require('../handlers');
 

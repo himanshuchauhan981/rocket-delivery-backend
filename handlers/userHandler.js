@@ -210,7 +210,72 @@ export default class UserHandler {
 					});
 			} catch (err) {
 				reject({
-					response: responseMessages.SERVER_ERROR,
+					response: ResponseMessages.SERVER_ERROR,
+					finalData: {},
+				});
+			}
+		});
+	}
+
+	async verifyOTP(payload) {
+		return new Promise((resolve, reject) => {
+			try {
+				Users.findAll({
+					where: { email: payload.email },
+					attributes: ['otp', 'otp_validity'],
+				})
+					.then((userDetails) => {
+						if (userDetails.length > 0) {
+							if (payload.otp === userDetails[0].otp) {
+								resolve({
+									response: ResponseMessages.VERIFIED_OTP,
+									finalData: {},
+								});
+							} else {
+								resolve({
+									response: ResponseMessages.INVALID_OTP,
+									finalData: {},
+								});
+							}
+						}
+					})
+					.catch((err) => {
+						reject({
+							response: ResponseMessages.SERVER_ERROR,
+							finalData: {},
+						});
+					});
+			} catch (err) {
+				reject({
+					response: ResponseMessages.SERVER_ERROR,
+					finalData: {},
+				});
+			}
+		});
+	}
+
+	async updateUserPassword(payload) {
+		const common = new Common();
+		return new Promise(async (resolve, reject) => {
+			try {
+				let hashedPassword = common.generateHashPassword(payload.newPassword);
+
+				await Users.update(
+					{ password: hashedPassword },
+					{ where: { email: payload.email } }
+				)
+					.then((data) => {
+						resolve({ response: ResponseMessages.SUCCESS, finalData: {} });
+					})
+					.catch((err) => {
+						reject({
+							response: ResponseMessages.SERVER_ERROR,
+							finalData: {},
+						});
+					});
+			} catch (err) {
+				reject({
+					response: ResponseMessages.SERVER_ERROR,
 					finalData: {},
 				});
 			}

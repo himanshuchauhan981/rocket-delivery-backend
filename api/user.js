@@ -23,6 +23,18 @@ export default class UserRoute {
 			userController.forgetPassword
 		);
 
+		apiRouter.post(
+			'/verifyOTP',
+			schemaMiddleware.validateSchema(SchemaValidator.VERIFY_OTP),
+			userController.verifyOTP
+		);
+
+		apiRouter.patch(
+			'/updatePassword',
+			schemaMiddleware.validateSchema(SchemaValidator.UPDATE_PASSWORD),
+			userController.updateUserPassword
+		);
+
 		return apiRouter;
 	}
 }
