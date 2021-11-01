@@ -1,5 +1,6 @@
 import express from 'express';
 import AddressRoutes from './address.js';
+import OrderRoutes from './orders.js';
 import PaymentRoute from './payment.js';
 import UserRoute from './user.js';
 
@@ -11,6 +12,7 @@ export default class Routes extends UserRoute {
 		const userRoutes = new UserRoute();
 		const addressRoutes = new AddressRoutes();
 		const paymentRoutes = new PaymentRoute();
+		const orderRoutes = new OrderRoutes();
 
 		const userAPI = await userRoutes.initiateUserRoutes(this.apiRouter);
 		const addressAPI = await addressRoutes.initiateAddressRoutes(
@@ -19,9 +21,12 @@ export default class Routes extends UserRoute {
 		const paymentAPI = await paymentRoutes.initiatePaymentRoutes(
 			this.apiRouter
 		);
+		const orderAPI = await orderRoutes.initiateOrderRoutes(this.apiRouter);
+
 		app.use('/', userAPI);
 		app.use('/address', addressAPI);
 		app.use('/payment', paymentAPI);
+		app.use('/order', orderAPI);
 	}
 }
 // const express = require('express');
@@ -59,18 +64,6 @@ export default class Routes extends UserRoute {
 // 		productController.getProductDetails
 // 	);
 
-// 	router.post(
-// 		'/signup',
-// 		schemaMiddleware(schemaValidator.SIGNUP),
-// 		userController.createNewUser
-// 	);
-
-// 	router.post(
-// 		'/login',
-// 		schemaMiddleware(schemaValidator.LOGIN),
-// 		userController.loginExistingUser
-// 	);
-
 // 	router.post('/cartProductDetails', productController.getCartProductDetails);
 
 // 	router.post(
@@ -90,12 +83,6 @@ export default class Routes extends UserRoute {
 // 	router.get('/viewAddress', authMiddleware, userController.viewUserAddress);
 
 // 	router.post(
-// 		'/generateOrder',
-// 		authMiddleware,
-// 		orderController.generateNewOrder
-// 	);
-
-// 	router.post(
 // 		'/addToWishlist',
 // 		schemaMiddleware(schemaValidator.ADD_NEW_WISHLIST_ITEM),
 // 		authMiddleware,
@@ -110,8 +97,6 @@ export default class Routes extends UserRoute {
 // 		authMiddleware,
 // 		orderController.updateUserWishlist
 // 	);
-
-// 	router.get('/userOrders', authMiddleware, orderController.getUserOrders);
 
 // 	router.get(
 // 		'/order',
