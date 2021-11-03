@@ -1,40 +1,43 @@
-import ReviewHandler from '../handlers/reviewHandler.js';
+import AddressHandler from '../handlers/addressHandler.js';
 import ResponseManager from '../lib/responseManager.js';
 
-export default class ReviewController extends ReviewHandler {
-	responseManager;
+class AddressController extends AddressHandler {
 	constructor() {
 		super();
 		this.responseManager = new ResponseManager();
 	}
-	saveNewReview = async (req, res) => {
+
+	addNewAddress = async (req, res) => {
 		try {
 			let payload = req.body;
 			let userDetails = req.user;
-			let response = await this.create(payload, userDetails);
+			let response = await this.save(payload, userDetails);
 			this.responseManager.sendSuccessResponse(response, res);
 		} catch (err) {
 			this.responseManager.sendErrorResponse(err, res);
 		}
 	};
 
-	updateReview = async (req, res) => {
+	editAddress = async (req, res) => {
 		try {
 			let payload = req.body;
-			let response = await this.update(payload);
+			let userDetails = req.user;
+			let response = await this.update(payload, userDetails);
 			this.responseManager.sendSuccessResponse(response, res);
 		} catch (err) {
 			this.responseManager.sendErrorResponse(err, res);
 		}
 	};
 
-	deleteReview = async (req, res) => {
+	viewUserAddress = async (req, res) => {
 		try {
-			let payload = req.body;
-			let response = await this.delete(payload);
+			let userDetails = req.user;
+			let response = await this.view(userDetails);
 			this.responseManager.sendSuccessResponse(response, res);
 		} catch (err) {
 			this.responseManager.sendErrorResponse(err, res);
 		}
 	};
 }
+
+export default AddressController;

@@ -1,24 +1,21 @@
-const Handlebar = require('handlebars');
-const moment = require('moment');
-const sequelize = require('sequelize');
-const Op = sequelize.Op;
+import moment from 'moment';
+import Handlebar from 'handlebars';
+import sequelize from 'sequelize';
 
-const { responseMessages, commonFunctions } = require('../lib');
-const paymentHandler = require('./paymentHandlers');
-const {
-	Orders,
-	Address,
-	OrderProducts,
-	Wishlist,
-	Products,
-	ProductPrice,
-	UserPayments,
-	ProductReview,
-	ProductReviewImages,
-} = require('../models');
+import Products from '../models/products.js';
+import ProductPrice from '../models/productPrice.js';
+import OrderProducts from '../models/orderProducts.js';
+import Orders from '../models/orders.js';
+import Common from '../lib/commonFunctions.js';
+import ResponseMessages from '../lib/responseMessages.js';
+import PaymentHandler from './paymentHandlers.js';
+import ProductReview from '../models/productReview.js';
+import ProductReviewImages from '../models/productReviewImages.js';
 
-const orderHandler = {
-	generateNewOrder: async (payload, userDetails) => {
+class OrderHandler {
+	async generateNewOrder(payload, userDetails) {
+		let common = new Common();
+		let paymentHandler = new PaymentHandler();
 		return new Promise((resolve, reject) => {
 			try {
 				let cartItems = payload.cartItems;
@@ -51,7 +48,7 @@ const orderHandler = {
 				})
 					.then(async (productDetails) => {
 						for (let i = 0; i < productDetails.length; i++) {
-							let discountDetails = commonFunctions.calculateDiscountPrice(
+							let discountDetails = common.calculateDiscountPrice(
 								productDetails[i].discountStartDate,
 								productDetails[i].discountEndDate,
 								productDetails[i].discountPercent,
@@ -81,14 +78,14 @@ const orderHandler = {
 								cartItems[cartItemIndex].quantity
 							) {
 								let template = Handlebar.compile(
-									responseMessages.INSUFFICIENT_QUANTITY.MSG
+									ResponseMessages.INSUFFICIENT_QUANTITY.MSG
 								);
 								let msg = template({ productName: productDetails[i].name });
 
 								resolve({
 									response: {
 										STATUS_CODE:
-											responseMessages.INSUFFICIENT_QUANTITY.STATUS_CODE,
+											ResponseMessages.INSUFFICIENT_QUANTITY.STATUS_CODE,
 										MSG: msg,
 									},
 									finalData: {},
@@ -159,136 +156,26 @@ const orderHandler = {
 						);
 
 						resolve({
-							response: responseMessages.SUCCESS,
+							response: ResponseMessages.SUCCESS,
 							finalData: {},
 						});
 					})
 					.catch((err) => {
 						reject({
-							response: responseMessages.SERVER_ERROR,
+							response: ResponseMessages.SERVER_ERROR,
 							finalData: {},
 						});
 					});
 			} catch (err) {
 				reject({
-					response: responseMessages.SERVER_ERROR,
+					response: ResponseMessages.SERVER_ERROR,
 					finalData: {},
 				});
 			}
 		});
-	},
+	}
 
-	addToWishlist: async (payload, userDetails) => {
-		return new Promise(async (resolve, reject) => {
-			try {
-				let existingWishlistItem = await Wishlist.findAll({
-					where: {
-						[Op.and]: [
-							{ product_id: payload.productId },
-							{ user_id: userDetails.id },
-							{ is_deleted: 0 },
-						],
-					},
-					attributes: ['id'],
-				});
-
-				if (existingWishlistItem.length == 0) {
-					Wishlist.create({
-						product_id: payload.productId,
-						user_id: userDetails.id,
-					})
-						.then(() => {
-							resolve({
-								response: responseMessages.NEW_WISHLIST_ITEM,
-								finalData: {},
-							});
-						})
-						.catch((err) => {
-							reject({
-								response: responseMessages.SERVER_ERROR,
-								finalData: {},
-							});
-						});
-				} else {
-					resolve({
-						response: responseMessages.EXISTING_WISHLIST_ITEM,
-						finalData: {},
-					});
-				}
-			} catch (err) {
-				reject({
-					response: responseMessages.SERVER_ERROR,
-					finalData: {},
-				});
-			}
-		});
-	},
-
-	viewUserWishlist: async (userDetails) => {
-		return new Promise((resolve, reject) => {
-			try {
-				Wishlist.findAll({
-					where: { [Op.and]: [{ user_id: userDetails.id }, { is_deleted: 0 }] },
-					include: [{ model: Products, attributes: ['id', 'name', 'image'] }],
-					attributes: ['id', [sequelize.col('product_id'), 'productId']],
-				})
-					.then((userWishlist) => {
-						resolve({
-							response: responseMessages.SUCCESS,
-							finalData: { userWishlist },
-						});
-					})
-					.catch((err) => {
-						reject({
-							response: responseMessages.SERVER_ERROR,
-							finalData: {},
-						});
-					});
-			} catch (err) {
-				reject({
-					response: responseMessages.SERVER_ERROR,
-					finalData: {},
-				});
-			}
-		});
-	},
-
-	updateUserWishlist: async (userDetails, payload) => {
-		return new Promise(async (resolve, reject) => {
-			try {
-				Wishlist.update(
-					{ is_deleted: 1 },
-					{
-						where: {
-							[Op.and]: [
-								{ id: payload.wishlistId },
-								{ user_id: userDetails.id },
-							],
-						},
-					}
-				)
-					.then(() => {
-						resolve({
-							response: responseMessages.REMOVE_WISHLIST_ITEM,
-							finalData: {},
-						});
-					})
-					.catch((err) => {
-						reject({
-							response: responseMessages.SERVER_ERROR,
-							finalData: {},
-						});
-					});
-			} catch (err) {
-				reject({
-					response: responseMessages.SERVER_ERROR,
-					finalData: {},
-				});
-			}
-		});
-	},
-
-	getUserOrders: async (userDetails) => {
+	async getUserOrders(userDetails) {
 		return new Promise((resolve, reject) => {
 			try {
 				Orders.findAll({
@@ -313,28 +200,29 @@ const orderHandler = {
 				})
 					.then((userOrderDetails) => {
 						resolve({
-							response: responseMessages.SUCCESS,
+							response: ResponseMessages.SUCCESS,
 							finalData: { userOrderDetails },
 						});
 					})
 					.catch((err) => {
 						reject({
-							response: responseMessages.SERVER_ERROR,
+							response: ResponseMessages.SERVER_ERROR,
 							finalData: {},
 						});
 					});
 			} catch (err) {
 				reject({
-					response: responseMessages.SERVER_ERROR,
+					response: ResponseMessages.SERVER_ERROR,
 					finalData: {},
 				});
 			}
 		});
-	},
+	}
 
-	specificOrderDetails: async (payload) => {
+	async specificOrderDetails(payload) {
 		return new Promise((resolve, reject) => {
 			try {
+				let Op = sequelize.Op;
 				Orders.findOne({
 					where: { id: payload.orderId },
 					include: [
@@ -417,20 +305,21 @@ const orderHandler = {
 					}
 
 					resolve({
-						response: responseMessages.SUCCESS,
+						response: ResponseMessages.SUCCESS,
 						finalData: { orderDetails: specificOrderDetails },
 					});
 				});
 			} catch (err) {
 				reject({
-					response: responseMessages.SERVER_ERROR,
+					response: ResponseMessages.SERVER_ERROR,
 					finalData: {},
 				});
 			}
 		});
-	},
+	}
 
-	changeOrderStatus: async (payload) => {
+	async changeOrderStatus(payload) {
+		let paymentHandler = new PaymentHandler();
 		return new Promise((resolve, reject) => {
 			try {
 				Orders.findAll({
@@ -458,32 +347,57 @@ const orderHandler = {
 										{ where: { id: payload.orderId } }
 									);
 									resolve({
-										response: responseMessages.ORDER_CANCELLED,
+										response: ResponseMessages.ORDER_CANCELLED,
 										finalData: {},
 									});
 								}
 							}
 						} else {
 							reject({
-								response: responseMessages.INVALID_ORDER_ID,
+								response: ResponseMessages.INVALID_ORDER_ID,
 								finalData: {},
 							});
 						}
 					})
 					.catch((err) => {
 						reject({
-							response: responseMessages.SERVER_ERROR,
+							response: ResponseMessages.SERVER_ERROR,
 							finalData: {},
 						});
 					});
 			} catch (err) {
 				reject({
-					response: responseMessages.SERVER_ERROR,
+					response: ResponseMessages.SERVER_ERROR,
 					finalData: {},
 				});
 			}
 		});
-	},
-};
+	}
+}
 
-module.exports = orderHandler;
+export default OrderHandler;
+
+// const Handlebar = require('handlebars');
+// const moment = require('moment');
+// const sequelize = require('sequelize');
+// const Op = sequelize.Op;
+
+// const { responseMessages, commonFunctions } = require('../lib');
+// const paymentHandler = require('./paymentHandlers');
+// const {
+// 	Orders,
+// 	Address,
+// 	OrderProducts,
+// 	Wishlist,
+// 	Products,
+// 	ProductPrice,
+// 	UserPayments,
+// 	ProductReview,
+// 	ProductReviewImages,
+// } = require('../models');
+
+// const orderHandler = {
+
+// 	},
+
+// module.exports = orderHandler;

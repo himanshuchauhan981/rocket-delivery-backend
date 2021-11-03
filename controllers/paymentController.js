@@ -1,20 +1,21 @@
-const { paymentHandler } = require('../handlers');
-const { responseManager } = require('../lib');
+import PaymentHandler from '../handlers/paymentHandlers.js';
+import ResponseManager from '../lib/responseManager.js';
 
-const paymentController = {
-	createRazorpayOrder: async (req, res) => {
+export default class PaymentController extends PaymentHandler {
+	responseManager;
+	constructor() {
+		super();
+		this.responseManager = new ResponseManager();
+	}
+
+	createRazorpayOrder = async (req, res) => {
 		try {
 			let payload = req.query;
 			let userDetails = req.user;
-			let response = await paymentHandler.createRazorpayOrder(
-				payload,
-				userDetails
-			);
-			responseManager.sendSuccessResponse(response, res);
+			let response = await super.createRazorpayOrder(payload, userDetails);
+			this.responseManager.sendSuccessResponse(response, res);
 		} catch (err) {
-			responseManager.sendErrorResponse(err, res);
+			this.responseManager.sendErrorResponse(err, res);
 		}
-	},
-};
-
-module.exports = paymentController;
+	};
+}
