@@ -5,6 +5,7 @@ import OrderHandler from '../handlers/orderHandler.js';
 import ResponseManager from '../lib/responseManager.js';
 
 class OrderController extends OrderHandler {
+	responseManager;
 	constructor() {
 		super();
 		this.responseManager = new ResponseManager();

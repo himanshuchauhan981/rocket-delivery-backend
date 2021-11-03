@@ -1,176 +1,363 @@
-const moment = require('moment');
-const sequelize = require('sequelize');
-const Op = sequelize.Op;
+import sequelize from 'sequelize';
+import moment from 'moment';
 
-const { responseMessages, commonFunctions } = require('../lib');
-const {
-	Categories,
-	SubCategories,
-	Products,
-	ProductPrice,
-	MeasuringUnits,
-	ProductHistory,
-	Orders,
-	OrderProducts,
-	ProductReview,
-} = require('../models');
+import ProductHistory from '../models/productHistory.js';
+import ResponseMessages from '../lib/responseMessages.js';
+import ProductPrice from '../models/productPrice.js';
+import Products from '../models/products.js';
+import Common from '../lib/commonFunctions.js';
+import Orders from '../models/orders.js';
+import OrderProducts from '../models/orderProducts.js';
+import ProductReview from '../models/productReview.js';
+import Categories from '../models/categories.js';
+import SubCategories from '../models/subCategories.js';
+import MeasuringUnits from '../models/measuringUnits.js';
 
-const mostBookedProducts = async (userDetails) => {
-	return new Promise((resolve, reject) => {
-		try {
-			Orders.findAll({
-				include: [
-					{
-						model: OrderProducts,
-						attributes: [],
-					},
-				],
-				attributes: [
-					'order_products.product_id',
-					sequelize.fn('COUNT', sequelize.col('order_products.product_id')),
-				],
-				group: ['order_products.product_id'],
-				order: [['count', 'DESC']],
-				raw: true,
-				subQuery: false,
-				limit: 4,
-			})
-				.then(async (orderDetails) => {
-					let finalOrderDetails = [];
-					for (let i = 0; i < orderDetails.length; i++) {
-						let orderObject = {};
-						let productDetails = await Products.findAll({
-							where: { id: orderDetails[i].product_id },
-							include: [{ model: ProductPrice, attributes: [] }],
-							attributes: [
-								'id',
-								'name',
-								'image',
-								'product_price.actual_price',
-								'product_price.discount_percent',
-								'product_price.discount_start_date',
-								'product_price.discount_end_date',
-							],
-							raw: true,
-						});
-
-						if (productDetails && productDetails.length > 0) {
-							let discountDetails = commonFunctions.calculateDiscountPrice(
-								productDetails[0].discount_start_date,
-								productDetails[0].discount_end_date,
-								productDetails[0].discount_percent,
-								productDetails[0].actual_price
-							);
-
-							let productReviewDetails = await ProductReview.findAll({
-								where: {
-									[Op.and]: [
-										{ product_id: orderDetails[i].product_id },
-										{ is_deleted: 0 },
-									],
-								},
-								attributes: ['id', 'ratings'],
+export default class ProductHandler {
+	#mostBookedProducts = async (userDetails) => {
+		let common = new Common();
+		return new Promise((resolve, reject) => {
+			try {
+				Orders.findAll({
+					include: [
+						{
+							model: OrderProducts,
+							attributes: [],
+						},
+					],
+					attributes: [
+						'order_products.product_id',
+						sequelize.fn('COUNT', sequelize.col('order_products.product_id')),
+					],
+					group: ['order_products.product_id'],
+					order: [['count', 'DESC']],
+					raw: true,
+					subQuery: false,
+					limit: 4,
+				})
+					.then(async (orderDetails) => {
+						let finalOrderDetails = [];
+						for (let i = 0; i < orderDetails.length; i++) {
+							let orderObject = {};
+							let productDetails = await Products.findAll({
+								where: { id: orderDetails[i].product_id },
+								include: [{ model: ProductPrice, attributes: [] }],
+								attributes: [
+									'id',
+									'name',
+									'image',
+									'product_price.actual_price',
+									'product_price.discount_percent',
+									'product_price.discount_start_date',
+									'product_price.discount_end_date',
+								],
+								raw: true,
 							});
-							let ratingCount = 0;
-							for (let i = 0; i < productReviewDetails.length; i++) {
-								ratingCount = ratingCount + productReviewDetails[i].ratings;
+
+							if (productDetails && productDetails.length > 0) {
+								let discountDetails = common.calculateDiscountPrice(
+									productDetails[0].discount_start_date,
+									productDetails[0].discount_end_date,
+									productDetails[0].discount_percent,
+									productDetails[0].actual_price
+								);
+
+								let productReviewDetails = await ProductReview.findAll({
+									where: {
+										[Op.and]: [
+											{ product_id: orderDetails[i].product_id },
+											{ is_deleted: 0 },
+										],
+									},
+									attributes: ['id', 'ratings'],
+								});
+								let ratingCount = 0;
+								for (let i = 0; i < productReviewDetails.length; i++) {
+									ratingCount = ratingCount + productReviewDetails[i].ratings;
+								}
+
+								let averageRatings =
+									productReviewDetails.length === 0
+										? 0
+										: ratingCount / productReviewDetails.length;
+
+								orderObject.count = orderDetails[i].count;
+								orderObject.product_id = orderDetails[i].product_id;
+								orderObject.product_name = productDetails[0].name;
+								orderObject.product_image = productDetails[0].image;
+								orderObject.actual_price = productDetails[0].actual_price;
+								orderObject.discount_status = discountDetails.discountStatus;
+								orderObject.discount_price = discountDetails.discountPrice;
+								orderObject.discount_start_date =
+									productDetails[0].discount_start_date;
+								orderObject.discount_end_date =
+									productDetails[0].discount_end_date;
+								orderObject.discount_percent =
+									productDetails[0].discount_percent;
+								orderObject.averageRatings = averageRatings;
 							}
-
-							let averageRatings =
-								productReviewDetails.length === 0
-									? 0
-									: ratingCount / productReviewDetails.length;
-
-							orderObject.count = orderDetails[i].count;
-							orderObject.product_id = orderDetails[i].product_id;
-							orderObject.product_name = productDetails[0].name;
-							orderObject.product_image = productDetails[0].image;
-							orderObject.actual_price = productDetails[0].actual_price;
-							orderObject.discount_status = discountDetails.discountStatus;
-							orderObject.discount_price = discountDetails.discountPrice;
-							orderObject.discount_start_date =
-								productDetails[0].discount_start_date;
-							orderObject.discount_end_date =
-								productDetails[0].discount_end_date;
-							orderObject.discount_percent = productDetails[0].discount_percent;
-							orderObject.averageRatings = averageRatings;
+							finalOrderDetails.push(orderObject);
 						}
-						finalOrderDetails.push(orderObject);
-					}
-					resolve(finalOrderDetails);
-				})
-				.catch((err) => {
-					reject(err);
-				});
-		} catch (err) {
-			reject(err);
-		}
-	});
-};
+						resolve(finalOrderDetails);
+					})
+					.catch((err) => {
+						reject(err);
+					});
+			} catch (err) {
+				reject(err);
+			}
+		});
+	};
 
-const mostViewedProducts = async (userDetails, mostViewedHistory) => {
-	return new Promise((resolve, reject) => {
-		try {
-			ProductHistory.findAll({
-				where: { [Op.and]: [{ user_id: userDetails.id }, { is_deleted: 0 }] },
-				include: [
-					{
-						model: Products,
-						attributes: [],
-						include: [{ model: ProductPrice, attributes: [] }],
+	#mostViewedProducts = async (userDetails, mostViewedHistory) => {
+		let common = new Common();
+		return new Promise((resolve, reject) => {
+			try {
+				ProductHistory.findAll({
+					where: {
+						[sequelize.Op.and]: [
+							{ user_id: userDetails.id },
+							{ is_deleted: 0 },
+						],
 					},
-				],
-
-				attributes: [
-					'id',
-					'view_count',
-					[sequelize.col('product.image'), 'image'],
-					[sequelize.col('product.id'), 'productId'],
-					[sequelize.col('product.name'), 'name'],
-					[sequelize.col('product.product_price.actual_price'), 'actualPrice'],
-					[
-						sequelize.col('product.product_price.discount_percent'),
-						'discountPercent',
+					include: [
+						{
+							model: Products,
+							attributes: [],
+							include: [{ model: ProductPrice, attributes: [] }],
+						},
 					],
-					[
-						sequelize.col('product.product_price.discount_start_date'),
-						'discountStartDate',
+					attributes: [
+						'id',
+						'view_count',
+						[sequelize.col('product.image'), 'image'],
+						[sequelize.col('product.id'), 'productId'],
+						[sequelize.col('product.name'), 'name'],
+						[
+							sequelize.col('product.product_price.actual_price'),
+							'actualPrice',
+						],
+						[
+							sequelize.col('product.product_price.discount_percent'),
+							'discountPercent',
+						],
+						[
+							sequelize.col('product.product_price.discount_start_date'),
+							'discountStartDate',
+						],
+						[
+							sequelize.col('product.product_price.discount_end_date'),
+							'discountEndDate',
+						],
 					],
-					[
-						sequelize.col('product.product_price.discount_end_date'),
-						'discountEndDate',
-					],
-				],
-				raw: true,
-				order: mostViewedHistory ? [['view_count', 'DESC']] : [],
-				limit: mostViewedHistory ? 2 : null,
-			})
-				.then((userProductHistory) => {
-					for (let i = 0; i < userProductHistory.length; i++) {
-						let discountDetails = commonFunctions.calculateDiscountPrice(
-							userProductHistory[i].discountStartDate,
-							userProductHistory[i].discountEndDate,
-							userProductHistory[i].discountPercent,
-							userProductHistory[i].actualPrice
-						);
-						userProductHistory[i].discountPrice = discountDetails.discountPrice;
-						userProductHistory[i].discountStatus =
-							discountDetails.discountStatus;
-					}
-
-					resolve(userProductHistory);
+					raw: true,
+					order: mostViewedHistory ? [['view_count', 'DESC']] : [],
+					limit: mostViewedHistory ? 2 : null,
 				})
-				.catch((err) => {
-					reject(err);
-				});
-		} catch (err) {
-			reject(err);
-		}
-	});
-};
+					.then((userProductHistory) => {
+						for (let i = 0; i < userProductHistory.length; i++) {
+							let discountDetails = common.calculateDiscountPrice(
+								userProductHistory[i].discountStartDate,
+								userProductHistory[i].discountEndDate,
+								userProductHistory[i].discountPercent,
+								userProductHistory[i].actualPrice
+							);
+							userProductHistory[i].discountPrice =
+								discountDetails.discountPrice;
+							userProductHistory[i].discountStatus =
+								discountDetails.discountStatus;
+						}
+						resolve(userProductHistory);
+					})
+					.catch((err) => {
+						reject(err);
+					});
+			} catch (err) {
+				reject(err);
+			}
+		});
+	};
 
-const productHandler = {
-	getHomeCategories: async () => {
+	async addToProductHistory(payload, userDetails) {
+		return new Promise(async (resolve, reject) => {
+			try {
+				let existingProductHistory = await ProductHistory.findAll({
+					where: {
+						[sequelize.Op.and]: [
+							{ product_id: payload.productId },
+							{ user_id: userDetails.id },
+						],
+					},
+				});
+
+				if (existingProductHistory && existingProductHistory.length === 0) {
+					await ProductHistory.create({
+						user_id: userDetails.id,
+						product_id: payload.productId,
+						view_count: 1,
+						is_deleted: 0,
+					});
+				} else {
+					await ProductHistory.increment(
+						{ view_count: +1 },
+						{
+							where: {
+								[sequelize.Op.and]: [
+									{ user_id: userDetails.id },
+									{ product_id: payload.productId },
+								],
+							},
+						}
+					);
+				}
+
+				resolve({
+					response: ResponseMessages.SUCCESS,
+					finalData: {},
+				});
+			} catch (err) {
+				reject({
+					response: ResponseMessages.SERVER_ERROR,
+					finalData: {},
+				});
+			}
+		});
+	}
+
+	async viewUserProductHistory(userDetails) {
+		try {
+			let userProductHistory = await this.#mostViewedProducts(
+				userDetails,
+				false
+			);
+			return {
+				response: ResponseMessages.SUCCESS,
+				finalData: { userProductHistory },
+			};
+		} catch (err) {
+			reject({
+				response: ResponseMessages.SERVER_ERROR,
+				finalData: {},
+			});
+		}
+	}
+
+	async removeFromProductHistory(payload) {
+		return new Promise(async (resolve, reject) => {
+			try {
+				let existingProductHistory = await ProductHistory.findAll({
+					where: { id: payload.productHistoryId },
+				});
+
+				if (existingProductHistory && existingProductHistory.length > 0) {
+					await ProductHistory.update(
+						{ is_deleted: 1 },
+						{ where: { id: payload.productHistoryId } }
+					);
+
+					resolve({
+						response: ResponseMessages.SUCCESS,
+						finalData: {},
+					});
+				} else {
+					reject({
+						response: ResponseMessages.INVALID_PRODUCT_HISTORY_ID,
+						finalData: {},
+					});
+				}
+			} catch (err) {
+				reject({
+					response: ResponseMessages.SERVER_ERROR,
+					finalData: {},
+				});
+			}
+		});
+	}
+
+	async getDiscountOffers() {
+		return new Promise((resolve, reject) => {
+			try {
+				let currentDate = moment().format('YYYY-MM-DD HH:mm:ss');
+				Products.findAll({
+					where: {},
+					include: [
+						{
+							model: ProductPrice,
+							where: {
+								[sequelize.Op.and]: [
+									{ discount_start_date: { [sequelize.Op.lt]: currentDate } },
+									{ discount_end_date: { [sequelize.Op.gt]: currentDate } },
+								],
+							},
+							attributes: [],
+						},
+					],
+					attributes: [
+						'id',
+						'name',
+						'image',
+						[sequelize.col('product_price.actual_price'), 'actualPrice'],
+						[
+							sequelize.col('product_price.discount_percent'),
+							'discountPercent',
+						],
+						[
+							sequelize.col('product_price.discount_end_date'),
+							'discountEndDate',
+						],
+					],
+					raw: true,
+					order: [['name']],
+					limit: 5,
+				})
+					.then((productDetails) => {
+						for (let i = 0; i < productDetails.length; i++) {
+							let discountPrice =
+								(productDetails[i].discountPercent / 100) *
+								productDetails[i].actualPrice;
+							discountPrice = productDetails[i].actualPrice - discountPrice;
+							productDetails[i].discountPrice = discountPrice;
+							productDetails[i].actualPrice = parseFloat(
+								productDetails[i].actualPrice
+							);
+						}
+						resolve({
+							response: ResponseMessages.SUCCESS,
+							finalData: { productDetails },
+						});
+					})
+					.catch((err) => {
+						reject({
+							response: ResponseMessages.SERVER_ERROR,
+							finalData: {},
+						});
+					});
+			} catch (err) {
+				reject({
+					response: ResponseMessages.SERVER_ERROR,
+					finalData: {},
+				});
+			}
+		});
+	}
+
+	async getProductOffers(userDetails) {
+		try {
+			let orderDetails = await this.#mostBookedProducts(userDetails);
+			let viewedProducts = await this.#mostViewedProducts(userDetails, true);
+			return {
+				response: ResponseMessages.SUCCESS,
+				finalData: { orderDetails, viewedProducts },
+			};
+		} catch (err) {
+			return {
+				response: ResponseMessages.SERVER_ERROR,
+				finalData: {},
+			};
+		}
+	}
+
+	async getHomeCategories() {
 		return new Promise((resolve, reject) => {
 			try {
 				Categories.findAll({
@@ -184,31 +371,33 @@ const productHandler = {
 				})
 					.then((categoryDetails) => {
 						resolve({
-							response: responseMessages.SUCCESS,
+							response: ResponseMessages.SUCCESS,
 							finalData: { categoryDetails },
 						});
 					})
 					.catch((err) => {
 						reject({
-							response: responseMessages.SERVER_ERROR,
+							response: ResponseMessages.SERVER_ERROR,
 							finalData: {},
 						});
 					});
 			} catch (err) {
 				reject({
-					response: responseMessages.SERVER_ERROR,
+					response: ResponseMessages.SERVER_ERROR,
 					finalData: {},
 				});
 			}
 		});
-	},
+	}
 
-	getSubCategoryItems: async (payload) => {
+	async getSubCategoryItems(payload) {
 		return new Promise(async (resolve, reject) => {
 			try {
 				SubCategories.findAll({
 					where: {
-						[Op.and]: [{ category_id: payload.categoryId, status: 'ACTIVE' }],
+						[sequelize.Op.and]: [
+							{ category_id: payload.categoryId, status: 'ACTIVE' },
+						],
 					},
 					include: [{ model: Categories, attributes: [] }],
 					attributes: [
@@ -221,26 +410,26 @@ const productHandler = {
 				})
 					.then((subCategoryDetails) => {
 						resolve({
-							response: responseMessages.SUCCESS,
+							response: ResponseMessages.SUCCESS,
 							finalData: { subCategoryDetails },
 						});
 					})
 					.catch((err) => {
 						reject({
-							response: responseMessages.SERVER_ERROR,
+							response: ResponseMessages.SERVER_ERROR,
 							finalData: {},
 						});
 					});
 			} catch (err) {
 				reject({
-					response: responseMessages.SERVER_ERROR,
+					response: ResponseMessages.SERVER_ERROR,
 					finalData: {},
 				});
 			}
 		});
-	},
+	}
 
-	getProducts: async (payload) => {
+	async getProducts(payload) {
 		return new Promise((resolve, reject) => {
 			try {
 				Products.findAll({
@@ -275,26 +464,27 @@ const productHandler = {
 				})
 					.then((products) => {
 						resolve({
-							response: responseMessages.SUCCESS,
+							response: ResponseMessages.SUCCESS,
 							finalData: { products },
 						});
 					})
 					.catch((err) => {
 						reject({
-							response: responseMessages.SERVER_ERROR,
+							response: ResponseMessages.SERVER_ERROR,
 							finalData: {},
 						});
 					});
 			} catch (err) {
 				reject({
-					response: responseMessages.SERVER_ERROR,
+					response: ResponseMessages.SERVER_ERROR,
 					finalData: {},
 				});
 			}
 		});
-	},
+	}
 
-	getProductDetails: async (payload) => {
+	async getProductDetails(payload) {
+		let common = new Common();
 		return new Promise((resolve, reject) => {
 			try {
 				Products.findOne({
@@ -323,7 +513,7 @@ const productHandler = {
 					raw: true,
 				})
 					.then(async (productDetails) => {
-						let discountDetails = commonFunctions.calculateDiscountPrice(
+						let discountDetails = common.calculateDiscountPrice(
 							productDetails.discountStartDate,
 							productDetails.discountEndDate,
 							productDetails.discountPercent,
@@ -350,7 +540,7 @@ const productHandler = {
 						let avergeRating = ratingCount / productReviewDetails.length;
 
 						resolve({
-							response: responseMessages.SUCCESS,
+							response: ResponseMessages.SUCCESS,
 							finalData: {
 								productDetails: productDetails,
 								productRatings: avergeRating,
@@ -360,20 +550,20 @@ const productHandler = {
 					})
 					.catch((err) => {
 						reject({
-							response: responseMessages.SERVER_ERROR,
+							response: ResponseMessages.SERVER_ERROR,
 							finalData: {},
 						});
 					});
 			} catch (err) {
 				reject({
-					response: responseMessages.SERVER_ERROR,
+					response: ResponseMessages.SERVER_ERROR,
 					finalData: {},
 				});
 			}
 		});
-	},
+	}
 
-	getCartProductDetails: async (payload) => {
+	async getCartProductDetails(payload) {
 		return new Promise((resolve, reject) => {
 			try {
 				let cartItems = payload.cartItems;
@@ -444,199 +634,21 @@ const productHandler = {
 					}
 
 					resolve({
-						response: responseMessages.SUCCESS,
+						response: ResponseMessages.SUCCESS,
 						finalData: { cartProductDetails: tempCartProductDetails },
 					});
 				});
 			} catch (err) {
 				reject({
-					response: responseMessages.SERVER_ERROR,
+					response: ResponseMessages.SERVER_ERROR,
 					finalData: {},
 				});
 			}
 		}).catch((err) => {
 			reject({
-				response: responseMessages.SERVER_ERROR,
+				response: ResponseMessages.SERVER_ERROR,
 				finalData: {},
 			});
 		});
-	},
-
-	getDiscountOffers: async () => {
-		return new Promise((resolve, reject) => {
-			try {
-				let currentDate = moment().format('YYYY-MM-DD HH:mm:ss');
-				Products.findAll({
-					where: {},
-					include: [
-						{
-							model: ProductPrice,
-							where: {
-								[Op.and]: [
-									{ discount_start_date: { [Op.lt]: currentDate } },
-									{ discount_end_date: { [Op.gt]: currentDate } },
-								],
-							},
-							attributes: [],
-						},
-					],
-					attributes: [
-						'id',
-						'name',
-						'image',
-						[sequelize.col('product_price.actual_price'), 'actualPrice'],
-						[
-							sequelize.col('product_price.discount_percent'),
-							'discountPercent',
-						],
-						[
-							sequelize.col('product_price.discount_end_date'),
-							'discountEndDate',
-						],
-					],
-					raw: true,
-					order: [['name']],
-					limit: 5,
-				})
-					.then((productDetails) => {
-						for (let i = 0; i < productDetails.length; i++) {
-							let discountPrice =
-								(productDetails[i].discountPercent / 100) *
-								productDetails[i].actualPrice;
-							discountPrice = productDetails[i].actualPrice - discountPrice;
-							productDetails[i].discountPrice = discountPrice;
-							productDetails[i].actualPrice = parseFloat(
-								productDetails[i].actualPrice
-							);
-						}
-						resolve({
-							response: responseMessages.SUCCESS,
-							finalData: { productDetails },
-						});
-					})
-					.catch((err) => {
-						reject({
-							response: responseMessages.SERVER_ERROR,
-							finalData: {},
-						});
-					});
-			} catch (err) {
-				reject({
-					response: responseMessages.SERVER_ERROR,
-					finalData: {},
-				});
-			}
-		});
-	},
-
-	addToProductHistory: async (payload, userDetails) => {
-		return new Promise(async (resolve, reject) => {
-			try {
-				let existingProductHistory = await ProductHistory.findAll({
-					where: {
-						[Op.and]: [
-							{ product_id: payload.productId },
-							{ user_id: userDetails.id },
-						],
-					},
-				});
-
-				if (existingProductHistory && existingProductHistory.length === 0) {
-					await ProductHistory.create({
-						user_id: userDetails.id,
-						product_id: payload.productId,
-						view_count: 1,
-						is_deleted: 0,
-					});
-				} else {
-					await ProductHistory.increment(
-						{ view_count: +1 },
-						{
-							where: {
-								[Op.and]: [
-									{ user_id: userDetails.id },
-									{ product_id: payload.productId },
-								],
-							},
-						}
-					);
-				}
-
-				resolve({
-					response: responseMessages.SUCCESS,
-					finalData: {},
-				});
-			} catch (err) {
-				reject({
-					response: responseMessages.SERVER_ERROR,
-					finalData: {},
-				});
-			}
-		});
-	},
-
-	viewUserProductHistory: async (userDetails) => {
-		try {
-			let userProductHistory = await mostViewedProducts(userDetails, false);
-			return {
-				response: responseMessages.SUCCESS,
-				finalData: { userProductHistory },
-			};
-		} catch (err) {
-			reject({
-				response: responseMessages.SERVER_ERROR,
-				finalData: {},
-			});
-		}
-	},
-
-	removeFromProductHistory: async (payload) => {
-		return new Promise(async (resolve, reject) => {
-			try {
-				let existingProductHistory = await ProductHistory.findAll({
-					where: { id: payload.productHistoryId },
-				});
-
-				if (existingProductHistory && existingProductHistory.length > 0) {
-					await ProductHistory.update(
-						{ is_deleted: 1 },
-						{ where: { id: payload.productHistoryId } }
-					);
-
-					resolve({
-						response: responseMessages.SUCCESS,
-						finalData: {},
-					});
-				} else {
-					reject({
-						response: responseMessages.INVALID_PRODUCT_HISTORY_ID,
-						finalData: {},
-					});
-				}
-			} catch (err) {
-				reject({
-					response: responseMessages.SERVER_ERROR,
-					finalData: {},
-				});
-			}
-		});
-	},
-
-	getProductOffers: async (userDetails) => {
-		try {
-			let orderDetails = await mostBookedProducts(userDetails);
-			let viewedProducts = await mostViewedProducts(userDetails, true);
-			return {
-				response: responseMessages.SUCCESS,
-				finalData: { orderDetails, viewedProducts },
-			};
-		} catch (err) {
-			return {
-				response: responseMessages.SERVER_ERROR,
-				finalData: {},
-			};
-		}
-	},
-};
-
-module.exports = productHandler;
+	}
+}

@@ -1,11 +1,9 @@
-const sequelize = require('sequelize');
-const Op = sequelize.Op;
+import ProductReview from '../models/productReview.js';
+import ProductReviewImages from '../models/productReviewImages.js';
+import ResponseMessages from '../lib/responseMessages.js';
 
-const { responseMessages } = require('../lib');
-const { ProductReview, ProductReviewImages } = require('../models');
-
-const ratingHandler = {
-	saveNewReview: (payload, userDetails) => {
+export default class ReviewHandler {
+	async create(payload, userDetails) {
 		return new Promise((resolve, reject) => {
 			try {
 				let productImages = [];
@@ -26,20 +24,20 @@ const ratingHandler = {
 					}
 
 					resolve({
-						response: responseMessages.SUCCESS,
+						response: ResponseMessages.SUCCESS,
 						finalData: {},
 					});
 				});
 			} catch (err) {
 				reject({
-					response: responseMessages.SERVER_ERROR,
+					response: ResponseMessages.SERVER_ERROR,
 					finalData: {},
 				});
 			}
 		});
-	},
+	}
 
-	updateReview: async (payload) => {
+	async update(payload) {
 		return new Promise((resolve, reject) => {
 			try {
 				ProductReview.update(
@@ -72,26 +70,26 @@ const ratingHandler = {
 							await ProductReviewImages.bulkCreate(productImages);
 						}
 						resolve({
-							response: responseMessages.SUCCESS,
+							response: ResponseMessages.SUCCESS,
 							finalData: {},
 						});
 					})
 					.catch((err) => {
 						reject({
-							response: responseMessages.SERVER_ERROR,
+							response: ResponseMessages.SERVER_ERROR,
 							finalData: {},
 						});
 					});
 			} catch (err) {
 				reject({
-					response: responseMessages.SERVER_ERROR,
+					response: ResponseMessages.SERVER_ERROR,
 					finalData: {},
 				});
 			}
 		});
-	},
+	}
 
-	deleteReview: (payload) => {
+	async delete(payload) {
 		return new Promise((resolve, reject) => {
 			try {
 				ProductReview.update(
@@ -99,18 +97,28 @@ const ratingHandler = {
 					{ where: { id: payload.reviewId } }
 				).then(() => {
 					resolve({
-						response: responseMessages.SUCCESS,
+						response: ResponseMessages.SUCCESS,
 						finalData: {},
 					});
 				});
 			} catch (err) {
 				reject({
-					response: responseMessages.SERVER_ERROR,
+					response: ResponseMessages.SERVER_ERROR,
 					finalData: {},
 				});
 			}
 		});
-	},
-};
+	}
+}
 
-module.exports = ratingHandler;
+// const sequelize = require('sequelize');
+// const Op = sequelize.Op;
+
+// const { responseMessages } = require('../lib');
+// const { ProductReview, ProductReviewImages } = require('../models');
+
+// const ratingHandler = {
+
+// };
+
+// module.exports = ratingHandler;

@@ -1,37 +1,40 @@
-const { responseManager } = require('../lib');
-const { reviewHandler } = require('../handlers');
+import ReviewHandler from '../handlers/reviewHandler.js';
+import ResponseManager from '../lib/responseManager.js';
 
-const ratingController = {
-	saveNewReview: async (req, res) => {
+export default class ReviewController extends ReviewHandler {
+	responseManager;
+	constructor() {
+		super();
+		this.responseManager = new ResponseManager();
+	}
+	saveNewReview = async (req, res) => {
 		try {
 			let payload = req.body;
 			let userDetails = req.user;
-			let response = await reviewHandler.saveNewReview(payload, userDetails);
-			responseManager.sendSuccessResponse(response, res);
+			let response = await this.create(payload, userDetails);
+			this.responseManager.sendSuccessResponse(response, res);
 		} catch (err) {
-			responseManager.sendErrorResponse(err, res);
+			this.responseManager.sendErrorResponse(err, res);
 		}
-	},
+	};
 
-	updateReview: async (req, res) => {
+	updateReview = async (req, res) => {
 		try {
 			let payload = req.body;
-			let response = await reviewHandler.updateReview(payload);
-			responseManager.sendSuccessResponse(response, res);
+			let response = await this.update(payload);
+			this.responseManager.sendSuccessResponse(response, res);
 		} catch (err) {
-			responseManager.sendErrorResponse(err, res);
+			this.responseManager.sendErrorResponse(err, res);
 		}
-	},
+	};
 
-	deleteReview: async (req, res) => {
+	deleteReview = async (req, res) => {
 		try {
 			let payload = req.body;
-			let response = await reviewHandler.deleteReview(payload);
-			responseManager.sendSuccessResponse(response, res);
+			let response = await this.delete(payload);
+			this.responseManager.sendSuccessResponse(response, res);
 		} catch (err) {
-			responseManager.sendErrorResponse(err, res);
+			this.responseManager.sendErrorResponse(err, res);
 		}
-	},
-};
-
-module.exports = ratingController;
+	};
+}
