@@ -42,19 +42,3 @@ export default class Routes extends UserRoute {
 		app.use('/product', productAPI);
 	}
 }
-
-// module.exports = () => {
-// 	const router = express.Router();
-
-// 	router.get('/homeCategories', productController.getHomeCategories);
-
-// 	router.get(
-// 		'/subCategory',
-// 		schemaMiddleware(schemaValidator.GET_SUB_CATEGORY_ITEMS),
-// 		productController.getSubCategoryItems
-// 	);
-
-// 	router.post('/cartProductDetails', productController.getCartProductDetails);
-
-// 	return router;
-// };

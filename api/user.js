@@ -2,12 +2,14 @@ import UserController from '../controllers/userController.js';
 import SchemaValidator from '../validator/schemaValidator.js';
 import SchemaMiddleware from '../middlewares/schemaMiddleware.js';
 import AuthMiddleware from '../middlewares/authMiddleware.js';
+import ProductController from '../controllers/productController.js';
 
 export default class UserRoute {
 	async initiateUserRoutes(apiRouter) {
 		let userController = new UserController();
 		let schemaMiddleware = new SchemaMiddleware();
 		let authMiddleware = new AuthMiddleware();
+		let productController = new ProductController();
 
 		apiRouter.post(
 			'/login',
@@ -48,6 +50,19 @@ export default class UserRoute {
 			schemaMiddleware.validateSchema(SchemaValidator.UPDATE_USER_DETAILS),
 			authMiddleware.apiAuth,
 			userController.updateUserDetails
+		);
+
+		apiRouter.get('/homeCategories', productController.getHomeCategories);
+
+		apiRouter.get(
+			'/subCategory',
+			schemaMiddleware.validateSchema(SchemaValidator.GET_SUB_CATEGORY_ITEMS),
+			productController.getSubCategoryItems
+		);
+
+		apiRouter.post(
+			'/cartProductDetails',
+			productController.getCartProductDetails
 		);
 
 		return apiRouter;
