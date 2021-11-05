@@ -11,10 +11,16 @@ export default class ProductRoute {
 		let productController = new ProductController();
 		let reviewController = new ReviewController();
 
+		apiRouter.get(
+			'/list',
+			schemaMiddleware.validateSchema(SchemaValidator.GET_PRODUCTS),
+			productController.getProducts
+		);
+
 		apiRouter.post(
 			'/history',
 			schemaMiddleware.validateSchema(SchemaValidator.ADD_TO_PRODUCT_HISTORY),
-			authMiddleware.apiAuth.apply,
+			authMiddleware.apiAuth,
 			productController.addToProductHistory
 		);
 
@@ -63,12 +69,6 @@ export default class ProductRoute {
 			'/',
 			schemaMiddleware.validateSchema(SchemaValidator.PRODUCT_DETAILS),
 			productController.getProductDetails
-		);
-
-		apiRouter.get(
-			'/list',
-			schemaMiddleware.validateSchema(SchemaValidator.GET_PRODUCTS),
-			productController.getProducts
 		);
 
 		return apiRouter;

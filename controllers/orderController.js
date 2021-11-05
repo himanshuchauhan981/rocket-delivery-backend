@@ -1,6 +1,3 @@
-// const { responseManager } = require('../lib');
-// const { orderHandler } = require('../handlers');
-
 import OrderHandler from '../handlers/orderHandler.js';
 import ResponseManager from '../lib/responseManager.js';
 
@@ -25,7 +22,6 @@ class OrderController extends OrderHandler {
 	getUserOrders = async (req, res) => {
 		try {
 			let userDetails = req.user;
-
 			let responseDetails = await super.getUserOrders(userDetails);
 			this.responseManager.sendSuccessResponse(responseDetails, res);
 		} catch (err) {

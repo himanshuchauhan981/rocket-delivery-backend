@@ -38,7 +38,12 @@ export default class ProductPrice extends Sequelize.Model {
 					allowNull: false,
 				},
 			},
-			{ timestamps: false, tableName: 'product_price', sequelize }
+			{
+				timestamps: false,
+				tableName: 'product_price',
+				sequelize,
+				modelName: 'product_price',
+			}
 		);
 	}
 }

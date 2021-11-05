@@ -35,7 +35,12 @@ class Categories extends Sequelize.Model {
 					allowNull: false,
 				},
 			},
-			{ timestamps: false, tableName: 'categories', sequelize }
+			{
+				timestamps: false,
+				tableName: 'categories',
+				sequelize,
+				modelName: 'categories',
+			}
 		);
 	}
 }

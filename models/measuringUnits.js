@@ -30,7 +30,12 @@ export default class MeasuringUnits extends Sequelize.Model {
 					allowNull: false,
 				},
 			},
-			{ timestamps: false, tableName: 'measuring_units', sequelize }
+			{
+				timestamps: false,
+				tableName: 'measuring_units',
+				modelName: 'measuring_unit',
+				sequelize,
+			}
 		);
 	}
 }

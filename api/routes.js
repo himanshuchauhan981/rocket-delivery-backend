@@ -26,19 +26,19 @@ export default class Routes extends UserRoute {
 		const paymentAPI = await paymentRoutes.initiatePaymentRoutes(
 			this.apiRouter
 		);
+		const productAPI = await productRoutes.initiateProductRoutes(
+			this.apiRouter
+		);
 		const orderAPI = await orderRoutes.initiateOrderRoutes(this.apiRouter);
 		const wishlistAPI = await wishlistRoutes.initiateWishlistRoutes(
 			this.apiRouter
 		);
-		const productAPI = await productRoutes.initiateProductRoutes(
-			this.apiRouter
-		);
 
 		app.use('/', userAPI);
+		app.use('/product', productAPI);
 		app.use('/address', addressAPI);
 		app.use('/payment', paymentAPI);
 		app.use('/order', orderAPI);
 		app.use('/wishlist', wishlistAPI);
-		app.use('/product', productAPI);
 	}
 }
