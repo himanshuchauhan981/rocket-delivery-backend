@@ -202,7 +202,6 @@ export default class UserHandler {
 						}
 					})
 					.catch((err) => {
-						console.log(err);
 						reject({
 							response: ResponseMessages.SERVER_ERROR,
 							finalData: {},

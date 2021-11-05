@@ -488,7 +488,7 @@ export default class ProductHandler {
 		return new Promise((resolve, reject) => {
 			try {
 				Products.findOne({
-					where: { id: payload.productId },
+					where: { id: payload.id },
 					include: [{ model: ProductPrice, attributes: [] }],
 					attributes: [
 						'name',
@@ -524,15 +524,14 @@ export default class ProductHandler {
 
 						let productReviewDetails = await ProductReview.findAll({
 							where: {
-								[Op.and]: [
-									{ product_id: payload.productId },
+								[sequelize.Op.and]: [
+									{ product_id: payload.id },
 									{ is_deleted: 0 },
 								],
 							},
 							attributes: ['id', 'ratings'],
 						});
 						let ratingCount = 0;
-						let totalStars = productReviewDetails.length * 5;
 						for (let i = 0; i < productReviewDetails.length; i++) {
 							ratingCount = ratingCount + productReviewDetails[i].ratings;
 						}

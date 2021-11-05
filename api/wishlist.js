@@ -1,13 +1,15 @@
-import WishlistController from '../controllers/wishlistController.js';
 import SchemaValidator from '../validator/schemaValidator.js';
 import SchemaMiddleware from '../middlewares/schemaMiddleware.js';
 import AuthMiddleware from '../middlewares/authMiddleware.js';
+import WishlistController from '../controllers/wishlistController.js';
 
-export default class WishlistRoute {
+class WishlistRoute {
 	async initiateWishlistRoutes(apiRouter) {
 		let wishlistController = new WishlistController();
 		let schemaMiddleware = new SchemaMiddleware();
 		let authMiddleware = new AuthMiddleware();
+
+		apiRouter.get('', authMiddleware.apiAuth, wishlistController.view);
 
 		apiRouter.post(
 			'/',
@@ -15,8 +17,6 @@ export default class WishlistRoute {
 			authMiddleware.apiAuth,
 			wishlistController.add
 		);
-
-		apiRouter.get('/', authMiddleware.apiAuth, wishlistController.view);
 
 		apiRouter.patch(
 			'/',
@@ -28,3 +28,5 @@ export default class WishlistRoute {
 		return apiRouter;
 	}
 }
+
+export default WishlistRoute;

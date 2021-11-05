@@ -1,3 +1,5 @@
+import sequelize from 'sequelize';
+
 import Wishlist from '../models/wishlist.js';
 import ResponseMessages from '../lib/responseMessages.js';
 import Products from '../models/products.js';
@@ -8,7 +10,7 @@ export default class WishlistHandler {
 			try {
 				let existingWishlistItem = await Wishlist.findAll({
 					where: {
-						[Op.and]: [
+						[sequelize.Op.and]: [
 							{ product_id: payload.productId },
 							{ user_id: userDetails.id },
 							{ is_deleted: 0 },
@@ -53,8 +55,19 @@ export default class WishlistHandler {
 		return new Promise((resolve, reject) => {
 			try {
 				Wishlist.findAll({
-					where: { [Op.and]: [{ user_id: userDetails.id }, { is_deleted: 0 }] },
-					include: [{ model: Products, attributes: ['id', 'name', 'image'] }],
+					where: {
+						[sequelize.Op.and]: [
+							{ user_id: userDetails.id },
+							{ is_deleted: 0 },
+						],
+					},
+					include: [
+						{
+							model: Products,
+							attributes: ['id', 'name', 'image'],
+							as: 'product',
+						},
+					],
 					attributes: ['id', [sequelize.col('product_id'), 'productId']],
 				})
 					.then((userWishlist) => {
@@ -85,7 +98,7 @@ export default class WishlistHandler {
 					{ is_deleted: 1 },
 					{
 						where: {
-							[Op.and]: [
+							[sequelize.Op.and]: [
 								{ id: payload.wishlistId },
 								{ user_id: userDetails.id },
 							],
@@ -94,19 +107,19 @@ export default class WishlistHandler {
 				)
 					.then(() => {
 						resolve({
-							response: responseMessages.REMOVE_WISHLIST_ITEM,
+							response: ResponseMessages.REMOVE_WISHLIST_ITEM,
 							finalData: {},
 						});
 					})
 					.catch((err) => {
 						reject({
-							response: responseMessages.SERVER_ERROR,
+							response: ResponseMessages.SERVER_ERROR,
 							finalData: {},
 						});
 					});
 			} catch (err) {
 				reject({
-					response: responseMessages.SERVER_ERROR,
+					response: ResponseMessages.SERVER_ERROR,
 					finalData: {},
 				});
 			}

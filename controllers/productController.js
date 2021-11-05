@@ -91,7 +91,7 @@ export default class ProductController extends ProductHandler {
 
 	getProductDetails = async (req, res) => {
 		try {
-			let payload = req.query;
+			let payload = req.params;
 			let response = await super.getProductDetails(payload);
 			this.responseManager.sendSuccessResponse(response, res);
 		} catch (err) {

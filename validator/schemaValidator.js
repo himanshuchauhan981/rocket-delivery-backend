@@ -13,8 +13,8 @@ const SchemaValidator = {
 		}),
 	},
 	PRODUCT_DETAILS: {
-		query: Joi.object({
-			productId: Joi.number().required(),
+		params: Joi.object({
+			id: Joi.number().required(),
 		}),
 	},
 	SIGNUP: {

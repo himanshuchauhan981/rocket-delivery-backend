@@ -20,6 +20,9 @@ export default class Routes extends UserRoute {
 		const productRoutes = new ProductRoute();
 
 		const userAPI = await userRoutes.initiateUserRoutes(this.apiRouter);
+		const wishlistAPI = await wishlistRoutes.initiateWishlistRoutes(
+			this.apiRouter
+		);
 		const addressAPI = await addressRoutes.initiateAddressRoutes(
 			this.apiRouter
 		);
@@ -30,15 +33,13 @@ export default class Routes extends UserRoute {
 			this.apiRouter
 		);
 		const orderAPI = await orderRoutes.initiateOrderRoutes(this.apiRouter);
-		const wishlistAPI = await wishlistRoutes.initiateWishlistRoutes(
-			this.apiRouter
-		);
 
+		app.use('/wishlist', wishlistAPI);
 		app.use('/', userAPI);
+
 		app.use('/product', productAPI);
 		app.use('/address', addressAPI);
 		app.use('/payment', paymentAPI);
 		app.use('/order', orderAPI);
-		app.use('/wishlist', wishlistAPI);
 	}
 }

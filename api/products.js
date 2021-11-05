@@ -66,8 +66,8 @@ export default class ProductRoute {
 		);
 
 		apiRouter.get(
-			'/',
-			schemaMiddleware.validateSchema(SchemaValidator.PRODUCT_DETAILS),
+			'/:id',
+			// schemaMiddleware.validateSchema(SchemaValidator.PRODUCT_DETAILS),
 			productController.getProductDetails
 		);
 

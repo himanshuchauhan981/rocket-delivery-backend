@@ -70,7 +70,12 @@ class Products extends Sequelize.Model {
 					allowNull: false,
 				},
 			},
-			{ timestamps: false, tableName: 'products', sequelize }
+			{
+				timestamps: false,
+				tableName: 'products',
+				sequelize,
+				modelName: 'product',
+			}
 		);
 	}
 }
