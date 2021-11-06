@@ -1,15 +1,18 @@
+import express from 'express';
+
 import SchemaValidator from '../validator/schemaValidator.js';
 import SchemaMiddleware from '../middlewares/schemaMiddleware.js';
 import AuthMiddleware from '../middlewares/authMiddleware.js';
 import WishlistController from '../controllers/wishlistController.js';
 
 class WishlistRoute {
-	async initiateWishlistRoutes(apiRouter) {
-		let wishlistController = new WishlistController();
-		let schemaMiddleware = new SchemaMiddleware();
-		let authMiddleware = new AuthMiddleware();
+	async initiateWishlistRoutes() {
+		const apiRouter = express.Router();
+		const wishlistController = new WishlistController();
+		const schemaMiddleware = new SchemaMiddleware();
+		const authMiddleware = new AuthMiddleware();
 
-		apiRouter.get('', authMiddleware.apiAuth, wishlistController.view);
+		apiRouter.get('/list', authMiddleware.apiAuth, wishlistController.view);
 
 		apiRouter.post(
 			'/',

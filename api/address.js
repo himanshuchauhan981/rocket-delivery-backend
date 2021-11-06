@@ -1,13 +1,17 @@
+import express from 'express';
+
 import AddressController from '../controllers/addressController.js';
 import SchemaValidator from '../validator/schemaValidator.js';
 import SchemaMiddleware from '../middlewares/schemaMiddleware.js';
 import AuthMiddleware from '../middlewares/authMiddleware.js';
 
 class AddressRoutes {
-	async initiateAddressRoutes(apiRouter) {
-		let addressController = new AddressController();
-		let schemaMiddleware = new SchemaMiddleware();
-		let authMiddleware = new AuthMiddleware();
+	async initiateAddressRoutes() {
+		const apiRouter = express.Router();
+
+		const addressController = new AddressController();
+		const schemaMiddleware = new SchemaMiddleware();
+		const authMiddleware = new AuthMiddleware();
 
 		apiRouter.post(
 			'/',
@@ -24,7 +28,7 @@ class AddressRoutes {
 		);
 
 		apiRouter.get(
-			'/',
+			'/list',
 			authMiddleware.apiAuth,
 			addressController.viewUserAddress
 		);

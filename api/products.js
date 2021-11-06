@@ -1,3 +1,5 @@
+import express from 'express';
+
 import SchemaValidator from '../validator/schemaValidator.js';
 import SchemaMiddleware from '../middlewares/schemaMiddleware.js';
 import AuthMiddleware from '../middlewares/authMiddleware.js';
@@ -5,11 +7,13 @@ import ProductController from '../controllers/productController.js';
 import ReviewController from '../controllers/reviewController.js';
 
 export default class ProductRoute {
-	async initiateProductRoutes(apiRouter) {
-		let schemaMiddleware = new SchemaMiddleware();
-		let authMiddleware = new AuthMiddleware();
-		let productController = new ProductController();
-		let reviewController = new ReviewController();
+	async initiateProductRoutes() {
+		const apiRouter = express.Router();
+
+		const schemaMiddleware = new SchemaMiddleware();
+		const authMiddleware = new AuthMiddleware();
+		const productController = new ProductController();
+		const reviewController = new ReviewController();
 
 		apiRouter.get(
 			'/list',
@@ -67,7 +71,7 @@ export default class ProductRoute {
 
 		apiRouter.get(
 			'/:id',
-			// schemaMiddleware.validateSchema(SchemaValidator.PRODUCT_DETAILS),
+			schemaMiddleware.validateSchema(SchemaValidator.PRODUCT_DETAILS),
 			productController.getProductDetails
 		);
 

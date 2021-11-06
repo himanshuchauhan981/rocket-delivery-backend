@@ -1,10 +1,14 @@
+import express from 'express';
+
 import SchemaValidator from '../validator/schemaValidator.js';
 import SchemaMiddleware from '../middlewares/schemaMiddleware.js';
 import AuthMiddleware from '../middlewares/authMiddleware.js';
 import OrderController from '../controllers/orderController.js';
 
 class OrderRoutes {
-	async initiateOrderRoutes(apiRouter) {
+	async initiateOrderRoutes() {
+		const apiRouter = express.Router();
+
 		const orderController = new OrderController();
 		const authMiddleware = new AuthMiddleware();
 		const schemaMiddleware = new SchemaMiddleware();

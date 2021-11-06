@@ -1,3 +1,5 @@
+import express from 'express';
+
 import UserController from '../controllers/userController.js';
 import SchemaValidator from '../validator/schemaValidator.js';
 import SchemaMiddleware from '../middlewares/schemaMiddleware.js';
@@ -5,11 +7,12 @@ import AuthMiddleware from '../middlewares/authMiddleware.js';
 import ProductController from '../controllers/productController.js';
 
 export default class UserRoute {
-	async initiateUserRoutes(apiRouter) {
-		let userController = new UserController();
-		let schemaMiddleware = new SchemaMiddleware();
-		let authMiddleware = new AuthMiddleware();
-		let productController = new ProductController();
+	async initiateUserRoutes() {
+		const apiRouter = express.Router();
+		const userController = new UserController();
+		const schemaMiddleware = new SchemaMiddleware();
+		const authMiddleware = new AuthMiddleware();
+		const productController = new ProductController();
 
 		apiRouter.post(
 			'/login',

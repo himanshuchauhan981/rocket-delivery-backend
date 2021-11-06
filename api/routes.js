@@ -7,11 +7,8 @@ import UserRoute from './user.js';
 import WishlistRoute from './wishlist.js';
 import ProductRoute from './products.js';
 
-export default class Routes extends UserRoute {
-	apiRouter;
+export default class Routes {
 	static async prepareRoutes(app) {
-		this.apiRouter = express.Router();
-
 		const userRoutes = new UserRoute();
 		const addressRoutes = new AddressRoutes();
 		const paymentRoutes = new PaymentRoute();
@@ -19,20 +16,12 @@ export default class Routes extends UserRoute {
 		const wishlistRoutes = new WishlistRoute();
 		const productRoutes = new ProductRoute();
 
-		const userAPI = await userRoutes.initiateUserRoutes(this.apiRouter);
-		const wishlistAPI = await wishlistRoutes.initiateWishlistRoutes(
-			this.apiRouter
-		);
-		const addressAPI = await addressRoutes.initiateAddressRoutes(
-			this.apiRouter
-		);
-		const paymentAPI = await paymentRoutes.initiatePaymentRoutes(
-			this.apiRouter
-		);
-		const productAPI = await productRoutes.initiateProductRoutes(
-			this.apiRouter
-		);
-		const orderAPI = await orderRoutes.initiateOrderRoutes(this.apiRouter);
+		const userAPI = await userRoutes.initiateUserRoutes();
+		const wishlistAPI = await wishlistRoutes.initiateWishlistRoutes();
+		const addressAPI = await addressRoutes.initiateAddressRoutes();
+		const paymentAPI = await paymentRoutes.initiatePaymentRoutes();
+		const productAPI = await productRoutes.initiateProductRoutes();
+		const orderAPI = await orderRoutes.initiateOrderRoutes();
 
 		app.use('/wishlist', wishlistAPI);
 		app.use('/', userAPI);
