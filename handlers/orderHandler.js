@@ -13,6 +13,7 @@ import ProductReview from '../models/productReview.js';
 import ProductReviewImages from '../models/productReviewImages.js';
 import Address from '../models/userAddress.js';
 import UserPayments from '../models/userPayments.js';
+import Users from '../models/users.js';
 
 class OrderHandler {
 	async generateNewOrder(payload, userDetails) {
@@ -320,10 +321,11 @@ class OrderHandler {
 	}
 
 	async changeOrderStatus(payload) {
-		let paymentHandler = new PaymentHandler();
+		const paymentHandler = new PaymentHandler();
+		const common = new Common();
 		return new Promise((resolve, reject) => {
 			try {
-				Orders.findAll({
+				Orders.findOne({
 					where: { id: payload.orderId },
 					attributes: [
 						'id',
@@ -332,15 +334,29 @@ class OrderHandler {
 						'payment_id',
 						'net_amount',
 					],
+					include: [
+						{ model: Users, attributes: ['id', 'fcm_token'], raw: true },
+					],
 				})
 					.then(async (orderDetails) => {
-						if (orderDetails && orderDetails.length > 0) {
+						if (orderDetails) {
 							if (payload.status == 3) {
-								if (orderDetails[0].status == 1) {
-									if (orderDetails[0].payment_method === 1) {
+								if (orderDetails.status == 1) {
+									if (orderDetails.payment_method == 1) {
 										await paymentHandler.refundOrderPayments(
-											orderDetails[0].payment_id,
-											parseFloat(orderDetails[0].net_amount) * 100
+											orderDetails.payment_id,
+											parseFloat(orderDetails.net_amount) * 100
+										);
+										const fcm_token = orderDetails.user.fcm_token;
+
+										let notification_data = {
+											title: 'Order',
+											body: 'Your order has been cancelled',
+										};
+
+										await common.sendFcmPushNofication(
+											fcm_token,
+											notification_data
 										);
 									}
 									await Orders.update(

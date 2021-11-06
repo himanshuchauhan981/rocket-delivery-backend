@@ -61,7 +61,7 @@ class Users extends Sequelize.Model {
 					allowNull: true,
 				},
 			},
-			{ timestamps: false, tableName: 'users', sequelize }
+			{ timestamps: false, tableName: 'users', sequelize, modelName: 'users' }
 		);
 	}
 }
