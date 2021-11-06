@@ -311,7 +311,6 @@ class OrderHandler {
 					});
 				});
 			} catch (err) {
-				console.log('>>>>>>>err', err);
 				reject({
 					response: ResponseMessages.SERVER_ERROR,
 					finalData: {},
@@ -378,28 +377,3 @@ class OrderHandler {
 }
 
 export default OrderHandler;
-
-// const Handlebar = require('handlebars');
-// const moment = require('moment');
-// const sequelize = require('sequelize');
-// const Op = sequelize.Op;
-
-// const { responseMessages, commonFunctions } = require('../lib');
-// const paymentHandler = require('./paymentHandlers');
-// const {
-// 	Orders,
-// 	Address,
-// 	OrderProducts,
-// 	Wishlist,
-// 	Products,
-// 	ProductPrice,
-// 	UserPayments,
-// 	ProductReview,
-// 	ProductReviewImages,
-// } = require('../models');
-
-// const orderHandler = {
-
-// 	},
-
-// module.exports = orderHandler;

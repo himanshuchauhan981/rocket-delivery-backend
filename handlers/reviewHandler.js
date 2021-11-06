@@ -110,15 +110,3 @@ export default class ReviewHandler {
 		});
 	}
 }
-
-// const sequelize = require('sequelize');
-// const Op = sequelize.Op;
-
-// const { responseMessages } = require('../lib');
-// const { ProductReview, ProductReviewImages } = require('../models');
-
-// const ratingHandler = {
-
-// };
-
-// module.exports = ratingHandler;
