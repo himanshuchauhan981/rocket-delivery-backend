@@ -35,7 +35,12 @@ export default class SubCategories extends Sequelize.Model {
 					allowNull: false,
 				},
 			},
-			{ timestamps: false, tableName: 'sub_categories', sequelize }
+			{
+				timestamps: false,
+				tableName: 'sub_categories',
+				sequelize,
+				modelName: 'sub_categories',
+			}
 		);
 	}
 }

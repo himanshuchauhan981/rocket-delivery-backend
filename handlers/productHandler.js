@@ -64,7 +64,7 @@ export default class ProductHandler {
 
 								let productReviewDetails = await ProductReview.findAll({
 									where: {
-										[Op.and]: [
+										[sequelize.Op.and]: [
 											{ product_id: orderDetails[i].product_id },
 											{ is_deleted: 0 },
 										],
@@ -101,6 +101,7 @@ export default class ProductHandler {
 						resolve(finalOrderDetails);
 					})
 					.catch((err) => {
+						console.log('>>>>>err1', err);
 						reject(err);
 					});
 			} catch (err) {
