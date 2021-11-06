@@ -1,1 +1,0 @@
-exports.schemaValidator = require('./schemaValidator');
