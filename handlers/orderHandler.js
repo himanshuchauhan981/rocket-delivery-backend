@@ -11,6 +11,8 @@ import ResponseMessages from '../lib/responseMessages.js';
 import PaymentHandler from './paymentHandlers.js';
 import ProductReview from '../models/productReview.js';
 import ProductReviewImages from '../models/productReviewImages.js';
+import Address from '../models/userAddress.js';
+import UserPayments from '../models/userPayments.js';
 
 class OrderHandler {
 	async generateNewOrder(payload, userDetails) {
@@ -23,7 +25,7 @@ class OrderHandler {
 
 				let cartItemsId = cartItems.map((item) => item.id);
 				Products.findAll({
-					where: { id: { [Op.in]: cartItemsId } },
+					where: { id: { [sequelize.Op.in]: cartItemsId } },
 					include: [{ model: ProductPrice, attributes: [] }],
 					attributes: [
 						'id',
@@ -48,7 +50,7 @@ class OrderHandler {
 				})
 					.then(async (productDetails) => {
 						for (let i = 0; i < productDetails.length; i++) {
-							let discountDetails = common.calculateDiscountPrice(
+							let discountDetails = await common.calculateDiscountPrice(
 								productDetails[i].discountStartDate,
 								productDetails[i].discountEndDate,
 								productDetails[i].discountPercent,
@@ -222,7 +224,6 @@ class OrderHandler {
 	async specificOrderDetails(payload) {
 		return new Promise((resolve, reject) => {
 			try {
-				let Op = sequelize.Op;
 				Orders.findOne({
 					where: { id: payload.orderId },
 					include: [
@@ -310,6 +311,7 @@ class OrderHandler {
 					});
 				});
 			} catch (err) {
+				console.log('>>>>>>>err', err);
 				reject({
 					response: ResponseMessages.SERVER_ERROR,
 					finalData: {},

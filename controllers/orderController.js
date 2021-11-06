@@ -31,7 +31,7 @@ class OrderController extends OrderHandler {
 
 	specificOrderDetails = async (req, res) => {
 		try {
-			let payload = req.query;
+			let payload = req.params;
 
 			let responseDetails = await super.specificOrderDetails(payload);
 			this.responseManager.sendSuccessResponse(responseDetails, res);

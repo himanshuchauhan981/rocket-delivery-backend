@@ -80,7 +80,12 @@ class Address extends Sequelize.Model {
 					allowNull: false,
 				},
 			},
-			{ timestamps: false, tableName: 'address', sequelize }
+			{
+				timestamps: false,
+				tableName: 'address',
+				sequelize,
+				modelName: 'address',
+			}
 		);
 	}
 }

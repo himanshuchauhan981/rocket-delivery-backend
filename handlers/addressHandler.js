@@ -1,3 +1,5 @@
+import sequelize from 'sequelize';
+
 import Address from '../models/userAddress.js';
 import ResponseMessages from '../lib/responseMessages.js';
 
@@ -81,7 +83,7 @@ export default class AddressHandler {
 		return new Promise((resolve, reject) => {
 			try {
 				let addressCondition = {
-					[Op.and]: [{ user_id: userDetails.id }, { is_deleted: 0 }],
+					[sequelize.Op.and]: [{ user_id: userDetails.id }, { is_deleted: 0 }],
 				};
 
 				Address.findAll({

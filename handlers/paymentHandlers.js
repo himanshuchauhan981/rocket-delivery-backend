@@ -1,4 +1,5 @@
 import Razorpay from 'razorpay';
+import sequelize from 'sequelize';
 
 import Common from '../lib/commonFunctions.js';
 import ResponseMessages from '../lib/responseMessages.js';
@@ -6,7 +7,7 @@ import UserPayments from '../models/userPayments.js';
 import Users from '../models/users.js';
 
 export default class PaymentHandler {
-	createRazorpayOrder = async (payload, userDetails) => {
+	async createRazorpayOrder(payload, userDetails) {
 		let common = new Common();
 		return new Promise(async (resolve, reject) => {
 			try {
@@ -53,7 +54,7 @@ export default class PaymentHandler {
 				});
 			}
 		});
-	};
+	}
 
 	captureOrderPayments = (paymentId, totalPrice, paymentOrderId) => {
 		totalPrice = totalPrice * 100;

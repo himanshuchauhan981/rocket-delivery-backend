@@ -52,7 +52,12 @@ export default class ProductReview extends Sequelize.Model {
 				},
 				review_images: { type: DataTypes.VIRTUAL },
 			},
-			{ timestamps: false, tableName: 'product_review', sequelize }
+			{
+				timestamps: false,
+				tableName: 'product_review',
+				sequelize,
+				modelName: 'product_review',
+			}
 		);
 	}
 }

@@ -26,7 +26,7 @@ class OrderRoutes {
 		);
 
 		apiRouter.get(
-			'/',
+			'/:orderId',
 			authMiddleware.apiAuth,
 			schemaMiddleware.validateSchema(SchemaValidator.SPECIFIC_ORDER_DETAILS),
 			orderController.specificOrderDetails

@@ -568,7 +568,7 @@ export default class ProductHandler {
 				let cartItems = payload.cartItems;
 				let productIds = cartItems.map((items) => items.id);
 				Products.findAll({
-					where: { id: { [Op.in]: productIds } },
+					where: { id: { [sequelize.Op.in]: productIds } },
 					include: [{ model: ProductPrice, attributes: [] }],
 					attributes: [
 						'id',

@@ -45,7 +45,12 @@ export default class OrderProducts extends Sequelize.Model {
 					allowNull: false,
 				},
 			},
-			{ timestamps: false, tableName: 'order_products', sequelize }
+			{
+				timestamps: false,
+				tableName: 'order_products',
+				modelName: 'order_products',
+				sequelize,
+			}
 		);
 	}
 }

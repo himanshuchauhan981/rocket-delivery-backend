@@ -60,7 +60,7 @@ const SchemaValidator = {
 		}),
 	},
 	SPECIFIC_ORDER_DETAILS: {
-		query: Joi.object({
+		params: Joi.object({
 			orderId: Joi.string().required(),
 		}),
 	},
@@ -137,9 +137,16 @@ const SchemaValidator = {
 			ratings: Joi.number().required(),
 		}),
 	},
+
 	DELETE_REVIEW: {
 		body: Joi.object({
 			reviewId: Joi.number().required(),
+		}),
+	},
+
+	RAZORPAY_ORDER: {
+		query: Joi.object({
+			amount: Joi.string().required(),
 		}),
 	},
 };
