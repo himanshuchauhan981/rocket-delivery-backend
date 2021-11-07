@@ -264,6 +264,11 @@ class OrderHandler {
 										'=',
 										0
 									),
+									col3: sequelize.where(
+										sequelize.col('order_products.product_review.order_id'),
+										'=',
+										payload.orderId
+									),
 								},
 								attributes: [
 									'id',
@@ -296,7 +301,10 @@ class OrderHandler {
 							let review_id = order_products[i].product_review.id;
 							let review_images = await ProductReviewImages.findAll({
 								where: {
-									[Op.and]: [{ review_id: review_id }, { is_deleted: 0 }],
+									[sequelize.Op.and]: [
+										{ review_id: review_id },
+										{ is_deleted: 0 },
+									],
 								},
 								attributes: ['id', 'image'],
 							});

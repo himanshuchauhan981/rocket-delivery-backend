@@ -70,6 +70,7 @@ const SchemaValidator = {
 			name: Joi.string().optional(),
 			touchedEmail: Joi.boolean().optional(),
 			newPassword: Joi.string().optional(),
+			profileImage: Joi.string().optional(),
 		}),
 	},
 	CHANGE_ORDER_STATUS: {

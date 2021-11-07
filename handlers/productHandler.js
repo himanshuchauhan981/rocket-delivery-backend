@@ -101,7 +101,6 @@ export default class ProductHandler {
 						resolve(finalOrderDetails);
 					})
 					.catch((err) => {
-						console.log('>>>>>err1', err);
 						reject(err);
 					});
 			} catch (err) {

@@ -60,6 +60,10 @@ class Users extends Sequelize.Model {
 					type: DataTypes.STRING,
 					allowNull: true,
 				},
+				profile_image: {
+					type: DataTypes.STRING,
+					allowNull: true,
+				},
 			},
 			{ timestamps: false, tableName: 'users', sequelize, modelName: 'users' }
 		);

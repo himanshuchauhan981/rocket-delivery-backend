@@ -19,7 +19,14 @@ export default class UserHandler {
 			};
 			Users.findAll({
 				where: existingUserQuery,
-				attributes: ['email', 'password', 'mobile_number', 'name', 'id'],
+				attributes: [
+					'email',
+					'password',
+					'mobile_number',
+					'name',
+					'id',
+					'profile_image',
+				],
 			})
 				.then((existingUser) => {
 					resolve(existingUser);
@@ -73,7 +80,11 @@ export default class UserHandler {
 						);
 						resolve({
 							response: ResponseMessages.SUCCESS,
-							finalData: { token, name: existingUser[0].name },
+							finalData: {
+								token,
+								name: existingUser[0].name,
+								profile_photo: existingUser[0].profile_image,
+							},
 						});
 					} else {
 						resolve({
@@ -342,17 +353,29 @@ export default class UserHandler {
 								},
 							});
 						} else {
-							await Users.update(
-								{ name: payload.name },
-								{ where: { id: userDetails.id } }
-							);
+							if (payload.name) {
+								await Users.update(
+									{ name: payload.name },
+									{ where: { id: userDetails.id } }
+								);
 
-							resolve({
-								response: payload.touchedEmail
-									? ResponseMessages.EXISTING_USER_EMAIL
-									: ResponseMessages.SUCCESS,
-								finalData: { name: payload.name },
-							});
+								resolve({
+									response: payload.touchedEmail
+										? ResponseMessages.EXISTING_USER_EMAIL
+										: ResponseMessages.SUCCESS,
+									finalData: { name: payload.name },
+								});
+							} else {
+								await Users.update(
+									{ profile_image: payload.profileImage },
+									{ where: { id: userDetails.id } }
+								);
+
+								resolve({
+									response: ResponseMessages.UPLOAD_PROFILE_IMAGE,
+									finalData: {},
+								});
+							}
 						}
 					})
 					.catch((err) => {
