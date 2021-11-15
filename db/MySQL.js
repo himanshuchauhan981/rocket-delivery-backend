@@ -15,6 +15,8 @@ import Products from '../models/products.js';
 import SubCategories from '../models/subCategories.js';
 import Wishlist from '../models/wishlist.js';
 import UserPayments from '../models/userPayments.js';
+import Admin from '../models/admin.js';
+import BootStrap from '../config/bootstrap.js';
 
 export default class MySQL {
 	static async create() {
@@ -26,9 +28,11 @@ export default class MySQL {
 				host: SQL_HOST,
 				dialect: SQL_DIALECT,
 			});
+			const bootstrap = new BootStrap();
 
 			await sequelize.authenticate(sequelize);
 			await this.initiateModels(sequelize);
+			await bootstrap.initiateAdminBootstrap();
 
 			console.log('Sequelize connection is successfull');
 		} catch (err) {
@@ -52,6 +56,7 @@ export default class MySQL {
 		SubCategories.init(sequelize, Sequelize);
 		Wishlist.init(sequelize, Sequelize);
 		UserPayments.init(sequelize, Sequelize);
+		Admin.init(sequelize, Sequelize);
 
 		Address.belongsTo(Users, { foreignKey: 'user_id' });
 
