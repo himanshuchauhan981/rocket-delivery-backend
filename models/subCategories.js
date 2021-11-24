@@ -24,15 +24,20 @@ export default class SubCategories extends Sequelize.Model {
 					required: true,
 					allowNull: false,
 				},
-				status: {
-					type: DataTypes.STRING,
+				is_active: {
+					type: DataTypes.INTEGER,
 					required: true,
-					allowNull: false,
+					defaultValue: 0,
 				},
 				created_at: {
 					type: 'TIMESTAMP',
 					defaultValue: DataTypes.literal('CURRENT_TIMESTAMP'),
 					allowNull: false,
+				},
+				is_deleted: {
+					type: DataTypes.INTEGER,
+					required: true,
+					defaultValue: 0,
 				},
 			},
 			{

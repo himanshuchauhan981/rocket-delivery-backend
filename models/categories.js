@@ -19,10 +19,10 @@ class Categories extends Sequelize.Model {
 					required: true,
 					allowNull: false,
 				},
-				status: {
+				is_active: {
 					type: DataTypes.INTEGER,
 					required: true,
-					allowNull: false,
+					defaultValue: 0,
 				},
 				is_sub_category: {
 					type: DataTypes.INTEGER,
@@ -33,6 +33,11 @@ class Categories extends Sequelize.Model {
 					type: 'TIMESTAMP',
 					defaultValue: DataTypes.literal('CURRENT_TIMESTAMP'),
 					allowNull: false,
+				},
+				is_deleted: {
+					type: DataTypes.INTEGER,
+					required: true,
+					defaultValue: 0,
 				},
 			},
 			{
