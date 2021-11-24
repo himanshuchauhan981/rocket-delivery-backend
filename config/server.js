@@ -1,6 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
+import cors from 'cors';
 
 export default class Server {
 	app;
@@ -12,6 +13,7 @@ export default class Server {
 		const port = process.env.port;
 
 		this.app.use(bodyParser.json());
+		this.app.use(cors());
 
 		const { default: Routes } = await import('../api/routes.js');
 		const { default: MySQL } = await import('../db/MySQL.js');

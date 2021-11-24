@@ -6,6 +6,7 @@ import PaymentRoute from './payment.js';
 import UserRoute from './user.js';
 import WishlistRoute from './wishlist.js';
 import ProductRoute from './products.js';
+import AdminRoute from './admin.js';
 
 export default class Routes {
 	static async prepareRoutes(app) {
@@ -15,6 +16,7 @@ export default class Routes {
 		const orderRoutes = new OrderRoutes();
 		const wishlistRoutes = new WishlistRoute();
 		const productRoutes = new ProductRoute();
+		const adminRoutes = new AdminRoute();
 
 		const userAPI = await userRoutes.initiateUserRoutes();
 		const wishlistAPI = await wishlistRoutes.initiateWishlistRoutes();
@@ -22,6 +24,7 @@ export default class Routes {
 		const paymentAPI = await paymentRoutes.initiatePaymentRoutes();
 		const productAPI = await productRoutes.initiateProductRoutes();
 		const orderAPI = await orderRoutes.initiateOrderRoutes();
+		const adminAPI = await adminRoutes.initiateAdminRoute();
 
 		app.use('/wishlist', wishlistAPI);
 		app.use('/', userAPI);
@@ -30,5 +33,6 @@ export default class Routes {
 		app.use('/address', addressAPI);
 		app.use('/payment', paymentAPI);
 		app.use('/order', orderAPI);
+		app.use('/admin', adminAPI);
 	}
 }
