@@ -21,7 +21,8 @@ class AdminController extends AdminHandler {
 
 	adminCategories = async (req, res) => {
 		try {
-			const response = await super.adminCategories();
+			const payload = req.query;
+			const response = await super.adminCategories(payload);
 			this.responseManager.sendSuccessResponse(response, res);
 		} catch (err) {
 			this.responseManager.sendErrorResponse(err, res);

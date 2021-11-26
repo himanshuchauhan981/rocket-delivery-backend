@@ -150,6 +150,22 @@ const SchemaValidator = {
 			amount: Joi.string().required(),
 		}),
 	},
+
+	CHANGE_CATEGORY_STATUS: {
+		params: Joi.object({
+			categoryId: Joi.number().required(),
+		}),
+		body: Joi.object({
+			status: Joi.boolean().required(),
+		}),
+	},
+
+	LIST_CATEGORIES: {
+		query: Joi.object({
+			pageIndex: Joi.number().required(),
+			pageSize: Joi.number().required(),
+		}),
+	},
 };
 
 export default SchemaValidator;

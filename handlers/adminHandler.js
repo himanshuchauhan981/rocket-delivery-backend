@@ -44,16 +44,20 @@ class AdminHandler {
 		});
 	}
 
-	async adminCategories() {
+	async adminCategories(payload) {
 		return new Promise((resolve, reject) => {
 			try {
-				Categories.findAll({
+				const pageIndex = payload.pageIndex * payload.pageSize;
+
+				Categories.findAndCountAll({
 					where: { is_deleted: 0 },
 					attributes: ['name', 'image', 'is_active', 'id'],
+					limit: payload.pageSize,
+					offset: pageIndex,
 				}).then(async (categories) => {
 					let categoriesDetails = [];
 
-					for (const item of categories) {
+					for (const item of categories.rows) {
 						const totalSubCategories = await SubCategories.findAndCountAll({
 							where: { category_id: item.id },
 							attributes: ['id'],
@@ -74,7 +78,7 @@ class AdminHandler {
 					}
 					resolve({
 						response: ResponseMessages.SUCCESS,
-						finalData: { categoriesDetails },
+						finalData: { categoriesDetails, count: categories.count },
 					});
 				});
 			} catch (err) {
