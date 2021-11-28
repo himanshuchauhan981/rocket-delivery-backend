@@ -29,6 +29,16 @@ class CategoryController extends CategoryHandler {
 			this.responseManager.sendErrorResponse(err, res);
 		}
 	};
+
+	deleteCategory = async (req, res) => {
+		try {
+			const payload = req.body;
+			const response = await super.deleteCategory(payload);
+			this.responseManager.sendSuccessResponse(response, res);
+		} catch (err) {
+			this.responseManager.sendErrorResponse(err, res);
+		}
+	};
 }
 
 export default CategoryController;

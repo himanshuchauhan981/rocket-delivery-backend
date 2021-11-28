@@ -29,10 +29,10 @@ class Products extends Sequelize.Model {
 					required: true,
 					allowNull: false,
 				},
-				status: {
+				is_active: {
 					type: DataTypes.INTEGER,
 					required: true,
-					allowNull: false,
+					defaultValue: 1,
 				},
 				max_quantity: {
 					type: DataTypes.INTEGER,
@@ -68,6 +68,11 @@ class Products extends Sequelize.Model {
 					type: 'TIMESTAMP',
 					defaultValue: DataTypes.literal('CURRENT_TIMESTAMP'),
 					allowNull: false,
+				},
+				is_deleted: {
+					type: DataTypes.INTEGER,
+					required: false,
+					defaultValue: 0,
 				},
 			},
 			{

@@ -29,6 +29,8 @@ class AdminRoute {
 			categoryController.changeCategoryStatus
 		);
 
+		apiRouter.delete('/category', categoryController.deleteCategory);
+
 		return apiRouter;
 	}
 }
