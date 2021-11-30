@@ -39,6 +39,17 @@ class CategoryController extends CategoryHandler {
 			this.responseManager.sendErrorResponse(err, res);
 		}
 	};
+
+	getCategoryDetail = async (req, res) => {
+		try {
+			const payload = req.params;
+			const response = await super.getCategoryDetails(payload);
+			this.responseManager.sendSuccessResponse(response, res);
+		} catch (err) {
+			console.log(err);
+			this.responseManager.sendErrorResponse(err, res);
+		}
+	};
 }
 
 export default CategoryController;

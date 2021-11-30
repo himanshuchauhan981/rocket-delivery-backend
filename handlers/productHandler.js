@@ -434,8 +434,8 @@ export default class ProductHandler {
 			try {
 				Products.findAll({
 					where: payload.subCategoryId
-						? { status: 1 }
-						: { category_id: payload.categoryId, status: 1 },
+						? { is_active: 1, is_deleted: 0 }
+						: { category_id: payload.categoryId, is_active: 1, is_deleted: 0 },
 					include: [
 						{ model: ProductPrice, attributes: [] },
 						{ model: MeasuringUnits, attributes: [] },
@@ -648,6 +648,80 @@ export default class ProductHandler {
 				response: ResponseMessages.SERVER_ERROR,
 				finalData: {},
 			});
+		});
+	}
+
+	async getAdminProducts(payload) {
+		const common = new Common();
+		return new Promise((resolve, reject) => {
+			try {
+				const pageIndex = payload.pageIndex * payload.pageSize;
+				Products.findAll({
+					where: {},
+					include: [
+						{ model: Categories, attributes: ['id', 'name'] },
+						{ model: SubCategories, attributes: ['id', 'name'] },
+						{
+							model: ProductPrice,
+							attributes: [
+								'id',
+								'actual_price',
+								'discount_percent',
+								'discount_start_date',
+								'discount_end_date',
+							],
+						},
+					],
+					attributes: ['id', 'name', 'image', 'max_quantity'],
+					limit: payload.pageSize,
+					offset: pageIndex,
+				}).then(async (products) => {
+					let productsList = [];
+					for (const product of products) {
+						let productObj = {};
+						const productPrice = product.product_price;
+
+						const discountDetails = common.calculateDiscountPrice(
+							productPrice.discount_start_date,
+							productPrice.discount_end_date,
+							productPrice.discountPercent,
+							productPrice.actual_price
+						);
+
+						productObj['id'] = product.id;
+						productObj['image'] = product.image;
+						productObj['max_quantity'] = product.max_quantity;
+						productObj['name'] = product.name;
+						productObj['actual_price'] = productPrice.actual_price;
+						productObj['discount_percent'] = productPrice.discount_percent;
+						productObj['discount_start_date'] =
+							productPrice.discount_start_date;
+						productObj['discount_price'] = discountDetails.discountPrice;
+						productObj['discount_status'] = discountDetails.discountStatus;
+						productObj['category_name'] = product.category.name;
+						productObj['sub_category_name'] = product.sub_category?.name;
+						productsList.push(productObj);
+					}
+
+					let totalProductsCount = await Products.findAndCountAll({
+						where: { is_deleted: 0 },
+					});
+
+					resolve({
+						response: ResponseMessages.SUCCESS,
+						finalData: {
+							products: productsList,
+							totalProductsCount: totalProductsCount.count,
+						},
+					});
+				});
+			} catch (err) {
+				console.log('>>>>>>>', err);
+				reject({
+					response: ResponseMessages.SERVER_ERROR,
+					finalData: {},
+				});
+			}
 		});
 	}
 }

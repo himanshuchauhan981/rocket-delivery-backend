@@ -108,4 +108,14 @@ export default class ProductController extends ProductHandler {
 			this.responseManager.sendErrorResponse(err, res);
 		}
 	};
+
+	getAdminProducts = async (req, res) => {
+		try {
+			let payload = req.query;
+			let response = await super.getAdminProducts(payload);
+			this.responseManager.sendSuccessResponse(response, res);
+		} catch (err) {
+			this.responseManager.sendErrorResponse(err, res);
+		}
+	};
 }

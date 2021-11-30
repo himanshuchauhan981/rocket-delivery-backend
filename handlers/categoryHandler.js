@@ -83,6 +83,31 @@ class CategoryHandler {
 					});
 				}
 			} catch (err) {
+				reject({
+					response: ResponseMessages.SERVER_ERROR,
+					finalData: {},
+				});
+			}
+		});
+	}
+
+	async getCategoryDetails(payload) {
+		return new Promise((resolve, reject) => {
+			try {
+				Categories.findOne({
+					where: { id: payload.id },
+					attributes: ['id', 'name', 'image'],
+				})
+					.then((category) => {
+						resolve({
+							response: ResponseMessages.SUCCESS,
+							finalData: { category },
+						});
+					})
+					.catch((err) => {
+						reject({ response: ResponseMessages.SERVER_ERROR, finalData: {} });
+					});
+			} catch (err) {
 				console.log(err);
 				reject({
 					response: ResponseMessages.SERVER_ERROR,

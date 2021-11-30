@@ -74,6 +74,9 @@ class Products extends Sequelize.Model {
 					required: false,
 					defaultValue: 0,
 				},
+				discount_price: {
+					type: DataTypes.VIRTUAL,
+				},
 			},
 			{
 				timestamps: false,
