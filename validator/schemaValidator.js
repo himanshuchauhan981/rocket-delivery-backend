@@ -166,6 +166,25 @@ const SchemaValidator = {
 			pageSize: Joi.number().required(),
 		}),
 	},
+	GET_CATEGORY_DETAILS: {
+		params: Joi.object({
+			id: Joi.number().required(),
+		}),
+	},
+
+	NEW_CATEGEORY: {
+		body: Joi.object({
+			name: Joi.string().required(),
+			image: Joi.string().required(),
+		}),
+	},
+
+	UPDATE_CATEGORY: {
+		body: Joi.object({
+			name: Joi.string().required(),
+			image: Joi.string().required(),
+		}),
+	},
 };
 
 export default SchemaValidator;

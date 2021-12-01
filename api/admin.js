@@ -25,7 +25,19 @@ class AdminRoute {
 			adminController.adminCategories
 		);
 
-		apiRouter.post('/category', categoryController.createNewCategory);
+		apiRouter.post(
+			'/category',
+			schemaMiddleware.validateSchema(SchemaValidator.NEW_CATEGEORY),
+			authMiddleware.apiAuth,
+			categoryController.createNewCategory
+		);
+
+		apiRouter.put(
+			'/category',
+			schemaMiddleware.validateSchema(SchemaValidator.UPDATE_CATEGORY),
+			authMiddleware.apiAuth,
+			categoryController.updateCategory
+		);
 
 		apiRouter.put(
 			'/category/:categoryId/status',
@@ -48,6 +60,7 @@ class AdminRoute {
 		apiRouter.get(
 			'/category/:id',
 			authMiddleware.apiAuth,
+			schemaMiddleware.validateSchema(SchemaValidator.GET_CATEGORY_DETAILS),
 			categoryController.getCategoryDetail
 		);
 

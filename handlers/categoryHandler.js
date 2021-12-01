@@ -108,7 +108,32 @@ class CategoryHandler {
 						reject({ response: ResponseMessages.SERVER_ERROR, finalData: {} });
 					});
 			} catch (err) {
-				console.log(err);
+				reject({
+					response: ResponseMessages.SERVER_ERROR,
+					finalData: {},
+				});
+			}
+		});
+	}
+
+	async updateCategory(payload) {
+		console;
+		return new Promise((resolve, reject) => {
+			try {
+				Categories.update(
+					{ name: payload.name, image: payload.image },
+					{ where: { id: payload.id } }
+				)
+					.then((res) => {
+						resolve({
+							response: ResponseMessages.SUCCESS,
+							finalData: {},
+						});
+					})
+					.catch((err) => {
+						reject({ response: ResponseMessages.SERVER_ERROR, finalData: {} });
+					});
+			} catch (err) {
 				reject({
 					response: ResponseMessages.SERVER_ERROR,
 					finalData: {},
