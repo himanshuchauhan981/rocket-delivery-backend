@@ -19,10 +19,15 @@ export default class MeasuringUnits extends Sequelize.Model {
 					required: true,
 					allowNull: false,
 				},
-				status: {
-					type: DataTypes.STRING,
+				is_active: {
+					type: DataTypes.INTEGER,
 					required: true,
-					allowNull: false,
+					defaultValue: 1,
+				},
+				is_deleted: {
+					type: DataTypes.INTEGER,
+					required: true,
+					defaultValue: 0,
 				},
 				created_at: {
 					type: 'TIMESTAMP',

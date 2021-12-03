@@ -22,7 +22,6 @@ class CategoryHandler {
 						});
 					})
 					.catch((err) => {
-						console.log(err);
 						reject({
 							response: ResponseMessages.SERVER_ERROR,
 							finalData: {},
@@ -117,7 +116,6 @@ class CategoryHandler {
 	}
 
 	async updateCategory(payload) {
-		console;
 		return new Promise((resolve, reject) => {
 			try {
 				Categories.update(

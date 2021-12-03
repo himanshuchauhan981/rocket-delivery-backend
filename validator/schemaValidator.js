@@ -181,6 +181,7 @@ const SchemaValidator = {
 
 	UPDATE_CATEGORY: {
 		body: Joi.object({
+			id: Joi.number().required(),
 			name: Joi.string().required(),
 			image: Joi.string().required(),
 		}),

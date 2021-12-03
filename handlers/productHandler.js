@@ -396,7 +396,7 @@ export default class ProductHandler {
 				SubCategories.findAll({
 					where: {
 						[sequelize.Op.and]: [
-							{ category_id: payload.categoryId, status: 'ACTIVE' },
+							{ category_id: payload.categoryId, is_active: 1, is_deleted: 0 },
 						],
 					},
 					include: [{ model: Categories, attributes: [] }],
@@ -716,7 +716,6 @@ export default class ProductHandler {
 					});
 				});
 			} catch (err) {
-				console.log('>>>>>>>', err);
 				reject({
 					response: ResponseMessages.SERVER_ERROR,
 					finalData: {},
