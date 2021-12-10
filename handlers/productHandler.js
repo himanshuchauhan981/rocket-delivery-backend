@@ -666,7 +666,8 @@ export default class ProductHandler {
 							attributes: [
 								'id',
 								'actual_price',
-								'discount_percent',
+								'discount',
+								'discount_type',
 								'discount_start_date',
 								'discount_end_date',
 							],
@@ -684,8 +685,9 @@ export default class ProductHandler {
 						const discountDetails = common.calculateDiscountPrice(
 							productPrice.discount_start_date,
 							productPrice.discount_end_date,
-							productPrice.discountPercent,
-							productPrice.actual_price
+							productPrice.discount,
+							productPrice.actual_price,
+							productPrice.discount_type
 						);
 
 						productObj['id'] = product.id;
@@ -713,6 +715,68 @@ export default class ProductHandler {
 							products: productsList,
 							totalProductsCount: totalProductsCount.count,
 						},
+					});
+				});
+			} catch (err) {
+				reject({
+					response: ResponseMessages.SERVER_ERROR,
+					finalData: {},
+				});
+			}
+		});
+	}
+
+	async addNewProduct(payload) {
+		return new Promise((resolve, reject) => {
+			try {
+				let data = {
+					name: payload.name,
+					image: payload.productImage,
+					category_id: payload.category,
+					sub_category_id:
+						payload.sub_category == 0 ? null : payload.subCategory,
+					max_quantity: payload.productStock,
+					purchase_limit: payload.purchaseLimit,
+					measuring_unit_id: payload.measuringUnit,
+					pre_selected_quantity: 0,
+					description: payload.description,
+					is_active: 1,
+					price_id: null,
+				};
+
+				Products.create({
+					name: payload.name,
+					image: payload.productImage,
+					category_id: payload.category,
+					sub_category_id:
+						payload.sub_category == 0 ? null : payload.subCategory,
+					max_quantity: payload.productStock,
+					purchase_limit: payload.purchaseLimit,
+					measuring_unit_id: payload.measuringUnit,
+					pre_selected_quantity: 0,
+					description: payload.description,
+					is_active: 1,
+					price_id: null,
+				}).then(async (newProduct) => {
+					await ProductPrice.create({
+						product_id: newProduct.id,
+						actual_price: payload.unitPrice,
+						discount: payload.discount ? payload.discount.amount : null,
+						discount_type: payload.discount
+							? payload.discount.type == 1
+								? 'FLAT'
+								: 'PERCENT'
+							: null,
+						discount_start_date: payload.discount
+							? payload.discount.startDate
+							: null,
+						discount_end_date: payload.discount
+							? payload.discount.endDate
+							: null,
+					});
+					resolve({
+						response: ResponseMessages.SUCCESS,
+						finalData: {},
 					});
 				});
 			} catch (err) {

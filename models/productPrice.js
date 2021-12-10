@@ -19,18 +19,23 @@ export default class ProductPrice extends Sequelize.Model {
 					required: true,
 					allowNull: false,
 				},
-				discount_percent: {
+				discount: {
 					type: DataTypes.FLOAT(10, 2),
+					required: true,
+					allowNull: false,
+				},
+				discount_type: {
+					type: DataTypes.STRING,
 					required: true,
 					allowNull: false,
 				},
 				discount_start_date: {
 					type: 'TIMESTAMP',
-					allowNull: false,
+					allowNull: true,
 				},
 				discount_end_date: {
 					type: 'TIMESTAMP',
-					allowNull: false,
+					allowNull: true,
 				},
 				created_at: {
 					type: 'TIMESTAMP',

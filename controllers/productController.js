@@ -118,4 +118,14 @@ export default class ProductController extends ProductHandler {
 			this.responseManager.sendErrorResponse(err, res);
 		}
 	};
+
+	addNewProduct = async (req, res) => {
+		try {
+			let payload = req.body;
+			let response = await super.addNewProduct(payload);
+			this.responseManager.sendSuccessResponse(response, res);
+		} catch (err) {
+			this.responseManager.sendErrorResponse(err, res);
+		}
+	};
 }

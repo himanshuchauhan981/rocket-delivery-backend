@@ -59,6 +59,12 @@ class AdminRoute {
 			productController.getAdminProducts
 		);
 
+		apiRouter.post(
+			'/products',
+			authMiddleware.apiAuth,
+			productController.addNewProduct
+		);
+
 		apiRouter.get(
 			'/category/:id',
 			authMiddleware.apiAuth,

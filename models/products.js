@@ -57,12 +57,12 @@ class Products extends Sequelize.Model {
 				price_id: {
 					type: DataTypes.INTEGER,
 					required: true,
-					allowNull: false,
+					allowNull: true,
 				},
 				description: {
 					type: DataTypes.TEXT,
 					required: true,
-					allowNull: false,
+					allowNull: true,
 				},
 				created_at: {
 					type: 'TIMESTAMP',
@@ -73,9 +73,6 @@ class Products extends Sequelize.Model {
 					type: DataTypes.INTEGER,
 					required: false,
 					defaultValue: 0,
-				},
-				discount_price: {
-					type: DataTypes.VIRTUAL,
 				},
 			},
 			{
