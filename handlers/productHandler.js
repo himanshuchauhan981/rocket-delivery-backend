@@ -682,24 +682,29 @@ export default class ProductHandler {
 						let productObj = {};
 						const productPrice = product.product_price;
 
-						const discountDetails = common.calculateDiscountPrice(
-							productPrice.discount_start_date,
-							productPrice.discount_end_date,
-							productPrice.discount,
-							productPrice.actual_price,
-							productPrice.discount_type
-						);
+						let discountDetails;
+
+						if (productPrice.discount) {
+							discountDetails = common.calculateDiscountPrice(
+								productPrice.discount_start_date,
+								productPrice.discount_end_date,
+								productPrice.discount,
+								productPrice.actual_price,
+								productPrice.discount_type
+							);
+						}
 
 						productObj['id'] = product.id;
 						productObj['image'] = product.image;
 						productObj['max_quantity'] = product.max_quantity;
 						productObj['name'] = product.name;
 						productObj['actual_price'] = productPrice.actual_price;
-						productObj['discount_percent'] = productPrice.discount_percent;
-						productObj['discount_start_date'] =
-							productPrice.discount_start_date;
-						productObj['discount_price'] = discountDetails.discountPrice;
-						productObj['discount_status'] = discountDetails.discountStatus;
+						productObj['discount_price'] = productPrice.discount
+							? discountDetails.discountPrice
+							: 0.0;
+						productObj['discount_status'] = productPrice.discount
+							? discountDetails.discountStatus
+							: null;
 						productObj['category_name'] = product.category.name;
 						productObj['sub_category_name'] = product.sub_category?.name;
 						productsList.push(productObj);
@@ -743,7 +748,6 @@ export default class ProductHandler {
 					is_active: 1,
 					price_id: null,
 				};
-				console.log(payload.subCategory == 0);
 
 				Products.create({
 					name: payload.name,
@@ -760,7 +764,7 @@ export default class ProductHandler {
 					price_id: null,
 				})
 					.then(async (newProduct) => {
-						await ProductPrice.create({
+						const productPriceDetails = await ProductPrice.create({
 							product_id: newProduct.id,
 							actual_price: payload.unitPrice,
 							discount: payload.discount ? payload.discount.amount : null,
@@ -776,13 +780,17 @@ export default class ProductHandler {
 								? payload.discount.endDate
 								: null,
 						});
+
+						await Products.update(
+							{ price_id: productPriceDetails.id },
+							{ where: { id: newProduct.id } }
+						);
 						resolve({
 							response: ResponseMessages.CREATE_NEW_PRODUCT,
 							finalData: {},
 						});
 					})
 					.catch((err) => {
-						console.log(err);
 						reject({
 							response: ResponseMessages.SERVER_ERROR,
 							finalData: {},
