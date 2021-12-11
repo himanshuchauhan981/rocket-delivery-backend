@@ -21,6 +21,12 @@ class AdminRoute {
 
 		apiRouter.post('/login', adminController.loginAdmin);
 
+		apiRouter.post(
+			'/image',
+			authMiddleware.apiAuth,
+			adminController.addNewImage
+		);
+
 		apiRouter.get(
 			'/categories',
 			schemaMiddleware.validateSchema(SchemaValidator.LIST_CATEGORIES),

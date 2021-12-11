@@ -28,6 +28,16 @@ class AdminController extends AdminHandler {
 			this.responseManager.sendErrorResponse(err, res);
 		}
 	};
+
+	addNewImage = async (req, res) => {
+		try {
+			const payload = req.body;
+			const response = await super.addNewImage(payload);
+			this.responseManager.sendSuccessResponse(response, res);
+		} catch (err) {
+			this.responseManager.sendErrorResponse(err, res);
+		}
+	};
 }
 
 export default AdminController;

@@ -6,6 +6,7 @@ import Common from '../lib/commonFunctions.js';
 import Categories from '../models/categories.js';
 import SubCategories from '../models/subCategories.js';
 import Products from '../models/products.js';
+import Image from '../models/image.js';
 
 class AdminHandler {
 	async loginAdmin(payload) {
@@ -83,7 +84,33 @@ class AdminHandler {
 					});
 				});
 			} catch (err) {
-				reject(err);
+				reject({
+					response: ResponseMessages.SERVER_ERROR,
+					finalData: {},
+				});
+			}
+		});
+	}
+
+	async addNewImage(payload) {
+		return new Promise(async (resolve, reject) => {
+			try {
+				let newImage = await Image.create({
+					url: payload.url,
+					name: payload.name,
+					type: payload.type,
+				});
+
+				resolve({
+					response: ResponseMessages.SUCCESS,
+					finalData: { id: newImage.id },
+				});
+			} catch (err) {
+				console.log(err);
+				reject({
+					response: ResponseMessages.SERVER_ERROR,
+					finalData: {},
+				});
 			}
 		});
 	}

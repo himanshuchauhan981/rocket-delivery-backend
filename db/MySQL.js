@@ -16,6 +16,7 @@ import SubCategories from '../models/subCategories.js';
 import Wishlist from '../models/wishlist.js';
 import UserPayments from '../models/userPayments.js';
 import Admin from '../models/admin.js';
+import Image from '../models/image.js';
 import BootStrap from '../config/bootstrap.js';
 
 export default class MySQL {
@@ -57,6 +58,7 @@ export default class MySQL {
 		Wishlist.init(sequelize, Sequelize);
 		UserPayments.init(sequelize, Sequelize);
 		Admin.init(sequelize, Sequelize);
+		Image.init(sequelize, Sequelize);
 
 		Address.belongsTo(Users, { foreignKey: 'user_id' });
 
