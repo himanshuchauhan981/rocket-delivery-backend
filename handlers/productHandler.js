@@ -743,13 +743,14 @@ export default class ProductHandler {
 					is_active: 1,
 					price_id: null,
 				};
+				console.log(payload.subCategory == 0);
 
 				Products.create({
 					name: payload.name,
 					image: payload.productImage,
 					category_id: payload.category,
 					sub_category_id:
-						payload.sub_category == 0 ? null : payload.subCategory,
+						payload.subCategory == 0 ? null : payload.subCategory,
 					max_quantity: payload.productStock,
 					purchase_limit: payload.purchaseLimit,
 					measuring_unit_id: payload.measuringUnit,
@@ -757,28 +758,36 @@ export default class ProductHandler {
 					description: payload.description,
 					is_active: 1,
 					price_id: null,
-				}).then(async (newProduct) => {
-					await ProductPrice.create({
-						product_id: newProduct.id,
-						actual_price: payload.unitPrice,
-						discount: payload.discount ? payload.discount.amount : null,
-						discount_type: payload.discount
-							? payload.discount.type == 1
-								? 'FLAT'
-								: 'PERCENT'
-							: null,
-						discount_start_date: payload.discount
-							? payload.discount.startDate
-							: null,
-						discount_end_date: payload.discount
-							? payload.discount.endDate
-							: null,
+				})
+					.then(async (newProduct) => {
+						await ProductPrice.create({
+							product_id: newProduct.id,
+							actual_price: payload.unitPrice,
+							discount: payload.discount ? payload.discount.amount : null,
+							discount_type: payload.discount
+								? payload.discount.type == 1
+									? 'FLAT'
+									: 'PERCENT'
+								: null,
+							discount_start_date: payload.discount
+								? payload.discount.startDate
+								: null,
+							discount_end_date: payload.discount
+								? payload.discount.endDate
+								: null,
+						});
+						resolve({
+							response: ResponseMessages.CREATE_NEW_PRODUCT,
+							finalData: {},
+						});
+					})
+					.catch((err) => {
+						console.log(err);
+						reject({
+							response: ResponseMessages.SERVER_ERROR,
+							finalData: {},
+						});
 					});
-					resolve({
-						response: ResponseMessages.SUCCESS,
-						finalData: {},
-					});
-				});
 			} catch (err) {
 				reject({
 					response: ResponseMessages.SERVER_ERROR,

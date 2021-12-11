@@ -22,12 +22,12 @@ export default class ProductPrice extends Sequelize.Model {
 				discount: {
 					type: DataTypes.FLOAT(10, 2),
 					required: true,
-					allowNull: false,
+					allowNull: true,
 				},
 				discount_type: {
 					type: DataTypes.STRING,
 					required: true,
-					allowNull: false,
+					allowNull: true,
 				},
 				discount_start_date: {
 					type: 'TIMESTAMP',

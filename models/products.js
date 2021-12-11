@@ -27,7 +27,7 @@ class Products extends Sequelize.Model {
 				sub_category_id: {
 					type: DataTypes.INTEGER,
 					required: true,
-					allowNull: false,
+					allowNull: true,
 				},
 				is_active: {
 					type: DataTypes.INTEGER,
