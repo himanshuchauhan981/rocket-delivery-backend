@@ -16,7 +16,6 @@ class Categories extends Sequelize.Model {
 				},
 				image: {
 					type: DataTypes.STRING,
-					required: true,
 					allowNull: false,
 				},
 				is_active: {

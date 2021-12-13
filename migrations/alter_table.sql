@@ -8,7 +8,7 @@ ALTER TABLE products ADD CONSTRAINT fk_products_sub_category FOREIGN KEY (sub_ca
 
 ALTER TABLE products ADD CONSTRAINT fk_products_measuring_unit FOREIGN KEY (measuring_unit_id) REFERENCES measuring_units (id);
 
-ALTER TABLE products ADD CONSTRAINT fk_product_price_products FOREIGN KEY (price_id) REFERENCES product_price (id);
+ALTER TABLE product_price ADD CONSTRAINT fk_product_price_products FOREIGN KEY (product_id) REFERENCES products (id);
 
 ALTER TABLE product_history ADD CONSTRAINT fk_product_history_products FOREIGN KEY (product_id) REFERENCES products (id);
 

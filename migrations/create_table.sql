@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS public.categories
 (
     id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
     name character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    image_id character varying(255) COLLATE pg_catalog."default" NULL,
+    image_id integer NOT NULL,
     is_sub_category integer NOT NULL DEFAULT 0,
     created_at timestamp with time zone NOT NULL DEFAULT now(),
     is_active integer DEFAULT 0,
@@ -122,14 +122,14 @@ CREATE TABLE IF NOT EXISTS public.product_history
 DROP TABLE IF EXISTS public.product_price CASCADE;
 CREATE TABLE IF NOT EXISTS public.product_price
 (
-    id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 78 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
+    id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
     product_id integer NOT NULL,
     actual_price numeric NOT NULL,
     discount integer,
     discount_start_date timestamp without time zone,
     discount_end_date timestamp without time zone,
-    created_at timestamp with time zone NOT NULL DEFAULT now(),
     discount_type character varying(128) COLLATE pg_catalog."default",
+    created_at timestamp with time zone NOT NULL DEFAULT now(),
     CONSTRAINT product_price_pkey PRIMARY KEY (id)
 );
 
@@ -153,20 +153,18 @@ CREATE TABLE IF NOT EXISTS public.product_review
 DROP TABLE IF EXISTS public.products CASCADE;
 CREATE TABLE IF NOT EXISTS public.products
 (
-    id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 78 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
+    id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
     name character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    image integer NOT NULL,
+    image_id integer NOT NULL,
     category_id integer NOT NULL,
     sub_category_id integer,
     max_quantity integer NOT NULL,
     purchase_limit integer NOT NULL,
     measuring_unit_id integer,
-    pre_selected_quantity integer NOT NULL,
     description text COLLATE pg_catalog."default",
     created_at timestamp with time zone NOT NULL DEFAULT now(),
     is_active integer NOT NULL DEFAULT 1,
     is_deleted integer DEFAULT 0,
-    price_id integer NULL,
     CONSTRAINT products_pkey PRIMARY KEY (id)
 );
 
@@ -174,10 +172,10 @@ CREATE TABLE IF NOT EXISTS public.products
 DROP TABLE IF EXISTS public.settings CASCADE;
 CREATE TABLE IF NOT EXISTS public.settings
 (
-    id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 6 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
+    id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
     settings_key character varying(256) COLLATE pg_catalog."default" NOT NULL,
     settings_value character varying(256) COLLATE pg_catalog."default" DEFAULT NULL::character varying,
-    created_at timestamp with time zone NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT now(),
     CONSTRAINT settings_pkey PRIMARY KEY (id)
 );
 
@@ -185,9 +183,9 @@ CREATE TABLE IF NOT EXISTS public.settings
 DROP TABLE IF EXISTS public.sub_categories CASCADE;
 CREATE TABLE IF NOT EXISTS public.sub_categories
 (
-    id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 6 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
+    id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
     name character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    image character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    image_id integer NOT NULL,
     category_id integer NOT NULL,
     created_at timestamp with time zone NOT NULL DEFAULT now(),
     is_deleted integer DEFAULT 0,
@@ -199,7 +197,7 @@ CREATE TABLE IF NOT EXISTS public.sub_categories
 DROP TABLE IF EXISTS public.users CASCADE;
 CREATE TABLE IF NOT EXISTS public.users
 (
-    id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 6 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
+    id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
     name character varying(255) COLLATE pg_catalog."default" NOT NULL,
     email character varying(255) COLLATE pg_catalog."default" NOT NULL,
     password character varying(255) COLLATE pg_catalog."default" NOT NULL,

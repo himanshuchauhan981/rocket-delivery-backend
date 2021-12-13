@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "nodemon index.js",
-    "migrate": "node migrations/run.js",
+    "migrate": "node --experimental-json-modules migrations/run.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -23,6 +23,7 @@
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
+    "csv-parse": "^5.0.3",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "fcm-node": "^1.6.1",
