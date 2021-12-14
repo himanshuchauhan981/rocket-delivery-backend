@@ -12,6 +12,7 @@ import ProductReview from '../models/productReview.js';
 import Categories from '../models/categories.js';
 import SubCategories from '../models/subCategories.js';
 import MeasuringUnits from '../models/measuringUnits.js';
+import Image from '../models/image.js';
 
 export default class ProductHandler {
 	#mostBookedProducts = async (userDetails) => {
@@ -101,9 +102,11 @@ export default class ProductHandler {
 						resolve(finalOrderDetails);
 					})
 					.catch((err) => {
+						console.log('>>>>>>errr', err);
 						reject(err);
 					});
 			} catch (err) {
+				console.log('>>>>>>errr', err);
 				reject(err);
 			}
 		});
@@ -124,22 +127,25 @@ export default class ProductHandler {
 						{
 							model: Products,
 							attributes: [],
-							include: [{ model: ProductPrice, attributes: [] }],
+							include: [
+								{ model: ProductPrice, attributes: [] },
+								{ model: Image, attributes: [] },
+							],
 						},
 					],
 					attributes: [
 						'id',
 						'view_count',
-						[sequelize.col('product.image'), 'image'],
 						[sequelize.col('product.id'), 'productId'],
 						[sequelize.col('product.name'), 'name'],
 						[
 							sequelize.col('product.product_price.actual_price'),
 							'actualPrice',
 						],
+						[sequelize.col('product.product_price.discount'), 'discount'],
 						[
-							sequelize.col('product.product_price.discount_percent'),
-							'discountPercent',
+							sequelize.col('product.product_price.discount_type'),
+							'discountType',
 						],
 						[
 							sequelize.col('product.product_price.discount_start_date'),
@@ -159,8 +165,9 @@ export default class ProductHandler {
 							let discountDetails = common.calculateDiscountPrice(
 								userProductHistory[i].discountStartDate,
 								userProductHistory[i].discountEndDate,
-								userProductHistory[i].discountPercent,
-								userProductHistory[i].actualPrice
+								userProductHistory[i].discount,
+								userProductHistory[i].actualPrice,
+								userProductHistory[i].discountType
 							);
 							userProductHistory[i].discountPrice =
 								discountDetails.discountPrice;
@@ -275,12 +282,14 @@ export default class ProductHandler {
 	}
 
 	async getDiscountOffers() {
+		let common = new Common();
 		return new Promise((resolve, reject) => {
 			try {
 				let currentDate = moment().format('YYYY-MM-DD HH:mm:ss');
 				Products.findAll({
 					where: {},
 					include: [
+						{ model: Image, attributes: ['id', 'url'] },
 						{
 							model: ProductPrice,
 							where: {
@@ -289,44 +298,48 @@ export default class ProductHandler {
 									{ discount_end_date: { [sequelize.Op.gt]: currentDate } },
 								],
 							},
-							attributes: [],
+							attributes: [
+								'actual_price',
+								'discount',
+								'discount_start_date',
+								'discount_end_date',
+								'discount_type',
+							],
 						},
 					],
-					attributes: [
-						'id',
-						'name',
-						'image',
-						[sequelize.col('product_price.actual_price'), 'actualPrice'],
-						[
-							sequelize.col('product_price.discount_percent'),
-							'discountPercent',
-						],
-						[
-							sequelize.col('product_price.discount_end_date'),
-							'discountEndDate',
-						],
-					],
-					raw: true,
+					attributes: ['id', 'name', 'image_id'],
 					order: [['name']],
 					limit: 5,
 				})
 					.then((productDetails) => {
+						const finalProductList = [];
 						for (let i = 0; i < productDetails.length; i++) {
-							let discountPrice =
-								(productDetails[i].discountPercent / 100) *
-								productDetails[i].actualPrice;
-							discountPrice = productDetails[i].actualPrice - discountPrice;
-							productDetails[i].discountPrice = discountPrice;
-							productDetails[i].actualPrice = parseFloat(
-								productDetails[i].actualPrice
+							const productPrice = productDetails[i].product_price;
+							let discountDetails = common.calculateDiscountPrice(
+								productPrice.discount_start_date,
+								productPrice.discount_end_date,
+								productPrice.discount,
+								productPrice.actual_price,
+								productPrice.discount_type
 							);
+
+							finalProductList.push({
+								id: productDetails[i].id,
+								name: productDetails[i].name,
+								price_details: {
+									...productPrice.dataValues,
+									discount_price: discountDetails.discountPrice,
+								},
+								image: productDetails[i].image,
+							});
 						}
 						resolve({
 							response: ResponseMessages.SUCCESS,
-							finalData: { productDetails },
+							finalData: { productDetails: finalProductList },
 						});
 					})
 					.catch((err) => {
+						console.log(err);
 						reject({
 							response: ResponseMessages.SERVER_ERROR,
 							finalData: {},
@@ -361,13 +374,14 @@ export default class ProductHandler {
 		return new Promise((resolve, reject) => {
 			try {
 				Categories.findAll({
-					where: { status: 1 },
+					where: { [sequelize.Op.and]: [{ is_active: 1 }, { is_deleted: 0 }] },
 					attributes: [
 						'id',
 						'name',
 						[sequelize.col('is_sub_category'), 'isSubCategory'],
-						'image',
+						'image_id',
 					],
+					include: [{ model: Image, attributes: ['url', 'id'], as: 'image' }],
 				})
 					.then((categoryDetails) => {
 						resolve({
@@ -402,7 +416,6 @@ export default class ProductHandler {
 					include: [{ model: Categories, attributes: [] }],
 					attributes: [
 						'id',
-						'image',
 						'name',
 						[sequelize.col('category.name'), 'categoryName'],
 					],

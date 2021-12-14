@@ -62,11 +62,18 @@ export default class MySQL {
 
 		Address.belongsTo(Users, { foreignKey: 'user_id' });
 
+		Categories.belongsTo(Image, { foreignKey: 'image_id' });
+
 		SubCategories.belongsTo(Categories, { foreignKey: 'category_id' });
+
 		Products.belongsTo(Categories, { foreignKey: 'category_id' });
 		Products.belongsTo(SubCategories, { foreignKey: 'sub_category_id' });
 		Products.belongsTo(MeasuringUnits, { foreignKey: 'measuring_unit_id' });
-		Products.belongsTo(ProductPrice, { foreignKey: 'price_id' });
+		Products.hasOne(ProductPrice, {
+			foreignKey: 'id',
+			targetKey: 'product_id',
+		});
+		Products.belongsTo(Image, { foreignKey: 'image_id' });
 
 		ProductHistory.belongsTo(Products, { foreignKey: 'product_id' });
 		ProductHistory.belongsTo(Users, { foreignKey: 'user_id' });

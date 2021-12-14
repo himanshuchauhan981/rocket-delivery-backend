@@ -38,6 +38,7 @@ class Image extends Sequelize.Model {
 			{
 				timestamps: false,
 				tableName: 'image',
+				modelName: 'image',
 				sequelize,
 				freezeTableName: true,
 			}
