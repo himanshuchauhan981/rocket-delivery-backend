@@ -14,7 +14,7 @@ export default class SubCategories extends Sequelize.Model {
 					required: true,
 					allowNull: false,
 				},
-				image: {
+				image_id: {
 					type: DataTypes.STRING,
 					required: true,
 					allowNull: false,

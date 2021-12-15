@@ -410,16 +410,20 @@ export default class ProductHandler {
 				SubCategories.findAll({
 					where: {
 						[sequelize.Op.and]: [
-							{ category_id: payload.categoryId, is_active: 1, is_deleted: 0 },
+							{ category_id: parseInt(payload.categoryId, 10) },
+							{ is_active: 1 },
+							{ is_deleted: 0 },
 						],
 					},
-					include: [{ model: Categories, attributes: [] }],
+					include: [
+						{ model: Categories, attributes: [] },
+						{ model: Image, attributes: ['url', 'id'] },
+					],
 					attributes: [
 						'id',
 						'name',
 						[sequelize.col('category.name'), 'categoryName'],
 					],
-					raw: true,
 				})
 					.then((subCategoryDetails) => {
 						resolve({
@@ -452,6 +456,7 @@ export default class ProductHandler {
 					include: [
 						{ model: ProductPrice, attributes: [] },
 						{ model: MeasuringUnits, attributes: [] },
+						{ model: Image, attributes: ['id', 'url'] },
 						payload.subCategoryId
 							? {
 									model: SubCategories,
@@ -464,16 +469,14 @@ export default class ProductHandler {
 					attributes: [
 						'id',
 						'name',
-						'image',
 						'max_quantity',
 						'purchase_limit',
 						[sequelize.col('product_price.actual_price'), 'price'],
 						[sequelize.col('measuring_unit.symbol'), 'symbol'],
 						payload.subCategoryId
 							? [sequelize.col('sub_category.name'), 'subCategoryName']
-							: [sequelize.col('category.name'), 'subCategoryNames'],
+							: [sequelize.col('category.name'), 'subCategoryName'],
 					],
-					raw: true,
 				})
 					.then((products) => {
 						resolve({
@@ -502,38 +505,31 @@ export default class ProductHandler {
 			try {
 				Products.findOne({
 					where: { id: payload.id },
-					include: [{ model: ProductPrice, attributes: [] }],
-					attributes: [
-						'name',
-						'image',
-						[sequelize.col('max_quantity'), 'maxQuantity'],
-						[sequelize.col('purchase_limit'), 'purchaseLimit'],
-						'description',
-						[
-							sequelize.col('product_price.discount_percent'),
-							'discountPercent',
-						],
-						[
-							sequelize.col('product_price.discount_start_date'),
-							'discountStartDate',
-						],
-						[
-							sequelize.col('product_price.discount_end_date'),
-							'discountEndDate',
-						],
-						[sequelize.col('product_price.actual_price'), 'price'],
+					include: [
+						{
+							model: ProductPrice,
+							attributes: [
+								'discount',
+								'discount_start_date',
+								'discount_end_date',
+								'discount_type',
+								'actual_price',
+							],
+						},
+						{ model: Image, attributes: ['id', 'url'] },
 					],
-					raw: true,
+					attributes: ['name', 'max_quantity', 'purchase_limit', 'description'],
 				})
 					.then(async (productDetails) => {
+						const discountData = productDetails.product_price;
 						let discountDetails = common.calculateDiscountPrice(
-							productDetails.discountStartDate,
-							productDetails.discountEndDate,
-							productDetails.discountPercent,
-							productDetails.price
+							discountData.discount_start_date,
+							discountData.discount_end_date,
+							discountData.discount,
+							discountData.discount_type
 						);
-						productDetails.discountStatus = discountDetails.discountStatus;
-						productDetails.discountPrice = discountDetails.discountPrice;
+						productDetails.discount_status = discountDetails.discountStatus;
+						productDetails.discount_price = discountDetails.discountPrice;
 
 						let productReviewDetails = await ProductReview.findAll({
 							where: {

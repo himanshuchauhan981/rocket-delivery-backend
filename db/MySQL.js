@@ -65,6 +65,7 @@ export default class MySQL {
 		Categories.belongsTo(Image, { foreignKey: 'image_id' });
 
 		SubCategories.belongsTo(Categories, { foreignKey: 'category_id' });
+		SubCategories.belongsTo(Image, { foreignKey: 'image_id' });
 
 		Products.belongsTo(Categories, { foreignKey: 'category_id' });
 		Products.belongsTo(SubCategories, { foreignKey: 'sub_category_id' });

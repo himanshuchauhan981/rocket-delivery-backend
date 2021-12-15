@@ -52,7 +52,7 @@ async function insertCategoryData() {
 		{
 			is_active: 1,
 			name: 'Non Veg',
-			is_sub_category: 1,
+			is_sub_category: 0,
 			image:
 				'https://indialovesbest.in/wp-content/uploads/2021/03/How-to-Store-Raw-Chicken-in-Fridge-scaled.jpg',
 		},
@@ -66,14 +66,14 @@ async function insertCategoryData() {
 		{
 			is_active: 1,
 			name: 'Spices',
-			is_sub_category: 1,
+			is_sub_category: 0,
 			image:
 				'https://www.homestratosphere.com/wp-content/uploads/2019/04/Different-types-of-spices-of-the-table-apr18.jpg',
 		},
 		{
 			is_active: 1,
 			name: 'Beverages',
-			is_sub_category: 1,
+			is_sub_category: 0,
 			image:
 				'https://c.ndtvimg.com/2021-02/e2uarbeo_juice-_625x300_25_February_21.jpg',
 		},
@@ -87,7 +87,7 @@ async function insertCategoryData() {
 		{
 			is_active: 0,
 			name: 'Instant food',
-			is_sub_category: 1,
+			is_sub_category: 0,
 			image: 'https://www.babycenter.com/ims/2019/05/iStock-643845180_wide.jpg',
 		},
 	];
@@ -304,7 +304,7 @@ async function insertProductsData() {
 					newImage.rows[0].id,
 					category_id,
 					sub_category_id,
-					randomNumber(300, 600),
+					randomNumber(1, 20),
 					randomNumber(1, 5),
 					measuring_unit_id,
 					'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In pharetra nibh quis eros eleifend, vel commodo augue fermentum. Nunc justo lectus, scelerisque quis pretium in, interdum ac felis. Nulla facilisi. Aenean rutrum luctus massa sit amet fringilla. Duis porttitor elit feugiat, convallis nunc a, faucibus justo. Vestibulum sed arcu felis.',
