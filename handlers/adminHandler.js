@@ -106,7 +106,6 @@ class AdminHandler {
 					finalData: { id: newImage.id },
 				});
 			} catch (err) {
-				console.log(err);
 				reject({
 					response: ResponseMessages.SERVER_ERROR,
 					finalData: {},

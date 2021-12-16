@@ -102,11 +102,9 @@ export default class ProductHandler {
 						resolve(finalOrderDetails);
 					})
 					.catch((err) => {
-						console.log('>>>>>>errr', err);
 						reject(err);
 					});
 			} catch (err) {
-				console.log('>>>>>>errr', err);
 				reject(err);
 			}
 		});
@@ -339,7 +337,6 @@ export default class ProductHandler {
 						});
 					})
 					.catch((err) => {
-						console.log(err);
 						reject({
 							response: ResponseMessages.SERVER_ERROR,
 							finalData: {},
@@ -508,25 +505,36 @@ export default class ProductHandler {
 					include: [
 						{
 							model: ProductPrice,
-							attributes: [
-								'discount',
-								'discount_start_date',
-								'discount_end_date',
-								'discount_type',
-								'actual_price',
-							],
+							attributes: [],
 						},
-						{ model: Image, attributes: ['id', 'url'] },
+						{ model: Image, attributes: [] },
 					],
-					attributes: ['name', 'max_quantity', 'purchase_limit', 'description'],
+					attributes: [
+						'name',
+						'max_quantity',
+						'purchase_limit',
+						'description',
+						[sequelize.col('image.url'), 'image'],
+						[sequelize.col('product_price.actual_price'), 'price'],
+						[
+							sequelize.col('product_price.discount_start_date'),
+							'discount_start_date',
+						],
+						[
+							sequelize.col('product_price.discount_end_date'),
+							'discount_end_date',
+						],
+						[sequelize.col('product_price.discount_type'), 'discount_type'],
+						[sequelize.col('product_price.discount'), 'discount'],
+					],
+					raw: true,
 				})
 					.then(async (productDetails) => {
-						const discountData = productDetails.product_price;
 						let discountDetails = common.calculateDiscountPrice(
-							discountData.discount_start_date,
-							discountData.discount_end_date,
-							discountData.discount,
-							discountData.discount_type
+							productDetails.discount_start_date,
+							productDetails.discount_end_date,
+							productDetails.discount,
+							productDetails.discount_type
 						);
 						productDetails.discount_status = discountDetails.discountStatus;
 						productDetails.discount_price = discountDetails.discountPrice;

@@ -107,7 +107,6 @@ class CategoryHandler {
 						reject({ response: ResponseMessages.SERVER_ERROR, finalData: {} });
 					});
 			} catch (err) {
-				console.log('err', err);
 				reject({
 					response: ResponseMessages.SERVER_ERROR,
 					finalData: {},
