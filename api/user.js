@@ -64,7 +64,8 @@ export default class UserRoute {
 		);
 
 		apiRouter.post(
-			'/cartProductDetails',
+			'/cart',
+			schemaMiddleware.validateSchema(SchemaValidator.CART_ITEMS),
 			productController.getCartProductDetails
 		);
 

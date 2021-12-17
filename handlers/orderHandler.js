@@ -14,6 +14,7 @@ import ProductReviewImages from '../models/productReviewImages.js';
 import Address from '../models/userAddress.js';
 import UserPayments from '../models/userPayments.js';
 import Users from '../models/users.js';
+import Image from '../models/image.js';
 
 class OrderHandler {
 	async generateNewOrder(payload, userDetails) {
@@ -27,21 +28,22 @@ class OrderHandler {
 				let cartItemsId = cartItems.map((item) => item.id);
 				Products.findAll({
 					where: { id: { [sequelize.Op.in]: cartItemsId } },
-					include: [{ model: ProductPrice, attributes: [] }],
+					include: [
+						{ model: ProductPrice, attributes: [] },
+						{ model: Image, attributes: [] },
+					],
 					attributes: [
 						'id',
 						'name',
-						'image',
 						[sequelize.col('max_quantity'), 'maxQuantity'],
 						[sequelize.col('product_price.actual_price'), 'price'],
-						[
-							sequelize.col('product_price.discount_percent'),
-							'discountPercent',
-						],
+						[sequelize.col('product_price.discount'), 'discount'],
+						[sequelize.col('product_price.discount_type'), 'discountType'],
 						[
 							sequelize.col('product_price.discount_end_date'),
 							'discountEndDate',
 						],
+						[sequelize.col('image.url'), 'image'],
 						[
 							sequelize.col('product_price.discount_start_date'),
 							'discountStartDate',
@@ -51,11 +53,13 @@ class OrderHandler {
 				})
 					.then(async (productDetails) => {
 						for (let i = 0; i < productDetails.length; i++) {
-							let discountDetails = await common.calculateDiscountPrice(
+							console.log(productDetails[i]);
+							let discountDetails = common.calculateDiscountPrice(
 								productDetails[i].discountStartDate,
 								productDetails[i].discountEndDate,
-								productDetails[i].discountPercent,
-								productDetails[i].price
+								productDetails[i].discount,
+								productDetails[i].price,
+								productDetails[i].discountType
 							);
 
 							let cartItemIndex = cartItems.findIndex(
@@ -164,12 +168,14 @@ class OrderHandler {
 						});
 					})
 					.catch((err) => {
+						console.log('>>>>>>err', err);
 						reject({
 							response: ResponseMessages.SERVER_ERROR,
 							finalData: {},
 						});
 					});
 			} catch (err) {
+				console.log('>>>>>final error', err);
 				reject({
 					response: ResponseMessages.SERVER_ERROR,
 					finalData: {},

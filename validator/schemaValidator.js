@@ -186,6 +186,18 @@ const SchemaValidator = {
 			image: Joi.string().required(),
 		}),
 	},
+
+	CART_ITEMS: {
+		body: Joi.object({
+			cartItems: Joi.array().items(
+				Joi.object().keys({
+					id: Joi.number().required(),
+					quantity: Joi.number().required(),
+				})
+			),
+			removeCartItem: Joi.boolean().required(),
+		}),
+	},
 };
 
 export default SchemaValidator;

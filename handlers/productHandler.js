@@ -136,6 +136,7 @@ export default class ProductHandler {
 						'view_count',
 						[sequelize.col('product.id'), 'productId'],
 						[sequelize.col('product.name'), 'name'],
+						[sequelize.col('image.url'), 'image'],
 						[
 							sequelize.col('product.product_price.actual_price'),
 							'actualPrice',
@@ -159,6 +160,7 @@ export default class ProductHandler {
 					limit: mostViewedHistory ? 2 : null,
 				})
 					.then((userProductHistory) => {
+						console.log(userProductHistory);
 						for (let i = 0; i < userProductHistory.length; i++) {
 							let discountDetails = common.calculateDiscountPrice(
 								userProductHistory[i].discountStartDate,
@@ -586,19 +588,21 @@ export default class ProductHandler {
 				let productIds = cartItems.map((items) => items.id);
 				Products.findAll({
 					where: { id: { [sequelize.Op.in]: productIds } },
-					include: [{ model: ProductPrice, attributes: [] }],
+					include: [
+						{ model: ProductPrice, attributes: [] },
+						{ model: Image, attributes: ['url'] },
+					],
 					attributes: [
 						'id',
 						'name',
-						'image',
-						'status',
+						'is_active',
 						'max_quantity',
 						'purchase_limit',
 						[sequelize.col('product_price.actual_price'), 'price'],
-						[
-							sequelize.col('product_price.discount_percent'),
-							'discountPercent',
-						],
+						[sequelize.col('product_price.discount'), 'discount'],
+						[sequelize.col('product_price.discount_type'), 'discount_type'],
+						[sequelize.col('image.url'), 'image'],
+
 						[
 							sequelize.col('product_price.discount_start_date'),
 							'discountStartDate',
@@ -655,6 +659,7 @@ export default class ProductHandler {
 					});
 				});
 			} catch (err) {
+				console.log(err);
 				reject({
 					response: ResponseMessages.SERVER_ERROR,
 					finalData: {},
