@@ -1,5 +1,5 @@
 # Rocket delivery backend
-This repositry contains the backend code for the mobile app and admin panel of rocket delivery.
+Rocker Delivery Backend is a backend of the mobile application and admin panel, which is created with the basic idea to allow a customer browse different products and order items.
 
 ## Technologies
 - Node JS (Backend language to create API)
