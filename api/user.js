@@ -55,7 +55,11 @@ export default class UserRoute {
 			userController.updateUserDetails
 		);
 
-		apiRouter.get('/homeCategories', productController.getHomeCategories);
+		apiRouter.get(
+			'/homeCategories',
+			schemaMiddleware.validateSchema(SchemaValidator.CATEGORY_LISTING),
+			productController.getHomeCategories
+		);
 
 		apiRouter.get(
 			'/subCategory',

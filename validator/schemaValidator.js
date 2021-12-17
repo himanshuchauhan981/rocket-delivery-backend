@@ -198,6 +198,12 @@ const SchemaValidator = {
 			removeCartItem: Joi.boolean().required(),
 		}),
 	},
+
+	CATEGORY_LISTING: {
+		query: Joi.object({
+			limit: Joi.number().required(),
+		}),
+	},
 };
 
 export default SchemaValidator;

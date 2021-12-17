@@ -22,12 +22,19 @@ import BootStrap from '../config/bootstrap.js';
 export default class MySQL {
 	static async create() {
 		try {
-			const { SQL_DATABASE, SQL_USER, SQL_PASSWORD, SQL_HOST, SQL_DIALECT } =
-				process.env;
+			const {
+				SQL_DATABASE,
+				SQL_USER,
+				SQL_PASSWORD,
+				SQL_HOST,
+				SQL_DIALECT,
+				SQL_LOGGING,
+			} = process.env;
 
 			const sequelize = new Sequelize(SQL_DATABASE, SQL_USER, SQL_PASSWORD, {
 				host: SQL_HOST,
 				dialect: SQL_DIALECT,
+				logging: !SQL_LOGGING,
 			});
 			const bootstrap = new BootStrap();
 

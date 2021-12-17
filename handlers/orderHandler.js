@@ -53,7 +53,6 @@ class OrderHandler {
 				})
 					.then(async (productDetails) => {
 						for (let i = 0; i < productDetails.length; i++) {
-							console.log(productDetails[i]);
 							let discountDetails = common.calculateDiscountPrice(
 								productDetails[i].discountStartDate,
 								productDetails[i].discountEndDate,
@@ -168,14 +167,12 @@ class OrderHandler {
 						});
 					})
 					.catch((err) => {
-						console.log('>>>>>>err', err);
 						reject({
 							response: ResponseMessages.SERVER_ERROR,
 							finalData: {},
 						});
 					});
 			} catch (err) {
-				console.log('>>>>>final error', err);
 				reject({
 					response: ResponseMessages.SERVER_ERROR,
 					finalData: {},

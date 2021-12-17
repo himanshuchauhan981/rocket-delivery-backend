@@ -62,7 +62,8 @@ export default class ProductController extends ProductHandler {
 
 	getHomeCategories = async (req, res) => {
 		try {
-			let response = await super.getHomeCategories();
+			let payload = req.query;
+			let response = await super.getHomeCategories(payload);
 			this.responseManager.sendSuccessResponse(response, res);
 		} catch (err) {
 			this.responseManager.sendErrorResponse(err, res);
@@ -72,7 +73,6 @@ export default class ProductController extends ProductHandler {
 	getCartProductDetails = async (req, res) => {
 		try {
 			let payload = req.body;
-			console.log(payload);
 			let response = await super.getCartProductDetails(payload);
 			this.responseManager.sendSuccessResponse(response, res);
 		} catch (err) {
