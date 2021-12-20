@@ -3,6 +3,7 @@ import sequelize from 'sequelize';
 import Wishlist from '../models/wishlist.js';
 import ResponseMessages from '../lib/responseMessages.js';
 import Products from '../models/products.js';
+import Image from '../models/image.js';
 
 export default class WishlistHandler {
 	async add(payload, userDetails) {
@@ -64,7 +65,8 @@ export default class WishlistHandler {
 					include: [
 						{
 							model: Products,
-							attributes: ['id', 'name', 'image'],
+							attributes: ['id', 'name'],
+							include: [{ model: Image, attributes: ['id', 'url'] }],
 							as: 'product',
 						},
 					],
