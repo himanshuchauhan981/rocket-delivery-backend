@@ -49,16 +49,6 @@ class Products extends Sequelize.Model {
 					required: true,
 					allowNull: false,
 				},
-				pre_selected_quantity: {
-					type: DataTypes.INTEGER,
-					required: true,
-					allowNull: false,
-				},
-				price_id: {
-					type: DataTypes.INTEGER,
-					required: true,
-					allowNull: true,
-				},
 				description: {
 					type: DataTypes.TEXT,
 					required: true,

@@ -52,7 +52,8 @@ class AdminHandler {
 
 				Categories.findAndCountAll({
 					where: { is_deleted: 0 },
-					attributes: ['name', 'image', 'is_active', 'id'],
+					include: [{ model: Image, attributes: ['id', 'url'] }],
+					attributes: ['name', 'is_active', 'id'],
 					order: sequelize.literal('name'),
 					limit: payload.pageSize,
 					offset: pageIndex,

@@ -696,8 +696,10 @@ export default class ProductHandler {
 								'discount_end_date',
 							],
 						},
+						{ model: Image, attributes: ['id', 'url'] },
 					],
-					attributes: ['id', 'name', 'image', 'max_quantity'],
+					attributes: ['id', 'name', 'max_quantity'],
+
 					limit: payload.pageSize,
 					offset: pageIndex,
 				}).then(async (products) => {

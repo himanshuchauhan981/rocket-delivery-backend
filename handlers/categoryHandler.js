@@ -1,9 +1,8 @@
-import sequelize from 'sequelize';
-
 import Categories from '../models/categories.js';
 import ResponseMessages from '../lib/responseMessages.js';
 import SubCategories from '../models/subCategories.js';
 import Products from '../models/products.js';
+import Image from '../models/image.js';
 
 class CategoryHandler {
 	async createNewCategory(payload) {
@@ -95,7 +94,8 @@ class CategoryHandler {
 			try {
 				Categories.findOne({
 					where: { id: payload.id },
-					attributes: ['id', 'name', 'image'],
+					attributes: ['id', 'name'],
+					include: [{ model: Image, attributes: ['id', 'url'] }],
 				})
 					.then((category) => {
 						resolve({

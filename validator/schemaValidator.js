@@ -204,6 +204,12 @@ const SchemaValidator = {
 			limit: Joi.number().required(),
 		}),
 	},
+
+	CATALOGUE_IMAGE_LISTING: {
+		query: Joi.object({
+			type: Joi.string().required(),
+		}),
+	},
 };
 
 export default SchemaValidator;
