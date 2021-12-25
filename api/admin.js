@@ -64,6 +64,7 @@ class AdminRoute {
 
 		apiRouter.get(
 			'/products',
+			schemaMiddleware.validateSchema(SchemaValidator.ADMIN_PRODUCTS_LISTING),
 			authMiddleware.apiAuth,
 			productController.getAdminProducts
 		);

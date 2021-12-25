@@ -676,12 +676,25 @@ export default class ProductHandler {
 	}
 
 	async getAdminProducts(payload) {
-		const common = new Common();
+		let sortBy = [];
+		if (payload.sort == 0) {
+			sortBy = [['id', 'ASC']];
+		} else if (payload.sort == 1) {
+			sortBy = [[sequelize.literal('total_ratings'), 'DESC']];
+		} else if (payload.sort == 2) {
+			sortBy = [[sequelize.literal('total_ratings'), 'ASC']];
+		} else if (payload.sort == 3) {
+			sortBy = [[sequelize.literal('total_orders'), 'ASC']];
+		} else if (payload.sort == 4) {
+			sortBy = [[sequelize.literal('total_orders'), 'DESC']];
+		}
+
 		return new Promise((resolve, reject) => {
 			try {
 				const pageIndex = payload.pageIndex * payload.pageSize;
-				Products.findAll({
-					where: {},
+				const common = new Common();
+				Products.findAndCountAll({
+					where: { is_deleted: 0 },
 					include: [
 						{ model: Categories, attributes: ['id', 'name'] },
 						{ model: SubCategories, attributes: ['id', 'name'] },
@@ -698,13 +711,31 @@ export default class ProductHandler {
 						},
 						{ model: Image, attributes: ['id', 'url'] },
 					],
-					attributes: ['id', 'name', 'max_quantity'],
+					attributes: [
+						'id',
+						'name',
+						'max_quantity',
+						[
+							sequelize.literal(
+								'(SELECT sum(quantity) from order_products where product_id = product.id)'
+							),
+							'total_orders',
+						],
+						[
+							sequelize.literal(
+								'(SELECT sum(ratings) from product_review where product_id = product.id)'
+							),
+							'total_ratings',
+						],
+					],
+					order: [sortBy],
 
 					limit: payload.pageSize,
 					offset: pageIndex,
 				}).then(async (products) => {
 					let productsList = [];
-					for (const product of products) {
+
+					for (const product of products.rows) {
 						let productObj = {};
 						const productPrice = product.product_price;
 
@@ -725,6 +756,12 @@ export default class ProductHandler {
 						productObj['max_quantity'] = product.max_quantity;
 						productObj['name'] = product.name;
 						productObj['actual_price'] = productPrice.actual_price;
+						productObj['total_orders'] = product.dataValues.total_orders
+							? parseInt(product.dataValues.total_orders, 10)
+							: 0;
+						productObj['total_reviews'] = product.total_reviews
+							? pa(product.total_reviews, 10)
+							: 0;
 						productObj['discount_price'] = productPrice.discount
 							? discountDetails.discountPrice
 							: 0.0;
@@ -736,15 +773,11 @@ export default class ProductHandler {
 						productsList.push(productObj);
 					}
 
-					let totalProductsCount = await Products.findAndCountAll({
-						where: { is_deleted: 0 },
-					});
-
 					resolve({
 						response: ResponseMessages.SUCCESS,
 						finalData: {
 							products: productsList,
-							totalProductsCount: totalProductsCount.count,
+							totalProductsCount: products.count,
 						},
 					});
 				});

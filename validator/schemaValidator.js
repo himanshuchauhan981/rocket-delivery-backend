@@ -210,6 +210,14 @@ const SchemaValidator = {
 			type: Joi.string().required(),
 		}),
 	},
+
+	ADMIN_PRODUCTS_LISTING: {
+		query: Joi.object({
+			pageIndex: Joi.number().required(),
+			pageSize: Joi.number().required(),
+			sort: Joi.number().required(),
+		}),
+	},
 };
 
 export default SchemaValidator;
