@@ -216,6 +216,7 @@ const SchemaValidator = {
 			pageIndex: Joi.number().required(),
 			pageSize: Joi.number().required(),
 			sort: Joi.number().required(),
+			search: Joi.string().required().allow(''),
 		}),
 	},
 };

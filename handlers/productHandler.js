@@ -694,7 +694,18 @@ export default class ProductHandler {
 				const pageIndex = payload.pageIndex * payload.pageSize;
 				const common = new Common();
 				Products.findAndCountAll({
-					where: { is_deleted: 0 },
+					where: payload.search
+						? {
+								[sequelize.Op.and]: [
+									{ is_deleted: 0 },
+									{
+										name: {
+											[sequelize.Op.iLike]: `%${payload.search}%`,
+										},
+									},
+								],
+						  }
+						: { is_deleted: 0 },
 					include: [
 						{ model: Categories, attributes: ['id', 'name'] },
 						{ model: SubCategories, attributes: ['id', 'name'] },
