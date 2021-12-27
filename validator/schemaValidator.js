@@ -219,6 +219,18 @@ const SchemaValidator = {
 			search: Joi.string().required().allow(''),
 		}),
 	},
+
+	DELETE_PRODUCTS: {
+		params: Joi.object({
+			id: Joi.number().required(),
+		}),
+	},
+
+	GET_PRODUCT_DETAILS: {
+		params: Joi.object({
+			id: Joi.number().required(),
+		}),
+	},
 };
 
 export default SchemaValidator;

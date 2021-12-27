@@ -129,4 +129,14 @@ export default class ProductController extends ProductHandler {
 			this.responseManager.sendErrorResponse(err, res);
 		}
 	};
+
+	deleteProduct = async (req, res) => {
+		try {
+			let payload = req.params;
+			let response = await super.deleteProduct(payload);
+			this.responseManager.sendSuccessResponse(response, res);
+		} catch (err) {
+			this.responseManager.sendErrorResponse(err, res);
+		}
+	};
 }

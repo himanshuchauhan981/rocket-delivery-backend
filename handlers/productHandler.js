@@ -512,14 +512,20 @@ export default class ProductHandler {
 							model: ProductPrice,
 							attributes: [],
 						},
-						{ model: Image, attributes: [] },
+						{ model: Image, attributes: ['id', 'url', 'name'] },
+						{ model: Categories, attributes: ['id', 'name'] },
+						{ model: SubCategories, attributes: ['id', 'name'] },
+						{
+							model: MeasuringUnits,
+							attributes: ['id', 'measuring_type', 'symbol'],
+						},
 					],
 					attributes: [
+						'image_id',
 						'name',
 						'max_quantity',
 						'purchase_limit',
 						'description',
-						[sequelize.col('image.url'), 'image'],
 						[sequelize.col('product_price.actual_price'), 'price'],
 						[
 							sequelize.col('product_price.discount_start_date'),
@@ -532,7 +538,6 @@ export default class ProductHandler {
 						[sequelize.col('product_price.discount_type'), 'discount_type'],
 						[sequelize.col('product_price.discount'), 'discount'],
 					],
-					raw: true,
 				})
 					.then(async (productDetails) => {
 						let discountDetails = common.calculateDiscountPrice(
@@ -570,6 +575,7 @@ export default class ProductHandler {
 						});
 					})
 					.catch((err) => {
+						console.log('>>>>er', err);
 						reject({
 							response: ResponseMessages.SERVER_ERROR,
 							finalData: {},
@@ -857,6 +863,31 @@ export default class ProductHandler {
 						);
 						resolve({
 							response: ResponseMessages.CREATE_NEW_PRODUCT,
+							finalData: {},
+						});
+					})
+					.catch((err) => {
+						reject({
+							response: ResponseMessages.SERVER_ERROR,
+							finalData: {},
+						});
+					});
+			} catch (err) {
+				reject({
+					response: ResponseMessages.SERVER_ERROR,
+					finalData: {},
+				});
+			}
+		});
+	}
+
+	async deleteProduct(payload) {
+		return new Promise((resolve, reject) => {
+			try {
+				Products.update({ is_deleted: 1 }, { where: { id: payload.id } })
+					.then((res) => {
+						resolve({
+							response: ResponseMessages.DELETE_PRODUCT,
 							finalData: {},
 						});
 					})

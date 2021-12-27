@@ -82,6 +82,20 @@ class AdminRoute {
 			categoryController.getCategoryDetail
 		);
 
+		apiRouter.delete(
+			'/product/:id',
+			authMiddleware.apiAuth,
+			schemaMiddleware.validateSchema(SchemaValidator.DELETE_PRODUCTS),
+			productController.deleteProduct
+		);
+
+		apiRouter.get(
+			'/product/:id',
+			authMiddleware.apiAuth,
+			schemaMiddleware.validateSchema(SchemaValidator.GET_PRODUCT_DETAILS),
+			productController.getProductDetails
+		);
+
 		apiRouter.get(
 			'/subCategories',
 			authMiddleware.apiAuth,
