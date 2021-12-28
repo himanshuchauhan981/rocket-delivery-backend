@@ -124,7 +124,7 @@ CREATE TABLE IF NOT EXISTS public.product_price
 (
     id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
     product_id integer NOT NULL,
-    actual_price numeric NOT NULL,
+    actual_price integer NOT NULL,
     discount integer,
     discount_start_date timestamp without time zone,
     discount_end_date timestamp without time zone,
