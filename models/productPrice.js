@@ -42,6 +42,13 @@ export default class ProductPrice extends Sequelize.Model {
 					defaultValue: DataTypes.literal('CURRENT_TIMESTAMP'),
 					allowNull: false,
 				},
+
+				discount_status: {
+					type: DataTypes.VIRTUAL,
+				},
+				discount_price: {
+					type: DataTypes.VIRTUAL,
+				},
 			},
 			{
 				timestamps: false,

@@ -510,7 +510,13 @@ export default class ProductHandler {
 					include: [
 						{
 							model: ProductPrice,
-							attributes: [],
+							attributes: [
+								'actual_price',
+								'discount_start_date',
+								'discount_end_date',
+								'discount_type',
+								'discount',
+							],
 						},
 						{ model: Image, attributes: ['id', 'url', 'name'] },
 						{ model: Categories, attributes: ['id', 'name'] },
@@ -520,34 +526,22 @@ export default class ProductHandler {
 							attributes: ['id', 'measuring_type', 'symbol'],
 						},
 					],
-					attributes: [
-						'image_id',
-						'name',
-						'max_quantity',
-						'purchase_limit',
-						'description',
-						[sequelize.col('product_price.actual_price'), 'price'],
-						[
-							sequelize.col('product_price.discount_start_date'),
-							'discount_start_date',
-						],
-						[
-							sequelize.col('product_price.discount_end_date'),
-							'discount_end_date',
-						],
-						[sequelize.col('product_price.discount_type'), 'discount_type'],
-						[sequelize.col('product_price.discount'), 'discount'],
-					],
+					attributes: ['name', 'max_quantity', 'purchase_limit', 'description'],
 				})
 					.then(async (productDetails) => {
+						const productPrice = productDetails.product_price;
 						let discountDetails = common.calculateDiscountPrice(
-							productDetails.discount_start_date,
-							productDetails.discount_end_date,
-							productDetails.discount,
-							productDetails.discount_type
+							productPrice.discount_start_date,
+							productPrice.discount_end_date,
+							productPrice.discount,
+							productPrice.actual_price,
+							productPrice.discount_type
 						);
-						productDetails.discount_status = discountDetails.discountStatus;
-						productDetails.discount_price = discountDetails.discountPrice;
+
+						productDetails.product_price.discount_status =
+							discountDetails.discountStatus;
+						productDetails.product_price.discount_price =
+							discountDetails.discountPrice;
 
 						let productReviewDetails = await ProductReview.findAll({
 							where: {

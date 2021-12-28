@@ -81,8 +81,8 @@ export default class MySQL {
 			foreignKey: 'id',
 			targetKey: 'product_id',
 		});
-		Products.belongsTo(Image, { foreignKey: 'image_id' });
-		Products.hasOne(Image, { foreignKey: 'id' });
+		Products.belongsTo(Image, { foreignKey: 'image_id', targetKey: 'id' });
+		// Products.hasOne(Image, { foreignKey: 'id' });
 
 		ProductHistory.belongsTo(Products, { foreignKey: 'product_id' });
 		ProductHistory.belongsTo(Users, { foreignKey: 'user_id' });
