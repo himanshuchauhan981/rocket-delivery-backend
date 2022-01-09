@@ -73,6 +73,7 @@ class AdminRoute {
 
 		apiRouter.post(
 			'/products',
+			schemaMiddleware.validateSchema(SchemaValidator.ADD_NEW_PRODUCT),
 			authMiddleware.apiAuth,
 			productController.addNewProduct
 		);

@@ -231,6 +231,21 @@ const SchemaValidator = {
 			id: Joi.number().required(),
 		}),
 	},
+
+	ADD_NEW_PRODUCT: {
+		body: Joi.object({
+			category: Joi.number().required(),
+			subCategory: Joi.number().optional(),
+			description: Joi.string().required(),
+			image: Joi.number().required(),
+			measuringUnit: Joi.number().required(),
+			paymentMethod: Joi.number().required(),
+			name: Joi.string().required(),
+			productStock: Joi.string().required(),
+			purchaseLimit: Joi.string().required(),
+			unitPrice: Joi.number().required(),
+		}),
+	},
 };
 
 export default SchemaValidator;

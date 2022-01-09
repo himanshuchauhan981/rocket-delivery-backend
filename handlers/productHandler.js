@@ -809,8 +809,7 @@ export default class ProductHandler {
 					name: payload.name,
 					image: payload.productImage,
 					category_id: payload.category,
-					sub_category_id:
-						payload.sub_category == 0 ? null : payload.subCategory,
+					sub_category_id: payload.subCategory ? payload.subCategory : null,
 					max_quantity: payload.productStock,
 					purchase_limit: payload.purchaseLimit,
 					measuring_unit_id: payload.measuringUnit,
@@ -819,13 +818,13 @@ export default class ProductHandler {
 					is_active: 1,
 					price_id: null,
 				};
+				console.log(data);
 
 				Products.create({
 					name: payload.name,
-					image: payload.productImage,
+					image: payload.image,
 					category_id: payload.category,
-					sub_category_id:
-						payload.subCategory == 0 ? null : payload.subCategory,
+					sub_category_id: payload.subCategory ? payload.subCategory : null,
 					max_quantity: payload.productStock,
 					purchase_limit: payload.purchaseLimit,
 					measuring_unit_id: payload.measuringUnit,
@@ -862,12 +861,14 @@ export default class ProductHandler {
 						});
 					})
 					.catch((err) => {
+						console.log('>>>>>err', err);
 						reject({
 							response: ResponseMessages.SERVER_ERROR,
 							finalData: {},
 						});
 					});
 			} catch (err) {
+				console.log('>>>>>err', err);
 				reject({
 					response: ResponseMessages.SERVER_ERROR,
 					finalData: {},
