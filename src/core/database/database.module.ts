@@ -1,4 +1,5 @@
 import { SequelizeModule } from '@nestjs/sequelize';
+import { Admin } from 'src/modules/admin/admin.entity';
 
 const DatabaseModule = [
   SequelizeModule.forRootAsync({
@@ -11,7 +12,7 @@ const DatabaseModule = [
       dialect: 'postgres',
       logging: true,
       synchronize: true,
-      models: [],
+      models: [Admin],
     }),
   }),
 ];
