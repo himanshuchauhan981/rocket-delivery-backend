@@ -17,7 +17,7 @@ export class Admin extends Model<Admin> {
     autoIncrement: true,
     primaryKey: true,
   })
-  id: string;
+  id: number;
 
   @Column({
     type: DataType.STRING,

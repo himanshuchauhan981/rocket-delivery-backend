@@ -1,6 +1,13 @@
-import { Body, Controller, Post, ValidationPipe } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  UseInterceptors,
+  ValidationPipe,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
+import { TransformInterceptor } from 'src/core/interceptors/transform.interceptor';
 import { AdminService } from './admin.service';
 import { AdminLogin } from './dto/admin.dto';
 
@@ -10,5 +17,9 @@ export class AdminController {
   constructor(private adminService: AdminService) {}
 
   @Post('login')
-  async login(@Body(ValidationPipe) payload: AdminLogin) {}
+  @UseInterceptors(TransformInterceptor)
+  async login(@Body(ValidationPipe) payload: AdminLogin) {
+    const data = this.adminService.login(payload);
+    return data;
+  }
 }
