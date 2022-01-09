@@ -8,6 +8,7 @@ import SchemaMiddleware from '../middlewares/schemaMiddleware.js';
 import AuthMiddleware from '../middlewares/authMiddleware.js';
 import MeasuringUnitController from '../controllers/measuringUnitController.js';
 import CatalogueController from '../controllers/catalogueController.js';
+import SubCategoryController from '../controllers/subCategoryController.js';
 
 class AdminRoute {
 	async initiateAdminRoute() {
@@ -15,6 +16,7 @@ class AdminRoute {
 
 		const adminController = new AdminController();
 		const categoryController = new CategoryController();
+		const subCategoryController = new SubCategoryController();
 		const productController = new ProductController();
 		const measuringUnitController = new MeasuringUnitController();
 		const catalogueController = new CatalogueController();
@@ -80,6 +82,12 @@ class AdminRoute {
 			authMiddleware.apiAuth,
 			schemaMiddleware.validateSchema(SchemaValidator.GET_CATEGORY_DETAILS),
 			categoryController.getCategoryDetail
+		);
+
+		apiRouter.get(
+			'/subCategories/all',
+			authMiddleware.apiAuth,
+			subCategoryController.findAll
 		);
 
 		apiRouter.delete(

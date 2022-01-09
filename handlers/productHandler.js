@@ -516,6 +516,7 @@ export default class ProductHandler {
 								'discount_end_date',
 								'discount_type',
 								'discount',
+								'refundable',
 							],
 						},
 						{ model: Image, attributes: ['id', 'url', 'name'] },
@@ -562,9 +563,9 @@ export default class ProductHandler {
 						resolve({
 							response: ResponseMessages.SUCCESS,
 							finalData: {
-								productDetails: productDetails,
-								productRatings: avergeRating,
-								totalReviews: productReviewDetails.length,
+								product_details: productDetails,
+								product_ratings: avergeRating,
+								total_reviews: productReviewDetails.length,
 							},
 						});
 					})
