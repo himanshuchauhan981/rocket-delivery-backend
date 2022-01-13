@@ -1,9 +1,4 @@
-import {
-  Inject,
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { MESSAGES } from 'src/core/constants/messages';
 
 import { ADMIN_REPOSITORY } from 'src/core/constants/repositories';
