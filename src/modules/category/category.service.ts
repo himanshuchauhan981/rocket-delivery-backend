@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { MESSAGES } from 'src/core/constants/messages';
 
 import { CATEGORY_REPOSITORY } from 'src/core/constants/repositories';
 import { STATUS_CODE } from 'src/core/constants/status_code';
@@ -25,15 +26,16 @@ export class CategoryService {
         this.categoryRepository
           .findAndCountAll({
             where: { is_deleted: 0 },
+            attributes: ['name', 'is_active', 'id'],
             include: [{ model: Image, attributes: ['id', 'url'] }],
             offset: pageIndex,
             limit: payload.pageSize,
           })
           .then(async (categories) => {
             for (const item of categories.rows) {
-              item.totalSubCategories =
+              item.subCategoriesCount =
                 await this.subCategoryService.countSubCategories(item.id);
-              item.totalProducts = await this.productService.countProducts(
+              item.productsCount = await this.productService.countProducts(
                 item.id,
               );
             }
@@ -47,9 +49,24 @@ export class CategoryService {
             });
           });
       } catch (err) {
-        console.log('>>>>err', err);
         reject(err);
       }
+    });
+  }
+
+  async statusUpdate(status: number, category_id: number) {
+    return new Promise((resolve, reject) => {
+      this.categoryRepository
+        .update({ is_active: status }, { where: { id: category_id } })
+        .then(([status]) => {
+          if (status == 0) {
+            reject({ response: STATUS_CODE.NOT_FOUND });
+          } else {
+          }
+        })
+        .catch((err) => {
+          reject(err);
+        });
     });
   }
 }

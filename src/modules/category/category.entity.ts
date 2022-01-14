@@ -70,10 +70,10 @@ export class Category extends Model<Category> {
   @Column({
     type: DataType.VIRTUAL,
   })
-  totalSubCategories: number;
+  subCategoriesCount: number;
 
   @Column({
     type: DataType.VIRTUAL,
   })
-  totalProducts: number;
+  productsCount: number;
 }
