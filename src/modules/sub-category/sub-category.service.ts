@@ -20,4 +20,11 @@ export class SubCategoryService {
       console.log(err);
     }
   }
+
+  async deleteByCategoryId(category_id: number): Promise<void> {
+    await this.subCategoryRepository.update(
+      { is_deleted: 1, is_active: 0 },
+      { where: { category_id } },
+    );
+  }
 }

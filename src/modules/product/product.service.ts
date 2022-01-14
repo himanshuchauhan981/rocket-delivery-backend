@@ -1,4 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
+import sequelize from 'sequelize';
+
 import { PRODUCT_REPOSITORY } from 'src/core/constants/repositories';
 import { Product } from './product.entity';
 
@@ -16,8 +18,15 @@ export class ProductService {
       });
 
       return products.count;
-    } catch (Err) {
-      console.log('', Err);
+    } catch (err) {
+      return err;
     }
+  }
+
+  async deleteByCategoryId(category_id: number): Promise<void> {
+    await this.productRepository.update(
+      { is_deleted: 1, is_active: 0 },
+      { where: { category_id } },
+    );
   }
 }

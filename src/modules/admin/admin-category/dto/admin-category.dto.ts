@@ -23,3 +23,9 @@ export class CategoryId {
   @ApiProperty()
   id: number;
 }
+
+export class CategoryIdList {
+  @IsNotEmpty()
+  @ApiProperty()
+  categoryIds: number[];
+}

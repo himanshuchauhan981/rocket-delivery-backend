@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Put,
@@ -13,10 +14,15 @@ import { ApiTags } from '@nestjs/swagger';
 import { TransformInterceptor } from 'src/core/interceptors/transform.interceptor';
 import { CategoryService } from 'src/modules/category/category.service';
 import {
+  APIResponse,
+  CategoriesListResponse,
+} from 'src/modules/category/dto/category.dto';
+import {
   CategoryId,
+  CategoryIdList,
   CategoryList,
   CategoryStatus,
-} from './dto/admin-cateogory.dto';
+} from './dto/admin-category.dto';
 
 @Controller('admin/category')
 @ApiTags('Admin Categories')
@@ -25,9 +31,8 @@ export class AdminCategoryController {
 
   @Get('list')
   @UseInterceptors(TransformInterceptor)
-  async list(@Query() query: CategoryList) {
-    const data = this.categoryService.list(query);
-    return data;
+  async list(@Query() query: CategoryList): Promise<CategoriesListResponse> {
+    return await this.categoryService.list(query);
   }
 
   @Put(':id/status')
@@ -35,8 +40,16 @@ export class AdminCategoryController {
   async statusUpdate(
     @Param() params: CategoryId,
     @Body(new ValidationPipe()) payload: CategoryStatus,
-  ) {
-    const data = this.categoryService.statusUpdate(payload.status, params.id);
-    return data;
+  ): Promise<APIResponse> {
+    return await this.categoryService.statusUpdate(payload.status, params.id);
+  }
+
+  @Delete('bulkDelete')
+  @UseInterceptors(TransformInterceptor)
+  async delete(
+    @Body(new ValidationPipe()) payload: CategoryIdList,
+  ): Promise<APIResponse> {
+    console.log(payload);
+    return await this.categoryService.delete(payload.categoryIds);
   }
 }
