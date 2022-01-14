@@ -10,15 +10,3 @@ export class CategoryList {
   @ApiProperty()
   pageSize: number;
 }
-
-export class CategoryStatus {
-  @IsNotEmpty()
-  @ApiProperty()
-  status: number;
-}
-
-export class CategoryId {
-  @IsNotEmpty()
-  @ApiProperty()
-  id: number;
-}

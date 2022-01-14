@@ -54,19 +54,32 @@ export class CategoryService {
     });
   }
 
+  async findById(id: number) {
+    return await this.categoryRepository.findByPk(id);
+  }
+
   async statusUpdate(status: number, category_id: number) {
-    return new Promise((resolve, reject) => {
-      this.categoryRepository
-        .update({ is_active: status }, { where: { id: category_id } })
-        .then(([status]) => {
-          if (status == 0) {
-            reject({ response: STATUS_CODE.NOT_FOUND });
-          } else {
-          }
-        })
-        .catch((err) => {
-          reject(err);
-        });
-    });
+    try {
+      const categoryDetails = await this.findById(category_id);
+
+      if (categoryDetails) {
+        await this.categoryRepository.update(
+          { is_active: status },
+          { where: { id: category_id } },
+        );
+
+        return {
+          statusCode: STATUS_CODE.SUCCESS,
+          message: MESSAGES.CATEGORY_STATUS_UPDATE_SUCCESS,
+        };
+      } else {
+        return {
+          statusCode: STATUS_CODE.BAD_REQUEST,
+          message: MESSAGES.INVALID_CATEGORY,
+        };
+      }
+    } catch (err) {
+      throw err;
+    }
   }
 }
