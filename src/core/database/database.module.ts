@@ -1,23 +1,27 @@
 import { SequelizeModule } from '@nestjs/sequelize';
-
 import { Admin } from 'src/modules/admin/admin.entity';
-import { Category } from 'src/modules/category/category.entity';
-import { Image } from 'src/modules/file/image.entity';
-import { Product } from 'src/modules/product/product.entity';
-import { SubCategory } from 'src/modules/sub-category/sub-category.entity';
+import { databaseConfig } from './database.config';
+
+let config;
+switch (process.env.NODE_ENV) {
+  case 'development':
+    config = databaseConfig.development;
+    break;
+  case 'test':
+    config = databaseConfig.test;
+    break;
+  case 'staging':
+    config = databaseConfig.production;
+    break;
+  default:
+    config = databaseConfig.development;
+}
 
 const DatabaseModule = [
   SequelizeModule.forRootAsync({
     useFactory: () => ({
-      host: process.env.TYPEORM_HOST,
-      port: parseInt(process.env.TYPEORM_PORT, 10),
-      username: process.env.TYPEORM_USERNAME,
-      password: process.env.TYPEORM_PASSWORD,
-      database: process.env.TYPEORM_DATABASE,
-      dialect: 'postgres',
-      logging: true,
-      synchronize: true,
-      models: [Admin, Category, Image, SubCategory, Product],
+      ...config,
+      models: [Admin],
     }),
   }),
 ];

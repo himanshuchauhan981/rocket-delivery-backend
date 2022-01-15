@@ -1,0 +1,23 @@
+{
+    "development": {
+        "database": "rocket_delivery_demo",
+        "host": "127.0.0.1",
+        "dialect": "postgres",
+        "password": "admin",
+        "username":"postgres"
+    },
+    "test": {
+        "database": "rocket_delivery_demo",
+        "host": "127.0.0.1",
+        "dialect": "postgres",
+        "password": "admin",
+        "username":"postgres"
+    },
+    "production": {
+        "database": "rocket_delivery_demo",
+        "host": "127.0.0.1",
+        "dialect": "postgres",
+        "password": "admin",
+        "username":"postgres"
+    }
+}
