@@ -2,7 +2,6 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    console.log('>>>yes');
     queryInterface.createTable(
       'admin',
       {
@@ -39,14 +38,14 @@ module.exports = {
       },
       {
         hooks: {
-          beforeCreate: function (user, options, fn) {
-            user.created_at = new Date();
-            user.updated_at = new Date();
-            fn(null, person);
+          beforeCreate: function (admin, options, fn) {
+            admin.created_at = new Date();
+            admin.updated_at = new Date();
+            fn(null, admin);
           },
-          beforeUpdate: function (user, options, fn) {
-            user.updated_at = new Date();
-            fn(null, person);
+          beforeUpdate: function (admin, options, fn) {
+            admin.updated_at = new Date();
+            fn(null, admin);
           },
         },
       },
