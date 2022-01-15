@@ -35,11 +35,6 @@ module.exports = {
           allowNull: false,
         },
 
-        is_sub_category: {
-          type: Sequelize.BIGINT,
-          allowNull: false,
-        },
-
         is_active: {
           type: Sequelize.BIGINT,
           allowNull: false,

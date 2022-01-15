@@ -30,11 +30,6 @@ module.exports = {
           allowNull: false,
         },
 
-        is_active: {
-          type: Sequelize.BIGINT,
-          allowNull: false,
-        },
-
         is_deleted: {
           type: Sequelize.BIGINT,
           allowNull: true,

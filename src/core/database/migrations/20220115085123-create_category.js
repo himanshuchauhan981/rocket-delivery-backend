@@ -30,7 +30,7 @@ module.exports = {
           allowNull: false,
         },
 
-        category_id: {
+        is_sub_category: {
           type: Sequelize.BIGINT,
           allowNull: false,
         },

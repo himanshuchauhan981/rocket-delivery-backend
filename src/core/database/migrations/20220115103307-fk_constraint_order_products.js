@@ -5,22 +5,22 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.addConstraint('product_history', {
+    await queryInterface.addConstraint('order_products', {
       type: 'FOREIGN KEY',
-      fields: ['user_id'],
-      name: 'fk_product_history_users',
+      fields: ['order_id'],
+      name: 'fk_order_products_orders',
       references: {
-        table: 'users',
+        table: 'orders',
         field: 'id',
       },
       onDelete: 'cascade',
       onUpdate: 'cascade',
     });
 
-    await queryInterface.addConstraint('product_history', {
+    await queryInterface.addConstraint('order_products', {
       type: 'FOREIGN KEY',
       fields: ['product_id'],
-      name: 'fk_product_history_products',
+      name: 'fk_order_products_products',
       references: {
         table: 'products',
         field: 'id',
@@ -32,14 +32,14 @@ module.exports = {
 
   down: async (queryInterface, Sequelize) => {
     await queryInterface.removeConstraint(
-      'orders',
-      'fk_product_history_users',
+      'order_products',
+      'fk_order_products_orders',
       {},
     );
 
     await queryInterface.removeConstraint(
-      'orders',
-      'fk_product_history_products',
+      'order_products',
+      'fk_order_products_products',
       {},
     );
   },

@@ -37,7 +37,7 @@ module.exports = {
 
         sub_category_id: {
           type: Sequelize.BIGINT,
-          allowNull: false,
+          allowNull: true,
         },
 
         max_quantity: {
