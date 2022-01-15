@@ -20,7 +20,9 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "db:migrate": "npx sequelize-cli db:migrate",
-    "db:unmigrate": "npx sequelize-cli db:migrate:undo:all"
+    "db:unmigrate": "npx sequelize-cli db:migrate:undo:all",
+    "db:seed": "npx sequelize-cli db:seed:all",
+    "db:unseed": "npx sequelize-cli db:seed:undo:all"
   },
   "dependencies": {
     "@nestjs/common": "^8.0.0",
