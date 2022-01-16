@@ -16,12 +16,14 @@ import { CategoryService } from 'src/modules/category/category.service';
 import {
   APIResponse,
   CategoriesListResponse,
-} from 'src/modules/category/dto/category.dto';
+  SpecificCategoryResponse,
+} from 'src/modules/category/dto/category-response.dto';
 import {
   CategoryId,
   CategoryIdList,
   CategoryList,
   CategoryStatus,
+  UpdateCategory,
 } from './dto/admin-category.dto';
 
 @Controller('admin/category')
@@ -37,8 +39,19 @@ export class AdminCategoryController {
 
   @Get(':id')
   @UseInterceptors(TransformInterceptor)
-  async categoryDetails(@Param() params: CategoryId) {
+  async categoryDetails(
+    @Param() params: CategoryId,
+  ): Promise<SpecificCategoryResponse> {
     return await this.categoryService.findOneById(params.id);
+  }
+
+  @Put(':id')
+  @UseInterceptors(TransformInterceptor)
+  async update(
+    @Body(new ValidationPipe()) payload: UpdateCategory,
+    @Param(new ValidationPipe()) params: CategoryId,
+  ) {
+    return await this.categoryService.update(payload, params.id);
   }
 
   @Put(':id/status')

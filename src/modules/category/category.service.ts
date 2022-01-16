@@ -4,15 +4,17 @@ import { MESSAGES } from 'src/core/constants/messages';
 
 import { CATEGORY_REPOSITORY } from 'src/core/constants/repositories';
 import { STATUS_CODE } from 'src/core/constants/status_code';
-import { File } from '../file/file.entity';
+import { File } from '../admin/file/file.entity';
 import { ProductService } from '../product/product.service';
 import { SubCategoryService } from '../sub-category/sub-category.service';
 import { Category } from './category.entity';
+import { CategoryList } from './dto/category.dto';
 import {
   APIResponse,
   CategoriesListResponse,
-  CategoryList,
-} from './dto/category.dto';
+  SpecificCategoryResponse,
+} from './dto/category-response.dto';
+import { UpdateCategory } from '../admin/admin-category/dto/admin-category.dto';
 
 @Injectable()
 export class CategoryService {
@@ -118,14 +120,47 @@ export class CategoryService {
     }
   }
 
-  async findOneById(categoryId: number) {
+  async findOneById(categoryId: number): Promise<SpecificCategoryResponse> {
     try {
       const category = await this.categoryRepository.findByPk(categoryId, {
         include: [{ model: File, attributes: ['id', 'name', 'url'] }],
         attributes: ['id', 'name'],
       });
 
-      return { statusCode: STATUS_CODE.SUCCESS, data: { category } };
+      return {
+        statusCode: STATUS_CODE.SUCCESS,
+        data: { category },
+        message: MESSAGES.SUCCESS,
+      };
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async update(
+    payload: UpdateCategory,
+    categoryId: number,
+  ): Promise<APIResponse> {
+    try {
+      const categoryDetails = await this.categoryRepository.findByPk(
+        categoryId,
+      );
+
+      if (categoryDetails) {
+        await this.categoryRepository.update(payload, {
+          where: { id: categoryId },
+        });
+
+        return {
+          statusCode: STATUS_CODE.SUCCESS,
+          message: MESSAGES.CATEGORY_UPDATE_SUCCESS,
+        };
+      } else {
+        return {
+          statusCode: STATUS_CODE.NOT_FOUND,
+          message: MESSAGES.INVALID_ID,
+        };
+      }
     } catch (err) {
       throw err;
     }

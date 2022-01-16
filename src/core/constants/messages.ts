@@ -4,4 +4,6 @@ export const MESSAGES = {
   CATEGORY_NOT_FOUND: 'Invalid Category Id',
   CATEGORY_STATUS_UPDATE_SUCCESS: 'Category status updated successfully',
   PRODUCT_DELETE_SUCCESSFULL: 'Product delete successfully',
+  CATEGORY_UPDATE_SUCCESS: 'Category update successfully',
+  INVALID_ID: 'Invalid id',
 };

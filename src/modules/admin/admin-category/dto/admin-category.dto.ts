@@ -29,3 +29,13 @@ export class CategoryIdList {
   @ApiProperty()
   categoryIds: number[];
 }
+
+export class UpdateCategory {
+  @IsNotEmpty()
+  @ApiProperty()
+  image_id: number;
+
+  @IsNotEmpty()
+  @ApiProperty()
+  name: string;
+}

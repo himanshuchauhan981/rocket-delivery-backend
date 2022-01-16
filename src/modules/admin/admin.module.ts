@@ -9,9 +9,10 @@ import { AdminCategoryController } from './admin-category/admin-category.control
 import { CategoryService } from '../category/category.service';
 import { SubCategoryService } from '../sub-category/sub-category.service';
 import { ProductService } from '../product/product.service';
+import { FileModule } from './file/file.module';
 
 @Module({
-  imports: [JwtModule.register({ secret: 'eyJhbGciOiJIUzI1NiJ9' })],
+  imports: [JwtModule.register({ secret: 'eyJhbGciOiJIUzI1NiJ9' }), FileModule],
   controllers: [AdminController, AdminCategoryController],
   providers: [
     AdminService,

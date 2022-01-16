@@ -9,7 +9,7 @@ import {
   BelongsTo,
   HasMany,
 } from 'sequelize-typescript';
-import { File } from '../file/file.entity';
+import { File } from '../admin/file/file.entity';
 import { SubCategory } from '../sub-category/sub-category.entity';
 
 @Table({
