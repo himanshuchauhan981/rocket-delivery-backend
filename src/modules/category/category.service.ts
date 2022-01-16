@@ -4,7 +4,7 @@ import { MESSAGES } from 'src/core/constants/messages';
 
 import { CATEGORY_REPOSITORY } from 'src/core/constants/repositories';
 import { STATUS_CODE } from 'src/core/constants/status_code';
-import { Image } from '../file/image.entity';
+import { File } from '../file/file.entity';
 import { ProductService } from '../product/product.service';
 import { SubCategoryService } from '../sub-category/sub-category.service';
 import { Category } from './category.entity';
@@ -30,7 +30,7 @@ export class CategoryService {
       const categories = await this.categoryRepository.findAndCountAll({
         where: { is_deleted: 0 },
         attributes: ['name', 'is_active', 'id'],
-        include: [{ model: Image, attributes: ['id', 'url'] }],
+        include: [{ model: File, attributes: ['id', 'url'] }],
         offset: pageIndex,
         limit: payload.pageSize,
       });
@@ -87,11 +87,9 @@ export class CategoryService {
 
   async delete(categoryIds: number[]): Promise<APIResponse> {
     try {
-      console.log(categoryIds);
       const categoryDetails = await this.categoryRepository.findAll({
         where: { id: { [sequelize.Op.in]: categoryIds } },
       });
-      console.log('>>>>CategoryDetails', categoryDetails);
 
       if (categoryDetails.length == categoryIds.length) {
         for (const categoryId of categoryIds) {
@@ -116,7 +114,19 @@ export class CategoryService {
         };
       }
     } catch (err) {
-      console.log(err);
+      throw err;
+    }
+  }
+
+  async findOneById(categoryId: number) {
+    try {
+      const category = await this.categoryRepository.findByPk(categoryId, {
+        include: [{ model: File, attributes: ['id', 'name', 'url'] }],
+        attributes: ['id', 'name'],
+      });
+
+      return { statusCode: STATUS_CODE.SUCCESS, data: { category } };
+    } catch (err) {
       throw err;
     }
   }

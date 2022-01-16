@@ -35,6 +35,12 @@ export class AdminCategoryController {
     return await this.categoryService.list(query);
   }
 
+  @Get(':id')
+  @UseInterceptors(TransformInterceptor)
+  async categoryDetails(@Param() params: CategoryId) {
+    return await this.categoryService.findOneById(params.id);
+  }
+
   @Put(':id/status')
   @UseInterceptors(TransformInterceptor)
   async statusUpdate(

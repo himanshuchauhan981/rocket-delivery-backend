@@ -10,7 +10,7 @@ import {
 } from 'sequelize-typescript';
 import { Category } from '../category/category.entity';
 
-import { Image } from '../file/image.entity';
+import { File } from '../file/file.entity';
 import { SubCategory } from '../sub-category/sub-category.entity';
 
 @Table({
@@ -35,7 +35,7 @@ export class Product extends Model<Product> {
     type: DataType.BIGINT,
     allowNull: false,
   })
-  @ForeignKey(() => Image)
+  @ForeignKey(() => File)
   image_id: number;
 
   @Column({
@@ -94,6 +94,6 @@ export class Product extends Model<Product> {
   @UpdatedAt
   updated_at: Date;
 
-  @BelongsTo(() => Image)
-  Image: Image;
+  @BelongsTo(() => File)
+  Image: File;
 }

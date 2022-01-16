@@ -8,9 +8,9 @@ import {
 } from 'sequelize-typescript';
 
 @Table({
-  tableName: 'image',
+  tableName: 'file',
 })
-export class Image extends Model<Image> {
+export class File extends Model<File> {
   @Column({
     type: DataType.BIGINT,
     allowNull: false,
@@ -35,7 +35,13 @@ export class Image extends Model<Image> {
     type: DataType.STRING,
     allowNull: false,
   })
-  type: number;
+  type: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  slug: string;
 
   @Column({
     type: DataType.BIGINT,
