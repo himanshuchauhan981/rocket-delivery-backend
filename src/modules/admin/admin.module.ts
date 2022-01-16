@@ -10,10 +10,17 @@ import { CategoryService } from '../category/category.service';
 import { SubCategoryService } from '../sub-category/sub-category.service';
 import { ProductService } from '../product/product.service';
 import { FileModule } from './file/file.module';
+import { AdminProductModule } from './admin-product/admin-product.module';
+import { AdminCategoryModule } from './admin-category/admin-category.module';
 
 @Module({
-  imports: [JwtModule.register({ secret: 'eyJhbGciOiJIUzI1NiJ9' }), FileModule],
-  controllers: [AdminController, AdminCategoryController],
+  imports: [
+    JwtModule.register({ secret: 'eyJhbGciOiJIUzI1NiJ9' }),
+    AdminCategoryModule,
+    AdminProductModule,
+    FileModule,
+  ],
+  controllers: [AdminController],
   providers: [
     AdminService,
     CommonService,
