@@ -7,11 +7,13 @@ import {
   ForeignKey,
   BelongsTo,
   UpdatedAt,
+  HasOne,
 } from 'sequelize-typescript';
+import { File } from '../admin/file/file.entity';
 import { Category } from '../category/category.entity';
 
-import { File } from '../file/file.entity';
 import { SubCategory } from '../sub-category/sub-category.entity';
+import { ProductPrice } from './product-price.entity';
 
 @Table({
   tableName: 'products',
@@ -96,4 +98,13 @@ export class Product extends Model<Product> {
 
   @BelongsTo(() => File)
   Image: File;
+
+  @BelongsTo(() => Category)
+  Category: Category;
+
+  @BelongsTo(() => SubCategory)
+  SubCategory: SubCategory;
+
+  @HasOne(() => ProductPrice)
+  ProductPrice: ProductPrice;
 }
