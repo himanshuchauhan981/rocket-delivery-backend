@@ -5,7 +5,7 @@ import { Admin } from 'src/modules/admin/admin.entity';
 import { Product } from 'src/modules/product/product.entity';
 import { SubCategory } from 'src/modules/sub-category/sub-category.entity';
 import { Category } from 'src/modules/category/category.entity';
-import { File } from 'src/modules/file/file.entity';
+import { File } from 'src/modules/admin/file/file.entity';
 
 let config;
 switch (process.env.NODE_ENV) {

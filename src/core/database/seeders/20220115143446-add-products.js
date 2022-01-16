@@ -16,12 +16,6 @@ module.exports = {
      * }], {});
      */
 
-    await queryInterface.bulkDelete(
-      'image',
-      {},
-      { restartIdentity: true, truncate: true },
-    );
-
     await queryInterface.bulkDelete('products', null, {});
 
     const product_data = [
@@ -789,8 +783,8 @@ module.exports = {
 
     for (const [index, item] of product_data.entries()) {
       const new_image = await queryInterface.bulkInsert(
-        'image',
-        [{ name: 'products', type: 'product', url: item.image }],
+        'file',
+        [{ name: 'products', slug: 'product', type: 'image', url: item.image }],
         { returning: true },
       );
 

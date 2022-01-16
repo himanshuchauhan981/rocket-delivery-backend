@@ -141,8 +141,15 @@ module.exports = {
 
     for (const [index, item] of sub_category_data.entries()) {
       const new_image = await queryInterface.bulkInsert(
-        'image',
-        [{ name: 'sub category', type: 'sub_category', url: item.image }],
+        'file',
+        [
+          {
+            name: 'sub category',
+            slug: 'sub-category',
+            type: 'image',
+            url: item.image,
+          },
+        ],
         { returning: true },
       );
 

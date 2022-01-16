@@ -12,7 +12,7 @@ module.exports = {
      * }], {});
      */
     await queryInterface.bulkDelete(
-      'image',
+      'file',
       {},
       { restartIdentity: true, truncate: true },
     );
@@ -80,8 +80,15 @@ module.exports = {
 
     for (const item of category_list) {
       const new_image = await queryInterface.bulkInsert(
-        'image',
-        [{ name: 'category_image', type: 'category', url: item.image }],
+        'file',
+        [
+          {
+            name: 'category_image',
+            slug: 'category',
+            type: 'image',
+            url: item.image,
+          },
+        ],
         { returning: true },
       );
 
