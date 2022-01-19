@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import sequelize from 'sequelize';
+import * as moment from 'moment';
 
 import { PRODUCT_REPOSITORY } from 'src/core/constants/repositories';
 import { AdminProductList } from '../admin/admin-product/dto/admin-product.dto';
@@ -13,8 +14,41 @@ import { Product } from './product.entity';
 export class ProductService {
   constructor(
     @Inject(PRODUCT_REPOSITORY)
-    private readonly productRepository: typeof Product,
+    private readonly productRepository: typeof Product
   ) {}
+
+  #calculateDiscountPrice(
+		start_date: Date,
+		end_date: Date,
+		discount: number,
+		actual_price: number,
+		discount_type: string
+	) {
+		let currentDate = moment().format('YYYY-MM-DD HH:mm:ss');
+		let discountStartDate = moment(start_date).format('YYYY-MM-DD HH:mm:ss');
+		let discountEndDate = moment(end_date).format('YYYY-MM-DD HH:mm:ss');
+		let discountStatus;
+		let discountPrice;
+
+		if (discountStartDate <= currentDate && discountEndDate >= currentDate) {
+			discountStatus = true;
+			if (discount_type == 'FLAT') {
+				discountPrice = actual_price - discount;
+			} else {
+				discountPrice = (discount / 100) * actual_price;
+				discountPrice = actual_price - discountPrice;
+			}
+
+			return {
+				discountPrice,
+				discountStatus,
+			};
+		} else {
+			discountStatus = false;
+			discountPrice = 0;
+			return { discountStatus, discountPrice };
+		}
+	}
 
   async countProducts(category_id: number): Promise<number> {
     try {
@@ -35,7 +69,7 @@ export class ProductService {
     );
   }
 
-  async #sortProduct(sort: number): Promise<any[]> {
+  #sortProduct(sort: number) {
     let sortBy = [];
 
     if (sort == 0) {
@@ -55,11 +89,11 @@ export class ProductService {
 
   async getAll(payload: AdminProductList) {
     try {
-      const sortBy = this.#sortProduct(payload.sort);
-
+      const sortBy = this.#sortProduct(payload.sort) || [];
       const pageIndex = payload.pageIndex * payload.pageSize;
 
-      const data = await this.productRepository.findAndCountAll({
+
+      const tempProductData = await this.productRepository.findAndCountAll({
         where: payload.search
           ? {
               [sequelize.Op.and]: [
@@ -94,19 +128,46 @@ export class ProductService {
           'max_quantity',
           [
             sequelize.literal(
-              '(SELECT sum(quantity) from order_products where product_id = Product.id)',
+              '(SELECT CAST(COALESCE(sum(quantity),0) AS INTEGER) from order_products op where op.product_id = "Product".id)',
             ),
             'total_orders',
           ],
-          // [
-          //   sequelize.literal(
-          //     '(SELECT sum(ratings) from product_review where product_id = Product.id)',
-          //   ),
-          //   'total_ratings',
-          // ],
+          [
+            sequelize.literal(
+              '(SELECT CAST(COALESCE(sum(ratings),0) AS INTEGER) from product_review where product_id = "Product".id)',
+            ),
+            'total_ratings',
+          ],
         ],
+        order: sortBy,
+        limit: payload.pageSize,
+        offset: pageIndex,
       });
-      return { data: data };
+
+      for(const item of tempProductData.rows) {
+        const productPrice =item.product_price;
+
+        let discountDetails;
+
+        if (productPrice.discount) {
+          discountDetails = this.#calculateDiscountPrice(
+            productPrice.discount_start_date,
+            productPrice.discount_end_date,
+            productPrice.discount,
+            productPrice.actual_price,
+            productPrice.discount_type
+          );
+        }
+
+
+      }
+
+      return {
+        data: {
+          productsList: tempProductData.rows,
+          count: tempProductData.count,
+        },
+      };
     } catch (err) {
       throw err;
     }

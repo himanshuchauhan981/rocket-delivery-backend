@@ -33,6 +33,7 @@ export class CategoryService {
         where: { is_deleted: 0 },
         attributes: ['name', 'is_active', 'id'],
         include: [{ model: File, attributes: ['id', 'url'] }],
+        order: [['name', 'ASC']],
         offset: pageIndex,
         limit: payload.pageSize,
       });

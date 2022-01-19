@@ -14,6 +14,6 @@ export class AdminProductList {
   @IsNotEmpty()
   sort: number;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   search: string;
 }

@@ -8,9 +8,9 @@ import {
   BelongsTo,
   UpdatedAt,
 } from 'sequelize-typescript';
-import { Category } from '../category/category.entity';
 
-import { File } from '../file/file.entity';
+import { Category } from '../category/category.entity';
+import { File } from '../admin/file/file.entity';
 
 @Table({
   tableName: 'sub_categories',

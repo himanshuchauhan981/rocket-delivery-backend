@@ -8,9 +8,11 @@ import {
   BelongsTo,
   UpdatedAt,
   HasOne,
+  HasMany,
 } from 'sequelize-typescript';
 import { File } from '../admin/file/file.entity';
 import { Category } from '../category/category.entity';
+import { OrderProduct } from '../order/order-product.entity';
 
 import { SubCategory } from '../sub-category/sub-category.entity';
 import { ProductPrice } from './product-price.entity';
@@ -20,7 +22,7 @@ import { ProductPrice } from './product-price.entity';
 })
 export class Product extends Model<Product> {
   @Column({
-    type: DataType.BIGINT,
+    type: DataType.INTEGER,
     allowNull: false,
     autoIncrement: true,
     primaryKey: true,
@@ -97,14 +99,19 @@ export class Product extends Model<Product> {
   updated_at: Date;
 
   @BelongsTo(() => File)
-  Image: File;
+  file: File;
 
   @BelongsTo(() => Category)
-  Category: Category;
+  category: Category;
 
   @BelongsTo(() => SubCategory)
-  SubCategory: SubCategory;
+  subCategory: SubCategory;
 
   @HasOne(() => ProductPrice)
-  ProductPrice: ProductPrice;
+  product_price: ProductPrice;
+
+  @Column({
+    type: DataType.VIRTUAL,
+  })
+  total_orders: number;
 }

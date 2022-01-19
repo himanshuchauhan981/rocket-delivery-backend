@@ -5,14 +5,17 @@ import {
   DataType,
   CreatedAt,
   UpdatedAt,
+  ForeignKey,
 } from 'sequelize-typescript';
 
+import { Product } from '../product/product.entity';
+
 @Table({
-  tableName: 'file',
+  tableName: 'order_products',
 })
-export class File extends Model<File> {
+export class OrderProduct extends Model<OrderProduct> {
   @Column({
-    type: DataType.INTEGER,
+    type: DataType.BIGINT,
     allowNull: false,
     autoIncrement: true,
     primaryKey: true,
@@ -20,35 +23,47 @@ export class File extends Model<File> {
   id: number;
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.BIGINT,
     allowNull: false,
   })
-  name: string;
-
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  url: string;
-
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  type: string;
-
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  slug: string;
+  order_id: number;
 
   @Column({
     type: DataType.BIGINT,
     allowNull: false,
-    defaultValue: 0,
   })
-  is_deleted: number;
+  @ForeignKey(() => Product)
+  product_id: number;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  product_name: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  product_image: string;
+
+  @Column({
+    type: DataType.BIGINT,
+    allowNull: false,
+  })
+  quantity: number;
+
+  @Column({
+    type: DataType.BIGINT,
+    allowNull: false,
+  })
+  price: number;
+
+  @Column({
+    type: DataType.TEXT,
+    allowNull: false,
+  })
+  description: string;
 
   @CreatedAt
   created_at: Date;

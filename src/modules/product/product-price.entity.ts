@@ -31,16 +31,16 @@ export class ProductPrice extends Model<ProductPrice> {
   product_id: number;
 
   @Column({
-    type: DataType.BIGINT,
+    type: DataType.DOUBLE(2,2),
     allowNull: false,
   })
   actual_price: number;
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.INTEGER,
     allowNull: false,
   })
-  discount: string;
+  discount: number;
 
   @Column({
     type: DataType.DATE,
