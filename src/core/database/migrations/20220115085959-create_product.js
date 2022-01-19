@@ -13,7 +13,7 @@ module.exports = {
       'products',
       {
         id: {
-          type: Sequelize.BIGINT,
+          type: Sequelize.INTEGER,
           allowNull: false,
           autoIncrement: true,
           unique: true,
@@ -31,22 +31,22 @@ module.exports = {
         },
 
         category_id: {
-          type: Sequelize.BIGINT,
+          type: Sequelize.INTEGER,
           allowNull: false,
         },
 
         sub_category_id: {
-          type: Sequelize.BIGINT,
+          type: Sequelize.INTEGER,
           allowNull: true,
         },
 
         max_quantity: {
-          type: Sequelize.BIGINT,
+          type: Sequelize.INTEGER,
           allowNull: false,
         },
 
         purchase_limit: {
-          type: Sequelize.BIGINT,
+          type: Sequelize.INTEGER,
           allowNull: false,
         },
 

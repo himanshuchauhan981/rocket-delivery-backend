@@ -13,7 +13,7 @@ module.exports = {
       'product_price',
       {
         id: {
-          type: Sequelize.BIGINT,
+          type: Sequelize.INTEGER,
           allowNull: false,
           autoIncrement: true,
           unique: true,
@@ -21,17 +21,17 @@ module.exports = {
         },
 
         product_id: {
-          type: Sequelize.BIGINT,
+          type: Sequelize.INTEGER,
           allowNull: false,
         },
 
         actual_price: {
-          type: Sequelize.BIGINT,
+          type: Sequelize.DOUBLE(2,2),
           allowNull: false,
         },
 
         discount: {
-          type: Sequelize.STRING,
+          type: Sequelize.INTEGER,
           allowNull: true,
         },
 

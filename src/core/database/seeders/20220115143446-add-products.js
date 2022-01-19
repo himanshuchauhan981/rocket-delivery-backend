@@ -17,6 +17,7 @@ module.exports = {
      */
 
     await queryInterface.bulkDelete('products', null, {});
+    await queryInterface.bulkDelete('products', null ,{});
 
     const product_data = [
       {
@@ -788,7 +789,7 @@ module.exports = {
         { returning: true },
       );
 
-      await queryInterface.bulkInsert('products', [
+      const newProduct = await queryInterface.bulkInsert('products', [
         {
           id: index + 1,
           name: item.name,
@@ -804,7 +805,19 @@ module.exports = {
           is_active: 1,
           is_deleted: 0,
         },
-      ]);
+      ],{ returning: true });
+
+      await queryInterface.bulkInsert('product_price',
+        [{
+          product_id: newProduct[0].id,
+          actual_price: randomNumber(100,300),
+          discount: null,
+          discount_start_date: null,
+          discount_end_date: null,
+          discount_type: null,
+          refundable: true,
+        }],
+			);
     }
   },
 

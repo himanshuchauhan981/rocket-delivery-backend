@@ -13,7 +13,7 @@ module.exports = {
       'categories',
       {
         id: {
-          type: Sequelize.BIGINT,
+          type: Sequelize.INTEGER,
           allowNull: false,
           autoIncrement: true,
           unique: true,
