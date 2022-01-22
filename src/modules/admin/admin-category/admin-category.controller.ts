@@ -68,7 +68,6 @@ export class AdminCategoryController {
   async delete(
     @Body(new ValidationPipe()) payload: CategoryIdList,
   ): Promise<APIResponse> {
-    console.log(payload);
     return await this.categoryService.delete(payload.categoryIds);
   }
 }

@@ -17,7 +17,7 @@ export class SubCategoryService {
 
       return subCategories.count;
     } catch (err) {
-      console.log(err);
+      throw err;
     }
   }
 

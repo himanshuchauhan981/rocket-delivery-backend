@@ -30,13 +30,13 @@ export class ProductService {
 		actual_price: number,
 		discount_type: string
 	) {
-		let currentDate = moment().format('YYYY-MM-DD HH:mm:ss');
-		let discountStartDate = moment(start_date).format('YYYY-MM-DD HH:mm:ss');
-		let discountEndDate = moment(end_date).format('YYYY-MM-DD HH:mm:ss');
+		let currentDate = moment();
+		let discountStartDate = moment(start_date);
+		let discountEndDate = moment(end_date);
 		let discountStatus;
 		let discountPrice;
 
-		if (discountStartDate <= currentDate && discountEndDate >= currentDate) {
+		if (discountStartDate.isAfter(currentDate) && discountEndDate.isAfter(discountStartDate)) {
 			discountStatus = true;
 			if (discount_type == 'FLAT') {
 				discountPrice = actual_price - discount;
@@ -296,6 +296,49 @@ export class ProductService {
 			productDetails.product_price.discount = discountDetails.discountPrice;
 
       return { statusCode: STATUS_CODE.SUCCESS, data: { product_details: productDetails }, message: MESSAGES.SUCCESS };
+    }
+    catch(err) {
+      throw err;
+    }
+  }
+
+  async update(payload: NewProduct, productId: number) {
+    try {
+      const productDetails = await this.productRepository.findByPk(productId);
+
+      if(productDetails) {
+        await this.productRepository.update(
+          {
+            name: payload.name,
+            image_id: payload.image,
+            category_id: payload.category,
+            sub_category_id: payload.subCategory,
+            max_quantity: payload.productStock,
+            purchase_limit: payload.purchaseLimit,
+            measuring_unit_id: payload.measuringUnit,
+            description: payload.description
+          },
+          { where:{ id: productId } }
+        );
+
+        await this.productPriceRepository.update(
+          {
+            product_id: productId,
+            actual_price: payload.unitPrice,
+            discount: payload.discountPrice,
+            discount_start_date: payload.discountStartDate,
+            discount_end_date: payload.discountEndDate,
+            discount_type: payload.discountType,
+            refundable: payload.refundable
+          },
+          { where:{ product_id: productId } }
+        )
+
+        return { statusCode: STATUS_CODE.SUCCESS, message: MESSAGES.PRODUCT_UPDATE_SUCCESSFULL }
+      }
+      else {
+        throw new HttpException(MESSAGES.PRODUCT_NOT_FOUND, STATUS_CODE.NOT_FOUND);
+      }
     }
     catch(err) {
       throw err;

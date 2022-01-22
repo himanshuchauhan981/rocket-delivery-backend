@@ -24,8 +24,8 @@ export class AdminProductController {
 
   @Put(':id')
   @UseInterceptors(TransformInterceptor)
-  async update(@Param(new ValidationPipe()) params: SpecificProduct) {
-
+  async update(@Param(new ValidationPipe()) params: SpecificProduct, @Body(new ValidationPipe()) payload: NewProduct) {
+    return await this.productService.update(payload, params.id);
   }
 
   @Post('new')
