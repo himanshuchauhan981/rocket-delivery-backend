@@ -325,10 +325,10 @@ export class ProductService {
           {
             product_id: productId,
             actual_price: payload.unitPrice,
-            discount: payload.discountPrice,
-            discount_start_date: payload.discountStartDate,
-            discount_end_date: payload.discountEndDate,
-            discount_type: payload.discountType,
+            discount: payload.discountPrice ? payload.discountPrice: null,
+            discount_start_date: payload.discountStartDate ? payload.discountStartDate: null,
+            discount_end_date: payload.discountEndDate ? payload.discountEndDate: null,
+            discount_type: payload.discountType ? payload.discountType: null,
             refundable: payload.refundable
           },
           { where:{ product_id: productId } }
@@ -339,6 +339,21 @@ export class ProductService {
       else {
         throw new HttpException(MESSAGES.PRODUCT_NOT_FOUND, STATUS_CODE.NOT_FOUND);
       }
+    }
+    catch(err) {
+      throw err;
+    }
+  }
+
+  async delete(id: number) {
+    try{
+      let productDetails = await this.productRepository.findByPk(id);
+
+      if(productDetails) {
+        await this.productRepository.update({ is_deleted: 1 }, { where: { id } });
+        return { statusCode: STATUS_CODE.SUCCESS, message: MESSAGES.PRODUCT_DELETE_SUCCESSFULL }
+      }
+      throw new HttpException(MESSAGES.INVALID_ID, STATUS_CODE.NOT_FOUND);
     }
     catch(err) {
       throw err;
