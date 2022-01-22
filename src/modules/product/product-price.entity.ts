@@ -71,4 +71,9 @@ export class ProductPrice extends Model<ProductPrice> {
 
   @UpdatedAt
   updated_at: Date;
+
+  @Column({
+    type: DataType.VIRTUAL
+  })
+  discount_status: boolean
 }

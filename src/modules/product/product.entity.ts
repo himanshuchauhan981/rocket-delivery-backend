@@ -12,6 +12,7 @@ import {
 } from 'sequelize-typescript';
 import { File } from '../admin/file/file.entity';
 import { Category } from '../category/category.entity';
+import { MeasuringUnit } from '../measuring-unit/measuring-unit.entity';
 import { OrderProduct } from '../order/order-product.entity';
 
 import { SubCategory } from '../sub-category/sub-category.entity';
@@ -72,6 +73,7 @@ export class Product extends Model<Product> {
     type: DataType.BIGINT,
     allowNull: false,
   })
+  @ForeignKey(() => MeasuringUnit)
   measuring_unit_id: number;
 
   @Column({
@@ -109,6 +111,9 @@ export class Product extends Model<Product> {
 
   @HasOne(() => ProductPrice)
   product_price: ProductPrice;
+
+  @BelongsTo(() => MeasuringUnit)
+  measurementUnit: MeasuringUnit;
 
   @Column({
     type: DataType.VIRTUAL,

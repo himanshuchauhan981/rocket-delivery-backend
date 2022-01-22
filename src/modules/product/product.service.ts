@@ -105,7 +105,7 @@ export class ProductService {
     return sortBy;
   }
 
-  async getAll(payload: AdminProductList) {
+  async findAll(payload: AdminProductList) {
     try {
       const sortBy = this.#sortProduct(payload.sort) || [];
       const pageIndex = payload.pageIndex * payload.pageSize;
@@ -175,6 +175,9 @@ export class ProductService {
             productPrice.actual_price,
             productPrice.discount_type
           );
+
+          item.product_price.discount = discountDetails.discountPrice;
+          item.product_price.discount_status = discountDetails.discountStatus;
         }
       }
 
@@ -247,6 +250,52 @@ export class ProductService {
       await this.productRepository.update({ is_active: 1 },{ where: { id: newProduct.id } })
 
       return { statusCode: STATUS_CODE.SUCCESS,message: MESSAGES.PRODUCT_ADD_SUCCESSFULL };
+    }
+    catch(err) {
+      throw err;
+    }
+  }
+
+  async findOneById(productId: number) {
+    try{
+      const productDetails = await this.productRepository.findByPk(
+        productId,
+        { 
+          include: [
+            {
+              model: ProductPrice,
+              attributes: [
+                'actual_price',
+                'discount_start_date',
+                'discount_end_date',
+                'discount_type',
+                'discount',
+                'refundable',
+              ],
+            },
+            { model: File, attributes: ['id', 'url', 'name'] },
+						{ model: Category, attributes: ['id', 'name'] },
+						{ model: SubCategory, attributes: ['id', 'name'] },
+						{ model: MeasuringUnit, attributes: ['id', 'measuring_type', 'symbol'] },
+          ],
+          attributes: ['name', 'max_quantity', 'purchase_limit', 'description'],
+        }
+      );
+
+      const productPrice = productDetails.product_price;
+
+      const discountDetails = this.#calculateDiscountPrice(
+        productPrice.discount_start_date,
+        productPrice.discount_end_date,
+        productPrice.discount,
+        productPrice.actual_price,
+        productPrice.discount_type
+      );
+
+      productDetails.product_price.discount_status = discountDetails.discountStatus;
+			productDetails.product_price.discount = discountDetails.discountPrice;
+
+      return { statusCode: STATUS_CODE.SUCCESS, data: { product_details: productDetails }, message: MESSAGES.SUCCESS };
     }
     catch(err) {
       throw err;

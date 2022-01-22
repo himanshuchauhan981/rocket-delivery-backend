@@ -75,3 +75,9 @@ export class NewProduct {
   refundable: boolean;
   
 }
+
+export class SpecificProduct {
+  @ApiProperty()
+  @IsNotEmpty()
+  id: number;
+}
