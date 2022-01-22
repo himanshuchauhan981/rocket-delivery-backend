@@ -62,12 +62,11 @@ module.exports = {
 
         is_active: {
           type: Sequelize.BIGINT,
-          allowNull: false,
+          defaultValue: 0,
         },
 
         is_deleted: {
           type: Sequelize.BIGINT,
-          allowNull: false,
           defaultValue: 0,
         },
 

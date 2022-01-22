@@ -791,7 +791,6 @@ module.exports = {
 
       const newProduct = await queryInterface.bulkInsert('products', [
         {
-          id: index + 1,
           name: item.name,
           category_id: item.category_id,
           sub_category_id: item.sub_category_id,
@@ -829,6 +828,8 @@ module.exports = {
      * await queryInterface.bulkDelete('products', null, {});
      */
 
-    await queryInterface.bulkDelete('products', null, {});
+    await queryInterface.bulkDelete('products', null, { resetIdSequence: true });
+
+    await queryInterface.bulkDelete('product_price', null, { resetIdSequence: true });
   },
 };
