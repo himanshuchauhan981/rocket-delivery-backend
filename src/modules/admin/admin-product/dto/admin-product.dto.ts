@@ -17,3 +17,61 @@ export class AdminProductList {
   @ApiProperty({ required: false })
   search: string;
 }
+
+export class NewProduct {
+  @ApiProperty()
+  @IsNotEmpty()
+  name: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  description: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  category: number;
+
+  @ApiProperty({ required: false })
+  subCategory: number;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  image: number;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  measuringUnit: number;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  paymentMethod: number;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  productStock: number;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  purchaseLimit: number;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  unitPrice: number;
+
+  @ApiProperty({ required: false })
+  discountPrice: number;
+
+  @ApiProperty({ required: false })
+  discountStartDate: Date;
+
+  @ApiProperty({ required: false })
+  discountEndDate: Date;
+
+  @ApiProperty({ required: false })
+  discountType: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  refundable: boolean;
+  
+}

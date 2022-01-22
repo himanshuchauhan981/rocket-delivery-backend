@@ -51,7 +51,7 @@ export class Product extends Model<Product> {
 
   @Column({
     type: DataType.BIGINT,
-    allowNull: false,
+    allowNull: true,
   })
   @ForeignKey(() => SubCategory)
   sub_category_id: number;
@@ -82,13 +82,13 @@ export class Product extends Model<Product> {
 
   @Column({
     type: DataType.BIGINT,
-    allowNull: false,
+    defaultValue: 0,
   })
   is_active: number;
 
   @Column({
     type: DataType.BIGINT,
-    allowNull: false,
+    defaultValue: 0,
   })
   is_deleted: number;
 

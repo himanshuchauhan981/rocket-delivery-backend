@@ -1,20 +1,26 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { HttpException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import sequelize from 'sequelize';
 import * as moment from 'moment';
 
-import { PRODUCT_REPOSITORY } from 'src/core/constants/repositories';
-import { AdminProductList } from '../admin/admin-product/dto/admin-product.dto';
+import { CATEGORY_REPOSITORY, MEASURING_UNIT_REPOSITORY, PRODUCT_PRICE_REPOSITORY, PRODUCT_REPOSITORY, SUB_CATEGORY_REPOSITORY } from 'src/core/constants/repositories';
+import { AdminProductList, NewProduct } from '../admin/admin-product/dto/admin-product.dto';
 import { File } from '../admin/file/file.entity';
 import { Category } from '../category/category.entity';
 import { SubCategory } from '../sub-category/sub-category.entity';
 import { ProductPrice } from './product-price.entity';
 import { Product } from './product.entity';
+import { MESSAGES } from 'src/core/constants/messages';
+import { STATUS_CODE } from 'src/core/constants/status_code';
+import { MeasuringUnit } from '../measuring-unit/measuring-unit.entity';
 
 @Injectable()
 export class ProductService {
   constructor(
-    @Inject(PRODUCT_REPOSITORY)
-    private readonly productRepository: typeof Product
+    @Inject(PRODUCT_REPOSITORY) private readonly productRepository: typeof Product,
+    @Inject(CATEGORY_REPOSITORY) private readonly categoryRepository: typeof Category,
+    @Inject(SUB_CATEGORY_REPOSITORY) private readonly subCategoryRepository: typeof SubCategory,
+    @Inject(PRODUCT_PRICE_REPOSITORY) private readonly productPriceRepository: typeof ProductPrice,
+    @Inject(MEASURING_UNIT_REPOSITORY) private readonly measuringUnitRepository: typeof MeasuringUnit
   ) {}
 
   #calculateDiscountPrice(
@@ -50,6 +56,18 @@ export class ProductService {
 		}
 	}
 
+  #validateDiscountDate(startDate: Date, endDate: Date): boolean{
+    const currentDate = moment();
+    const discountStartDate = moment(startDate);
+    const discountEndDate = moment(endDate);
+
+    
+    if(currentDate.isSameOrBefore(discountStartDate) && discountStartDate.isBefore(discountEndDate)) {
+      return true;
+    }
+    return false;
+  }
+
   async countProducts(category_id: number): Promise<number> {
     try {
       const products = await this.productRepository.findAndCountAll({
@@ -73,7 +91,7 @@ export class ProductService {
     let sortBy = [];
 
     if (sort == 0) {
-      sortBy = [['id', 'ASC']];
+      sortBy = [['name', 'ASC']];
     } else if (sort == 1) {
       sortBy = [[sequelize.literal('total_ratings'), 'DESC']];
     } else if (sort == 2) {
@@ -158,8 +176,6 @@ export class ProductService {
             productPrice.discount_type
           );
         }
-
-
       }
 
       return {
@@ -169,6 +185,70 @@ export class ProductService {
         },
       };
     } catch (err) {
+      throw err;
+    }
+  }
+
+  async createNew(payload: NewProduct) {
+    try {
+      const categoryDetails = await this.categoryRepository.findByPk(payload.category);
+      const measuringUnitDetails = await this.measuringUnitRepository.findByPk(payload.measuringUnit);
+
+      
+      if(!categoryDetails) {
+        throw new HttpException(MESSAGES.CATEGORY_NOT_FOUND, STATUS_CODE.NOT_FOUND);
+      }
+
+      if(payload.subCategory) {
+        const subCategoryDetails = await this.subCategoryRepository.findByPk(payload.subCategory);
+
+        if(!subCategoryDetails) {
+          throw new HttpException(MESSAGES.SUB_CATEGORY_NOT_FOUND, STATUS_CODE.NOT_FOUND);
+        }
+      }
+
+      if(!measuringUnitDetails) {
+        throw new HttpException(MESSAGES.MEASURING_UNIT_NOT_FOUND, STATUS_CODE.NOT_FOUND);
+      }
+
+      if(payload.discountStartDate && payload.discountEndDate) {
+        const status = this.#validateDiscountDate(payload.discountStartDate, payload.discountEndDate);
+
+        if(!status) {
+          throw new HttpException(MESSAGES.INVALID_DISCOUNT_DATE, STATUS_CODE.NOT_ACCEPTABLE);
+        }
+      }
+
+      const newProductObj = {
+        category_id: payload.category,
+        sub_category_id: payload.subCategory,
+        max_quantity: payload.productStock,
+        purchase_limit: payload.purchaseLimit,
+        measuring_unit_id: payload.measuringUnit,
+        name: payload.name,
+        description: payload.description,
+        image_id: payload.image
+      };
+
+      const newProduct = await this.productRepository.create<any>(newProductObj);
+
+      const productPriceObj = {
+        product_id: newProduct.id,
+        actual_price: payload.unitPrice,
+        discount: payload.discountPrice,
+        discount_type: payload.discountType ? payload.discountType.toLocaleUpperCase() : null,
+        discount_start_date: payload.discountStartDate,
+        discount_end_date: payload.discountEndDate,
+        refundable: payload.refundable
+      }
+
+      await this.productPriceRepository.create<any>(productPriceObj);
+
+      await this.productRepository.update({ is_active: 1 },{ where: { id: newProduct.id } })
+
+      return { statusCode: STATUS_CODE.SUCCESS,message: MESSAGES.PRODUCT_ADD_SUCCESSFULL };
+    }
+    catch(err) {
       throw err;
     }
   }

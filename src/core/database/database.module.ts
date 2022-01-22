@@ -8,6 +8,7 @@ import { Category } from 'src/modules/category/category.entity';
 import { File } from 'src/modules/admin/file/file.entity';
 import { ProductPrice } from 'src/modules/product/product-price.entity';
 import { OrderProduct } from 'src/modules/order/order-product.entity';
+import { MeasuringUnit } from 'src/modules/measuring-unit/measuring-unit.entity';
 
 let config;
 switch (process.env.NODE_ENV) {
@@ -36,6 +37,7 @@ const DatabaseModule = [
         File,
         ProductPrice,
         OrderProduct,
+        MeasuringUnit
       ],
     }),
   }),
