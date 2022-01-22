@@ -27,6 +27,8 @@ export class AdminService {
       if (passwordStatus) {
         const token = this.commonService.generateJWTToken({
           id: adminDetails.id,
+          role: 'admin',
+          email: payload.email,
         });
 
         return { data: { token } };

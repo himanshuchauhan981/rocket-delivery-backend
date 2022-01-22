@@ -4,16 +4,18 @@ import {
   Get,
   Post,
   Query,
+  UseGuards,
   UseInterceptors,
   ValidationPipe,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+
+import { JWTAuthGuard } from 'src/core/guard/jwt.guard';
 import { TransformInterceptor } from 'src/core/interceptors/transform.interceptor';
 import {
   CreateFileResponse,
   GetAllFilesResponse,
 } from './dto/file-response.dto';
-
 import { CreateFile, FileList } from './dto/file.dto';
 import { FileService } from './file.service';
 
@@ -23,6 +25,8 @@ export class FileController {
   constructor(private fileService: FileService) {}
 
   @Get('')
+  @ApiBearerAuth('Authorization')
+  @UseGuards(JWTAuthGuard)
   @UseInterceptors(TransformInterceptor)
   async getAll(
     @Query(new ValidationPipe()) query: FileList,
@@ -31,6 +35,8 @@ export class FileController {
   }
 
   @Post('')
+  @ApiBearerAuth('Authorization')
+  @UseGuards(JWTAuthGuard)
   @UseInterceptors(TransformInterceptor)
   async create(
     @Body(new ValidationPipe()) payload: CreateFile,

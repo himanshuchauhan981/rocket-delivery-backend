@@ -12,4 +12,6 @@ export const MESSAGES = {
   CATEGORY_UPDATE_SUCCESS: 'Category update successfully',
   INVALID_DISCOUNT_DATE: 'Invalid discount start date and end date',
   INVALID_ID: 'Invalid id',
+  EXPIRED_TOKEN: 'JWT token expired',
+  REQUIRED_JWT_TOKEN: 'Token required'
 };
