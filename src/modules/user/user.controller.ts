@@ -2,14 +2,19 @@ import { Body, Controller, Get, Post, Query, UseInterceptors, ValidationPipe } f
 import { ApiTags } from '@nestjs/swagger';
 
 import { TransformInterceptor } from 'src/core/interceptors/transform.interceptor';
+import { ProductService } from '../product/product.service';
 import { SubCategoryService } from '../sub-category/sub-category.service';
-import { UserLogin, UserSignup, UserCategoryList, UserSubCategoryList } from './dto/user.dto';
+import { UserLogin, UserSignup, UserCategoryList, UserSubCategoryList, UserCart } from './dto/user.dto';
 import { UserService } from './user.service';
 
 @Controller('user')
 @ApiTags('User')
 export class UserController {
-	constructor(private readonly userService: UserService, private readonly subCategoryService: SubCategoryService) {}
+	constructor(
+    private readonly userService: UserService,
+    private readonly subCategoryService: SubCategoryService,
+    private readonly productService: ProductService
+  ) {}
 
   @Post('signup')
   @UseInterceptors(TransformInterceptor)
@@ -33,5 +38,11 @@ export class UserController {
   @UseInterceptors(TransformInterceptor)
   async listSubCategory(@Query(new ValidationPipe()) query: UserSubCategoryList) {
     return await this.subCategoryService.list(query.category_id);
+  }
+
+  @Post('cart')
+  @UseInterceptors(TransformInterceptor)
+  async cartDetails(@Body(new ValidationPipe()) payload: UserCart) {
+    return await this.productService.cartItems(payload);
   }
 }

@@ -12,6 +12,7 @@ import { Product } from './product.entity';
 import { MESSAGES } from 'src/core/constants/messages';
 import { STATUS_CODE } from 'src/core/constants/status_code';
 import { MeasuringUnit } from '../measuring-unit/measuring-unit.entity';
+import { UserCart } from '../user/dto/user.dto';
 
 @Injectable()
 export class ProductService {
@@ -401,4 +402,48 @@ export class ProductService {
     }
   }
 
+  async cartItems (payload: UserCart) {
+    const productIds = payload.cartItems.map((items) => items.id);
+
+    const productDetails = await this.productRepository.findAll({
+      where: { id: { [sequelize.Op.in]: productIds } },
+      include: [
+        { model: ProductPrice, attributes: ['actual_price', 'discount', 'discount_type', 'discount_start_date', 'discount_end_date'] },
+        { model: File, attributes: ['id', 'url'] },
+      ],
+      attributes: [
+        'id',
+        'name',
+        'is_active',
+        'max_quantity',
+        'purchase_limit',
+      ],
+    });
+
+    for(const item of productDetails) {
+      const product_price = item.product_price;
+
+      const discountDetails = this.#calculateDiscountPrice(
+        product_price.discount_start_date,
+        product_price.discount_end_date, 
+        product_price.discount, 
+        product_price.actual_price, 
+        product_price.discount_type
+      );
+
+      if(discountDetails.discountStatus) {
+        item.product_price.discount = discountDetails.discountPrice;
+      }
+
+      const productQuantity = payload.cartItems.filter((cartItem) => cartItem.id === item.id)[0].quantity;
+
+      if (productQuantity < item.max_quantity && payload.removeCartItem === true) {
+        item.quantity = productQuantity;
+      } else if (payload.removeCartItem === false) {
+        item.quantity = productQuantity;
+      }
+    }
+
+    return {statusCode: STATUS_CODE.SUCCESS, data: { cartProductDetails: productDetails }, message: MESSAGES.SUCCESS }
+  }
 }

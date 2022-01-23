@@ -119,4 +119,9 @@ export class Product extends Model<Product> {
     type: DataType.VIRTUAL,
   })
   total_orders: number;
+
+  @Column({
+    type: DataType.VIRTUAL,
+  })
+  quantity: number;
 }

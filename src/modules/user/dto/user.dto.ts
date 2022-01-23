@@ -70,3 +70,23 @@ export class SpecificProduct {
   @ApiProperty()
   id: number;
 }
+
+class Cart {
+  @IsNotEmpty()
+  @ApiProperty()
+  id: number;
+
+  @IsNotEmpty()
+  @ApiProperty()
+  quantity: number;
+}
+
+export class UserCart {
+  @ApiProperty()
+  @IsNotEmpty()
+  cartItems: Cart[];
+
+  @ApiProperty()
+  @IsNotEmpty()
+  removeCartItem: boolean;
+}
