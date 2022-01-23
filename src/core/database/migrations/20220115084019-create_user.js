@@ -20,6 +20,11 @@ module.exports = {
           primaryKey: true,
         },
 
+        name: {
+          type: Sequelize.STRING,
+          allowNull: false,
+        },
+
         email: {
           type: Sequelize.STRING,
           allowNull: false,
@@ -62,6 +67,11 @@ module.exports = {
         },
 
         profile_image: {
+          type: Sequelize.STRING,
+          allowNull: true,
+        },
+
+        fcm_token: {
           type: Sequelize.STRING,
           allowNull: true,
         },
