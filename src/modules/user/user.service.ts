@@ -113,7 +113,6 @@ export class UserService {
 					'id',
 					'name',
 					'is_sub_category',
-					'image_id',
 				],
 				limit: limit == 0 ? 10000 : limit,
 				include: [{ model: File, attributes: ['url', 'id'] }],

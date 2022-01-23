@@ -63,5 +63,8 @@ export class SubCategory extends Model<SubCategory> {
   updated_at: Date;
 
   @BelongsTo(() => File)
-  Image: File;
+  image: File;
+
+  @BelongsTo(() => Category)
+  category: Category
 }

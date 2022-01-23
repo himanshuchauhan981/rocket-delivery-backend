@@ -50,3 +50,23 @@ export class UserCategoryList {
   @ApiProperty()
   limit: number;
 }
+
+export class UserSubCategoryList {
+  @IsNotEmpty()
+  @ApiProperty()
+  category_id: number;
+}
+
+export class UserProducts {
+  @ApiProperty({required: false})
+  category_id: number;
+
+  @ApiProperty({required: false})
+  sub_category_id: number;
+}
+
+export class SpecificProduct {
+  @IsNotEmpty()
+  @ApiProperty()
+  id: number;
+}
