@@ -8,6 +8,7 @@ import { CommonModule } from './modules/common/common.module';
 import { CategoryModule } from './modules/category/category.module';
 import { SubCategoryModule } from './modules/sub-category/sub-category.module';
 import { UserModule } from './modules/user/user.module';
+import { OrderModule } from './modules/order/order.module';
 import DatabaseModule from './core/database/database.module';
 
 @Module({
@@ -19,6 +20,7 @@ import DatabaseModule from './core/database/database.module';
     CommonModule,
     SubCategoryModule,
     UserModule,
+    OrderModule,
   ],
   controllers: [AppController],
   providers: [AppService],
