@@ -1,7 +1,7 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Controller, Get } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 
-import { JWTAuthGuard } from 'src/core/guard/jwt.guard';
+import { Auth } from 'src/core/decorators/auth.decorator';
 import { AdminSubcategoryService } from './admin-subcategory.service';
 
 @ApiTags('Admin sub category')
@@ -10,8 +10,7 @@ export class AdminSubcategoryController {
   constructor(private readonly adminSubCategoryService: AdminSubcategoryService) {}
 
   @Get('all')
-  @ApiBearerAuth('Authorization')
-  @UseGuards(JWTAuthGuard)
+  @Auth('admin')
   async findAll() {
     return await this.adminSubCategoryService.findAll(); 
   }

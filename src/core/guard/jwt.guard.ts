@@ -16,8 +16,11 @@ export class JWTAuthGuard implements CanActivate {
 			const token = authorization.split(' ')[1];
 
 			try {
-				const userDetails: any = jwt.verify(token, process.env.JWT_KEY)
-				request.user = { id: userDetails.id, role: userDetails.role };
+				const userDetails: any = jwt.verify(token, process.env.JWT_KEY);
+
+				request.userId = userDetails.id;
+				request.role = userDetails.role;
+
 				return true;
 			}
 			catch(err) {

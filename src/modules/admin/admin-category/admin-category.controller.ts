@@ -6,13 +6,12 @@ import {
   Param,
   Put,
   Query,
-  UseGuards,
   UseInterceptors,
   ValidationPipe,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
+import { Auth } from 'src/core/decorators/auth.decorator';
 
-import { JWTAuthGuard } from 'src/core/guard/jwt.guard';
 import { TransformInterceptor } from 'src/core/interceptors/transform.interceptor';
 import { CategoryService } from 'src/modules/category/category.service';
 import {
@@ -34,16 +33,14 @@ export class AdminCategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @Get('list')
-  @ApiBearerAuth('Authorization')
-  @UseGuards(JWTAuthGuard)
+  @Auth('admin')
   @UseInterceptors(TransformInterceptor)
   async list(@Query() query: CategoryList): Promise<CategoriesListResponse> {
     return await this.categoryService.list(query);
   }
 
   @Get(':id')
-  @ApiBearerAuth('Authorization')
-  @UseGuards(JWTAuthGuard)
+  @Auth('admin')
   @UseInterceptors(TransformInterceptor)
   async categoryDetails(
     @Param() params: CategoryId,
@@ -52,8 +49,7 @@ export class AdminCategoryController {
   }
 
   @Put(':id')
-  @ApiBearerAuth('Authorization')
-  @UseGuards(JWTAuthGuard)
+  @Auth('admin')
   @UseInterceptors(TransformInterceptor)
   async update(
     @Body(new ValidationPipe()) payload: UpdateCategory,
@@ -63,8 +59,7 @@ export class AdminCategoryController {
   }
 
   @Put(':id/status')
-  @ApiBearerAuth('Authorization')
-  @UseGuards(JWTAuthGuard)
+  @Auth('admin')
   @UseInterceptors(TransformInterceptor)
   async statusUpdate(
     @Param() params: CategoryId,
@@ -74,8 +69,7 @@ export class AdminCategoryController {
   }
 
   @Delete('bulkDelete')
-  @ApiBearerAuth('Authorization')
-  @UseGuards(JWTAuthGuard)
+  @Auth('admin')
   @UseInterceptors(TransformInterceptor)
   async delete(
     @Body(new ValidationPipe()) payload: CategoryIdList,
