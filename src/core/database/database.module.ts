@@ -9,6 +9,7 @@ import { File } from 'src/modules/admin/file/file.entity';
 import { ProductPrice } from 'src/modules/product/product-price.entity';
 import { OrderProduct } from 'src/modules/order/order-product.entity';
 import { MeasuringUnit } from 'src/modules/measuring-unit/measuring-unit.entity';
+import { User } from 'src/modules/user/user.entity';
 
 let config;
 switch (process.env.NODE_ENV) {
@@ -37,7 +38,8 @@ const DatabaseModule = [
         File,
         ProductPrice,
         OrderProduct,
-        MeasuringUnit
+        MeasuringUnit,
+        User
       ],
     }),
   }),

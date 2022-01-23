@@ -13,5 +13,6 @@ export const MESSAGES = {
   INVALID_DISCOUNT_DATE: 'Invalid discount start date and end date',
   INVALID_ID: 'Invalid id',
   EXPIRED_TOKEN: 'JWT token expired',
-  REQUIRED_JWT_TOKEN: 'Token required'
+  REQUIRED_JWT_TOKEN: 'Token required',
+  USER_ALREADY_EXISTED: 'User already existed',
 };
