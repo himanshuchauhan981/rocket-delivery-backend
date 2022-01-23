@@ -359,4 +359,46 @@ export class ProductService {
       throw err;
     }
   }
+
+  async list(categoryId: number, subCategoryId: number) {
+    try {
+      if(subCategoryId) {
+        const subCategoryDetails = await this.subCategoryRepository.findByPk(subCategoryId);
+
+        if(!subCategoryDetails) {
+          throw new HttpException(MESSAGES.SUB_CATEGORY_NOT_FOUND, STATUS_CODE.NOT_FOUND);
+        }
+      }
+      else if(categoryId) {
+        const categoryDetails = await this.categoryRepository.findByPk(categoryId);
+
+        if(!categoryDetails) {
+          throw new HttpException(MESSAGES.CATEGORY_NOT_FOUND, STATUS_CODE.NOT_FOUND);
+        }
+      }
+
+      const products = await this.productRepository.findAll({
+        where: subCategoryId ? { is_active: 1, is_deleted: 0 } : { category_id: categoryId, is_active: 1, is_deleted: 0 },
+        include: [
+          { model: ProductPrice, attributes: ['actual_price'] },
+          { model: MeasuringUnit, attributes: ['symbol'] },
+          { model: File, attributes: ['id', 'url'] },
+          subCategoryId ? { model: SubCategory, where: { id: subCategoryId }, attributes: [] } : { model: Category, attributes: [] },
+        ],
+        attributes: [
+          'id',
+          'name',
+          'max_quantity',
+          'purchase_limit',
+          subCategoryId ? [sequelize.col('subCategory.name'), 'subCategoryName'] : [sequelize.col('category.name'), 'subCategoryName'],
+        ],
+      });
+
+      return { statusCode: STATUS_CODE.SUCCESS, message: MESSAGES.SUCCESS, data: { products } };
+    }
+    catch(err) {
+      throw err;
+    }
+  }
+
 }

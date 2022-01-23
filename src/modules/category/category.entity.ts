@@ -38,7 +38,7 @@ export class Category extends Model<Category> {
   image_id: number;
 
   @Column({
-    type: DataType.BIGINT,
+    type: DataType.INTEGER,
     allowNull: false,
   })
   is_sub_category: number;
