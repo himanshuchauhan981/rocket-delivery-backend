@@ -25,6 +25,10 @@ export class UserSignup {
 	@IsNotEmpty()
   @ApiProperty()
   type: string;
+
+  @IsNotEmpty()
+  @ApiProperty()
+  fcm_token: string;
 }
 
 export class UserLogin {
@@ -39,4 +43,10 @@ export class UserLogin {
   @IsNotEmpty()
   @ApiProperty()
   fcm_token: string;
+}
+
+export class UserCategoryList {
+  @IsNotEmpty()
+  @ApiProperty()
+  limit: number;
 }

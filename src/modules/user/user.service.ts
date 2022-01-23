@@ -2,8 +2,10 @@ import { HttpException, Inject, Injectable } from '@nestjs/common';
 import sequelize from 'sequelize';
 import { MESSAGES } from 'src/core/constants/messages';
 
-import { USER_REPOSITORY } from 'src/core/constants/repositories';
+import { CATEGORY_REPOSITORY, USER_REPOSITORY } from 'src/core/constants/repositories';
 import { STATUS_CODE } from 'src/core/constants/status_code';
+import { File } from '../admin/file/file.entity';
+import { Category } from '../category/category.entity';
 import { CommonService } from '../common/common.service';
 import { UserLogin, UserSignup } from './dto/user.dto';
 import { User } from './user.entity';
@@ -13,7 +15,8 @@ export class UserService {
 
 	constructor(
 		private readonly commonService: CommonService,
-		@Inject(USER_REPOSITORY) private readonly userRepository: typeof User
+		@Inject(USER_REPOSITORY) private readonly userRepository: typeof User,
+		@Inject(CATEGORY_REPOSITORY) private readonly categoryRepository: typeof Category
 	) {}
 
 	async #findExistingUser(email: string, mobileNumber: string = null): Promise<User> {
@@ -44,6 +47,7 @@ export class UserService {
 					country_code: payload.country_code,
 					mobile_number: payload.mobile_number,
 					type: payload.type,
+					fcm_token: payload.fcm_token
 				});
 
 				const token = this.commonService.generateJWTToken({
@@ -52,7 +56,7 @@ export class UserService {
           email: payload.email
 				});
 
-				return { statusCode: STATUS_CODE.SUCCESS, message: MESSAGES.SUCCESS, data: { token } };
+				return { statusCode: STATUS_CODE.SUCCESS, message: MESSAGES.SUCCESS, data: { token, name: payload.name } };
 			}
 			else {
 				throw new HttpException(MESSAGES.USER_ALREADY_EXISTED, STATUS_CODE.CONFLICT);
@@ -82,7 +86,11 @@ export class UserService {
 						{ where: { id: existingUser.id } }
 					)
 
-					return {statusCode: STATUS_CODE.SUCCESS, data : { token }, message: MESSAGES.SUCCESS }
+					return {
+						statusCode: STATUS_CODE.SUCCESS,
+						data : { token, name: existingUser.name, profile_photo: existingUser.profile_image },
+						message: MESSAGES.SUCCESS
+					}
 				}
 				else {
 					throw new HttpException(MESSAGES.INVALID_CREDS, STATUS_CODE.UNAUTHORIZED);
@@ -91,6 +99,27 @@ export class UserService {
 			else {
 				throw new HttpException(MESSAGES.INVALID_CREDS, STATUS_CODE.UNAUTHORIZED);
 			}
+		}
+		catch(err) {
+			throw err;
+		}
+	}
+
+	async listCategories(limit: number) {
+		try {
+			const categoryList = await this.categoryRepository.findAll({
+				where: { [sequelize.Op.and]: [{ is_active: 1 }, { is_deleted: 0 }] },
+				attributes: [
+					'id',
+					'name',
+					'is_sub_category',
+					'image_id',
+				],
+				limit: limit == 0 ? 10000 : limit,
+				include: [{ model: File, attributes: ['url', 'id'] }],
+			});
+
+			return { statusCode: STATUS_CODE.SUCCESS, message: MESSAGES.SUCCESS, data: { categoryList } }
 		}
 		catch(err) {
 			throw err;

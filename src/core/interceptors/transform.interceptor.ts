@@ -23,7 +23,7 @@ export class TransformInterceptor<T> implements NestInterceptor<T, any> {
         return {
           statusCode: apiResponse.statusCode,
           message: response.message,
-          data: response.data,
+          ...response.data,
         };
       }),
     );
