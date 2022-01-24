@@ -15,4 +15,5 @@ export const MESSAGES = {
   EXPIRED_TOKEN: 'JWT token expired',
   REQUIRED_JWT_TOKEN: 'Token required',
   USER_ALREADY_EXISTED: 'User already existed',
+  USER_ADDRESS_NOT_FOUND: 'USER_ADDRESS_NOT_FOUND',
 };
