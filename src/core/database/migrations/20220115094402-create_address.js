@@ -13,7 +13,7 @@ module.exports = {
       'address',
       {
         id: {
-          type: Sequelize.BIGINT,
+          type: Sequelize.INTEGER,
           allowNull: false,
           autoIncrement: true,
           unique: true,
@@ -21,7 +21,7 @@ module.exports = {
         },
 
         user_id: {
-          type: Sequelize.BIGINT,
+          type: Sequelize.INTEGER,
           allowNull: false,
         },
 
@@ -61,12 +61,12 @@ module.exports = {
         },
 
         latitude: {
-          type: Sequelize.BIGINT,
+          type: Sequelize.INTEGER,
           allowNull: false,
         },
 
         longitude: {
-          type: Sequelize.BIGINT,
+          type: Sequelize.INTEGER,
           allowNull: false,
         },
 
