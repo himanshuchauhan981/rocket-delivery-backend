@@ -37,7 +37,7 @@ export class ProductService {
 		let discountStatus;
 		let discountPrice;
 
-		if (discountStartDate.isAfter(currentDate) && discountEndDate.isAfter(discountStartDate)) {
+		if (discountStartDate.isBefore(currentDate) && discountEndDate.isAfter(discountStartDate)) {
 			discountStatus = true;
 			if (discount_type == 'FLAT') {
 				discountPrice = actual_price - discount;
@@ -381,11 +381,12 @@ export class ProductService {
       const products = await this.productRepository.findAll({
         where: subCategoryId ? { is_active: 1, is_deleted: 0 } : { category_id: categoryId, is_active: 1, is_deleted: 0 },
         include: [
-          { model: ProductPrice, attributes: ['actual_price'] },
+          { model: ProductPrice, attributes: ['actual_price', 'discount', 'discount_start_date', 'discount_end_date', 'discount_type'] },
           { model: MeasuringUnit, attributes: ['symbol'] },
           { model: File, attributes: ['id', 'url'] },
           subCategoryId ? { model: SubCategory, where: { id: subCategoryId }, attributes: [] } : { model: Category, attributes: [] },
         ],
+        order: [['name','ASC']],
         attributes: [
           'id',
           'name',
@@ -394,6 +395,21 @@ export class ProductService {
           subCategoryId ? [sequelize.col('subCategory.name'), 'subCategoryName'] : [sequelize.col('category.name'), 'subCategoryName'],
         ],
       });
+
+      for(const item of products) {
+        const productPrice = item.product_price;
+
+        const discountDetails = this.#calculateDiscountPrice(
+          productPrice.discount_start_date,
+          productPrice.discount_end_date,
+          productPrice.discount,
+          productPrice.actual_price,
+          productPrice.discount_type
+        );
+
+        item.product_price.discount_status = discountDetails.discountStatus;
+        item.product_price.discount_price = discountDetails.discountPrice;
+      }
 
       return { statusCode: STATUS_CODE.SUCCESS, message: MESSAGES.SUCCESS, data: { products } };
     }
@@ -432,7 +448,8 @@ export class ProductService {
       );
 
       if(discountDetails.discountStatus) {
-        item.product_price.discount = discountDetails.discountPrice;
+        item.product_price.discount_price = discountDetails.discountPrice;
+        item.product_price.discount_status = discountDetails.discountStatus;
       }
 
       const productQuantity = payload.cartItems.filter((cartItem) => cartItem.id === item.id)[0].quantity;

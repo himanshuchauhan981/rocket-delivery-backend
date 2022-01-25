@@ -75,5 +75,10 @@ export class ProductPrice extends Model<ProductPrice> {
   @Column({
     type: DataType.VIRTUAL
   })
-  discount_status: boolean
+  discount_status: boolean;
+
+  @Column({
+    type: DataType.VIRTUAL
+  })
+  discount_price: number;
 }
