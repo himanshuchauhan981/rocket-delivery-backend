@@ -1,0 +1,11 @@
+import { ORDER_PRODUCT_REPOSITORY, ORDER_REPOSITORY, PRODUCT_REPOSITORY } from "src/core/constants/repositories";
+import { Product } from "../product/product.entity";
+import { OrderProduct } from "./order-product.entity";
+import { Order } from "./order.entity";
+
+export const OrderProvider = [
+	{ provide: ORDER_REPOSITORY, useValue: Order },
+	{ provide: PRODUCT_REPOSITORY, useValue: Product },
+	{ provide: ORDER_PRODUCT_REPOSITORY, useValue: OrderProduct }
+
+];

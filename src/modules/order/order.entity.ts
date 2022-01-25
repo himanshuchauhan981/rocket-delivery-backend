@@ -70,13 +70,13 @@ export class Order extends Model<Order> {
 
 	@Column({
 		type: DataType.DATE,
-		allowNull: false,
+		allowNull: true
 	})
-	delivery_date: Date;
+	delivery_date: string;
 	
 	@Column({
 		type: DataType.INTEGER,
-		allowNull: false,
+		allowNull: true,
 	})
 	payment_id: string;
 

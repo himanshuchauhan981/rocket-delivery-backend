@@ -59,12 +59,6 @@ export class OrderProduct extends Model<OrderProduct> {
   })
   price: number;
 
-  @Column({
-    type: DataType.TEXT,
-    allowNull: false,
-  })
-  description: string;
-
   @CreatedAt
   created_at: Date;
 
