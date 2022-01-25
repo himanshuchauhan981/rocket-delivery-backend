@@ -13,7 +13,7 @@ module.exports = {
       'orders',
       {
         id: {
-          type: Sequelize.BIGINT,
+          type: Sequelize.INTEGER,
           allowNull: false,
           autoIncrement: true,
           unique: true,
@@ -66,8 +66,8 @@ module.exports = {
         },
 
         payment_id: {
-          type: Sequelize.DATE,
-          allowNull: false,
+          type: Sequelize.STRING,
+          allowNull: true,
         },
 
         // Timestamps
