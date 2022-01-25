@@ -11,6 +11,7 @@ import { OrderProduct } from 'src/modules/order/order-product.entity';
 import { MeasuringUnit } from 'src/modules/measuring-unit/measuring-unit.entity';
 import { User } from 'src/modules/user/user.entity';
 import { Address } from 'src/modules/address/address.entity';
+import { Order } from 'src/modules/order/order.entity';
 
 let config;
 switch (process.env.NODE_ENV) {
@@ -41,7 +42,8 @@ const DatabaseModule = [
         OrderProduct,
         MeasuringUnit,
         User,
-        Address
+        Address,
+        Order
       ],
     }),
   }),
