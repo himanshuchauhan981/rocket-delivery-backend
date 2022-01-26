@@ -40,4 +40,25 @@ export class PaymentService {
 			throw err;
 		}
 	}
+
+	async captureOrderPayment(payment_id: string, total_price: number, payment_order_id: string) {
+		total_price = total_price * 100;
+
+		const razorpayInstance = new Razorpay({
+			key_id: process.env.RAZORPAY_KEY,
+			key_secret: process.env.RAZORPAY_SECRET
+		});
+
+		let paymentResult = await razorpayInstance.payments.capture(
+			payment_id,
+			total_price
+		);
+
+		await this.userPaymentRepository.update(
+			{ status:1, payment_id, card_number: paymentResult.card.last4, card_type: paymentResult.card.type },
+			{ where: { payment_order_id } }
+		);
+
+		return paymentResult;
+	}
 }

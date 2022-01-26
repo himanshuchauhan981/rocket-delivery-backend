@@ -12,13 +12,15 @@ import { Product } from '../product/product.entity';
 import { NewOrder } from '../user/user-order/dto/order.dto';
 import { Order } from './order.entity';
 import { OrderProduct } from './order-product.entity';
+import { PaymentService } from '../payment/payment.service';
 
 @Injectable()
 export class OrderService {
 	constructor(
 		@Inject(ORDER_REPOSITORY) private readonly orderRepository: typeof Order,
 		@Inject(PRODUCT_REPOSITORY) private readonly productRepository: typeof Product,
-		@Inject(ORDER_PRODUCT_REPOSITORY) private readonly orderProductRepository: typeof OrderProduct
+		@Inject(ORDER_PRODUCT_REPOSITORY) private readonly orderProductRepository: typeof OrderProduct,
+		private readonly paymentService: PaymentService
 	) {}
 
 	#calculateDiscountPrice(
@@ -107,7 +109,7 @@ export class OrderService {
 				}
 
 				if (payload.payment_method == 1) {
-					// Capture payment method
+					await this.paymentService.captureOrderPayment(payload.payment_id, subTotal + payload.delivery_charges, payload.payment_order_id);
 				}
 
 				let newOrder = await this.orderRepository.create<any>({

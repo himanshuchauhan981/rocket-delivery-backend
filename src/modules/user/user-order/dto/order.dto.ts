@@ -29,8 +29,8 @@ export class NewOrder {
 	payment_method: number;
 
 	@ApiProperty({ required: false })
-	payment_id: number;
+	payment_id: string;
 
 	@ApiProperty({ required: false })
-	payment_order_id: number;
+	payment_order_id: string;
 }
