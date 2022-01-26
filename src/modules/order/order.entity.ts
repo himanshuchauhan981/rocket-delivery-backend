@@ -40,10 +40,11 @@ export class Order extends Model<Order> {
 	user_id: number;
 
 	@Column({
-		type: DataType.INTEGER,
+		type: DataType.ENUM,
+		values: ['REQUESTED', 'CONFIRMED', 'DELIVERED', 'CANCELLED'],
 		allowNull: false,
 	})
-	status: number;
+	status: string;
 
 	@Column({
 		type: DataType.INTEGER,

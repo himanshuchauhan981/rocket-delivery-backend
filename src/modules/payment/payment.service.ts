@@ -26,7 +26,7 @@ export class PaymentService {
 				currency: 'INR',
 			});
 
-			const newPayment = await this.userPaymentRepository.create<any>({ payment_order_id: newOrder.id, status: 0 });
+			const newPayment = await this.userPaymentRepository.create<any>({ payment_order_id: newOrder.id, status: 'INITIATED' });
 
 			const userDetails = await this.userRepository.findByPk(user_id, { attributes: ['name', 'email', 'mobile_number'] });
 
@@ -55,10 +55,33 @@ export class PaymentService {
 		);
 
 		await this.userPaymentRepository.update(
-			{ status:1, payment_id, card_number: paymentResult.card.last4, card_type: paymentResult.card.type },
+			{ status: 'CAPTURED', payment_id, card_number: paymentResult.card.last4, card_type: paymentResult.card.type },
 			{ where: { payment_order_id } }
 		);
 
 		return paymentResult;
+	}
+
+	async refundOrderPayment(user_payment_id: number, amount: number) {
+		try {
+			const paymentDetails = await this.userPaymentRepository.findByPk(user_payment_id);
+
+			const razorpayInstance = new Razorpay({
+				key_id: process.env.RAZORPAY_KEY,
+				key_secret: process.env.RAZORPAY_SECRET
+			});
+
+			await razorpayInstance.payments.refund(paymentDetails.payment_id, {
+				amount,
+			});
+
+			await this.userPaymentRepository.update(
+				{ status: 'REFUNDED' },
+				{ where: { payment_id: paymentDetails.payment_id } }
+			);
+		}
+		catch(err) {
+			throw err;
+		}
 	}
 }

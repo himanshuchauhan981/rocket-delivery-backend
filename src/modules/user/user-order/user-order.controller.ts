@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Req, UseInterceptors, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Req, UseInterceptors, ValidationPipe } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
 import { Auth } from 'src/core/decorators/auth.decorator';
@@ -30,5 +30,12 @@ export class UserOrderController {
 	@UseInterceptors(TransformInterceptor)
 	async findOneById(@Param(new ValidationPipe()) params: SpecificOrder) {
 		return await this.orderService.findOneById(params.id);
+	}
+
+	@Get(':id/cancel')
+	@Auth('user')
+	@UseInterceptors(TransformInterceptor)
+	async cancelOrder(@Param(new ValidationPipe()) params: SpecificOrder) {
+		return await this.orderService.cancelOrder(params.id);
 	}
 }

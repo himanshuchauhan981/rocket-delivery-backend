@@ -182,7 +182,33 @@ export class OrderService {
 
 		//Product review join
 
-		return { statusCode: STATUS_CODE.SUCCESS, message: STATUS_CODE.SUCCESS, data: { orderDetails } };
+		if(!orderDetails) {
+			throw new HttpException(MESSAGES.INVALID_ORDER_ID, STATUS_CODE.NOT_FOUND);
+		}
+		else {
+			return { statusCode: STATUS_CODE.SUCCESS, message: STATUS_CODE.SUCCESS, data: { orderDetails } };
+		}
 	}
 	
+	async cancelOrder(id: number) {
+		const orderDetails = await this.orderRepository.findByPk(id);
+
+		if(!orderDetails) {
+			throw new HttpException(MESSAGES.INVALID_ORDER_ID, STATUS_CODE.NOT_FOUND);
+		}
+		else if(orderDetails.status == 'CANCELLED') {
+			throw new HttpException(MESSAGES.ORDER_ALREADY_REFUNDED, STATUS_CODE.BAD_REQUEST);
+		}
+		else {
+			if (orderDetails.payment_method == 1) {
+				await this.paymentService.refundOrderPayment(orderDetails.user_payment_id, orderDetails.net_amount * 100);
+			}
+			await this.orderRepository.update(
+				{ status: 'CANCELLED' },
+				{ where: { id } }
+			);
+
+			return { statusCode: STATUS_CODE.SUCCESS, message: MESSAGES.ORDER_CANCELLED_SUCCESS };
+		}
+	}
 }

@@ -34,10 +34,11 @@ export class UserPayment extends Model<UserPayment> {
 	payment_id: string;
 
 	@Column({
-		type: DataType.INTEGER,
+		type: DataType.ENUM,
+		values: ['INITIATED','REFUNDED','CAPTURED'],
 		allowNull: false,
 	})
-	status: number;
+	status: string;e
 
 	@Column({
 		type: DataType.STRING,
