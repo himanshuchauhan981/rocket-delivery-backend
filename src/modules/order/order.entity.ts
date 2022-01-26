@@ -5,8 +5,15 @@ import {
 	DataType,
 	CreatedAt,
 	UpdatedAt,
+	HasMany,
+	ForeignKey,
+	HasOne,
+	BelongsTo
 } from 'sequelize-typescript';
-  
+
+import { Address } from '../address/address.entity';
+import { UserPayment } from '../payment/user-payment.entity';
+import { OrderProduct } from './order-product.entity';
   
 @Table({
 	tableName: 'orders',
@@ -39,9 +46,9 @@ export class Order extends Model<Order> {
 	status: number;
 
 	@Column({
-			type: DataType.INTEGER,
-			allowNull: false,
-		})
+		type: DataType.INTEGER,
+		allowNull: false,
+	})
 	delivery_charges: number;
 
 	@Column({
@@ -66,6 +73,7 @@ export class Order extends Model<Order> {
 		type: DataType.INTEGER,
 		allowNull: false,
 	})
+	@ForeignKey(() => Address)
 	user_address: number;
 
 	@Column({
@@ -78,12 +86,22 @@ export class Order extends Model<Order> {
 		type: DataType.INTEGER,
 		allowNull: true,
 	})
-	payment_id: string;
+	@ForeignKey(() => UserPayment)
+	user_payment_id: number;
 
 	@CreatedAt
 	created_at: Date;
 
 	@UpdatedAt
 	updated_at: Date;
+
+	@HasMany(() => OrderProduct)
+	order_products: OrderProduct;
+
+	@BelongsTo(() => Address)
+	address: Address;
+
+	@BelongsTo(() => UserPayment)
+	payment: UserPayment;
 }
   

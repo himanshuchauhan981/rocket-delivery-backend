@@ -6,16 +6,20 @@ import {
   CreatedAt,
   UpdatedAt,
   ForeignKey,
+  BelongsTo,
+  HasMany,
+  HasOne,
 } from 'sequelize-typescript';
 
 import { Product } from '../product/product.entity';
+import { Order } from './order.entity';
 
 @Table({
   tableName: 'order_products',
 })
 export class OrderProduct extends Model<OrderProduct> {
   @Column({
-    type: DataType.BIGINT,
+    type: DataType.INTEGER,
     allowNull: false,
     autoIncrement: true,
     primaryKey: true,
@@ -23,13 +27,14 @@ export class OrderProduct extends Model<OrderProduct> {
   id: number;
 
   @Column({
-    type: DataType.BIGINT,
+    type: DataType.INTEGER,
     allowNull: false,
   })
+  @ForeignKey(() => Order)
   order_id: number;
 
   @Column({
-    type: DataType.BIGINT,
+    type: DataType.INTEGER,
     allowNull: false,
   })
   @ForeignKey(() => Product)
@@ -48,13 +53,13 @@ export class OrderProduct extends Model<OrderProduct> {
   product_image: string;
 
   @Column({
-    type: DataType.BIGINT,
+    type: DataType.INTEGER,
     allowNull: false,
   })
   quantity: number;
 
   @Column({
-    type: DataType.BIGINT,
+    type: DataType.INTEGER,
     allowNull: false,
   })
   price: number;

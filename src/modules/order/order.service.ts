@@ -13,6 +13,8 @@ import { NewOrder } from '../user/user-order/dto/order.dto';
 import { Order } from './order.entity';
 import { OrderProduct } from './order-product.entity';
 import { PaymentService } from '../payment/payment.service';
+import { Address } from '../address/address.entity';
+import { UserPayment } from '../payment/user-payment.entity';
 
 @Injectable()
 export class OrderService {
@@ -116,7 +118,7 @@ export class OrderService {
 					order_number: uuidv4(),
 					status: 1,
 					delivery_charges: 10,
-					payment_method: 0,
+					payment_method: payload.payment_method,
 					amount: subTotal,
 					net_amount: subTotal + 10,
 					user_address: payload.order_address,
@@ -146,4 +148,41 @@ export class OrderService {
 			throw err;
 		}
 	}
+
+	async list(user_id: number) {
+		try {
+			const orderList = await this.orderRepository.findAll({
+				where: { user_id },
+				attributes: ['id', 'order_number', 'payment_method', 'user_address', 'delivery_date', 'created_at', 'status', 'net_amount'],
+				include: [
+					{model: OrderProduct, attributes: ['id', 'product_name', 'product_image']}
+				],
+				order: [['created_at', 'DESC']],
+			});
+
+			return { statusCode: STATUS_CODE.SUCCESS, message: STATUS_CODE.SUCCESS, data: { orderList } };
+		}
+		catch(err) {
+			throw err;
+		}
+	}
+
+	async findOneById(order_id: number) {
+		let orderDetails = await this.orderRepository.findByPk(
+			order_id,
+			{ 
+				include: [
+					{ model: Address, attributes: ['full_name', 'house_no', 'area', 'city', 'state', 'landmark', 'country_code','mobile_number'] },
+					{ model: OrderProduct, attributes: ['id', 'product_id', 'product_name', 'product_image', 'price', 'quantity'] },
+					{ model: UserPayment, attributes: ['status', 'card_number', 'card_type'] }
+				],
+				attributes: ['id', 'status', 'payment_method', 'delivery_charges', 'amount', 'net_amount', 'created_at']
+			}
+		);
+
+		//Product review join
+
+		return { statusCode: STATUS_CODE.SUCCESS, message: STATUS_CODE.SUCCESS, data: { orderDetails } };
+	}
+	
 }

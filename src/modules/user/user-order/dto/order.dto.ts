@@ -34,3 +34,9 @@ export class NewOrder {
 	@ApiProperty({ required: false })
 	payment_order_id: string;
 }
+
+export class SpecificOrder {
+	@ApiProperty()
+	@IsNotEmpty()
+	id: number;
+}

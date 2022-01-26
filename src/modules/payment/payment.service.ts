@@ -26,13 +26,13 @@ export class PaymentService {
 				currency: 'INR',
 			});
 
-			await this.userPaymentRepository.create<any>({ payment_order_id: newOrder.id, status: 0 });
+			const newPayment = await this.userPaymentRepository.create<any>({ payment_order_id: newOrder.id, status: 0 });
 
 			const userDetails = await this.userRepository.findByPk(user_id, { attributes: ['name', 'email', 'mobile_number'] });
 
 			return {
 				statusCode: STATUS_CODE.SUCCESS,
-				data:{ order_id: newOrder.id, key: process.env.RAZORPAY_KEY, userDetails },
+				data:{ order_id: newOrder.id, new_payment_id: newPayment.id, key: process.env.RAZORPAY_KEY, userDetails },
 				message: MESSAGES.SUCCESS
 			}
 		}
