@@ -21,7 +21,7 @@ module.exports = {
         categoryId: 1,
         image:
           'https://www.healthyeating.org/images/default-source/home-0.0/nutrition-topics-2.0/general-nutrition-wellness/2-2-2-3foodgroups_fruits_detailfeature_thumb.jpg?sfvrsn=7abe71fe_4',
-        is_active: 0,
+        is_active: 1,
       },
       {
         id: 2,

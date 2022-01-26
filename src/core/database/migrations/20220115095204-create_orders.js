@@ -26,37 +26,37 @@ module.exports = {
         },
 
         user_id: {
-          type: Sequelize.BIGINT,
+          type: Sequelize.INTEGER,
           allowNull: false,
         },
 
         status: {
-          type: Sequelize.BIGINT,
+          type: Sequelize.INTEGER,
           allowNull: false,
         },
 
         delivery_charges: {
-          type: Sequelize.BIGINT,
+          type: Sequelize.INTEGER,
           allowNull: false,
         },
 
         payment_method: {
-          type: Sequelize.BIGINT,
+          type: Sequelize.INTEGER,
           allowNull: false,
         },
 
         amount: {
-          type: Sequelize.BIGINT,
+          type: Sequelize.INTEGER,
           allowNull: false,
         },
 
         net_amount: {
-          type: Sequelize.BIGINT,
+          type: Sequelize.INTEGER,
           allowNull: true,
         },
 
         user_address: {
-          type: Sequelize.BIGINT,
+          type: Sequelize.INTEGER,
           allowNull: false,
         },
 
@@ -65,8 +65,8 @@ module.exports = {
           allowNull: true,
         },
 
-        payment_id: {
-          type: Sequelize.STRING,
+        user_payment_id: {
+          type: Sequelize.INTEGER,
           allowNull: true,
         },
 

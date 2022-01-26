@@ -13,7 +13,7 @@ module.exports = {
       'user_payments',
       {
         id: {
-          type: Sequelize.BIGINT,
+          type: Sequelize.INTEGER,
           allowNull: false,
           autoIncrement: true,
           unique: true,
@@ -31,7 +31,7 @@ module.exports = {
         },
 
         status: {
-          type: Sequelize.BIGINT,
+          type: Sequelize.INTEGER,
           allowNull: false,
         },
 
