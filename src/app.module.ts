@@ -10,6 +10,7 @@ import { SubCategoryModule } from './modules/sub-category/sub-category.module';
 import { UserModule } from './modules/user/user.module';
 import { OrderModule } from './modules/order/order.module';
 import { AddressModule } from './modules/address/address.module';
+import { PaymentModule } from './modules/payment/payment.module';
 import DatabaseModule from './core/database/database.module';
 
 @Module({
@@ -23,6 +24,7 @@ import DatabaseModule from './core/database/database.module';
     UserModule,
     OrderModule,
     AddressModule,
+    PaymentModule,
   ],
   controllers: [AppController],
   providers: [AppService],
