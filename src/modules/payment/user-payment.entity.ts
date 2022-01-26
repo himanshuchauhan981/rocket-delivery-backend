@@ -38,7 +38,7 @@ export class UserPayment extends Model<UserPayment> {
 		values: ['INITIATED','REFUNDED','CAPTURED'],
 		allowNull: false,
 	})
-	status: string;e
+	status: string;
 
 	@Column({
 		type: DataType.STRING,

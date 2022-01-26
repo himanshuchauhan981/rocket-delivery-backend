@@ -116,14 +116,14 @@ export class OrderService {
 
 				let newOrder = await this.orderRepository.create<any>({
 					order_number: uuidv4(),
-					status: 1,
+					status: 'REQUESTED',
 					delivery_charges: 10,
 					payment_method: payload.payment_method,
 					amount: subTotal,
 					net_amount: subTotal + 10,
 					user_address: payload.order_address,
 					user_id,
-					payment_id: payload.payment_id,
+					user_payment_id: payload.user_payment_id,
 				});
 
 				orderProducts = orderProducts.map(item => ({...item, order_id: newOrder.id }));

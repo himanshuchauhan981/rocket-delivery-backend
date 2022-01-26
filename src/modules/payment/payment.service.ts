@@ -50,16 +50,16 @@ export class PaymentService {
 		});
 
 		let paymentResult = await razorpayInstance.payments.capture(
-			payment_id,
+			payment_order_id,
 			total_price
 		);
 
-		await this.userPaymentRepository.update(
+		const userPaymentData = await this.userPaymentRepository.update(
 			{ status: 'CAPTURED', payment_id, card_number: paymentResult.card.last4, card_type: paymentResult.card.type },
-			{ where: { payment_order_id } }
+			{ where: { payment_order_id: payment_id }, returning: true },
 		);
 
-		return paymentResult;
+		return userPaymentData;
 	}
 
 	async refundOrderPayment(user_payment_id: number, amount: number) {

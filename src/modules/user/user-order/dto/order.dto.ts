@@ -33,6 +33,10 @@ export class NewOrder {
 
 	@ApiProperty({ required: false })
 	payment_order_id: string;
+
+	@ApiProperty({ required: false })
+	user_payment_id: number;
+
 }
 
 export class SpecificOrder {
