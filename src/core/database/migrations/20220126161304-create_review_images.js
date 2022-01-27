@@ -6,11 +6,11 @@ module.exports = {
      * Add altering commands here.
      *
      * Example:
-     * await queryInterface.createTable('product_review', { id: Sequelize.INTEGER });
+     * await queryInterface.createTable('product_review_file', { id: Sequelize.INTEGER });
      */
 
     await queryInterface.createTable(
-      'product_review',
+      'product_review_file',
       {
         id: {
           type: Sequelize.INTEGER,
@@ -20,38 +20,22 @@ module.exports = {
           primaryKey: true,
         },
 
-        headline: {
-          type: Sequelize.TEXT,
+        url: {
+          type: Sequelize.STRING,
           allowNull: false,
         },
 
-        opinion: {
-          type: Sequelize.TEXT,
-          allowNull: false,
-        },
-
-        user_id: {
-          type: Sequelize.INTEGER,
-          allowNull: false,
-        },
-
-        product_id: {
-          type: Sequelize.INTEGER,
+        type: {
+          type: Sequelize.STRING,
           allowNull: false,
         },
 
         is_deleted: {
           type: Sequelize.INTEGER,
-          allowNull: false,
           defaultValue: 0,
         },
 
-        ratings: {
-          type: Sequelize.INTEGER,
-          allowNull: false,
-        },
-
-        order_id: {
+        review_id: {
           type: Sequelize.INTEGER,
           allowNull: false,
         },
@@ -71,14 +55,14 @@ module.exports = {
       },
       {
         hooks: {
-          beforeCreate: function (product_review, options, fn) {
-            product_review.created_at = new Date();
-            product_review.updated_at = new Date();
-            fn(null, product_review);
+          beforeCreate: function (orders, options, fn) {
+            orders.created_at = new Date();
+            orders.updated_at = new Date();
+            fn(null, orders);
           },
-          beforeUpdate: function (product_review, options, fn) {
-            product_review.updated_at = new Date();
-            fn(null, product_review);
+          beforeUpdate: function (orders, options, fn) {
+            orders.updated_at = new Date();
+            fn(null, orders);
           },
         },
       },
@@ -90,9 +74,9 @@ module.exports = {
      * Add reverting commands here.
      *
      * Example:
-     * await queryInterface.dropTable('product_review');
+     * await queryInterface.dropTable('product_review_file');
      */
 
-    await queryInterface.dropTable('product_review');
+    await queryInterface.dropTable('product_review_file');
   },
 };
