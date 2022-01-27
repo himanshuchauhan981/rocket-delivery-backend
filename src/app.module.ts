@@ -13,6 +13,7 @@ import { AddressModule } from './modules/address/address.module';
 import { PaymentModule } from './modules/payment/payment.module';
 import DatabaseModule from './core/database/database.module';
 import { CommonService } from './modules/common/common.service';
+import { ProductReviewModule } from './modules/product-review/product-review.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { CommonService } from './modules/common/common.service';
     OrderModule,
     AddressModule,
     PaymentModule,
+    ProductReviewModule,
   ],
   controllers: [AppController],
   providers: [AppService, CommonService],
