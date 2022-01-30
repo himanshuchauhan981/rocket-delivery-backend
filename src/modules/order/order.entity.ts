@@ -13,6 +13,7 @@ import {
 
 import { Address } from '../address/address.entity';
 import { UserPayment } from '../payment/user-payment.entity';
+import { Product } from '../product/product.entity';
 import { OrderProduct } from './order-product.entity';
   
 @Table({
@@ -104,5 +105,17 @@ export class Order extends Model<Order> {
 
 	@BelongsTo(() => UserPayment)
 	payment: UserPayment;
+
+	@Column({
+		type: DataType.VIRTUAL,
+		allowNull: true,
+	})
+	product_id: number;
+
+	@Column({
+		type: DataType.VIRTUAL,
+		allowNull: true,
+	})
+	product: Product;
 }
   

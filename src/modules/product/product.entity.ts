@@ -14,6 +14,7 @@ import { File } from '../admin/file/file.entity';
 import { Category } from '../category/category.entity';
 import { MeasuringUnit } from '../measuring-unit/measuring-unit.entity';
 import { OrderProduct } from '../order/order-product.entity';
+import { ProductReview } from '../product-review/product-review.entity';
 
 import { SubCategory } from '../sub-category/sub-category.entity';
 import { ProductPrice } from './product-price.entity';
@@ -124,4 +125,12 @@ export class Product extends Model<Product> {
     type: DataType.VIRTUAL,
   })
   quantity: number;
+
+  @HasMany(() => ProductReview)
+  product_review: ProductReview[];
+
+  @Column({
+    type: DataType.VIRTUAL,
+  })
+  average_ratings: number;
 }

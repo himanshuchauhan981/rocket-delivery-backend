@@ -7,8 +7,6 @@ import {
   UpdatedAt,
   ForeignKey,
   BelongsTo,
-  HasMany,
-  HasOne,
 } from 'sequelize-typescript';
 
 import { Product } from '../product/product.entity';

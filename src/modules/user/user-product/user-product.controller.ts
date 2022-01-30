@@ -1,5 +1,6 @@
-import { Controller, Get, Param, Query, UseInterceptors, ValidationPipe } from '@nestjs/common';
+import { Controller, Get, Param, Query, Req, UseInterceptors, ValidationPipe } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { Auth } from 'src/core/decorators/auth.decorator';
 
 import { TransformInterceptor } from 'src/core/interceptors/transform.interceptor';
 import { ProductService } from 'src/modules/product/product.service';
@@ -15,6 +16,13 @@ export class UserProductController {
 	@UseInterceptors(TransformInterceptor)
 	async productList(@Query(new ValidationPipe()) query: UserProducts) {
 		return this.productService.list(query.category_id, query.sub_category_id);
+	}
+
+	@Get('offers')
+	@Auth('user')
+	@UseInterceptors(TransformInterceptor)
+	async productOffers(@Req()request) {
+		return this.productService.productOffers(request.userId);
 	}
 
 	@Get(':id')

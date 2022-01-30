@@ -5,7 +5,11 @@ import {
 	DataType,
 	CreatedAt,
 	UpdatedAt,
+	ForeignKey,
+	BelongsTo,
+	HasOne,
 } from 'sequelize-typescript';
+import { Product } from '../product/product.entity';
 
 @Table({
 	tableName: 'product_review',
@@ -41,6 +45,7 @@ export class ProductReview extends Model<ProductReview> {
 		type: DataType.INTEGER,
 		allowNull: false,
 	})
+	@ForeignKey(() => Product)
 	product_id: number;
 	
 	@Column({

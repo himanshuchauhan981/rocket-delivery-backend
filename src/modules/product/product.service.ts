@@ -2,7 +2,7 @@ import { HttpException, Inject, Injectable, NotFoundException } from '@nestjs/co
 import sequelize from 'sequelize';
 import * as moment from 'moment';
 
-import { CATEGORY_REPOSITORY, MEASURING_UNIT_REPOSITORY, PRODUCT_PRICE_REPOSITORY, PRODUCT_REPOSITORY, SUB_CATEGORY_REPOSITORY } from 'src/core/constants/repositories';
+import { CATEGORY_REPOSITORY, MEASURING_UNIT_REPOSITORY, ORDER_REPOSITORY, PRODUCT_PRICE_REPOSITORY, PRODUCT_REPOSITORY, PRODUCT_REVIEW_REPOSITORY, SUB_CATEGORY_REPOSITORY } from 'src/core/constants/repositories';
 import { AdminProductList, NewProduct } from '../admin/admin-product/dto/admin-product.dto';
 import { File } from '../admin/file/file.entity';
 import { Category } from '../category/category.entity';
@@ -13,6 +13,9 @@ import { MESSAGES } from 'src/core/constants/messages';
 import { STATUS_CODE } from 'src/core/constants/status_code';
 import { MeasuringUnit } from '../measuring-unit/measuring-unit.entity';
 import { UserCart } from '../user/dto/user.dto';
+import { Order } from '../order/order.entity';
+import { OrderProduct } from '../order/order-product.entity';
+import { ProductReview } from '../product-review/product-review.entity';
 
 @Injectable()
 export class ProductService {
@@ -21,7 +24,9 @@ export class ProductService {
     @Inject(CATEGORY_REPOSITORY) private readonly categoryRepository: typeof Category,
     @Inject(SUB_CATEGORY_REPOSITORY) private readonly subCategoryRepository: typeof SubCategory,
     @Inject(PRODUCT_PRICE_REPOSITORY) private readonly productPriceRepository: typeof ProductPrice,
-    @Inject(MEASURING_UNIT_REPOSITORY) private readonly measuringUnitRepository: typeof MeasuringUnit
+    @Inject(MEASURING_UNIT_REPOSITORY) private readonly measuringUnitRepository: typeof MeasuringUnit,
+    @Inject(ORDER_REPOSITORY) private readonly orderRepository: typeof Order,
+    @Inject(PRODUCT_REVIEW_REPOSITORY) private readonly productReviewRepository: typeof ProductReview
   ) {}
 
   #calculateDiscountPrice(
@@ -461,6 +466,76 @@ export class ProductService {
       }
     }
 
-    return {statusCode: STATUS_CODE.SUCCESS, data: { cartProductDetails: productDetails }, message: MESSAGES.SUCCESS }
+    return { statusCode: STATUS_CODE.SUCCESS, data: { cartProductDetails: productDetails }, message: MESSAGES.SUCCESS }
+  }
+
+  async #mostBookedProducts() {
+    try {
+      const bookedProducts = await this.orderRepository.findAll({
+        include: [{ model: OrderProduct, attributes: [] }],
+        attributes: [
+          'order_products.product_id',
+          [sequelize.fn('COUNT', sequelize.col('order_products.product_id')), 'count'],
+        ],
+        group: ['order_products.product_id'],
+        order: [['count', 'DESC']],
+        raw: true,
+        subQuery: false,
+        limit: 4,
+      });
+
+      for(const item of bookedProducts) {
+        let productDetails = await this.productRepository.findOne({
+          where: { id: item.product_id },
+          include: [
+            { model: ProductPrice, attributes: ['actual_price','discount', 'discount_type', 'discount_start_date', 'discount_end_date'] },
+            { model: File, attributes: ['url'] },
+            { model: ProductReview, attributes:['id', 'ratings'] }
+          ],
+          attributes: ['name', 'id'],
+        });
+
+        const product_price = productDetails.product_price;
+
+        let discountDetails = this.#calculateDiscountPrice(
+          product_price.discount_start_date,
+          product_price.discount_end_date,
+          product_price.discount,
+          product_price.actual_price,
+          product_price.discount_type
+        );
+
+        productDetails.product_price.discount = discountDetails.discountPrice;
+        productDetails.product_price.discount_status = discountDetails.discountStatus;
+
+        let ratingCount = 0;
+        for (let i = 0; i < productDetails.product_review.length; i++) {
+          ratingCount = ratingCount + productDetails.product_review[i].ratings;
+        }
+
+        const averageRatings = productDetails.product_review.length === 0 ? 0 : ratingCount / productDetails.product_review.length;
+        item.product = productDetails;
+        item.product.average_ratings = averageRatings;
+      }
+
+      return bookedProducts;
+    }
+    catch(err) {
+      throw err;
+    }
+  }
+
+  async #mostViewedProducts(userId: number) {}
+
+  async productOffers(userId: number) {
+    try {
+      const orderDetails = await this.#mostBookedProducts();
+      const viewedProducts = await this.#mostViewedProducts(userId);
+
+      return { statusCode: STATUS_CODE.SUCCESS, message: STATUS_CODE.SUCCESS, data:{ orderDetails, viewedProducts: [] } };
+    }
+    catch(err) {
+      throw err;
+    }
   }
 }
