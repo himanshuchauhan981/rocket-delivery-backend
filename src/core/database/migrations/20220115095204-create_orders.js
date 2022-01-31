@@ -31,8 +31,8 @@ module.exports = {
         },
 
         status: {
-          type: Sequelize.INTEGER,
-          allowNull: false,
+          type: Sequelize.ENUM,
+          values: ['REQUESTED', 'CONFIRMED', 'DELIVERED', 'CANCELLED'],
         },
 
         delivery_charges: {
