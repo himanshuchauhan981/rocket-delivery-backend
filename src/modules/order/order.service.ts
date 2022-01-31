@@ -15,6 +15,7 @@ import { OrderProduct } from './order-product.entity';
 import { PaymentService } from '../payment/payment.service';
 import { Address } from '../address/address.entity';
 import { UserPayment } from '../payment/user-payment.entity';
+import { User } from '../user/user.entity';
 
 @Injectable()
 export class OrderService {
@@ -209,6 +210,24 @@ export class OrderService {
 			);
 
 			return { statusCode: STATUS_CODE.SUCCESS, message: MESSAGES.ORDER_CANCELLED_SUCCESS };
+		}
+	}
+
+	async adminOrderList() {
+		try {
+			const orderDetails = await this.orderRepository.findAll({
+				where: {},
+				include: [
+					{ model: User, attributes: ['id','name'] },
+					{ model: OrderProduct, attributes: ['id'] },
+				],
+				attributes: ['id', 'order_number', 'status', 'net_amount', 'payment_method'],
+			});
+
+			return {statusCode: STATUS_CODE.SUCCESS, message: MESSAGES.SUCCESS, data: { orderDetails } };
+		}
+		catch(err) {
+			throw err;
 		}
 	}
 }

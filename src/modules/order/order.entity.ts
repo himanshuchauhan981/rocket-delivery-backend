@@ -7,13 +7,13 @@ import {
 	UpdatedAt,
 	HasMany,
 	ForeignKey,
-	HasOne,
 	BelongsTo
 } from 'sequelize-typescript';
 
 import { Address } from '../address/address.entity';
 import { UserPayment } from '../payment/user-payment.entity';
 import { Product } from '../product/product.entity';
+import { User } from '../user/user.entity';
 import { OrderProduct } from './order-product.entity';
   
 @Table({
@@ -38,6 +38,7 @@ export class Order extends Model<Order> {
 		type: DataType.INTEGER,
 		allowNull: false,
 	})
+	@ForeignKey(() => User)
 	user_id: number;
 
 	@Column({
@@ -117,5 +118,8 @@ export class Order extends Model<Order> {
 		allowNull: true,
 	})
 	product: Product;
+
+	@BelongsTo(() => User)
+	user: User;
 }
   

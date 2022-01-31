@@ -13,6 +13,7 @@ import { AdminProductModule } from './admin-product/admin-product.module';
 import { AdminCategoryModule } from './admin-category/admin-category.module';
 import { AdminSubcategoryModule } from './admin-subcategory/admin-subcategory.module';
 import { MeasuringUnitModule } from '../measuring-unit/measuring-unit.module';
+import { AdminOrdersModule } from './admin-orders/admin-orders.module';
 
 @Module({
   imports: [
@@ -21,7 +22,8 @@ import { MeasuringUnitModule } from '../measuring-unit/measuring-unit.module';
     AdminProductModule,
     FileModule,
     AdminSubcategoryModule,
-    MeasuringUnitModule
+    MeasuringUnitModule,
+    AdminOrdersModule
   ],
   controllers: [AdminController],
   providers: [
