@@ -514,7 +514,21 @@ module.exports = {
         "longitude": -122.3249,
         "country_code": "+91",
         "mobile_number": "2064706608"
-      }
+      },
+      {
+        "user_id": 17,
+        "full_name": "Marcellus Ledster",
+        "pincode": 487342,
+        "house_no": "4370",
+        "area": "2 Mockingbird Plaza",
+        "city": "Youngstown",
+        "state": "Ohio",
+        "landmark": "745-zhv-8978",
+        "latitude": 41.1039,
+        "longitude": -80.6436,
+        "country_code": "+91",
+        "mobile_number": "3307501495"
+      },
     ], {});
   },
 
