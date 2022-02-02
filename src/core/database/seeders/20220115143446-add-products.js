@@ -17,6 +17,7 @@ module.exports = {
      */
 
     await queryInterface.bulkDelete('products', null, { restartIdentity: true, truncate: true, cascade: true });
+    await queryInterface.bulkDelete('product_price', null, {restartIdentity: true, truncate: true, cascade: true });
 
     const product_data = [
       {
