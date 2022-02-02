@@ -16,6 +16,7 @@ import { PaymentService } from '../payment/payment.service';
 import { Address } from '../address/address.entity';
 import { UserPayment } from '../payment/user-payment.entity';
 import { User } from '../user/user.entity';
+import { OrdersList } from '../admin/admin-orders/dto/admin-orders.entity';
 
 @Injectable()
 export class OrderService {
@@ -213,8 +214,9 @@ export class OrderService {
 		}
 	}
 
-	async adminOrderList() {
+	async adminOrderList(query: OrdersList) {
 		try {
+			const pageIndex = query.pageIndex * query.pageSize;
 			const orderDetails = await this.orderRepository.findAll({
 				where: {},
 				include: [
@@ -222,6 +224,8 @@ export class OrderService {
 					{ model: OrderProduct, attributes: ['id'] },
 				],
 				attributes: ['id', 'order_number', 'status', 'net_amount', 'payment_method'],
+				offset: pageIndex,
+				limit: query.pageSize
 			});
 
 			return {statusCode: STATUS_CODE.SUCCESS, message: MESSAGES.SUCCESS, data: { orderDetails } };
