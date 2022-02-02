@@ -1,9 +1,10 @@
-import { Controller, Get, Query, UseInterceptors, ValidationPipe } from '@nestjs/common';
+import { Controller, Get, Param, Query, UseInterceptors, ValidationPipe } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
 import { Auth } from 'src/core/decorators/auth.decorator';
 import { TransformInterceptor } from 'src/core/interceptors/transform.interceptor';
 import { OrderService } from 'src/modules/order/order.service';
+import { SpecificOrder } from 'src/modules/user/user-order/dto/order.dto';
 import { OrdersList } from './dto/admin-orders.entity';
 
 @Controller('admin/orders')
@@ -17,5 +18,12 @@ export class AdminOrdersController {
   @UseInterceptors(TransformInterceptor)
   async list(@Query(new ValidationPipe()) query: OrdersList) {
     return await this.orderService.adminOrderList(query);
+  }
+
+  @Get(':id')
+  @Auth('admin')
+  @UseInterceptors(TransformInterceptor)
+  async findOneById(@Param(new ValidationPipe()) params: SpecificOrder) {
+    return await this.orderService.findOneById(params.id);
   }
 }

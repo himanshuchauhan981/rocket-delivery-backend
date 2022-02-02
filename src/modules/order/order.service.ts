@@ -217,18 +217,19 @@ export class OrderService {
 	async adminOrderList(query: OrdersList) {
 		try {
 			const pageIndex = query.pageIndex * query.pageSize;
-			const orderDetails = await this.orderRepository.findAll({
+			const orderDetails = await this.orderRepository.findAndCountAll({
 				where: {},
 				include: [
 					{ model: User, attributes: ['id','name'] },
 					{ model: OrderProduct, attributes: ['id'] },
 				],
-				attributes: ['id', 'order_number', 'status', 'net_amount', 'payment_method'],
+				attributes: ['id', 'order_number', 'status', 'net_amount', 'payment_method', 'created_at'],
 				offset: pageIndex,
+				order: [['created_at','DESC']],
 				limit: query.pageSize
 			});
 
-			return {statusCode: STATUS_CODE.SUCCESS, message: MESSAGES.SUCCESS, data: { orderDetails } };
+			return {statusCode: STATUS_CODE.SUCCESS, message: MESSAGES.SUCCESS, data: { orderDetails: orderDetails.rows, totalOrders: orderDetails.count } };
 		}
 		catch(err) {
 			throw err;

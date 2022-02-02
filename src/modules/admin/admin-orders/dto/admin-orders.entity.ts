@@ -10,3 +10,9 @@ export class OrdersList {
   @ApiProperty()
   pageSize: number;
 }
+
+export class SpecificProduct {
+  @IsNotEmpty()
+  @ApiProperty()
+  id: number;
+}
