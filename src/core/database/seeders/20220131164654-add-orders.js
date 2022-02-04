@@ -53,18 +53,19 @@ module.exports = {
         let amount = 0;
         for(let j=0; j < totalProducts; j++) {
           const productId = this.randomNumber(1,78);
+          const quantity = this.randomNumber(1,4);
           
           const productDetails = await queryInterface.rawSelect('products', { where:{ id: productId }, plain: false }, ['id']);
           const productPriceDetails = await queryInterface.rawSelect('product_price', { where: { id: productDetails[0].id}, plain: false }, ['id']);
           const imageDetails = await queryInterface.rawSelect('file',{ where: { id: productDetails[0].image_id }, plain: false }, ['id']);
-          amount = amount + productPriceDetails[0].actual_price;
+          amount = amount + productPriceDetails[0].actual_price * quantity;
 
           orderProducts.push({
             order_id: orderDetails[0].id,
             product_id: productDetails[0].id,
             product_name: productDetails[0].name,
             product_image: imageDetails[0].url,
-            quantity: this.randomNumber(1,4),
+            quantity,
             price: productPriceDetails[0].actual_price,
           });
         }
