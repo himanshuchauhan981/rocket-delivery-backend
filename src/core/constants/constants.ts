@@ -1,5 +1,6 @@
 export const CONSTANTS = {
   ORDER_STATUS: 'status',
+  PAYMENT_STATUS: 'payment_status',
   CONFIRMED: 'CONFIRMED',
   DELIVERED: 'DELIVERED',
   REQUESTED: 'REQUESTED',

@@ -62,8 +62,7 @@ export class AddressService {
 			}
 			else {
 				await this.addressRepository.update<any>(payload, { where: { id } });
-
-				return {statusCode: STATUS_CODE.SUCCESS, message: MESSAGES.SUCCESS }
+				return {statusCode: STATUS_CODE.SUCCESS, message: MESSAGES.ADDRESS_UPDATED_SUCCESSFULLY }
 			}
 		}
 		catch(err) {

@@ -175,12 +175,40 @@ export class OrderService {
 			order_id,
 			{ 
 				include: [
-					{ model: Address, attributes: ['full_name', 'house_no', 'area', 'city', 'state', 'landmark', 'country_code','mobile_number'] },
+					{ 
+						model: Address,
+						attributes: [
+							'id',
+							'full_name',
+							'house_no',
+							'area',
+							'city',
+							'state',
+							'landmark',
+							'country_code',
+							'mobile_number',
+							'pincode',
+							'latitude',
+							'longitude',
+							'country_code'
+						]
+					},
 					{ model: OrderProduct, attributes: ['id', 'product_id', 'product_name', 'product_image', 'price', 'quantity'] },
 					{ model: UserPayment, attributes: ['status', 'card_number', 'card_type'] },
 					{ model: User, attributes: ['id', 'name', 'email', 'mobile_number'] }
 				],
-				attributes: ['id', 'status', 'payment_method', 'delivery_charges', 'amount', 'net_amount', 'created_at', 'delivery_status', 'payment_status']
+				attributes: [
+					'id',
+					'status',
+					'payment_method',
+					'delivery_charges',
+					'amount',
+					'net_amount',
+					'created_at',
+					'delivery_status',
+					'payment_status',
+					'order_number',
+				]
 			}
 		);
 
@@ -225,7 +253,7 @@ export class OrderService {
 					{ model: User, attributes: ['id','name'] },
 					{ model: OrderProduct, attributes: ['id'] },
 				],
-				attributes: ['id', 'order_number', 'status', 'net_amount', 'payment_method', 'created_at'],
+				attributes: ['id', 'order_number', 'status', 'net_amount', 'payment_method', 'created_at', 'payment_status'],
 				offset: pageIndex,
 				order: [['created_at','DESC']],
 				limit: query.pageSize
@@ -253,7 +281,10 @@ export class OrderService {
 						message: payload.status == CONSTANTS.CONFIRMED ?
 							MESSAGES.ORDER_CONFIRMED_SUCCESS: payload.status == CONSTANTS.DELIVERED ?
 								MESSAGES.ORDER_DELIVERED_SUCCESS : MESSAGES.ORDER_CANCELLED_SUCCESS
-					}
+					};
+				}
+				else if(CONSTANTS.PAYMENT_STATUS in payload) {
+					return { statusCode: STATUS_CODE.SUCCESS, message: MESSAGES.PAYMENT_STATUS_UPDATE_SUCCESS };
 				}
 			}
 			else {
