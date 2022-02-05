@@ -9,6 +9,7 @@ import {
 	ForeignKey,
 	BelongsTo
 } from 'sequelize-typescript';
+import { CONSTANTS } from 'src/core/constants/constants';
 
 import { Address } from '../address/address.entity';
 import { UserPayment } from '../payment/user-payment.entity';
@@ -43,7 +44,7 @@ export class Order extends Model<Order> {
 
 	@Column({
 		type: DataType.ENUM,
-		values: ['REQUESTED', 'CONFIRMED', 'DELIVERED', 'CANCELLED'],
+		values: [CONSTANTS.REQUESTED, CONSTANTS.CONFIRMED, CONSTANTS.DELIVERED, CONSTANTS.CANCELLED],
 		allowNull: false,
 	})
 	status: string;
@@ -91,6 +92,20 @@ export class Order extends Model<Order> {
 	})
 	@ForeignKey(() => UserPayment)
 	user_payment_id: number;
+
+	@Column({
+		type: DataType.ENUM,
+		values: [CONSTANTS.PENDING, CONSTANTS.CONFIRMED, CONSTANTS.PICKED, CONSTANTS.ON_THE_WAY, CONSTANTS.DELIVERED],
+		defaultValue: CONSTANTS.PENDING
+	})
+	delivery_status: string;
+
+	@Column({
+		type: DataType.ENUM,
+		values: [CONSTANTS.PAID, CONSTANTS.UNPAID],
+		defaultValue: CONSTANTS.UNPAID
+	})
+	payment_status: string;
 
 	@CreatedAt
 	created_at: Date;
