@@ -1,4 +1,5 @@
 import {
+  ADDRESS_REPOSITORY,
   ADMIN_REPOSITORY,
   CATEGORY_REPOSITORY,
   MEASURING_UNIT_REPOSITORY,
@@ -8,6 +9,7 @@ import {
   PRODUCT_REVIEW_REPOSITORY,
   SUB_CATEGORY_REPOSITORY,
 } from 'src/core/constants/repositories';
+import { Address } from '../address/address.entity';
 import { Category } from '../category/category.entity';
 import { MeasuringUnit } from '../measuring-unit/measuring-unit.entity';
 import { Order } from '../order/order.entity';
@@ -26,4 +28,5 @@ export const AdminProvider = [
   { provide: MEASURING_UNIT_REPOSITORY, useValue: MeasuringUnit },
   { provide: ORDER_REPOSITORY, useValue: Order },
   { provide: PRODUCT_REVIEW_REPOSITORY, useValue: ProductReview },
+  { provide: ADDRESS_REPOSITORY, useValue: Address },
 ];
