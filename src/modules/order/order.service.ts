@@ -18,6 +18,7 @@ import { UserPayment } from '../payment/user-payment.entity';
 import { User } from '../user/user.entity';
 import { OrdersList } from '../admin/admin-orders/dto/admin-orders.entity';
 import { CONSTANTS } from 'src/core/constants/constants';
+import { FcmService } from 'src/core/utils/fcm.service';
 
 @Injectable()
 export class OrderService {
@@ -25,7 +26,8 @@ export class OrderService {
 		@Inject(ORDER_REPOSITORY) private readonly orderRepository: typeof Order,
 		@Inject(PRODUCT_REPOSITORY) private readonly productRepository: typeof Product,
 		@Inject(ORDER_PRODUCT_REPOSITORY) private readonly orderProductRepository: typeof OrderProduct,
-		private readonly paymentService: PaymentService
+		private readonly paymentService: PaymentService,
+		private readonly fcmService: FcmService
 	) {}
 
 	#calculateDiscountPrice(
@@ -273,6 +275,20 @@ export class OrderService {
 	async updateOrderStatus(payload: UpdateOrder, id: number) {
 		try {
 			const orderUpdateStatus = await this.orderRepository.update(payload,{ where: { id } });
+			const orderDetails = await this.orderRepository.findByPk(
+				id, 
+				{ include:[{ model: User, attributes:['id', 'fcm_token'] }] }
+			);
+
+			const deviceIds = [orderDetails.user.fcm_token];
+			const notificationPayload = {
+				notification: {
+					title: 'Test title',
+					body: 'Test body'
+				}
+			};
+
+			await this.fcmService.sendNotification(deviceIds, notificationPayload, false);
 
 			if(orderUpdateStatus[0]) {
 				if(CONSTANTS.ORDER_STATUS in payload) {
