@@ -19,6 +19,8 @@ export const MESSAGES = {
   INVALID_PRODUCT_ID: 'INVALID_PRODUCT_ID',
   PRODUCT_QUANTITY_NOT_AVAILABLE: 'Product is not available',
   INVALID_ORDER_ID: 'Invalid order Id',
-  ORDER_CANCELLED_SUCCESS: 'Order cancelled successfully',
   ORDER_ALREADY_REFUNDED: 'Order already refunded',
+  ORDER_CONFIRMED_SUCCESS: 'Order confirmed successfully',
+  ORDER_DELIVERED_SUCCESS: 'Order delivered successfully',
+  ORDER_CANCELLED_SUCCESS: 'Order cancelled successfully',
 };

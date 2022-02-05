@@ -9,7 +9,7 @@ import { STATUS_CODE } from 'src/core/constants/status_code';
 import { File } from '../admin/file/file.entity';
 import { ProductPrice } from '../product/product-price.entity';
 import { Product } from '../product/product.entity';
-import { NewOrder } from '../user/user-order/dto/order.dto';
+import { NewOrder, UpdateOrder } from '../user/user-order/dto/order.dto';
 import { Order } from './order.entity';
 import { OrderProduct } from './order-product.entity';
 import { PaymentService } from '../payment/payment.service';
@@ -17,6 +17,7 @@ import { Address } from '../address/address.entity';
 import { UserPayment } from '../payment/user-payment.entity';
 import { User } from '../user/user.entity';
 import { OrdersList } from '../admin/admin-orders/dto/admin-orders.entity';
+import { CONSTANTS } from 'src/core/constants/constants';
 
 @Injectable()
 export class OrderService {
@@ -176,9 +177,10 @@ export class OrderService {
 				include: [
 					{ model: Address, attributes: ['full_name', 'house_no', 'area', 'city', 'state', 'landmark', 'country_code','mobile_number'] },
 					{ model: OrderProduct, attributes: ['id', 'product_id', 'product_name', 'product_image', 'price', 'quantity'] },
-					{ model: UserPayment, attributes: ['status', 'card_number', 'card_type'] }
+					{ model: UserPayment, attributes: ['status', 'card_number', 'card_type'] },
+					{ model: User, attributes: ['id', 'name', 'email', 'mobile_number'] }
 				],
-				attributes: ['id', 'status', 'payment_method', 'delivery_charges', 'amount', 'net_amount', 'created_at']
+				attributes: ['id', 'status', 'payment_method', 'delivery_charges', 'amount', 'net_amount', 'created_at', 'delivery_status', 'payment_status']
 			}
 		);
 
@@ -229,7 +231,34 @@ export class OrderService {
 				limit: query.pageSize
 			});
 
-			return {statusCode: STATUS_CODE.SUCCESS, message: MESSAGES.SUCCESS, data: { orderDetails: orderDetails.rows, totalOrders: orderDetails.count } };
+			return {
+				statusCode: STATUS_CODE.SUCCESS,
+				message: MESSAGES.SUCCESS,
+				data: { orderDetails: orderDetails.rows, totalOrders: orderDetails.count }
+			};
+		}
+		catch(err) {
+			throw err;
+		}
+	}
+
+	async updateOrderStatus(payload: UpdateOrder, id: number) {
+		try {
+			const orderUpdateStatus = await this.orderRepository.update(payload,{ where: { id } });
+
+			if(orderUpdateStatus[0]) {
+				if(CONSTANTS.ORDER_STATUS in payload) {
+					return {
+						statusCode: STATUS_CODE.SUCCESS,
+						message: payload.status == CONSTANTS.CONFIRMED ?
+							MESSAGES.ORDER_CONFIRMED_SUCCESS: payload.status == CONSTANTS.DELIVERED ?
+								MESSAGES.ORDER_DELIVERED_SUCCESS : MESSAGES.ORDER_CANCELLED_SUCCESS
+					}
+				}
+			}
+			else {
+				throw new HttpException(MESSAGES.INVALID_ORDER_ID, STATUS_CODE.NOT_FOUND);
+			}
 		}
 		catch(err) {
 			throw err;

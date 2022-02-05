@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsNotEmpty } from "class-validator";
+import { CONSTANTS } from "src/core/constants/constants";
 
 export class CartItems {
 	@ApiProperty()
@@ -43,4 +44,18 @@ export class SpecificOrder {
 	@ApiProperty()
 	@IsNotEmpty()
 	id: number;
+}
+
+export class UpdateOrder {
+	@ApiProperty({ required: false })
+	payment_status: string;
+
+	@ApiProperty({
+		required: false,
+		enum: [CONSTANTS.REQUESTED, CONSTANTS.CONFIRMED, CONSTANTS.DELIVERED, CONSTANTS.CANCELLED]
+	})
+	status: string;
+
+	@ApiProperty({required: false})
+	delivery_status: string;
 }
