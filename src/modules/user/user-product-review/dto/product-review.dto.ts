@@ -42,3 +42,31 @@ export class NewProductReview {
   @IsNotEmpty()
   review_images: NewReviewFiles[];
 }
+
+export class UpdateProductReview {
+  @ApiProperty()
+  @IsNotEmpty()
+  headline: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  opinion: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  ratings: number;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  remove_image_id: number[];
+
+  @ApiProperty()
+  @IsNotEmpty()
+  review_images: NewReviewFiles[];
+}
+
+export class SpecificProductReview {
+  @ApiProperty()
+  @IsNotEmpty()
+  id: number;
+}
