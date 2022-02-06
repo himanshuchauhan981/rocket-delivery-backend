@@ -14,6 +14,7 @@ import { PaymentModule } from './modules/payment/payment.module';
 import DatabaseModule from './core/database/database.module';
 import { CommonService } from './modules/common/common.service';
 import { ProductReviewModule } from './modules/product-review/product-review.module';
+import { ProductHistoryModule } from './modules/product-history/product-history.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { ProductReviewModule } from './modules/product-review/product-review.mod
     AddressModule,
     PaymentModule,
     ProductReviewModule,
+    ProductHistoryModule,
   ],
   controllers: [AppController],
   providers: [AppService, CommonService],

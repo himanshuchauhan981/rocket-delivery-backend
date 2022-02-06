@@ -12,6 +12,7 @@ import { UserAddressModule } from './user-address/user-address.module';
 import { UserOrderModule } from './user-order/user-order.module';
 import { UserPaymentModule } from './user-payment/user-payment.module';
 import { UserProductReviewModule } from './user-product-review/user-product-review.module';
+import { UserProductHistoryModule } from './user-product-history/user-product-history.module';
 
 @Module({
   imports:[
@@ -20,7 +21,8 @@ import { UserProductReviewModule } from './user-product-review/user-product-revi
     UserAddressModule,
     UserOrderModule,
     UserPaymentModule,
-    UserProductReviewModule
+    UserProductReviewModule,
+    UserProductHistoryModule
   ],
   controllers: [UserController],
   providers: [UserService, CommonService, SubCategoryService, ProductService, ...UserProvider]

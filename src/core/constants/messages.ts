@@ -24,5 +24,6 @@ export const MESSAGES = {
   ORDER_DELIVERED_SUCCESS: 'Order delivered successfully',
   ORDER_CANCELLED_SUCCESS: 'Order cancelled successfully',
   PAYMENT_STATUS_UPDATE_SUCCESS: 'Payment status updated successfully',
-  ADDRESS_UPDATED_SUCCESSFULLY: 'Address updated successfully'
+  ADDRESS_UPDATED_SUCCESSFULLY: 'Address updated successfully',
+  INVALID_PRODUCT_HISTORY_ID: 'Invalid product history id',
 };
