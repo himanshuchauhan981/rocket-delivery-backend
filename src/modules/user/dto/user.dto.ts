@@ -90,3 +90,17 @@ export class UserCart {
   @IsNotEmpty()
   removeCartItem: boolean;
 }
+
+export class UpdateProfile {
+  @ApiProperty()
+  @IsNotEmpty()
+  email: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  name: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  mobile_number: string;
+}

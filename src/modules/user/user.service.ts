@@ -7,7 +7,7 @@ import { STATUS_CODE } from 'src/core/constants/status_code';
 import { File } from '../admin/file/file.entity';
 import { Category } from '../category/category.entity';
 import { CommonService } from '../common/common.service';
-import { UserLogin, UserSignup } from './dto/user.dto';
+import { UpdateProfile, UserLogin, UserSignup } from './dto/user.dto';
 import { User } from './user.entity';
 
 @Injectable()
@@ -123,5 +123,33 @@ export class UserService {
 		catch(err) {
 			throw err;
 		}
+	}
+
+	async getUserDetails(user_id: number) {
+		try {
+			const userDetails = await this.userRepository.findByPk(
+				user_id,
+				{ attributes: ['name', 'email', 'mobile_number'] }
+			);
+
+			return { statusCode: STATUS_CODE.SUCCESS, message: MESSAGES.SUCCESS, data: { userDetails } };
+		}
+		catch(err) {
+			throw err;
+		}
+	}
+
+	async updateUserDetails(payload: UpdateProfile, id: number) {
+		const existingUser = await this.#findExistingUser(payload.email);
+
+		if(existingUser && existingUser.id != id) {
+			throw new HttpException(MESSAGES.NEW_EMAIL_EXISTED, STATUS_CODE.CONFLICT);
+		}
+		await this.userRepository.update(
+			{ email: payload.email, mobile_number: payload.mobile_number, name: payload.name },
+			{ where: { id } }
+		);
+
+		return { statusCode: STATUS_CODE.SUCCESS, message: MESSAGES.USER_PROFILE_UPDATE_SUCCESS	 };
 	}
 }

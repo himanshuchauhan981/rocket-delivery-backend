@@ -1,10 +1,11 @@
-import { Body, Controller, Get, Post, Query, UseInterceptors, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Post, Put, Query, Req, UseInterceptors, ValidationPipe } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { Auth } from 'src/core/decorators/auth.decorator';
 
 import { TransformInterceptor } from 'src/core/interceptors/transform.interceptor';
 import { ProductService } from '../product/product.service';
 import { SubCategoryService } from '../sub-category/sub-category.service';
-import { UserLogin, UserSignup, UserCategoryList, UserSubCategoryList, UserCart } from './dto/user.dto';
+import { UserLogin, UserSignup, UserCategoryList, UserSubCategoryList, UserCart, UpdateProfile } from './dto/user.dto';
 import { UserService } from './user.service';
 
 @Controller('user')
@@ -44,5 +45,18 @@ export class UserController {
   @UseInterceptors(TransformInterceptor)
   async cartDetails(@Body(new ValidationPipe()) payload: UserCart) {
     return await this.productService.cartItems(payload);
+  }
+
+  @Get('details')
+  @Auth('user')
+  @UseInterceptors(TransformInterceptor)
+  async getUserDetails(@Req() request) {
+    return await this.userService.getUserDetails(request.userId);
+  }
+
+  @Patch('details')
+  @Auth('user')
+  async updateUserDetails(@Body(new ValidationPipe()) payload: UpdateProfile, @Req() request) {
+    return await this.userService.updateUserDetails(payload, request.userId);
   }
 }

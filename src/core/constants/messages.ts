@@ -15,8 +15,8 @@ export const MESSAGES = {
   EXPIRED_TOKEN: 'JWT token expired',
   REQUIRED_JWT_TOKEN: 'Token required',
   USER_ALREADY_EXISTED: 'User already existed',
-  USER_ADDRESS_NOT_FOUND: 'USER_ADDRESS_NOT_FOUND',
-  INVALID_PRODUCT_ID: 'INVALID_PRODUCT_ID',
+  USER_ADDRESS_NOT_FOUND: 'User address not found',
+  INVALID_PRODUCT_ID: 'Invalid product Id',
   PRODUCT_QUANTITY_NOT_AVAILABLE: 'Product is not available',
   INVALID_ORDER_ID: 'Invalid order Id',
   ORDER_ALREADY_REFUNDED: 'Order already refunded',
@@ -26,4 +26,6 @@ export const MESSAGES = {
   PAYMENT_STATUS_UPDATE_SUCCESS: 'Payment status updated successfully',
   ADDRESS_UPDATED_SUCCESSFULLY: 'Address updated successfully',
   INVALID_PRODUCT_HISTORY_ID: 'Invalid product history id',
+  NEW_EMAIL_EXISTED: 'Email already existed',
+  USER_PROFILE_UPDATE_SUCCESS: 'User updated successfully'
 };
