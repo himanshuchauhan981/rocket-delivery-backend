@@ -104,3 +104,9 @@ export class UpdateProfile {
   @IsNotEmpty()
   mobile_number: string;
 }
+
+export class UpdatePassword {
+  @ApiProperty()
+  @IsNotEmpty()
+  password: string;
+}

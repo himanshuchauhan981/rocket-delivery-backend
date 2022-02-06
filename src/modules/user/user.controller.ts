@@ -5,7 +5,7 @@ import { Auth } from 'src/core/decorators/auth.decorator';
 import { TransformInterceptor } from 'src/core/interceptors/transform.interceptor';
 import { ProductService } from '../product/product.service';
 import { SubCategoryService } from '../sub-category/sub-category.service';
-import { UserLogin, UserSignup, UserCategoryList, UserSubCategoryList, UserCart, UpdateProfile } from './dto/user.dto';
+import { UserLogin, UserSignup, UserCategoryList, UserSubCategoryList, UserCart, UpdateProfile, UpdatePassword } from './dto/user.dto';
 import { UserService } from './user.service';
 
 @Controller('user')
@@ -56,7 +56,15 @@ export class UserController {
 
   @Patch('details')
   @Auth('user')
+  @UseInterceptors(TransformInterceptor)
   async updateUserDetails(@Body(new ValidationPipe()) payload: UpdateProfile, @Req() request) {
     return await this.userService.updateUserDetails(payload, request.userId);
+  }
+
+  @Patch('password/update')
+  @Auth('user')
+  @UseInterceptors(TransformInterceptor)
+  async updateUserPassword(@Body(new ValidationPipe()) payload: UpdatePassword, @Req() request) {
+    return await this.userService.updateUserPassword(payload, request.userId);
   }
 }

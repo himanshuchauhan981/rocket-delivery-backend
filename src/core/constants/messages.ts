@@ -27,5 +27,7 @@ export const MESSAGES = {
   ADDRESS_UPDATED_SUCCESSFULLY: 'Address updated successfully',
   INVALID_PRODUCT_HISTORY_ID: 'Invalid product history id',
   NEW_EMAIL_EXISTED: 'Email already existed',
-  USER_PROFILE_UPDATE_SUCCESS: 'User updated successfully'
+  USER_PROFILE_UPDATE_SUCCESS: 'User updated successfully',
+  INVALID_USER_ID: 'Invalid user id'
+
 };
