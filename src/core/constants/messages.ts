@@ -28,6 +28,8 @@ export const MESSAGES = {
   INVALID_PRODUCT_HISTORY_ID: 'Invalid product history id',
   NEW_EMAIL_EXISTED: 'Email already existed',
   USER_PROFILE_UPDATE_SUCCESS: 'User updated successfully',
-  INVALID_USER_ID: 'Invalid user id'
-
+  INVALID_USER_ID: 'Invalid user id',
+  WISHLIST_CREATED_SUCCESS: 'Product is added in wishlist',
+  EXISTED_USER_WISHLIST: 'Product is already in wishlist',
+  WISHLIST_DELETE_SUCCESS: 'Product is removed from wishlist'
 };

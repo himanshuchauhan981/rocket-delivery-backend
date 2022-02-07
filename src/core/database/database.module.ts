@@ -15,6 +15,7 @@ import { Order } from 'src/modules/order/order.entity';
 import { UserPayment } from 'src/modules/payment/user-payment.entity';
 import { ProductReview } from 'src/modules/product-review/product-review.entity';
 import { ProductReviewFile } from 'src/modules/product-review/product-review-file.entity';
+import { Wishlist } from 'src/modules/wishlist/wishlist.entity';
 
 let config;
 switch (process.env.NODE_ENV) {
@@ -49,7 +50,8 @@ const DatabaseModule = [
         Order,
         UserPayment,
         ProductReview,
-        ProductReviewFile
+        ProductReviewFile,
+        Wishlist
       ],
     }),
   }),

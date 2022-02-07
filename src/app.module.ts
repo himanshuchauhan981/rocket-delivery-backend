@@ -15,6 +15,7 @@ import DatabaseModule from './core/database/database.module';
 import { CommonService } from './modules/common/common.service';
 import { ProductReviewModule } from './modules/product-review/product-review.module';
 import { ProductHistoryModule } from './modules/product-history/product-history.module';
+import { WishlistModule } from './modules/wishlist/wishlist.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { ProductHistoryModule } from './modules/product-history/product-history.
     PaymentModule,
     ProductReviewModule,
     ProductHistoryModule,
+    WishlistModule,
   ],
   controllers: [AppController],
   providers: [AppService, CommonService],

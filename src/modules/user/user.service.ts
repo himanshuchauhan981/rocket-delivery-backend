@@ -7,7 +7,7 @@ import { STATUS_CODE } from 'src/core/constants/status_code';
 import { File } from '../admin/file/file.entity';
 import { Category } from '../category/category.entity';
 import { CommonService } from '../common/common.service';
-import { UpdatePassword, UpdateProfile, UserLogin, UserSignup } from './dto/user.dto';
+import { UpdateProfile, UserLogin, UserSignup } from './dto/user.dto';
 import { User } from './user.entity';
 
 @Injectable()
@@ -141,7 +141,14 @@ export class UserService {
 
 	async updateUserDetails(payload: UpdateProfile, id: number) {
 		try {
-			const existingUser = await this.#findExistingUser(payload.email);
+			const existingUser = await this.userRepository.findByPk(id);
+
+			if(payload.password && existingUser) {
+				const hashedPassword = await this.commonService.generateHashPassword(payload.password);
+
+				await this.userRepository.update({password: hashedPassword}, {where: { id } });
+				return { statusCode: STATUS_CODE.SUCCESS, message: MESSAGES.SUCCESS };
+			}
 
 			if(existingUser && existingUser.id != id) {
 				throw new HttpException(MESSAGES.NEW_EMAIL_EXISTED, STATUS_CODE.CONFLICT);
@@ -152,25 +159,6 @@ export class UserService {
 			);
 
 			return { statusCode: STATUS_CODE.SUCCESS, message: MESSAGES.USER_PROFILE_UPDATE_SUCCESS	 };
-		}
-		catch(err) {
-			throw err;
-		}
-	}
-
-	async updateUserPassword(payload: UpdatePassword, id: number) {
-		try {
-			const existingUser = await this.userRepository.findByPk(id);
-
-			if(existingUser) {
-				const hashedPassword = await this.commonService.generateHashPassword(payload.password);
-
-				await this.userRepository.update({password: hashedPassword}, {where: { id } });
-				return { statusCode: STATUS_CODE.SUCCESS, message: MESSAGES.SUCCESS };
-			}
-			else {
-				return { statusCode: STATUS_CODE.NOT_FOUND, message: MESSAGES.INVALID_USER_ID };
-			}
 		}
 		catch(err) {
 			throw err;

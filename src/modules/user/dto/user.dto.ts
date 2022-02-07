@@ -92,21 +92,15 @@ export class UserCart {
 }
 
 export class UpdateProfile {
-  @ApiProperty()
-  @IsNotEmpty()
+  @ApiProperty({required: false})
   email: string;
 
-  @ApiProperty()
-  @IsNotEmpty()
+  @ApiProperty({required: false})
   name: string;
 
-  @ApiProperty()
-  @IsNotEmpty()
+  @ApiProperty({required: false})
   mobile_number: string;
-}
 
-export class UpdatePassword {
-  @ApiProperty()
-  @IsNotEmpty()
+  @ApiProperty({required: false})
   password: string;
 }
