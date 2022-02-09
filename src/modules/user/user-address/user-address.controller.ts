@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, Req, UseInterceptors, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Req, UseInterceptors, ValidationPipe } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
 import { TransformInterceptor } from 'src/core/interceptors/transform.interceptor';
@@ -26,7 +26,7 @@ export class UserAddressController {
 		return await this.addressService.add(payload, req.userId);
 	}
 
-	@Put(':id')
+	@Patch(':id')
 	@Auth('user')
 	@UseInterceptors(TransformInterceptor)
 	async update(@Body(new ValidationPipe()) payload: NewAddress, @Param() params: AddressId) {

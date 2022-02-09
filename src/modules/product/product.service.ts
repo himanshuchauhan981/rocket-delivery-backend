@@ -283,12 +283,14 @@ export class ProductService {
 						{ model: Category, attributes: ['id', 'name'] },
 						{ model: SubCategory, attributes: ['id', 'name'] },
 						{ model: MeasuringUnit, attributes: ['id', 'measuring_type', 'symbol'] },
+            { model: ProductReview, attributes: ['id', 'ratings'], where: { is_deleted: 0 } }
           ],
           attributes: ['name', 'max_quantity', 'purchase_limit', 'description'],
         }
       );
 
       const productPrice = productDetails.product_price;
+      let ratingCount = 0;
 
       const discountDetails = this.#calculateDiscountPrice(
         productPrice.discount_start_date,
@@ -300,6 +302,13 @@ export class ProductService {
 
       productDetails.product_price.discount_status = discountDetails.discountStatus;
 			productDetails.product_price.discount = discountDetails.discountPrice;
+
+      for (let i = 0; i < productDetails.product_review.length; i++) {
+        ratingCount = ratingCount + productDetails.product_review[i].ratings;
+      }
+
+      let avergeRating = ratingCount / productDetails.product_review.length;
+      productDetails.average_ratings = parseFloat(avergeRating.toFixed(2));
 
       return { statusCode: STATUS_CODE.SUCCESS, data: { product_details: productDetails }, message: MESSAGES.SUCCESS };
     }
