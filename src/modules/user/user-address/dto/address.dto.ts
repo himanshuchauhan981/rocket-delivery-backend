@@ -33,11 +33,11 @@ export class NewAddress {
 
 	@ApiProperty()
 	@IsNotEmpty()
-	latitude: number;
+	latitude: string;
 
 	@ApiProperty()
 	@IsNotEmpty()
-	longitude: number;
+	longitude: string;
 
 	@ApiProperty()
 	@IsNotEmpty()

@@ -40,9 +40,12 @@ export class AddressService {
 
 	async add(payload: NewAddress, user_id: number) {
 		try {
+			const latitude = parseFloat(payload.latitude);
+
 			await this.addressRepository.create<any>({
 				user_id,
-				latitude: payload.latitude,
+				latitude,
+				longitude: parseFloat(payload.longitude),
 				...payload,
 			});
 

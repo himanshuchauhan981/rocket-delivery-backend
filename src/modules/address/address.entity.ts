@@ -69,13 +69,13 @@ export class Address extends Model<Address> {
 	landmark: string;
 
 	@Column({
-		type: DataType.INTEGER,
+		type: DataType.DECIMAL,
 		allowNull: false,
 	})
 	latitude: number;
 
 	@Column({
-		type: DataType.INTEGER,
+		type: DataType.DECIMAL,
 		allowNull: false,
 	})
 	longitude: number;
