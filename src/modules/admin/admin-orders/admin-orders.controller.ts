@@ -1,0 +1,39 @@
+import { Controller, Get, Param, Query, UseInterceptors, ValidationPipe, Put, Body } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+
+import { Auth } from 'src/core/decorators/auth.decorator';
+import { TransformInterceptor } from 'src/core/interceptors/transform.interceptor';
+import { OrderService } from 'src/modules/order/order.service';
+import { SpecificOrder, UpdateOrder } from 'src/modules/user/user-order/dto/order.dto';
+import { OrdersList } from './dto/admin-orders.entity';
+
+@Controller('admin/orders')
+@ApiTags('Admin orders')
+export class AdminOrdersController {
+
+  constructor(private readonly orderService: OrderService) {}
+
+  @Get('list')
+  @Auth('admin')
+  @UseInterceptors(TransformInterceptor)
+  async list(@Query(new ValidationPipe()) query: OrdersList) {
+    return await this.orderService.adminOrderList(query);
+  }
+
+  @Get(':id')
+  @Auth('admin')
+  @UseInterceptors(TransformInterceptor)
+  async findOneById(@Param(new ValidationPipe()) params: SpecificOrder) {
+    return await this.orderService.findOneById(params.id);
+  }
+  
+  @Put(':id/status')
+  @Auth('admin')
+  @UseInterceptors(TransformInterceptor)
+  async updateOrder(
+    @Body(new ValidationPipe()) payload: UpdateOrder,
+    @Param(new ValidationPipe()) params: SpecificOrder
+  ) {
+    return await this.orderService.updateOrderStatus(payload, params.id);
+  }
+}
