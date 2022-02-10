@@ -71,4 +71,7 @@ export class ProductReview extends Model<ProductReview> {
 
 	@UpdatedAt
 	updated_at: Date;
+
+	@BelongsTo(() => Product)
+	product: Product;
 }

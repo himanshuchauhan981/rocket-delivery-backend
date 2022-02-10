@@ -534,14 +534,49 @@ export class ProductService {
     }
   }
 
-  async #mostViewedProducts(userId: number) {}
+  async #mostViewedProducts(user_id: number, most_viewed_history: boolean) {
+		try {
+      let viewedProductDetails = await this.productReviewRepository.findAll({
+        where: { [sequelize.Op.and]: [{ user_id }, { is_deleted: 0 }] },
+        include: [
+          {
+            model: Product,
+            attributes: ['id','name'],
+            include: [
+              { model: ProductPrice, attributes: ['actual_price', 'discount_type', 'discount', 'discount_start_date', 'discount_end_date'] },
+              { model: File, attributes: ['id', 'image'] },
+            ],
+          },
+        ],
+        attributes: ['id', 'view_count'],
+        raw: true,
+        order: most_viewed_history ? [['view_count', 'DESC']] : [],
+        limit: most_viewed_history ? 4 : null,
+      });
+
+      for (const item of viewedProductDetails) {
+        const product_price = item.product.product_price;
+        let discountDetails = this.#calculateDiscountPrice(
+          product_price.discount_start_date,
+          product_price.discount_end_date,
+          product_price.discount,
+          product_price.actual_price,
+          product_price.discount_type
+        );
+        item.product.product_price.discount_price = discountDetails.discountPrice;
+        item.product.product_price.discount_status = discountDetails.discountStatus;
+      }
+    } catch (err) {
+      throw err;
+    }
+  }
 
   async productOffers(userId: number) {
     try {
       const orderDetails = await this.#mostBookedProducts();
-      const viewedProducts = await this.#mostViewedProducts(userId);
+      const viewedProducts = await this.#mostViewedProducts(userId, false);
 
-      return { statusCode: STATUS_CODE.SUCCESS, message: STATUS_CODE.SUCCESS, data:{ orderDetails, viewedProducts: [] } };
+      return { statusCode: STATUS_CODE.SUCCESS, message: STATUS_CODE.SUCCESS, data:{ orderDetails, viewedProducts } };
     }
     catch(err) {
       throw err;
