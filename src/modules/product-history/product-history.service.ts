@@ -90,7 +90,6 @@ export class ProductHistoryService {
           },
         ],
         attributes: ['id', 'view_count'],
-        raw: true,
         order: most_viewed_History ? [['view_count', 'DESC']] : [],
         limit: most_viewed_History ? 4 : null,
       });
@@ -107,11 +106,11 @@ export class ProductHistoryService {
 
         item.product.product_price.discount_status = discountDetails.discountStatus;
         item.product.product_price.discount_price = discountDetails.discountPrice;
-
-        return { statusCode: STATUS_CODE.SUCCESS, message: MESSAGES.SUCCESS, data: { productHistoryList } };
       }
+      return { statusCode: STATUS_CODE.SUCCESS, message: MESSAGES.SUCCESS, data: { productHistoryList } };
     }
     catch(err) {
+      console.log('>>>Err', err);
       throw err;
     }
   }

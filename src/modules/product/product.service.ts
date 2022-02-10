@@ -30,37 +30,37 @@ export class ProductService {
   ) {}
 
   #calculateDiscountPrice(
-		start_date: Date,
-		end_date: Date,
-		discount: number,
-		actual_price: number,
-		discount_type: string
-	) {
-		let currentDate = moment();
-		let discountStartDate = moment(start_date);
-		let discountEndDate = moment(end_date);
-		let discountStatus;
-		let discountPrice;
+    start_date: Date,
+    end_date: Date,
+    discount: number,
+    actual_price: number,
+    discount_type: string
+  ) {
+    let currentDate = moment();
+    let discountStartDate = moment(start_date);
+    let discountEndDate = moment(end_date);
+    let discountStatus;
+    let discountPrice;
 
-		if (discountStartDate.isBefore(currentDate) && discountEndDate.isAfter(discountStartDate)) {
-			discountStatus = true;
-			if (discount_type == 'FLAT') {
-				discountPrice = actual_price - discount;
-			} else {
-				discountPrice = (discount / 100) * actual_price;
-				discountPrice = actual_price - discountPrice;
-			}
+    if (discountStartDate.isBefore(currentDate) && discountEndDate.isAfter(discountStartDate)) {
+      discountStatus = true;
+      if (discount_type == 'FLAT') {
+        discountPrice = actual_price - discount;
+      } else {
+        discountPrice = (discount / 100) * actual_price;
+        discountPrice = actual_price - discountPrice;
+      }
 
-			return {
-				discountPrice,
-				discountStatus,
-			};
-		} else {
-			discountStatus = false;
-			discountPrice = 0;
-			return { discountStatus, discountPrice };
-		}
-	}
+      return {
+        discountPrice,
+        discountStatus,
+      };
+    } else {
+      discountStatus = false;
+      discountPrice = 0;
+      return { discountStatus, discountPrice };
+    }
+  }
 
   #validateDiscountDate(startDate: Date, endDate: Date): boolean{
     const currentDate = moment();
@@ -120,15 +120,15 @@ export class ProductService {
       const tempProductData = await this.productRepository.findAndCountAll({
         where: payload.search
           ? {
-              [sequelize.Op.and]: [
-                { is_deleted: 0 },
-                {
-                  name: {
-                    [sequelize.Op.iLike]: `%${payload.search}%`,
-                  },
+            [sequelize.Op.and]: [
+              { is_deleted: 0 },
+              {
+                name: {
+                  [sequelize.Op.iLike]: `%${payload.search}%`,
                 },
-              ],
-            }
+              },
+            ],
+          }
           : { is_deleted: 0 },
         include: [
           { model: Category, attributes: ['id', 'name'] },
@@ -168,8 +168,8 @@ export class ProductService {
         offset: pageIndex,
       });
 
-      for(const item of tempProductData.rows) {
-        const productPrice =item.product_price;
+      for (const item of tempProductData.rows) {
+        const productPrice = item.product_price;
 
         let discountDetails;
 
@@ -280,9 +280,9 @@ export class ProductService {
               ],
             },
             { model: File, attributes: ['id', 'url', 'name'] },
-						{ model: Category, attributes: ['id', 'name'] },
-						{ model: SubCategory, attributes: ['id', 'name'] },
-						{ model: MeasuringUnit, attributes: ['id', 'measuring_type', 'symbol'] },
+            { model: Category, attributes: ['id', 'name'] },
+            { model: SubCategory, attributes: ['id', 'name'] },
+            { model: MeasuringUnit, attributes: ['id', 'measuring_type', 'symbol'] },
             { model: ProductReview, attributes: ['id', 'ratings'], where: { is_deleted: 0 } }
           ],
           attributes: ['name', 'max_quantity', 'purchase_limit', 'description'],
@@ -301,7 +301,7 @@ export class ProductService {
       );
 
       productDetails.product_price.discount_status = discountDetails.discountStatus;
-			productDetails.product_price.discount = discountDetails.discountPrice;
+      productDetails.product_price.discount = discountDetails.discountPrice;
 
       for (let i = 0; i < productDetails.product_review.length; i++) {
         ratingCount = ratingCount + productDetails.product_review[i].ratings;
@@ -340,13 +340,13 @@ export class ProductService {
           {
             product_id: productId,
             actual_price: payload.unitPrice,
-            discount: payload.discountPrice ? payload.discountPrice: null,
-            discount_start_date: payload.discountStartDate ? payload.discountStartDate: null,
-            discount_end_date: payload.discountEndDate ? payload.discountEndDate: null,
-            discount_type: payload.discountType ? payload.discountType: null,
+            discount: payload.discountPrice ? payload.discountPrice : null,
+            discount_start_date: payload.discountStartDate ? payload.discountStartDate : null,
+            discount_end_date: payload.discountEndDate ? payload.discountEndDate : null,
+            discount_type: payload.discountType ? payload.discountType : null,
             refundable: payload.refundable
           },
-          { where:{ product_id: productId } }
+          { where: { product_id: productId } }
         )
 
         return { statusCode: STATUS_CODE.SUCCESS, message: MESSAGES.PRODUCT_UPDATE_SUCCESSFULL }
@@ -455,9 +455,9 @@ export class ProductService {
 
       const discountDetails = this.#calculateDiscountPrice(
         product_price.discount_start_date,
-        product_price.discount_end_date, 
-        product_price.discount, 
-        product_price.actual_price, 
+        product_price.discount_end_date,
+        product_price.discount,
+        product_price.actual_price,
         product_price.discount_type
       );
 

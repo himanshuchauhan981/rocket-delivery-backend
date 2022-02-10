@@ -22,7 +22,7 @@ export class UserProductHistoryController {
   @Get('list')
   @Auth('user')
   @UseInterceptors(TransformInterceptor)
-  async list(@Body(new ValidationPipe()) payload: NewProductHistory, @Req() request) {
+  async list(@Req() request) {
     return await this.productHistoryService.list(request.userId, false);
   }
 

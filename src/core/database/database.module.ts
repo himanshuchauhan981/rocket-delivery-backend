@@ -16,6 +16,7 @@ import { UserPayment } from 'src/modules/payment/user-payment.entity';
 import { ProductReview } from 'src/modules/product-review/product-review.entity';
 import { ProductReviewFile } from 'src/modules/product-review/product-review-file.entity';
 import { Wishlist } from 'src/modules/wishlist/wishlist.entity';
+import { ProductHistory } from 'src/modules/product-history/product-history.entity';
 
 let config;
 switch (process.env.NODE_ENV) {
@@ -51,7 +52,8 @@ const DatabaseModule = [
         UserPayment,
         ProductReview,
         ProductReviewFile,
-        Wishlist
+        Wishlist,
+        ProductHistory
       ],
     }),
   }),
