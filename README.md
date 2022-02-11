@@ -24,49 +24,55 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Rocker Delivery Backend is a backend of the mobile application and admin panel, which is created with the basic idea to allow a customer browse different products and order items.
 
-## Installation
+## Technologies
+- Nest JS (Backend language to create API for admin panel and app)
+- Sequelize (Node JS ORM)
+- PostgreSQL (Relational Database Management System)
+- Nodemailer and Mailgun (Service used for sending email)
+
+## Features
+- Authentication using JSON Web Tokens
+- Password encryption using bcrypt library
+- Payment Gateway Integration
+
+## Setup API Backend and Database
+Setup local dev environment and run the backend.
+
+### Setup local environment
+- Install **PostgresSQL**
+- Create .env file with following data :-
+
+```
+PORT = 3000
+SQL_HOST = 'localhost'
+SQL_USER = 'postgres'
+SQL_PASSWORD = <SQL_PASSWORD>
+SQL_DATABASE = <SQL_DATABASE>
+SQL_DIALECT = 'postgres'
+SQL_LOGGING  = false
+JWT_KEY = 'eyJhbGciOiJIUzI1NiJ9'
+```
+
+### Installation
 
 ```bash
 $ npm install
 ```
 
-## Running the app
+### Running the app
 
 ```bash
-# development
-$ npm run start
 
-# watch mode
+# migrations and seed database 
+$ npm run db:migrate
+$ npm run db:seed
+
+# run your local api backend 
 $ npm run start:dev
 
-# production mode
-$ npm run start:prod
 ```
-
-## Test
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
 
 ## License
 
