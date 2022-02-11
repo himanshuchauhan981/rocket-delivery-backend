@@ -1,8 +1,8 @@
-import { HttpException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, Inject, Injectable } from '@nestjs/common';
 import sequelize from 'sequelize';
 import * as moment from 'moment';
 
-import { CATEGORY_REPOSITORY, MEASURING_UNIT_REPOSITORY, ORDER_REPOSITORY, PRODUCT_PRICE_REPOSITORY, PRODUCT_REPOSITORY, PRODUCT_REVIEW_REPOSITORY, SUB_CATEGORY_REPOSITORY } from 'src/core/constants/repositories';
+import { CATEGORY_REPOSITORY, MEASURING_UNIT_REPOSITORY, ORDER_REPOSITORY, PRODUCT_HISTORY_REPOSITORY, PRODUCT_PRICE_REPOSITORY, PRODUCT_REPOSITORY, PRODUCT_REVIEW_REPOSITORY, SUB_CATEGORY_REPOSITORY } from 'src/core/constants/repositories';
 import { AdminProductList, NewProduct } from '../admin/admin-product/dto/admin-product.dto';
 import { File } from '../admin/file/file.entity';
 import { Category } from '../category/category.entity';
@@ -16,6 +16,7 @@ import { UserCart } from '../user/dto/user.dto';
 import { Order } from '../order/order.entity';
 import { OrderProduct } from '../order/order-product.entity';
 import { ProductReview } from '../product-review/product-review.entity';
+import { ProductHistory } from '../product-history/product-history.entity';
 
 @Injectable()
 export class ProductService {
@@ -26,7 +27,7 @@ export class ProductService {
     @Inject(PRODUCT_PRICE_REPOSITORY) private readonly productPriceRepository: typeof ProductPrice,
     @Inject(MEASURING_UNIT_REPOSITORY) private readonly measuringUnitRepository: typeof MeasuringUnit,
     @Inject(ORDER_REPOSITORY) private readonly orderRepository: typeof Order,
-    @Inject(PRODUCT_REVIEW_REPOSITORY) private readonly productReviewRepository: typeof ProductReview
+    @Inject(PRODUCT_HISTORY_REPOSITORY) private readonly productHistoryRepository: typeof ProductHistory,
   ) {}
 
   #calculateDiscountPrice(
@@ -536,7 +537,7 @@ export class ProductService {
 
   async #mostViewedProducts(user_id: number, most_viewed_history: boolean) {
 		try {
-      let viewedProductDetails = await this.productReviewRepository.findAll({
+      let viewedProductDetails = await this.productHistoryRepository.findAll({
         where: { [sequelize.Op.and]: [{ user_id }, { is_deleted: 0 }] },
         include: [
           {
@@ -544,12 +545,11 @@ export class ProductService {
             attributes: ['id','name'],
             include: [
               { model: ProductPrice, attributes: ['actual_price', 'discount_type', 'discount', 'discount_start_date', 'discount_end_date'] },
-              { model: File, attributes: ['id', 'image'] },
+              { model: File, attributes: ['id', 'url'] },
             ],
           },
         ],
         attributes: ['id', 'view_count'],
-        raw: true,
         order: most_viewed_history ? [['view_count', 'DESC']] : [],
         limit: most_viewed_history ? 4 : null,
       });
