@@ -582,4 +582,47 @@ export class ProductService {
       throw err;
     }
   }
+
+  async discountOffers() {
+    try {
+      const currentDate = moment().format('YYYY-MM-DD HH:mm:ss');
+      const productDetails = await this.productRepository.findAll({
+        where: {},
+        include: [
+          { model: File, attributes: ['id','url'] },
+          {
+            model: ProductPrice,
+            where: {
+              [sequelize.Op.and]: [
+                { discount_start_date: { [sequelize.Op.lt]: currentDate } },
+                { discount_end_date: { [sequelize.Op.gt]: currentDate } },
+              ],
+            },
+            attributes: ['actual_price', 'discount', 'discount_start_date', 'discount_end_date', 'discount_type']
+          }
+        ],
+        attributes: ['id', 'name'],
+        order: [['name', 'ASC']],
+        limit: 5,
+      });
+
+      for(const item of productDetails) {
+        let discountDetails = this.#calculateDiscountPrice(
+          item.product_price.discount_start_date,
+          item.product_price.discount_end_date,
+          item.product_price.discount,
+          item.product_price.actual_price,
+          item.product_price.discount_type
+        );
+
+        item.product_price.discount_price = discountDetails.discountPrice;
+        item.product_price.discount_status = discountDetails.discountStatus;
+      }
+
+      return { statusCode: STATUS_CODE.SUCCESS, message: MESSAGES.SUCCESS, data: { productDetails } };
+    }
+    catch(err) {
+      throw err;
+    }
+  }
 }

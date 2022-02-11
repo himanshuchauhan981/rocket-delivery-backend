@@ -15,19 +15,26 @@ export class UserProductController {
 	@Get('list')
 	@UseInterceptors(TransformInterceptor)
 	async productList(@Query(new ValidationPipe()) query: UserProducts) {
-		return this.productService.list(query.category_id, query.sub_category_id);
+		return await this.productService.list(query.category_id, query.sub_category_id);
 	}
 
 	@Get('offers')
 	@Auth('user')
 	@UseInterceptors(TransformInterceptor)
 	async productOffers(@Req()request) {
-		return this.productService.productOffers(request.userId);
+		return await this.productService.productOffers(request.userId);
 	}
+
+	@Get('discountOffers')
+	@UseInterceptors(TransformInterceptor)
+	async discountOffers() {
+		return await this.productService.discountOffers();
+	}
+
 
 	@Get(':id')
 	@UseInterceptors(TransformInterceptor)
 	async findOneById(@Param(new ValidationPipe()) params: SpecificProduct) {
-		return this.productService.findOneById(params.id);
+		return await this.productService.findOneById(params.id);
 	}
 }
