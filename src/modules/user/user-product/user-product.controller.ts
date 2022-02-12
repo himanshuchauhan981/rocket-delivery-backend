@@ -15,7 +15,7 @@ export class UserProductController {
 	@Get('list')
 	@UseInterceptors(TransformInterceptor)
 	async productList(@Query(new ValidationPipe()) query: UserProducts) {
-		return await this.productService.list(query.category_id, query.sub_category_id);
+		return await this.productService.list(query);
 	}
 
 	@Get('offers')

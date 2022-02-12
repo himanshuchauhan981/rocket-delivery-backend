@@ -63,6 +63,14 @@ export class UserProducts {
 
   @ApiProperty({required: false})
   sub_category_id: number;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  page: number;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  limit: number;
 }
 
 export class SpecificProduct {

@@ -12,7 +12,7 @@ import { Product } from './product.entity';
 import { MESSAGES } from 'src/core/constants/messages';
 import { STATUS_CODE } from 'src/core/constants/status_code';
 import { MeasuringUnit } from '../measuring-unit/measuring-unit.entity';
-import { UserCart } from '../user/dto/user.dto';
+import { UserCart, UserProducts } from '../user/dto/user.dto';
 import { Order } from '../order/order.entity';
 import { OrderProduct } from '../order/order-product.entity';
 import { ProductReview } from '../product-review/product-review.entity';
@@ -376,42 +376,45 @@ export class ProductService {
     }
   }
 
-  async list(categoryId: number, subCategoryId: number) {
+  async list(payload: UserProducts) {
     try {
-      if(subCategoryId) {
-        const subCategoryDetails = await this.subCategoryRepository.findByPk(subCategoryId);
+      payload.page = payload.page * payload.limit;
+      if(payload.sub_category_id) {
+        const subCategoryDetails = await this.subCategoryRepository.findByPk(payload.sub_category_id);
 
         if(!subCategoryDetails) {
           throw new HttpException(MESSAGES.SUB_CATEGORY_NOT_FOUND, STATUS_CODE.NOT_FOUND);
         }
       }
-      else if(categoryId) {
-        const categoryDetails = await this.categoryRepository.findByPk(categoryId);
+      else if(payload.category_id) {
+        const categoryDetails = await this.categoryRepository.findByPk(payload.category_id);
 
         if(!categoryDetails) {
           throw new HttpException(MESSAGES.CATEGORY_NOT_FOUND, STATUS_CODE.NOT_FOUND);
         }
       }
 
-      const products = await this.productRepository.findAll({
-        where: subCategoryId ? { is_active: 1, is_deleted: 0 } : { category_id: categoryId, is_active: 1, is_deleted: 0 },
+      const products = await this.productRepository.findAndCountAll({
+        where: payload.sub_category_id ? { is_active: 1, is_deleted: 0 } : { category_id: payload.category_id, is_active: 1, is_deleted: 0 },
         include: [
           { model: ProductPrice, attributes: ['actual_price', 'discount', 'discount_start_date', 'discount_end_date', 'discount_type'] },
           { model: MeasuringUnit, attributes: ['symbol'] },
           { model: File, attributes: ['id', 'url'] },
-          subCategoryId ? { model: SubCategory, where: { id: subCategoryId }, attributes: [] } : { model: Category, attributes: [] },
+          payload.sub_category_id ? { model: SubCategory, where: { id: payload.sub_category_id }, attributes: [] } : { model: Category, attributes: [] },
         ],
         order: [['name','ASC']],
+        offset: payload.page,
+        limit: payload.limit,
         attributes: [
           'id',
           'name',
           'max_quantity',
           'purchase_limit',
-          subCategoryId ? [sequelize.col('subCategory.name'), 'subCategoryName'] : [sequelize.col('category.name'), 'subCategoryName'],
+          payload.sub_category_id ? [sequelize.col('subCategory.name'), 'subCategoryName'] : [sequelize.col('category.name'), 'subCategoryName'],
         ],
       });
 
-      for(const item of products) {
+      for(const item of products.rows) {
         const productPrice = item.product_price;
 
         const discountDetails = this.#calculateDiscountPrice(
@@ -426,7 +429,7 @@ export class ProductService {
         item.product_price.discount_price = discountDetails.discountPrice;
       }
 
-      return { statusCode: STATUS_CODE.SUCCESS, message: MESSAGES.SUCCESS, data: { products } };
+      return { statusCode: STATUS_CODE.SUCCESS, message: MESSAGES.SUCCESS, data: { products: products.rows, count: products.count } };
     }
     catch(err) {
       throw err;
@@ -566,6 +569,8 @@ export class ProductService {
         item.product.product_price.discount_price = discountDetails.discountPrice;
         item.product.product_price.discount_status = discountDetails.discountStatus;
       }
+
+      return viewedProductDetails;
     } catch (err) {
       throw err;
     }
