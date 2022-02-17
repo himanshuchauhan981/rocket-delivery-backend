@@ -24,7 +24,7 @@ import { AddressService } from '../address/address.service';
     FileModule,
     AdminSubcategoryModule,
     MeasuringUnitModule,
-    AdminOrdersModule
+    AdminOrdersModule,
   ],
   controllers: [AdminController],
   providers: [

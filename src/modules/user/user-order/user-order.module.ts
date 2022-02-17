@@ -8,6 +8,6 @@ import { UserOrderProvider } from './user-order.provider';
 
 @Module({
   controllers: [UserOrderController],
-  providers: [OrderService, PaymentService, FcmService, ...UserOrderProvider]
+  providers: [OrderService, PaymentService, FcmService, ...UserOrderProvider],
 })
 export class UserOrderModule {}

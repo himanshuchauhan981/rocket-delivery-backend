@@ -7,6 +7,10 @@ import { UserProductHistoryProvider } from './user-product-history.provider';
 
 @Module({
   controllers: [UserProductHistoryController],
-  providers: [ProductHistoryService, ProductService, ...UserProductHistoryProvider]
+  providers: [
+    ProductHistoryService,
+    ProductService,
+    ...UserProductHistoryProvider,
+  ],
 })
 export class UserProductHistoryModule {}

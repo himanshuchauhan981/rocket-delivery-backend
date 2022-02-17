@@ -7,7 +7,7 @@ export const MESSAGES = {
   MEASURING_UNIT_NOT_FOUND: 'Invalid measuring unit id',
   CATEGORY_STATUS_UPDATE_SUCCESS: 'Category status updated successfully',
   PRODUCT_ADD_SUCCESSFULL: 'Product added successfully',
-  PRODUCT_UPDATE_SUCCESSFULL :'Product updated successfully',
+  PRODUCT_UPDATE_SUCCESSFULL: 'Product updated successfully',
   PRODUCT_DELETE_SUCCESSFULL: 'Product delete successfully',
   CATEGORY_UPDATE_SUCCESS: 'Category update successfully',
   INVALID_DISCOUNT_DATE: 'Invalid discount start date and end date',
@@ -31,5 +31,5 @@ export const MESSAGES = {
   INVALID_USER_ID: 'Invalid user id',
   WISHLIST_CREATED_SUCCESS: 'Product is added in wishlist',
   EXISTED_USER_WISHLIST: 'Product is already in wishlist',
-  WISHLIST_DELETE_SUCCESS: 'Product is removed from wishlist'
+  WISHLIST_DELETE_SUCCESS: 'Product is removed from wishlist',
 };

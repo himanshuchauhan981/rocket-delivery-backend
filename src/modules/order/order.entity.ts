@@ -1,13 +1,13 @@
 import {
-	Table,
-	Column,
-	Model,
-	DataType,
-	CreatedAt,
-	UpdatedAt,
-	HasMany,
-	ForeignKey,
-	BelongsTo
+  Table,
+  Column,
+  Model,
+  DataType,
+  CreatedAt,
+  UpdatedAt,
+  HasMany,
+  ForeignKey,
+  BelongsTo,
 } from 'sequelize-typescript';
 import { CONSTANTS } from 'src/core/constants/constants';
 
@@ -16,125 +16,135 @@ import { UserPayment } from '../payment/user-payment.entity';
 import { Product } from '../product/product.entity';
 import { User } from '../user/user.entity';
 import { OrderProduct } from './order-product.entity';
-  
+
 @Table({
-	tableName: 'orders',
+  tableName: 'orders',
 })
 export class Order extends Model<Order> {
-	@Column({
-		type: DataType.INTEGER,
-		allowNull: false,
-		autoIncrement: true,
-		primaryKey: true,
-	})
-	id: number;
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+    autoIncrement: true,
+    primaryKey: true,
+  })
+  id: number;
 
-	@Column({
-		type: DataType.STRING,
-		allowNull: false,
-	})
-	order_number: string;
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  order_number: string;
 
-	@Column({
-		type: DataType.INTEGER,
-		allowNull: false,
-	})
-	@ForeignKey(() => User)
-	user_id: number;
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  @ForeignKey(() => User)
+  user_id: number;
 
-	@Column({
-		type: DataType.ENUM,
-		values: [CONSTANTS.REQUESTED, CONSTANTS.CONFIRMED, CONSTANTS.DELIVERED, CONSTANTS.CANCELLED],
-		allowNull: false,
-	})
-	status: string;
+  @Column({
+    type: DataType.ENUM,
+    values: [
+      CONSTANTS.REQUESTED,
+      CONSTANTS.CONFIRMED,
+      CONSTANTS.DELIVERED,
+      CONSTANTS.CANCELLED,
+    ],
+    allowNull: false,
+  })
+  status: string;
 
-	@Column({
-		type: DataType.INTEGER,
-		allowNull: false,
-	})
-	delivery_charges: number;
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  delivery_charges: number;
 
-	@Column({
-		type: DataType.INTEGER,
-		allowNull: false,
-	})
-	payment_method: number;
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  payment_method: number;
 
-	@Column({
-		type: DataType.INTEGER,
-		allowNull: false,
-	})
-	amount: number;
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  amount: number;
 
-	@Column({
-		type: DataType.INTEGER,
-		allowNull: false,
-	})
-	net_amount: number;
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  net_amount: number;
 
-	@Column({
-		type: DataType.INTEGER,
-		allowNull: false,
-	})
-	@ForeignKey(() => Address)
-	user_address: number;
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  @ForeignKey(() => Address)
+  user_address: number;
 
-	@Column({
-		type: DataType.DATE,
-		allowNull: true
-	})
-	delivery_date: string;
-	
-	@Column({
-		type: DataType.INTEGER,
-		allowNull: true,
-	})
-	@ForeignKey(() => UserPayment)
-	user_payment_id: number;
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  delivery_date: string;
 
-	@Column({
-		type: DataType.ENUM,
-		values: [CONSTANTS.PENDING, CONSTANTS.CONFIRMED, CONSTANTS.PICKED, CONSTANTS.ON_THE_WAY, CONSTANTS.DELIVERED],
-		defaultValue: CONSTANTS.PENDING
-	})
-	delivery_status: string;
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: true,
+  })
+  @ForeignKey(() => UserPayment)
+  user_payment_id: number;
 
-	@Column({
-		type: DataType.ENUM,
-		values: [CONSTANTS.PAID, CONSTANTS.UNPAID],
-		defaultValue: CONSTANTS.UNPAID
-	})
-	payment_status: string;
+  @Column({
+    type: DataType.ENUM,
+    values: [
+      CONSTANTS.PENDING,
+      CONSTANTS.CONFIRMED,
+      CONSTANTS.PICKED,
+      CONSTANTS.ON_THE_WAY,
+      CONSTANTS.DELIVERED,
+    ],
+    defaultValue: CONSTANTS.PENDING,
+  })
+  delivery_status: string;
 
-	@CreatedAt
-	created_at: Date;
+  @Column({
+    type: DataType.ENUM,
+    values: [CONSTANTS.PAID, CONSTANTS.UNPAID],
+    defaultValue: CONSTANTS.UNPAID,
+  })
+  payment_status: string;
 
-	@UpdatedAt
-	updated_at: Date;
+  @CreatedAt
+  created_at: Date;
 
-	@HasMany(() => OrderProduct)
-	order_products: OrderProduct;
+  @UpdatedAt
+  updated_at: Date;
 
-	@BelongsTo(() => Address)
-	address: Address;
+  @HasMany(() => OrderProduct)
+  order_products: OrderProduct;
 
-	@BelongsTo(() => UserPayment)
-	payment: UserPayment;
+  @BelongsTo(() => Address)
+  address: Address;
 
-	@Column({
-		type: DataType.VIRTUAL,
-		allowNull: true,
-	})
-	product_id: number;
+  @BelongsTo(() => UserPayment)
+  payment: UserPayment;
 
-	@Column({
-		type: DataType.VIRTUAL,
-		allowNull: true,
-	})
-	product: Product;
+  @Column({
+    type: DataType.VIRTUAL,
+    allowNull: true,
+  })
+  product_id: number;
 
-	@BelongsTo(() => User)
-	user: User;
+  @Column({
+    type: DataType.VIRTUAL,
+    allowNull: true,
+  })
+  product: Product;
+
+  @BelongsTo(() => User)
+  user: User;
 }
-  

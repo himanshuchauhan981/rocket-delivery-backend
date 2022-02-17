@@ -1,8 +1,7 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty } from "class-validator";
+import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty } from 'class-validator';
 
 export class NewReviewFiles {
-
   @ApiProperty()
   @IsNotEmpty()
   url: string;
@@ -13,7 +12,6 @@ export class NewReviewFiles {
 }
 
 export class NewProductReview {
-
   @ApiProperty()
   @IsNotEmpty()
   headline: string;

@@ -25,5 +25,5 @@ export const CategoryProvider = [
   { provide: MEASURING_UNIT_REPOSITORY, useValue: MeasuringUnit },
   { provide: ORDER_REPOSITORY, useValue: Order },
   { provide: PRODUCT_REVIEW_REPOSITORY, useValue: ProductReview },
-  { provide: PRODUCT_HISTORY_REPOSITORY, useValue: ProductHistory }
+  { provide: PRODUCT_HISTORY_REPOSITORY, useValue: ProductHistory },
 ];

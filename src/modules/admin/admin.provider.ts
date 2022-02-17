@@ -31,5 +31,5 @@ export const AdminProvider = [
   { provide: ORDER_REPOSITORY, useValue: Order },
   { provide: PRODUCT_REVIEW_REPOSITORY, useValue: ProductReview },
   { provide: ADDRESS_REPOSITORY, useValue: Address },
-  { provide: PRODUCT_HISTORY_REPOSITORY, useValue: ProductHistory }
+  { provide: PRODUCT_HISTORY_REPOSITORY, useValue: ProductHistory },
 ];

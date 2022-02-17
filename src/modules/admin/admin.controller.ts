@@ -19,7 +19,10 @@ import { AdminLogin } from './dto/admin.dto';
 @Controller('admin')
 @ApiTags('Admin')
 export class AdminController {
-  constructor(private readonly adminService: AdminService, private readonly addressService: AddressService) {}
+  constructor(
+    private readonly adminService: AdminService,
+    private readonly addressService: AddressService,
+  ) {}
 
   @Post('login')
   @UseInterceptors(TransformInterceptor)
@@ -31,7 +34,10 @@ export class AdminController {
   @Put('address/:id')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async updateAddress(@Body(new ValidationPipe()) payload: NewAddress, @Param(new ValidationPipe()) params: AddressId) {
+  async updateAddress(
+    @Body(new ValidationPipe()) payload: NewAddress,
+    @Param(new ValidationPipe()) params: AddressId,
+  ) {
     return await this.addressService.update(payload, params.id);
   }
 }

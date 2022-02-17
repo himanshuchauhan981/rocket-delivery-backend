@@ -9,5 +9,5 @@ export const CONSTANTS = {
   UNPAID: 'UNPAID',
   PENDING: 'PENDING',
   PICKED: 'PICKED',
-  ON_THE_WAY: 'ON_THE_WAY'
-}
+  ON_THE_WAY: 'ON_THE_WAY',
+};

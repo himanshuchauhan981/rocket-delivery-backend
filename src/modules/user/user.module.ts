@@ -16,7 +16,7 @@ import { UserProductHistoryModule } from './user-product-history/user-product-hi
 import { UserWishlistModule } from './user-wishlist/user-wishlist.module';
 
 @Module({
-  imports:[
+  imports: [
     JwtModule.register({ secret: 'eyJhbGciOiJIUzI1NiJ9' }),
     UserProductModule,
     UserAddressModule,
@@ -24,9 +24,15 @@ import { UserWishlistModule } from './user-wishlist/user-wishlist.module';
     UserPaymentModule,
     UserProductReviewModule,
     UserProductHistoryModule,
-    UserWishlistModule
+    UserWishlistModule,
   ],
   controllers: [UserController],
-  providers: [UserService, CommonService, SubCategoryService, ProductService, ...UserProvider]
+  providers: [
+    UserService,
+    CommonService,
+    SubCategoryService,
+    ProductService,
+    ...UserProvider,
+  ],
 })
 export class UserModule {}

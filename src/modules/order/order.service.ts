@@ -4,7 +4,11 @@ import { MESSAGES } from 'src/core/constants/messages';
 import * as moment from 'moment';
 import { v4 as uuidv4 } from 'uuid';
 
-import { ORDER_PRODUCT_REPOSITORY, ORDER_REPOSITORY, PRODUCT_REPOSITORY } from 'src/core/constants/repositories';
+import {
+  ORDER_PRODUCT_REPOSITORY,
+  ORDER_REPOSITORY,
+  PRODUCT_REPOSITORY,
+} from 'src/core/constants/repositories';
 import { STATUS_CODE } from 'src/core/constants/status_code';
 import { File } from '../admin/file/file.entity';
 import { ProductPrice } from '../product/product-price.entity';
@@ -22,293 +26,386 @@ import { FcmService } from 'src/core/utils/fcm.service';
 
 @Injectable()
 export class OrderService {
-	constructor(
-		@Inject(ORDER_REPOSITORY) private readonly orderRepository: typeof Order,
-		@Inject(PRODUCT_REPOSITORY) private readonly productRepository: typeof Product,
-		@Inject(ORDER_PRODUCT_REPOSITORY) private readonly orderProductRepository: typeof OrderProduct,
-		private readonly paymentService: PaymentService,
-		private readonly fcmService: FcmService
-	) {}
+  constructor(
+    @Inject(ORDER_REPOSITORY) private readonly orderRepository: typeof Order,
+    @Inject(PRODUCT_REPOSITORY)
+    private readonly productRepository: typeof Product,
+    @Inject(ORDER_PRODUCT_REPOSITORY)
+    private readonly orderProductRepository: typeof OrderProduct,
+    private readonly paymentService: PaymentService,
+    private readonly fcmService: FcmService,
+  ) {}
 
-	#calculateDiscountPrice(
-		start_date: Date,
-		end_date: Date,
-		discount: number,
-		actual_price: number,
-		discount_type: string
-	) {
-		let currentDate = moment();
-		let discountStartDate = moment(start_date);
-		let discountEndDate = moment(end_date);
-		let discountStatus;
-		let discountPrice;
+  #calculateDiscountPrice(
+    start_date: Date,
+    end_date: Date,
+    discount: number,
+    actual_price: number,
+    discount_type: string,
+  ) {
+    const currentDate = moment();
+    const discountStartDate = moment(start_date);
+    const discountEndDate = moment(end_date);
+    let discountStatus;
+    let discountPrice;
 
-		if (discountStartDate.isAfter(currentDate) && discountEndDate.isAfter(discountStartDate)) {
-			discountStatus = true;
-			if (discount_type == 'FLAT') {
-				discountPrice = actual_price - discount;
-			} else {
-				discountPrice = (discount / 100) * actual_price;
-				discountPrice = actual_price - discountPrice;
-			}
+    if (
+      discountStartDate.isAfter(currentDate) &&
+      discountEndDate.isAfter(discountStartDate)
+    ) {
+      discountStatus = true;
+      if (discount_type == 'FLAT') {
+        discountPrice = actual_price - discount;
+      } else {
+        discountPrice = (discount / 100) * actual_price;
+        discountPrice = actual_price - discountPrice;
+      }
 
-			return {
-				discountPrice,
-				discountStatus,
-			};
-		} else {
-			discountStatus = false;
-			discountPrice = 0;
-			return { discountStatus, discountPrice };
-		}
-	}
+      return {
+        discountPrice,
+        discountStatus,
+      };
+    } else {
+      discountStatus = false;
+      discountPrice = 0;
+      return { discountStatus, discountPrice };
+    }
+  }
 
+  async create(payload: NewOrder, user_id: number) {
+    try {
+      let subTotal = 0;
 
-	async create(payload: NewOrder, user_id: number) {
-		try{
-			let subTotal = 0;
+      const cartItemsId = payload.cart_items.map((item) => item.id);
 
-			let cartItemsId = payload.cart_items.map((item) => item.id);
+      let orderProducts = [];
 
-			let orderProducts = [];
+      const productDetails = await this.productRepository.findAll({
+        where: { id: { [sequelize.Op.in]: cartItemsId } },
+        include: [
+          {
+            model: ProductPrice,
+            attributes: [
+              'actual_price',
+              'discount_start_date',
+              'discount_end_date',
+              'discount',
+              'discount_type',
+            ],
+          },
+          { model: File, attributes: ['id', 'url'] },
+        ],
+      });
 
-			const productDetails = await this.productRepository.findAll({
-				where: { id: { [sequelize.Op.in]: cartItemsId } },
-				include: [
-					{ model: ProductPrice, attributes: ['actual_price', 'discount_start_date', 'discount_end_date', 'discount', 'discount_type'] },
-					{ model: File, attributes: ['id', 'url'] },
-				],
-			});
+      if (productDetails.length !== cartItemsId.length) {
+        throw new HttpException(
+          MESSAGES.INVALID_PRODUCT_ID,
+          STATUS_CODE.NOT_FOUND,
+        );
+      } else {
+        for (const item of productDetails) {
+          const productPrice = item.product_price;
+          let finalProductPrice: number;
 
-			if(productDetails.length !== cartItemsId.length) {
-				throw new HttpException(MESSAGES.INVALID_PRODUCT_ID, STATUS_CODE.NOT_FOUND);
-			}
-			else {
-				for(const item of productDetails) {
-					const productPrice = item.product_price;
-					let finalProductPrice: number;
-					
-					const discountDetails = this.#calculateDiscountPrice(
-						productPrice.discount_start_date,
-						productPrice.discount_end_date,
-						productPrice.discount,
-						productPrice.actual_price,
-						productPrice.discount_type
-					);
-					
-					let cartItemIndex = payload.cart_items.findIndex((cartItem) => cartItem.id == item.id);
-					const cartProductQuantity = payload.cart_items[cartItemIndex].quantity;
+          const discountDetails = this.#calculateDiscountPrice(
+            productPrice.discount_start_date,
+            productPrice.discount_end_date,
+            productPrice.discount,
+            productPrice.actual_price,
+            productPrice.discount_type,
+          );
 
-					if(discountDetails.discountStatus) {
-						finalProductPrice = discountDetails.discountPrice;
-					}
-					else {
-						finalProductPrice = item.product_price.actual_price;
-					}
+          const cartItemIndex = payload.cart_items.findIndex(
+            (cartItem) => cartItem.id == item.id,
+          );
+          const cartProductQuantity =
+            payload.cart_items[cartItemIndex].quantity;
 
-					subTotal = subTotal + (finalProductPrice * cartProductQuantity);
+          if (discountDetails.discountStatus) {
+            finalProductPrice = discountDetails.discountPrice;
+          } else {
+            finalProductPrice = item.product_price.actual_price;
+          }
 
-					orderProducts.push({ product_id: item.id, product_name: item.name, product_image: item.file.url, quantity: cartProductQuantity, price: finalProductPrice });
+          subTotal = subTotal + finalProductPrice * cartProductQuantity;
 
-					if(item.max_quantity < cartProductQuantity) {
-						throw new HttpException(MESSAGES.PRODUCT_QUANTITY_NOT_AVAILABLE, STATUS_CODE.NOT_FOUND);
-					}
-				}
+          orderProducts.push({
+            product_id: item.id,
+            product_name: item.name,
+            product_image: item.file.url,
+            quantity: cartProductQuantity,
+            price: finalProductPrice,
+          });
 
-				if (payload.payment_method == 1) {
-					await this.paymentService.captureOrderPayment(payload.payment_id, subTotal + payload.delivery_charges, payload.payment_order_id);
-				}
+          if (item.max_quantity < cartProductQuantity) {
+            throw new HttpException(
+              MESSAGES.PRODUCT_QUANTITY_NOT_AVAILABLE,
+              STATUS_CODE.NOT_FOUND,
+            );
+          }
+        }
 
-				let newOrder = await this.orderRepository.create<any>({
-					order_number: uuidv4(),
-					status: 'REQUESTED',
-					delivery_charges: 10,
-					payment_method: payload.payment_method,
-					amount: subTotal,
-					net_amount: subTotal + 10,
-					user_address: payload.order_address,
-					user_id,
-					user_payment_id: payload.user_payment_id,
-				});
+        if (payload.payment_method == 1) {
+          await this.paymentService.captureOrderPayment(
+            payload.payment_id,
+            subTotal + payload.delivery_charges,
+            payload.payment_order_id,
+          );
+        }
 
-				orderProducts = orderProducts.map(item => ({...item, order_id: newOrder.id }));
+        const newOrder = await this.orderRepository.create<any>({
+          order_number: uuidv4(),
+          status: 'REQUESTED',
+          delivery_charges: 10,
+          payment_method: payload.payment_method,
+          amount: subTotal,
+          net_amount: subTotal + 10,
+          user_address: payload.order_address,
+          user_id,
+          user_payment_id: payload.user_payment_id,
+        });
 
-				await this.orderProductRepository.bulkCreate(orderProducts);
+        orderProducts = orderProducts.map((item) => ({
+          ...item,
+          order_id: newOrder.id,
+        }));
 
-				let deliveryDate = moment(newOrder.created_at).add(2, 'days').format('YYYY-MM-DD');
+        await this.orderProductRepository.bulkCreate(orderProducts);
 
-				await this.orderRepository.update(
-					{ delivery_date: deliveryDate },
-					{ where:{ id: newOrder.id } }
-				);
+        const deliveryDate = moment(newOrder.created_at)
+          .add(2, 'days')
+          .format('YYYY-MM-DD');
 
-				for(const item of orderProducts) {
-					await this.productRepository.decrement('max_quantity',{ by: item.quantity, where:{ id: item.product_id } })
-				}
-				
-				return { statusCode: STATUS_CODE.SUCCESS, message: MESSAGES.SUCCESS };
-			}
-		}
-		catch(err) {
-			throw err;
-		}
-	}
+        await this.orderRepository.update(
+          { delivery_date: deliveryDate },
+          { where: { id: newOrder.id } },
+        );
 
-	async list(user_id: number) {
-		try {
-			const orderList = await this.orderRepository.findAll({
-				where: { user_id },
-				attributes: ['id', 'order_number', 'payment_method', 'user_address', 'delivery_date', 'created_at', 'status', 'net_amount'],
-				include: [
-					{model: OrderProduct, attributes: ['id', 'product_name', 'product_image']}
-				],
-				order: [['created_at', 'DESC']],
-			});
+        for (const item of orderProducts) {
+          await this.productRepository.decrement('max_quantity', {
+            by: item.quantity,
+            where: { id: item.product_id },
+          });
+        }
 
-			return { statusCode: STATUS_CODE.SUCCESS, message: STATUS_CODE.SUCCESS, data: { orderList } };
-		}
-		catch(err) {
-			throw err;
-		}
-	}
+        return { statusCode: STATUS_CODE.SUCCESS, message: MESSAGES.SUCCESS };
+      }
+    } catch (err) {
+      throw err;
+    }
+  }
 
-	async findOneById(order_id: number) {
-		let orderDetails = await this.orderRepository.findByPk(
-			order_id,
-			{ 
-				include: [
-					{ 
-						model: Address,
-						attributes: [
-							'id',
-							'full_name',
-							'house_no',
-							'area',
-							'city',
-							'state',
-							'landmark',
-							'country_code',
-							'mobile_number',
-							'pincode',
-							'latitude',
-							'longitude',
-							'country_code'
-						]
-					},
-					{ model: OrderProduct, attributes: ['id', 'product_id', 'product_name', 'product_image', 'price', 'quantity'] },
-					{ model: UserPayment, attributes: ['status', 'card_number', 'card_type'] },
-					{ model: User, attributes: ['id', 'name', 'email', 'mobile_number'] }
-				],
-				attributes: [
-					'id',
-					'status',
-					'payment_method',
-					'delivery_charges',
-					'amount',
-					'net_amount',
-					'created_at',
-					'delivery_status',
-					'payment_status',
-					'order_number',
-				]
-			}
-		);
+  async list(user_id: number) {
+    try {
+      const orderList = await this.orderRepository.findAll({
+        where: { user_id },
+        attributes: [
+          'id',
+          'order_number',
+          'payment_method',
+          'user_address',
+          'delivery_date',
+          'created_at',
+          'status',
+          'net_amount',
+        ],
+        include: [
+          {
+            model: OrderProduct,
+            attributes: ['id', 'product_name', 'product_image'],
+          },
+        ],
+        order: [['created_at', 'DESC']],
+      });
 
-		//Product review join
+      return {
+        statusCode: STATUS_CODE.SUCCESS,
+        message: STATUS_CODE.SUCCESS,
+        data: { orderList },
+      };
+    } catch (err) {
+      throw err;
+    }
+  }
 
-		if(!orderDetails) {
-			throw new HttpException(MESSAGES.INVALID_ORDER_ID, STATUS_CODE.NOT_FOUND);
-		}
-		else {
-			return { statusCode: STATUS_CODE.SUCCESS, message: STATUS_CODE.SUCCESS, data: { orderDetails } };
-		}
-	}
-	
-	async cancelOrder(id: number) {
-		const orderDetails = await this.orderRepository.findByPk(id);
+  async findOneById(order_id: number) {
+    const orderDetails = await this.orderRepository.findByPk(order_id, {
+      include: [
+        {
+          model: Address,
+          attributes: [
+            'id',
+            'full_name',
+            'house_no',
+            'area',
+            'city',
+            'state',
+            'landmark',
+            'country_code',
+            'mobile_number',
+            'pincode',
+            'latitude',
+            'longitude',
+            'country_code',
+          ],
+        },
+        {
+          model: OrderProduct,
+          attributes: [
+            'id',
+            'product_id',
+            'product_name',
+            'product_image',
+            'price',
+            'quantity',
+          ],
+        },
+        {
+          model: UserPayment,
+          attributes: ['status', 'card_number', 'card_type'],
+        },
+        { model: User, attributes: ['id', 'name', 'email', 'mobile_number'] },
+      ],
+      attributes: [
+        'id',
+        'status',
+        'payment_method',
+        'delivery_charges',
+        'amount',
+        'net_amount',
+        'created_at',
+        'delivery_status',
+        'payment_status',
+        'order_number',
+      ],
+    });
 
-		if(!orderDetails) {
-			throw new HttpException(MESSAGES.INVALID_ORDER_ID, STATUS_CODE.NOT_FOUND);
-		}
-		else if(orderDetails.status == 'CANCELLED') {
-			throw new HttpException(MESSAGES.ORDER_ALREADY_REFUNDED, STATUS_CODE.BAD_REQUEST);
-		}
-		else {
-			if (orderDetails.payment_method == 1) {
-				await this.paymentService.refundOrderPayment(orderDetails.user_payment_id, orderDetails.net_amount * 100);
-			}
-			await this.orderRepository.update(
-				{ status: 'CANCELLED' },
-				{ where: { id } }
-			);
+    //Product review join
 
-			return { statusCode: STATUS_CODE.SUCCESS, message: MESSAGES.ORDER_CANCELLED_SUCCESS };
-		}
-	}
+    if (!orderDetails) {
+      throw new HttpException(MESSAGES.INVALID_ORDER_ID, STATUS_CODE.NOT_FOUND);
+    } else {
+      return {
+        statusCode: STATUS_CODE.SUCCESS,
+        message: STATUS_CODE.SUCCESS,
+        data: { orderDetails },
+      };
+    }
+  }
 
-	async adminOrderList(query: OrdersList) {
-		try {
-			const pageIndex = query.pageIndex * query.pageSize;
-			const orderDetails = await this.orderRepository.findAndCountAll({
-				where: {},
-				include: [
-					{ model: User, attributes: ['id','name'] },
-					{ model: OrderProduct, attributes: ['id'] },
-				],
-				attributes: ['id', 'order_number', 'status', 'net_amount', 'payment_method', 'created_at', 'payment_status'],
-				offset: pageIndex,
-				order: [['created_at','DESC']],
-				limit: query.pageSize
-			});
+  async cancelOrder(id: number) {
+    const orderDetails = await this.orderRepository.findByPk(id);
 
-			return {
-				statusCode: STATUS_CODE.SUCCESS,
-				message: MESSAGES.SUCCESS,
-				data: { orderDetails: orderDetails.rows, totalOrders: orderDetails.count }
-			};
-		}
-		catch(err) {
-			throw err;
-		}
-	}
+    if (!orderDetails) {
+      throw new HttpException(MESSAGES.INVALID_ORDER_ID, STATUS_CODE.NOT_FOUND);
+    } else if (orderDetails.status == 'CANCELLED') {
+      throw new HttpException(
+        MESSAGES.ORDER_ALREADY_REFUNDED,
+        STATUS_CODE.BAD_REQUEST,
+      );
+    } else {
+      if (orderDetails.payment_method == 1) {
+        await this.paymentService.refundOrderPayment(
+          orderDetails.user_payment_id,
+          orderDetails.net_amount * 100,
+        );
+      }
+      await this.orderRepository.update(
+        { status: 'CANCELLED' },
+        { where: { id } },
+      );
 
-	async updateOrderStatus(payload: UpdateOrder, id: number) {
-		try {
-			const orderUpdateStatus = await this.orderRepository.update(payload,{ where: { id } });
-			const orderDetails = await this.orderRepository.findByPk(
-				id, 
-				{ include:[{ model: User, attributes:['id', 'fcm_token'] }] }
-			);
+      return {
+        statusCode: STATUS_CODE.SUCCESS,
+        message: MESSAGES.ORDER_CANCELLED_SUCCESS,
+      };
+    }
+  }
 
-			const deviceIds = [orderDetails.user.fcm_token];
-			const notificationPayload = {
-				notification: {
-					title: 'Test title',
-					body: 'Test body'
-				}
-			};
+  async adminOrderList(query: OrdersList) {
+    try {
+      const pageIndex = query.pageIndex * query.pageSize;
+      const orderDetails = await this.orderRepository.findAndCountAll({
+        where: {},
+        include: [
+          { model: User, attributes: ['id', 'name'] },
+          { model: OrderProduct, attributes: ['id'] },
+        ],
+        attributes: [
+          'id',
+          'order_number',
+          'status',
+          'net_amount',
+          'payment_method',
+          'created_at',
+          'payment_status',
+        ],
+        offset: pageIndex,
+        order: [['created_at', 'DESC']],
+        limit: query.pageSize,
+      });
 
-			await this.fcmService.sendNotification(deviceIds, notificationPayload, false);
+      return {
+        statusCode: STATUS_CODE.SUCCESS,
+        message: MESSAGES.SUCCESS,
+        data: {
+          orderDetails: orderDetails.rows,
+          totalOrders: orderDetails.count,
+        },
+      };
+    } catch (err) {
+      throw err;
+    }
+  }
 
-			if(orderUpdateStatus[0]) {
-				if(CONSTANTS.ORDER_STATUS in payload) {
-					return {
-						statusCode: STATUS_CODE.SUCCESS,
-						message: payload.status == CONSTANTS.CONFIRMED ?
-							MESSAGES.ORDER_CONFIRMED_SUCCESS: payload.status == CONSTANTS.DELIVERED ?
-								MESSAGES.ORDER_DELIVERED_SUCCESS : MESSAGES.ORDER_CANCELLED_SUCCESS
-					};
-				}
-				else if(CONSTANTS.PAYMENT_STATUS in payload) {
-					return { statusCode: STATUS_CODE.SUCCESS, message: MESSAGES.PAYMENT_STATUS_UPDATE_SUCCESS };
-				}
-			}
-			else {
-				throw new HttpException(MESSAGES.INVALID_ORDER_ID, STATUS_CODE.NOT_FOUND);
-			}
-		}
-		catch(err) {
-			throw err;
-		}
-	}
+  async updateOrderStatus(payload: UpdateOrder, id: number) {
+    try {
+      const orderUpdateStatus = await this.orderRepository.update(payload, {
+        where: { id },
+      });
+      const orderDetails = await this.orderRepository.findByPk(id, {
+        include: [{ model: User, attributes: ['id', 'fcm_token'] }],
+      });
+
+      const deviceIds = [orderDetails.user.fcm_token];
+      const notificationPayload = {
+        notification: {
+          title: 'Test title',
+          body: 'Test body',
+        },
+      };
+
+      await this.fcmService.sendNotification(
+        deviceIds,
+        notificationPayload,
+        false,
+      );
+
+      if (orderUpdateStatus[0]) {
+        if (CONSTANTS.ORDER_STATUS in payload) {
+          return {
+            statusCode: STATUS_CODE.SUCCESS,
+            message:
+              payload.status == CONSTANTS.CONFIRMED
+                ? MESSAGES.ORDER_CONFIRMED_SUCCESS
+                : payload.status == CONSTANTS.DELIVERED
+                ? MESSAGES.ORDER_DELIVERED_SUCCESS
+                : MESSAGES.ORDER_CANCELLED_SUCCESS,
+          };
+        } else if (CONSTANTS.PAYMENT_STATUS in payload) {
+          return {
+            statusCode: STATUS_CODE.SUCCESS,
+            message: MESSAGES.PAYMENT_STATUS_UPDATE_SUCCESS,
+          };
+        }
+      } else {
+        throw new HttpException(
+          MESSAGES.INVALID_ORDER_ID,
+          STATUS_CODE.NOT_FOUND,
+        );
+      }
+    } catch (err) {
+      throw err;
+    }
+  }
 }

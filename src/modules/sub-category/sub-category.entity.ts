@@ -66,5 +66,5 @@ export class SubCategory extends Model<SubCategory> {
   image: File;
 
   @BelongsTo(() => Category)
-  category: Category
+  category: Category;
 }

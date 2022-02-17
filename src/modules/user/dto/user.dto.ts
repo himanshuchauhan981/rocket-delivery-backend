@@ -2,7 +2,7 @@ import { IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class UserSignup {
-	@IsNotEmpty()
+  @IsNotEmpty()
   @ApiProperty()
   name: string;
 
@@ -14,15 +14,15 @@ export class UserSignup {
   @ApiProperty()
   password: string;
 
-	@IsNotEmpty()
+  @IsNotEmpty()
   @ApiProperty()
   country_code: string;
 
-	@IsNotEmpty()
+  @IsNotEmpty()
   @ApiProperty()
   mobile_number: string;
 
-	@IsNotEmpty()
+  @IsNotEmpty()
   @ApiProperty()
   type: string;
 
@@ -58,10 +58,10 @@ export class UserSubCategoryList {
 }
 
 export class UserProducts {
-  @ApiProperty({required: false})
+  @ApiProperty({ required: false })
   category_id: number;
 
-  @ApiProperty({required: false})
+  @ApiProperty({ required: false })
   sub_category_id: number;
 
   @ApiProperty()
@@ -100,15 +100,15 @@ export class UserCart {
 }
 
 export class UpdateProfile {
-  @ApiProperty({required: false})
+  @ApiProperty({ required: false })
   email: string;
 
-  @ApiProperty({required: false})
+  @ApiProperty({ required: false })
   name: string;
 
-  @ApiProperty({required: false})
+  @ApiProperty({ required: false })
   mobile_number: string;
 
-  @ApiProperty({required: false})
+  @ApiProperty({ required: false })
   password: string;
 }

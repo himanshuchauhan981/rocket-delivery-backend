@@ -50,9 +50,12 @@ export class SubCategoryService {
         attributes: ['id', 'name'],
       });
 
-      return {statusCode: STATUS_CODE.SUCCESS, message: MESSAGES.SUCCESS, data: { subCategories } }
-    }
-    catch(err) {
+      return {
+        statusCode: STATUS_CODE.SUCCESS,
+        message: MESSAGES.SUCCESS,
+        data: { subCategories },
+      };
+    } catch (err) {
       throw err;
     }
   }

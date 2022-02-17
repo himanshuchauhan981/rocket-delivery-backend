@@ -6,6 +6,6 @@ import { UserPaymentProvider } from './user-payment.provider';
 
 @Module({
   controllers: [UserPaymentController],
-  providers: [PaymentService, ...UserPaymentProvider]
+  providers: [PaymentService, ...UserPaymentProvider],
 })
 export class UserPaymentModule {}

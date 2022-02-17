@@ -6,7 +6,7 @@ import {
   PRODUCT_PRICE_REPOSITORY,
   PRODUCT_REPOSITORY,
   PRODUCT_REVIEW_REPOSITORY,
-  SUB_CATEGORY_REPOSITORY
+  SUB_CATEGORY_REPOSITORY,
 } from 'src/core/constants/repositories';
 import { Category } from 'src/modules/category/category.entity';
 import { MeasuringUnit } from 'src/modules/measuring-unit/measuring-unit.entity';
@@ -25,5 +25,5 @@ export const AdminProductProvider = [
   { provide: MEASURING_UNIT_REPOSITORY, useValue: MeasuringUnit },
   { provide: ORDER_REPOSITORY, useValue: Order },
   { provide: PRODUCT_REVIEW_REPOSITORY, useValue: ProductReview },
-  { provide: PRODUCT_HISTORY_REPOSITORY, useValue: ProductHistory }
+  { provide: PRODUCT_HISTORY_REPOSITORY, useValue: ProductHistory },
 ];
