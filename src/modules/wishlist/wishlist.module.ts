@@ -4,6 +4,6 @@ import { WishlistProvider } from './wishlist.provider';
 import { WishlistService } from './wishlist.service';
 
 @Module({
-  providers: [WishlistService, ...WishlistProvider]
+  providers: [WishlistService, ...WishlistProvider],
 })
 export class WishlistModule {}

@@ -53,7 +53,7 @@ const DatabaseModule = [
         ProductReview,
         ProductReviewFile,
         Wishlist,
-        ProductHistory
+        ProductHistory,
       ],
     }),
   }),

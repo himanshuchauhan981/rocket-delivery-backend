@@ -6,6 +6,6 @@ import { UserAddressProvider } from './user-address.provider';
 
 @Module({
   controllers: [UserAddressController],
-  providers: [AddressService, ...UserAddressProvider]
+  providers: [AddressService, ...UserAddressProvider],
 })
 export class UserAddressModule {}

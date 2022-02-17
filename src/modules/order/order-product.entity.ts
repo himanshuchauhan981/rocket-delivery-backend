@@ -6,7 +6,6 @@ import {
   CreatedAt,
   UpdatedAt,
   ForeignKey,
-  BelongsTo,
 } from 'sequelize-typescript';
 
 import { Product } from '../product/product.entity';

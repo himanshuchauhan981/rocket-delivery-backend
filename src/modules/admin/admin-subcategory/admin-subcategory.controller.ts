@@ -7,11 +7,13 @@ import { AdminSubcategoryService } from './admin-subcategory.service';
 @ApiTags('Admin sub category')
 @Controller('admin/subcategory')
 export class AdminSubcategoryController {
-  constructor(private readonly adminSubCategoryService: AdminSubcategoryService) {}
+  constructor(
+    private readonly adminSubCategoryService: AdminSubcategoryService,
+  ) {}
 
   @Get('all')
   @Auth('admin')
   async findAll() {
-    return await this.adminSubCategoryService.findAll(); 
+    return await this.adminSubCategoryService.findAll();
   }
 }

@@ -73,7 +73,6 @@ export class NewProduct {
   @ApiProperty()
   @IsNotEmpty()
   refundable: boolean;
-  
 }
 
 export class SpecificProduct {

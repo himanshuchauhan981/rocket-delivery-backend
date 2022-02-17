@@ -2,86 +2,109 @@ import { Inject, Injectable } from '@nestjs/common';
 import * as Razorpay from 'razorpay';
 
 import { MESSAGES } from 'src/core/constants/messages';
-import { USER_PAYMENT_REPOSITORY, USER_REPOSITORY } from 'src/core/constants/repositories';
+import {
+  USER_PAYMENT_REPOSITORY,
+  USER_REPOSITORY,
+} from 'src/core/constants/repositories';
 import { STATUS_CODE } from 'src/core/constants/status_code';
 import { User } from '../user/user.entity';
 import { UserPayment } from './user-payment.entity';
 
 @Injectable()
 export class PaymentService {
-	constructor(
-		@Inject(USER_REPOSITORY) private readonly userRepository: typeof User,
-		@Inject(USER_PAYMENT_REPOSITORY) private readonly userPaymentRepository: typeof UserPayment
-	) {}
-  
-	async generateRazorpayOrder(amount: number, user_id: number) {
-		try{
-			const razorpayInstance = new Razorpay({
-				key_id: process.env.RAZORPAY_KEY,
-				key_secret: process.env.RAZORPAY_SECRET
-			});
+  constructor(
+    @Inject(USER_REPOSITORY) private readonly userRepository: typeof User,
+    @Inject(USER_PAYMENT_REPOSITORY)
+    private readonly userPaymentRepository: typeof UserPayment,
+  ) {}
 
-			let newOrder = await razorpayInstance.orders.create({
-				amount: amount * 100,
-				currency: 'INR',
-			});
+  async generateRazorpayOrder(amount: number, user_id: number) {
+    try {
+      const razorpayInstance = new Razorpay({
+        key_id: process.env.RAZORPAY_KEY,
+        key_secret: process.env.RAZORPAY_SECRET,
+      });
 
-			const newPayment = await this.userPaymentRepository.create<any>({ payment_order_id: newOrder.id, status: 'INITIATED' });
+      const newOrder = await razorpayInstance.orders.create({
+        amount: amount * 100,
+        currency: 'INR',
+      });
 
-			const userDetails = await this.userRepository.findByPk(user_id, { attributes: ['name', 'email', 'mobile_number'] });
+      const newPayment = await this.userPaymentRepository.create<any>({
+        payment_order_id: newOrder.id,
+        status: 'INITIATED',
+      });
 
-			return {
-				statusCode: STATUS_CODE.SUCCESS,
-				data:{ order_id: newOrder.id, new_payment_id: newPayment.id, key: process.env.RAZORPAY_KEY, userDetails },
-				message: MESSAGES.SUCCESS
-			}
-		}
-		catch(err) {
-			throw err;
-		}
-	}
+      const userDetails = await this.userRepository.findByPk(user_id, {
+        attributes: ['name', 'email', 'mobile_number'],
+      });
 
-	async captureOrderPayment(payment_id: string, total_price: number, payment_order_id: string) {
-		total_price = total_price * 100;
+      return {
+        statusCode: STATUS_CODE.SUCCESS,
+        data: {
+          order_id: newOrder.id,
+          new_payment_id: newPayment.id,
+          key: process.env.RAZORPAY_KEY,
+          userDetails,
+        },
+        message: MESSAGES.SUCCESS,
+      };
+    } catch (err) {
+      throw err;
+    }
+  }
 
-		const razorpayInstance = new Razorpay({
-			key_id: process.env.RAZORPAY_KEY,
-			key_secret: process.env.RAZORPAY_SECRET
-		});
+  async captureOrderPayment(
+    payment_id: string,
+    total_price: number,
+    payment_order_id: string,
+  ) {
+    total_price = total_price * 100;
 
-		let paymentResult = await razorpayInstance.payments.capture(
-			payment_order_id,
-			total_price
-		);
+    const razorpayInstance = new Razorpay({
+      key_id: process.env.RAZORPAY_KEY,
+      key_secret: process.env.RAZORPAY_SECRET,
+    });
 
-		const userPaymentData = await this.userPaymentRepository.update(
-			{ status: 'CAPTURED', payment_id, card_number: paymentResult.card.last4, card_type: paymentResult.card.type },
-			{ where: { payment_order_id: payment_id }, returning: true },
-		);
+    const paymentResult = await razorpayInstance.payments.capture(
+      payment_order_id,
+      total_price,
+    );
 
-		return userPaymentData;
-	}
+    const userPaymentData = await this.userPaymentRepository.update(
+      {
+        status: 'CAPTURED',
+        payment_id,
+        card_number: paymentResult.card.last4,
+        card_type: paymentResult.card.type,
+      },
+      { where: { payment_order_id: payment_id }, returning: true },
+    );
 
-	async refundOrderPayment(user_payment_id: number, amount: number) {
-		try {
-			const paymentDetails = await this.userPaymentRepository.findByPk(user_payment_id);
+    return userPaymentData;
+  }
 
-			const razorpayInstance = new Razorpay({
-				key_id: process.env.RAZORPAY_KEY,
-				key_secret: process.env.RAZORPAY_SECRET
-			});
+  async refundOrderPayment(user_payment_id: number, amount: number) {
+    try {
+      const paymentDetails = await this.userPaymentRepository.findByPk(
+        user_payment_id,
+      );
 
-			await razorpayInstance.payments.refund(paymentDetails.payment_id, {
-				amount,
-			});
+      const razorpayInstance = new Razorpay({
+        key_id: process.env.RAZORPAY_KEY,
+        key_secret: process.env.RAZORPAY_SECRET,
+      });
 
-			await this.userPaymentRepository.update(
-				{ status: 'REFUNDED' },
-				{ where: { payment_id: paymentDetails.payment_id } }
-			);
-		}
-		catch(err) {
-			throw err;
-		}
-	}
+      await razorpayInstance.payments.refund(paymentDetails.payment_id, {
+        amount,
+      });
+
+      await this.userPaymentRepository.update(
+        { status: 'REFUNDED' },
+        { where: { payment_id: paymentDetails.payment_id } },
+      );
+    } catch (err) {
+      throw err;
+    }
+  }
 }

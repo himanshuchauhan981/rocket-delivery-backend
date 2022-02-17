@@ -4,7 +4,6 @@ import {
   Injectable,
   NestInterceptor,
 } from '@nestjs/common';
-import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 export interface Response<T> {
@@ -22,14 +21,13 @@ export class TransformInterceptor<T> implements NestInterceptor<T, any> {
 
     return next.handle().pipe(
       map((response) => {
-        if(apiRequest.role == 'admin') {
+        if (apiRequest.role == 'admin') {
           return {
             statusCode: apiResponse.statusCode,
             message: response.message,
             data: response.data,
           };
-        }
-        else {
+        } else {
           return {
             statusCode: apiResponse.statusCode,
             message: response.message,

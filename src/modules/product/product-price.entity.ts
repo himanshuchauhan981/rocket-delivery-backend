@@ -6,7 +6,6 @@ import {
   CreatedAt,
   UpdatedAt,
   ForeignKey,
-  BelongsTo,
 } from 'sequelize-typescript';
 
 import { Product } from './product.entity';
@@ -31,7 +30,7 @@ export class ProductPrice extends Model<ProductPrice> {
   product_id: number;
 
   @Column({
-    type: DataType.DOUBLE(2,2),
+    type: DataType.DOUBLE(2, 2),
     allowNull: false,
   })
   actual_price: number;
@@ -73,12 +72,12 @@ export class ProductPrice extends Model<ProductPrice> {
   updated_at: Date;
 
   @Column({
-    type: DataType.VIRTUAL
+    type: DataType.VIRTUAL,
   })
   discount_status: boolean;
 
   @Column({
-    type: DataType.VIRTUAL
+    type: DataType.VIRTUAL,
   })
   discount_price: number;
 }

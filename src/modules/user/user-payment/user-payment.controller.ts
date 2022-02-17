@@ -1,4 +1,11 @@
-import { Body, Controller, Post, Req, UseInterceptors, ValidationPipe } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  Req,
+  UseInterceptors,
+  ValidationPipe,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
 import { Auth } from 'src/core/decorators/auth.decorator';
@@ -9,12 +16,18 @@ import { NewPaymentOrder } from './dto/payment.dto';
 @Controller('user/payment')
 @ApiTags('User payments')
 export class UserPaymentController {
-	constructor(private readonly paymentService: PaymentService) {}
+  constructor(private readonly paymentService: PaymentService) {}
 
-	@Post('create')
-	@Auth('user')
-	@UseInterceptors(TransformInterceptor)
-	async generateRazorpayOrder(@Body(new ValidationPipe()) payload: NewPaymentOrder, @Req() request) {
-		return this.paymentService.generateRazorpayOrder(payload.amount, request.userId);
-	}
+  @Post('create')
+  @Auth('user')
+  @UseInterceptors(TransformInterceptor)
+  async generateRazorpayOrder(
+    @Body(new ValidationPipe()) payload: NewPaymentOrder,
+    @Req() request,
+  ) {
+    return this.paymentService.generateRazorpayOrder(
+      payload.amount,
+      request.userId,
+    );
+  }
 }

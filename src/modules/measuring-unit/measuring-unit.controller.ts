@@ -8,7 +8,6 @@ import { MeasuringUnitService } from './measuring-unit.service';
 @Controller('admin/measuringUnit')
 @ApiTags('Measuring units')
 export class MeasuringUnitController {
-
   constructor(private measuringUnitService: MeasuringUnitService) {}
 
   @Get('all')

@@ -1,4 +1,14 @@
-import { Body, Controller, Delete, Get, Param, Post, Req, Request, UseInterceptors, ValidationPipe } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Req,
+  UseInterceptors,
+  ValidationPipe,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
 import { Auth } from 'src/core/decorators/auth.decorator';
@@ -21,8 +31,11 @@ export class UserWishlistController {
   @Post('new')
   @Auth('user')
   @UseInterceptors(TransformInterceptor)
-  async create(@Body(new ValidationPipe()) payload: NewWishlistItem, @Req() req) {
-    const data =  await this.wishlistService.create(payload, req.userId);
+  async create(
+    @Body(new ValidationPipe()) payload: NewWishlistItem,
+    @Req() req,
+  ) {
+    const data = await this.wishlistService.create(payload, req.userId);
     console.log(data);
     return data;
   }
@@ -30,7 +43,7 @@ export class UserWishlistController {
   @Delete(':id')
   @Auth('user')
   @UseInterceptors(TransformInterceptor)
-  async delete(@Param(new ValidationPipe()) payload: SpecificWishlistItem, @Req() req) {
+  async delete(@Param(new ValidationPipe()) payload: SpecificWishlistItem) {
     return await this.wishlistService.delete(payload.id);
   }
 }

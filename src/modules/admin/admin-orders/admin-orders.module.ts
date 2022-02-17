@@ -8,6 +8,6 @@ import { AdminOrdersProvider } from './admin-orders.provider';
 
 @Module({
   controllers: [AdminOrdersController],
-  providers: [OrderService, PaymentService, FcmService, ...AdminOrdersProvider]
+  providers: [OrderService, PaymentService, FcmService, ...AdminOrdersProvider],
 })
 export class AdminOrdersModule {}
