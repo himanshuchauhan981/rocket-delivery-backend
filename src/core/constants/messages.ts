@@ -34,4 +34,6 @@ export const MESSAGES = {
   WISHLIST_DELETE_SUCCESS: 'Product is removed from wishlist',
   PRODUCT_REVIEW_SUCCESS: 'Review updated successfully',
   REVIEW_NOT_FOUND: 'Product review not found',
+  FILE_SAVED_SUCCESS: 'Image saved successfully',
+  FILE_DELETED_SUCCESS: 'Image removed successfully',
 };

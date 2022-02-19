@@ -31,7 +31,7 @@ export class CategoryService {
 
       const categories = await this.categoryRepository.findAndCountAll({
         where: { is_deleted: 0 },
-        attributes: ['name', 'is_active', 'id'],
+        attributes: ['name', 'is_active', 'id', 'updated_at'],
         include: [{ model: File, attributes: ['id', 'url'] }],
         order: [['name', 'ASC']],
         offset: pageIndex,

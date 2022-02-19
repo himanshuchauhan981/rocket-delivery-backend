@@ -9,6 +9,9 @@ export class FileList {
   @IsNotEmpty()
   @ApiProperty()
   type: string;
+
+  @ApiProperty({ required: false })
+  name: string;
 }
 
 export class CreateFile {
@@ -27,4 +30,10 @@ export class CreateFile {
   @IsNotEmpty()
   @ApiProperty()
   name: string;
+}
+
+export class SpecificFile {
+  @IsNotEmpty()
+  @ApiProperty()
+  id: number;
 }

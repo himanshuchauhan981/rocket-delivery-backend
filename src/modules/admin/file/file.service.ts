@@ -10,6 +10,7 @@ import {
 import { FILE_REPOSITORY } from 'src/core/constants/repositories';
 import { STATUS_CODE } from 'src/core/constants/status_code';
 import { MESSAGES } from 'src/core/constants/messages';
+import { APIResponse } from 'src/modules/category/dto/category-response.dto';
 
 @Injectable()
 export class FileService {
@@ -18,8 +19,15 @@ export class FileService {
   ) {}
 
   async getAll(query: FileList): Promise<GetAllFilesResponse> {
+    const defaultQuery: any = [{ slug: query.slug }];
+
+    if (query.name) {
+      defaultQuery.push({
+        name: { [sequelize.Op.iLike]: `%${query.name}%` },
+      });
+    }
     const imageList = await this.fileRepository.findAll({
-      where: { [sequelize.Op.and]: [{ slug: query.slug }] },
+      where: { [sequelize.Op.and]: defaultQuery },
       attributes: ['id', 'name', 'url'],
     });
 
@@ -43,6 +51,23 @@ export class FileService {
         statusCode: STATUS_CODE.SUCCESS,
         data: { id: newImage.id, name: payload.name },
         message: MESSAGES.SUCCESS,
+      };
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async delete(id: number): Promise<APIResponse> {
+    try {
+      const deleteFileResponse = await this.fileRepository.destroy({
+        where: { id },
+      });
+
+      console.log(deleteFileResponse);
+
+      return {
+        statusCode: STATUS_CODE.SUCCESS,
+        message: MESSAGES.FILE_DELETED_SUCCESS,
       };
     } catch (err) {
       throw err;
