@@ -2,8 +2,9 @@ import {
   Body,
   Controller,
   Delete,
+  Param,
+  Patch,
   Post,
-  Put,
   Req,
   UseInterceptors,
   ValidationPipe,
@@ -34,14 +35,19 @@ export class UserProductReviewController {
     return await this.productReviewService.create(payload, request.userId);
   }
 
-  @Put('update/:id')
+  @Patch('update/:id')
   @Auth('user')
   @UseInterceptors(TransformInterceptor)
   async update(
     @Body(new ValidationPipe()) payload: UpdateProductReview,
     @Req() request,
+    @Param() params: SpecificProductReview,
   ) {
-    return await this.productReviewService.update(payload, request.userId);
+    return await this.productReviewService.update(
+      payload,
+      request.userId,
+      params.id,
+    );
   }
 
   @Delete(':id')

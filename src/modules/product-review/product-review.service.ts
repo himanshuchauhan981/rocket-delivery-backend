@@ -1,4 +1,5 @@
 import { HttpException, Inject, Injectable } from '@nestjs/common';
+import sequelize from 'sequelize';
 
 import { MESSAGES } from 'src/core/constants/messages';
 import {
@@ -62,38 +63,48 @@ export class ProductReviewService {
     }
   }
 
-  async update(payload: UpdateProductReview, id: number) {
+  async update(payload: UpdateProductReview, user_id: number, id: number) {
     try {
-      await this.productReviewRepository.update(
+      const productImages = [];
+
+      const updateStatus = await this.productReviewRepository.update(
         {
           headline: payload.headline,
           opinion: payload.opinion,
           ratings: payload.ratings,
         },
-        { where: { id } },
+        { where: { [sequelize.Op.and]: [{ id }, { user_id }] } },
       );
 
-      const productImages = [];
+      if (updateStatus[0]) {
+        for (const id of payload.remove_image_id) {
+          await this.productReviewFileRepository.destroy({
+            where: { id },
+          });
+        }
 
-      for (let i = 0; i < payload.remove_image_id.length; i++) {
-        await this.productReviewFileRepository.update(
-          { is_deleted: 1 },
-          { where: { id: payload.remove_image_id[i] } },
-        );
-      }
-
-      payload.review_images.forEach((item) => {
-        productImages.push({
-          image: item.url,
-          review_id: id,
+        payload.review_images.forEach((item) => {
+          productImages.push({
+            image: item.url,
+            review_id: id,
+          });
         });
-      });
-      if (productImages.length !== 0) {
-        await this.productReviewFileRepository.bulkCreate(productImages);
-      }
 
-      return { statusCode: STATUS_CODE.SUCCESS, message: MESSAGES.SUCCESS };
+        if (productImages.length !== 0) {
+          await this.productReviewFileRepository.bulkCreate(productImages);
+        }
+
+        return {
+          statusCode: STATUS_CODE.SUCCESS,
+          message: MESSAGES.PRODUCT_REVIEW_SUCCESS,
+        };
+      }
+      return {
+        statusCode: STATUS_CODE.NOT_FOUND,
+        message: MESSAGES.REVIEW_NOT_FOUND,
+      };
     } catch (err) {
+      console.log('>>>Errr', err);
       throw err;
     }
   }

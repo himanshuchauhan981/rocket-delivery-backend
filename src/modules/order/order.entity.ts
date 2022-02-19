@@ -13,6 +13,7 @@ import { CONSTANTS } from 'src/core/constants/constants';
 
 import { Address } from '../address/address.entity';
 import { UserPayment } from '../payment/user-payment.entity';
+import { ProductReview } from '../product-review/product-review.entity';
 import { Product } from '../product/product.entity';
 import { User } from '../user/user.entity';
 import { OrderProduct } from './order-product.entity';
@@ -147,4 +148,7 @@ export class Order extends Model<Order> {
 
   @BelongsTo(() => User)
   user: User;
+
+  @HasMany(() => ProductReview)
+  product_review: ProductReview[];
 }

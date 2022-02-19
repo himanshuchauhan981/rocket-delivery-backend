@@ -23,6 +23,8 @@ import { User } from '../user/user.entity';
 import { OrdersList } from '../admin/admin-orders/dto/admin-orders.entity';
 import { CONSTANTS } from 'src/core/constants/constants';
 import { FcmService } from 'src/core/utils/fcm.service';
+import { ProductReview } from '../product-review/product-review.entity';
+import { ProductReviewFile } from '../product-review/product-review-file.entity';
 
 @Injectable()
 export class OrderService {
@@ -265,6 +267,13 @@ export class OrderService {
           attributes: ['status', 'card_number', 'card_type'],
         },
         { model: User, attributes: ['id', 'name', 'email', 'mobile_number'] },
+        {
+          model: ProductReview,
+          where: { [sequelize.Op.and]: [{ order_id }, { is_deleted: 0 }] },
+          attributes: ['id', 'headline', 'opinion', 'ratings', 'product_id'],
+          required: false,
+          include: [{ model: ProductReviewFile, attributes: ['id', 'url'] }],
+        },
       ],
       attributes: [
         'id',
@@ -279,8 +288,6 @@ export class OrderService {
         'order_number',
       ],
     });
-
-    //Product review join
 
     if (!orderDetails) {
       throw new HttpException(MESSAGES.INVALID_ORDER_ID, STATUS_CODE.NOT_FOUND);
