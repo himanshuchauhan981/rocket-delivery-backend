@@ -7,8 +7,12 @@ import {
   UpdatedAt,
   ForeignKey,
   BelongsTo,
+  HasMany,
 } from 'sequelize-typescript';
+
+import { Order } from '../order/order.entity';
 import { Product } from '../product/product.entity';
+import { ProductReviewFile } from './product-review-file.entity';
 
 @Table({
   tableName: 'product_review',
@@ -57,6 +61,7 @@ export class ProductReview extends Model<ProductReview> {
     type: DataType.INTEGER,
     allowNull: false,
   })
+  @ForeignKey(() => Order)
   order_id: number;
 
   @Column({
@@ -73,4 +78,7 @@ export class ProductReview extends Model<ProductReview> {
 
   @BelongsTo(() => Product)
   product: Product;
+
+  @HasMany(() => ProductReviewFile)
+  review_images: ProductReviewFile[];
 }

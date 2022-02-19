@@ -5,7 +5,9 @@ import {
   DataType,
   CreatedAt,
   UpdatedAt,
+  ForeignKey,
 } from 'sequelize-typescript';
+import { ProductReview } from './product-review.entity';
 
 @Table({
   tableName: 'product_review_file',
@@ -35,6 +37,7 @@ export class ProductReviewFile extends Model<ProductReviewFile> {
     type: DataType.INTEGER,
     allowNull: false,
   })
+  @ForeignKey(() => ProductReview)
   review_id: number;
 
   @Column({
