@@ -7,10 +7,12 @@ import {
   ForeignKey,
   BelongsTo,
   UpdatedAt,
+  HasMany,
 } from 'sequelize-typescript';
 
 import { Category } from '../category/category.entity';
 import { File } from '../admin/file/file.entity';
+import { Product } from '../product/product.entity';
 
 @Table({
   tableName: 'sub_categories',
@@ -67,4 +69,7 @@ export class SubCategory extends Model<SubCategory> {
 
   @BelongsTo(() => Category)
   category: Category;
+
+  @HasMany(() => Product)
+  products: Product;
 }
