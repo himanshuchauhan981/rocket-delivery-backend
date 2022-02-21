@@ -17,11 +17,10 @@ module.exports = {
       { restartIdentity: true, truncate: true },
     );
 
-    await queryInterface.bulkDelete('categories', {});
+    await queryInterface.bulkDelete('categories',{}, { restartIdentity: true, truncate: true, cascade: true });
 
     const category_list = [
       {
-        id: 1,
         is_active: 1,
         name: 'Fruits & Vegetables',
         is_sub_category: 1,
@@ -29,7 +28,6 @@ module.exports = {
           'https://www.lalpathlabs.com/blog/wp-content/uploads/2019/01/Fruits-and-Vegetables.jpg',
       },
       {
-        id: 2,
         is_active: 1,
         name: 'Non Veg',
         is_sub_category: 0,
@@ -37,7 +35,6 @@ module.exports = {
           'https://indialovesbest.in/wp-content/uploads/2021/03/How-to-Store-Raw-Chicken-in-Fridge-scaled.jpg',
       },
       {
-        id: 3,
         is_active: 1,
         name: 'Milk & Dairy',
         is_sub_category: 1,
@@ -45,7 +42,6 @@ module.exports = {
           'https://domf5oio6qrcr.cloudfront.net/medialibrary/9685/iStock-544807136.jpg',
       },
       {
-        id: 4,
         is_active: 1,
         name: 'Spices',
         is_sub_category: 0,
@@ -53,7 +49,6 @@ module.exports = {
           'https://www.homestratosphere.com/wp-content/uploads/2019/04/Different-types-of-spices-of-the-table-apr18.jpg',
       },
       {
-        id: 5,
         is_active: 1,
         name: 'Beverages',
         is_sub_category: 0,
@@ -61,7 +56,6 @@ module.exports = {
           'https://c.ndtvimg.com/2021-02/e2uarbeo_juice-_625x300_25_February_21.jpg',
       },
       {
-        id: 6,
         is_active: 1,
         name: 'House hold',
         is_sub_category: 1,
@@ -69,7 +63,6 @@ module.exports = {
           'https://cached.imagescaler.hbpl.co.uk/resize/scaleWidth/743/cached.offlinehbpl.hbpl.co.uk/news/OMC/988EAC9D-00F5-EEE9-6A89B0F36DBAF81C.jpg',
       },
       {
-        id: 7,
         is_active: 0,
         name: 'Instant food',
         is_sub_category: 0,
@@ -94,7 +87,6 @@ module.exports = {
 
       await queryInterface.bulkInsert('categories', [
         {
-          id: item.id,
           name: item.name,
           image_id: new_image[0].id,
           is_sub_category: item.is_sub_category,
