@@ -7,7 +7,7 @@ import { STATUS_CODE } from 'src/core/constants/status_code';
 import { Product } from 'src/modules/product/product.entity';
 import { SubCategory } from 'src/modules/sub-category/sub-category.entity';
 import { File } from '../file/file.entity';
-import { SubCategoryList } from './dto/admin-subcategory.dto';
+import { SubCategoryList, SubmitSubCategory } from './dto/admin-subcategory.dto';
 
 @Injectable()
 export class AdminSubcategoryService {
@@ -33,13 +33,30 @@ export class AdminSubcategoryService {
     }
   }
 
+  async findOneById(id: number) {
+    try {
+      const subCategory = await this.subCategoryRepository.findByPk(
+        id,
+        { include: [ {model: File, attributes: ['id', 'url', 'name'] }], attributes: ['id', 'name'] }
+      );
+
+      return {
+        statusCode: STATUS_CODE.SUCCESS,
+        message: MESSAGES.SUCCESS,
+        data: { subCategory },
+      };
+    } catch (err) {
+      throw err;
+    }
+  }
+
   async findAllByCategoryId(query: SubCategoryList) {
     try {
       const defaultQuery = { [sequelize.Op.and]: [{ is_deleted: 0 }, { category_id: query.categoryId }] };
       const subCategoryList = await this.subCategoryRepository.findAll({
         where: defaultQuery,
         include: [
-          { model: File, attributes: ['id', 'url'] },
+          { model: File, attributes: ['id', 'url', 'name'] },
           { model: Product, attributes: [] },
         ],
         attributes: [
@@ -61,6 +78,31 @@ export class AdminSubcategoryService {
         statusCode: STATUS_CODE.SUCCESS,
         message: MESSAGES.SUCCESS,
         data : { subCategoryList: subCategoryList, count }
+      }
+    }
+    catch (err) {
+      throw err;
+    }
+  }
+
+  async update(payload: SubmitSubCategory, id: number) {
+    try {
+      const subCategoryDetails = await this.subCategoryRepository.findByPk(id);
+
+      if (subCategoryDetails) {
+        await this.subCategoryRepository.update(payload, {
+          where: { id: id },
+        });
+
+        return {
+          statusCode: STATUS_CODE.SUCCESS,
+          message: MESSAGES.SUB_CATEGORY_UPDATE_SUCCESS,
+        };
+      } else {
+        return {
+          statusCode: STATUS_CODE.NOT_FOUND,
+          message: MESSAGES.INVALID_SUB_CATEGORY,
+        };
       }
     }
     catch (err) {

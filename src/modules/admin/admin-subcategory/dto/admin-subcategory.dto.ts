@@ -15,3 +15,18 @@ export class SubCategoryList {
   categoryId: number;
 }
 
+export class SubmitSubCategory {
+  @IsNotEmpty()
+  @ApiProperty()
+  image_id: number;
+
+  @IsNotEmpty()
+  @ApiProperty()
+  name: string;
+}
+
+export class SubCategoryId {
+  @IsNotEmpty()
+  @ApiProperty()
+  id: number;
+}
