@@ -39,19 +39,19 @@ export class Category extends Model<Category> {
 
   @Column({
     type: DataType.INTEGER,
-    allowNull: false,
+    defaultValue: 0,
   })
   is_sub_category: number;
 
   @Column({
-    type: DataType.BIGINT,
-    allowNull: false,
+    type: DataType.INTEGER,
+    defaultValue: 0,
   })
   is_active: number;
 
   @Column({
-    type: DataType.BIGINT,
-    allowNull: false,
+    type: DataType.INTEGER,
+    defaultValue: 0,
   })
   is_deleted: number;
 

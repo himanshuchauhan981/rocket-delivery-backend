@@ -1,7 +1,7 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { HttpException, Inject, Injectable } from '@nestjs/common';
 import sequelize from 'sequelize';
-import { MESSAGES } from 'src/core/constants/messages';
 
+import { MESSAGES } from 'src/core/constants/messages';
 import { CATEGORY_REPOSITORY } from 'src/core/constants/repositories';
 import { STATUS_CODE } from 'src/core/constants/status_code';
 import { File } from '../admin/file/file.entity';
@@ -14,7 +14,7 @@ import {
   CategoriesListResponse,
   SpecificCategoryResponse,
 } from './dto/category-response.dto';
-import { UpdateCategory } from '../admin/admin-category/dto/admin-category.dto';
+import { SubmitCategory } from '../admin/admin-category/dto/admin-category.dto';
 
 @Injectable()
 export class CategoryService {
@@ -139,7 +139,7 @@ export class CategoryService {
   }
 
   async update(
-    payload: UpdateCategory,
+    payload: SubmitCategory,
     categoryId: number,
   ): Promise<APIResponse> {
     try {
@@ -163,6 +163,30 @@ export class CategoryService {
         };
       }
     } catch (err) {
+      throw err;
+    }
+  }
+
+  async create(payload: SubmitCategory) {
+    try {
+      const existingCategory = await this.categoryRepository.findOne({
+        where: {name: payload.name }
+      });
+
+      if(existingCategory) {
+        throw new HttpException(MESSAGES.CATEGORY_ADD_SUCCESS, STATUS_CODE.SUCCESS);
+      }
+      else {
+        await this.categoryRepository.create<any>({
+          name: payload.name,
+          image_id: payload.image_id,
+        });
+
+        return { statusCode: STATUS_CODE.SUCCESS, message: MESSAGES.CATEGORY_EXISTED };
+      }
+    }
+    catch(err) {
+      console.log(err);
       throw err;
     }
   }

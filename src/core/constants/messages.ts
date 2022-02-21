@@ -36,4 +36,8 @@ export const MESSAGES = {
   REVIEW_NOT_FOUND: 'Product review not found',
   FILE_SAVED_SUCCESS: 'Image saved successfully',
   FILE_DELETED_SUCCESS: 'Image removed successfully',
+  CATEGORY_ADD_SUCCESS : 'Category added successfully',
+  CATEGORY_EXISTED: 'Category already existed',
+  SUB_CATEGORY_UPDATE_SUCCESS: 'Sub Category update successfully',
+  INVALID_SUB_CATEGORY: 'Invalid sub category'
 };

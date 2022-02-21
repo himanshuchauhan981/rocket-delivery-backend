@@ -4,14 +4,15 @@ import {
   Delete,
   Get,
   Param,
+  Post,
   Put,
   Query,
   UseInterceptors,
   ValidationPipe,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { Auth } from 'src/core/decorators/auth.decorator';
 
+import { Auth } from 'src/core/decorators/auth.decorator';
 import { TransformInterceptor } from 'src/core/interceptors/transform.interceptor';
 import { CategoryService } from 'src/modules/category/category.service';
 import {
@@ -24,13 +25,20 @@ import {
   CategoryIdList,
   CategoryList,
   CategoryStatus,
-  UpdateCategory,
+  SubmitCategory,
 } from './dto/admin-category.dto';
 
 @Controller('admin/category')
 @ApiTags('Admin Categories')
 export class AdminCategoryController {
   constructor(private readonly categoryService: CategoryService) {}
+
+  @Post('')
+  @Auth('admin')
+  @UseInterceptors(TransformInterceptor)
+  async create(@Body(new ValidationPipe()) payload: SubmitCategory) {
+    return await this.categoryService.create(payload);
+  }
 
   @Get('list')
   @Auth('admin')
@@ -52,7 +60,7 @@ export class AdminCategoryController {
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
   async update(
-    @Body(new ValidationPipe()) payload: UpdateCategory,
+    @Body(new ValidationPipe()) payload: SubmitCategory,
     @Param(new ValidationPipe()) params: CategoryId,
   ) {
     return await this.categoryService.update(payload, params.id);

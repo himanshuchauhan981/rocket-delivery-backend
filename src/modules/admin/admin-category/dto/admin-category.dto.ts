@@ -30,7 +30,7 @@ export class CategoryIdList {
   categoryIds: number[];
 }
 
-export class UpdateCategory {
+export class SubmitCategory {
   @IsNotEmpty()
   @ApiProperty()
   image_id: number;
