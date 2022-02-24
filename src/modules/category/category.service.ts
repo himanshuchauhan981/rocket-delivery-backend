@@ -56,8 +56,19 @@ export class CategoryService {
     }
   }
 
-  async findById(id: number) {
-    return await this.categoryRepository.findByPk(id);
+  async findById(id: number): Promise<Category> {
+    try {
+      const categoryDetails = await this.categoryRepository.findByPk<Category>(id);
+
+      if(!categoryDetails) {
+        throw new HttpException(MESSAGES.CATEGORY_NOT_FOUND, STATUS_CODE.NOT_FOUND);
+      }
+
+      return categoryDetails;
+    }
+    catch (err) {
+      throw err;
+    }
   }
 
   async statusUpdate(
@@ -65,23 +76,19 @@ export class CategoryService {
     category_id: number,
   ): Promise<APIResponse> {
     try {
-      const categoryDetails = await this.findById(category_id);
+      const response = await this.categoryRepository.update(
+        { is_active: status },
+        { where: { id: category_id } },
+      );
 
-      if (categoryDetails) {
-        await this.categoryRepository.update(
-          { is_active: status },
-          { where: { id: category_id } },
-        );
-
+      if(response[0]) {
         return {
           statusCode: STATUS_CODE.SUCCESS,
           message: MESSAGES.CATEGORY_STATUS_UPDATE_SUCCESS,
         };
-      } else {
-        return {
-          statusCode: STATUS_CODE.BAD_REQUEST,
-          message: MESSAGES.CATEGORY_NOT_FOUND,
-        };
+      }
+      else {
+        throw new HttpException(MESSAGES.CATEGORY_NOT_FOUND,STATUS_CODE.BAD_REQUEST);
       }
     } catch (err) {
       throw err;
@@ -107,7 +114,7 @@ export class CategoryService {
 
           return {
             statusCode: STATUS_CODE.SUCCESS,
-            message: MESSAGES.PRODUCT_DELETE_SUCCESSFULL,
+            message: MESSAGES.CATEGORY_DELETED_SUCCESS,
           };
         }
       } else {

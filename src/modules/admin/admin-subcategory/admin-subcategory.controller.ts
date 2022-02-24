@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Query, UseInterceptors, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Query, UseInterceptors, ValidationPipe } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
 import { Auth } from 'src/core/decorators/auth.decorator';
@@ -42,5 +42,14 @@ export class AdminSubcategoryController {
     @Param(new ValidationPipe()) params: SubCategoryId,
   ) {
     return await this.adminSubCategoryService.update(payload, params.id);
+  }
+
+  @Delete(':id')
+  @Auth('admin')
+  @UseInterceptors(TransformInterceptor)
+  async delete(
+    @Param(new ValidationPipe()) params: SubCategoryId,
+  ) {
+    return await this.adminSubCategoryService.delete(params.id);
   }
 }

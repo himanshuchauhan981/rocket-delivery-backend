@@ -1,8 +1,8 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { HttpException, Inject, Injectable } from '@nestjs/common';
 import sequelize from 'sequelize';
-import { MESSAGES } from 'src/core/constants/messages';
 
-import { SUB_CATEGORY_REPOSITORY } from 'src/core/constants/repositories';
+import { MESSAGES } from 'src/core/constants/messages';
+import { PRODUCT_REPOSITORY, SUB_CATEGORY_REPOSITORY } from 'src/core/constants/repositories';
 import { STATUS_CODE } from 'src/core/constants/status_code';
 import { Product } from 'src/modules/product/product.entity';
 import { SubCategory } from 'src/modules/sub-category/sub-category.entity';
@@ -14,6 +14,8 @@ export class AdminSubcategoryService {
   constructor(
     @Inject(SUB_CATEGORY_REPOSITORY)
     private readonly subCategoryRepository: typeof SubCategory,
+    @Inject(PRODUCT_REPOSITORY)
+    private readonly productRepository: typeof Product,
   ) {}
 
   async findAll() {
@@ -106,6 +108,32 @@ export class AdminSubcategoryService {
       }
     }
     catch (err) {
+      throw err;
+    }
+  }
+
+  async delete(id: number) {
+    try {
+      const response = await this.subCategoryRepository.update(
+        { is_deleted: 1, is_active: 0 },
+        { where: { id } },
+      );
+
+      if(!response[0]) {
+        throw new HttpException(MESSAGES.SUB_CATEGORY_NOT_FOUND, STATUS_CODE.NOT_FOUND);
+      }
+
+      await this.productRepository.update(
+        { is_deleted: 1, is_active: 0 },
+        { where: { category_id: id } },
+      );
+
+      return {
+        statusCode: STATUS_CODE.SUCCESS,
+        message: MESSAGES.SUB_CATEGORY_UPDATE_SUCCESS,
+      };
+    }
+    catch(err) {
       throw err;
     }
   }
