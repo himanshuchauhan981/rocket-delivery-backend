@@ -1,18 +1,8 @@
-'use strict';
+// 'use strict';
+// import faker from 'faker';
+const faker = require('@faker-js/faker').default;
 
 module.exports = {
-  randomWords(limit) {
-    let possibleWords =
-      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-
-    let text = '';
-    for (var i = 0; i < limit; i++) {
-      text += possibleWords.charAt(
-        Math.floor(Math.random() * possibleWords.length),
-      );
-    }
-    return text;
-  },
 
   randomNumber(min, max) {
     return Math.floor(Math.random() * (max - min) + min);
@@ -28,7 +18,6 @@ module.exports = {
      *   isBetaMember: false
      * }], {});
      */
-
     await queryInterface.bulkDelete(
       'product_review_file',
       {},
@@ -59,8 +48,8 @@ module.exports = {
           'product_review',
           [
             {
-              headline: this.randomWords(this.randomNumber(5, 40)),
-              opinion: this.randomWords(this.randomNumber(5, 40)),
+              headline: faker.random.words(this.randomNumber(3, 8)),
+              opinion: faker.random.words(this.randomNumber(5, 50)),
               user_id: item.user_id,
               product_id: orderProductItem.product_id,
               ratings: this.randomNumber(0, 5),
@@ -70,7 +59,7 @@ module.exports = {
           { returning: true },
         );
 
-        const totalProductReviewImages = this.randomNumber(0, 3);
+        const totalProductReviewImages = this.randomNumber(1, 5);
 
         for (let i = 0; i < totalProductReviewImages; i++) {
           await queryInterface.bulkInsert('product_review_file', [
