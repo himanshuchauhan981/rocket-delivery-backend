@@ -332,8 +332,26 @@ export class OrderService {
   async adminOrderList(query: OrdersList) {
     try {
       const pageIndex = query.pageIndex * query.pageSize;
+      const defaultQuery = [];
+
+      if(query.startDate !== '' && query.endDate !== '') {
+        defaultQuery.push({
+          created_at: { [sequelize.Op.lte]: query.endDate, [sequelize.Op.gte]: query.startDate }
+        });
+      }
+      else if(query.paymentStatus !== '') {
+        defaultQuery.push({
+          payment_status: query.paymentStatus,
+        });
+      }
+      else if(query.orderNumber !== '') {
+        defaultQuery.push({
+          order_number: { [sequelize.Op.iLike]: '%' + query.orderNumber + '%' }
+        });
+      }
+
       const orderDetails = await this.orderRepository.findAndCountAll({
-        where: {},
+        where: { [sequelize.Op.and]: defaultQuery },
         include: [
           { model: User, attributes: ['id', 'name'] },
           { model: OrderProduct, attributes: ['id'] },
@@ -350,6 +368,7 @@ export class OrderService {
         offset: pageIndex,
         order: [['created_at', 'DESC']],
         limit: query.pageSize,
+        distinct: true,
       });
 
       return {
