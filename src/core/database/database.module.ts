@@ -26,7 +26,7 @@ switch (process.env.NODE_ENV) {
   case 'test':
     config = databaseConfig.test;
     break;
-  case 'staging':
+  case 'production':
     config = databaseConfig.production;
     break;
   default:

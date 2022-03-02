@@ -1,4 +1,5 @@
 'use strict';
+const { v4: uuidv4 } = require('uuid');
 
 
 module.exports = {
@@ -35,6 +36,7 @@ module.exports = {
         const orderDate = this.randomDate(new Date(2022, 0, 1), new Date())
         
         const orderDetails = await queryInterface.bulkInsert('orders',[{
+          order_number: uuidv4(),
           user_id: userItem.id,
           status: 'REQUESTED',
           delivery_charges: 10,
