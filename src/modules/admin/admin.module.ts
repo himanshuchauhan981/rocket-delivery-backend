@@ -15,6 +15,7 @@ import { AdminSubcategoryModule } from './admin-subcategory/admin-subcategory.mo
 import { MeasuringUnitModule } from '../measuring-unit/measuring-unit.module';
 import { AdminOrdersModule } from './admin-orders/admin-orders.module';
 import { AddressService } from '../address/address.service';
+import { AdminUsersModule } from './admin-users/admin-users.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { AddressService } from '../address/address.service';
     AdminSubcategoryModule,
     MeasuringUnitModule,
     AdminOrdersModule,
+    AdminUsersModule,
   ],
   controllers: [AdminController],
   providers: [

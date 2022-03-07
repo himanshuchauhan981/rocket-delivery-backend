@@ -1,5 +1,5 @@
 import { HttpException, Inject, Injectable } from '@nestjs/common';
-import sequelize from 'sequelize';
+import sequelize, { where } from 'sequelize';
 import { MESSAGES } from 'src/core/constants/messages';
 
 import {
@@ -7,6 +7,7 @@ import {
   USER_REPOSITORY,
 } from 'src/core/constants/repositories';
 import { STATUS_CODE } from 'src/core/constants/status_code';
+import { UsersList } from '../admin/admin-users/dto/admin-users.entity';
 import { File } from '../admin/file/file.entity';
 import { Category } from '../category/category.entity';
 import { CommonService } from '../common/common.service';
@@ -207,6 +208,28 @@ export class UserService {
         message: MESSAGES.USER_PROFILE_UPDATE_SUCCESS,
       };
     } catch (err) {
+      throw err;
+    }
+  }
+
+  async listUsers(payload: UsersList) {
+    try {
+      const pageIndex = payload.pageIndex * payload.pageSize;
+
+      const userList = await this.userRepository.findAndCountAll({
+        where: { is_deleted: 0 },
+        attributes: ['id', 'name', 'email', 'created_at', 'mobile_number', 'is_active', 'profile_image'],
+        offset: pageIndex,
+        limit: payload.pageSize,
+      });
+
+      return {
+        statusCode: STATUS_CODE.SUCCESS,
+        message: MESSAGES.SUCCESS,
+        data: { userList: userList.rows, count: userList.count }
+      };
+    }
+    catch(err) {
       throw err;
     }
   }
