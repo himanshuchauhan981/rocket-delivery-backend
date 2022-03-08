@@ -1,5 +1,5 @@
 import { HttpException, Inject, Injectable } from '@nestjs/common';
-import sequelize, { where } from 'sequelize';
+import sequelize from 'sequelize';
 import { MESSAGES } from 'src/core/constants/messages';
 
 import {
@@ -216,9 +216,20 @@ export class UserService {
     try {
       const pageIndex = payload.pageIndex * payload.pageSize;
 
+      const query: any = [{ is_deleted: 0 }];
+      if(payload.search && payload.search !== '') {
+        query.push({
+          [sequelize.Op.or]: [
+            { name: { [sequelize.Op.iLike]: `%${payload.search}%` } },
+            { email: { [sequelize.Op.iLike]: `%${payload.search}%` } },
+          ]
+        });
+      }
+
       const userList = await this.userRepository.findAndCountAll({
-        where: { is_deleted: 0 },
+        where: { [sequelize.Op.and]: query },
         attributes: ['id', 'name', 'email', 'created_at', 'mobile_number', 'is_active', 'profile_image'],
+        order: [[payload.sortColumn, payload.sortBy]],
         offset: pageIndex,
         limit: payload.pageSize,
       });

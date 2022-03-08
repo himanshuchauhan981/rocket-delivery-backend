@@ -9,4 +9,15 @@ export class UsersList {
   @IsNotEmpty()
   @ApiProperty()
   pageSize: number;
+
+  @ApiProperty({ required: false })
+  search: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  sortColumn: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  sortBy: string;
 }
