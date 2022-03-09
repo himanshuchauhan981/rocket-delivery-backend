@@ -58,15 +58,19 @@ export class CategoryService {
 
   async findById(id: number): Promise<Category> {
     try {
-      const categoryDetails = await this.categoryRepository.findByPk<Category>(id);
+      const categoryDetails = await this.categoryRepository.findByPk<Category>(
+        id,
+      );
 
-      if(!categoryDetails) {
-        throw new HttpException(MESSAGES.CATEGORY_NOT_FOUND, STATUS_CODE.NOT_FOUND);
+      if (!categoryDetails) {
+        throw new HttpException(
+          MESSAGES.CATEGORY_NOT_FOUND,
+          STATUS_CODE.NOT_FOUND,
+        );
       }
 
       return categoryDetails;
-    }
-    catch (err) {
+    } catch (err) {
       throw err;
     }
   }
@@ -81,14 +85,16 @@ export class CategoryService {
         { where: { id: category_id } },
       );
 
-      if(response[0]) {
+      if (response[0]) {
         return {
           statusCode: STATUS_CODE.SUCCESS,
           message: MESSAGES.CATEGORY_STATUS_UPDATE_SUCCESS,
         };
-      }
-      else {
-        throw new HttpException(MESSAGES.CATEGORY_NOT_FOUND,STATUS_CODE.BAD_REQUEST);
+      } else {
+        throw new HttpException(
+          MESSAGES.CATEGORY_NOT_FOUND,
+          STATUS_CODE.BAD_REQUEST,
+        );
       }
     } catch (err) {
       throw err;
@@ -177,22 +183,26 @@ export class CategoryService {
   async create(payload: SubmitCategory) {
     try {
       const existingCategory = await this.categoryRepository.findOne({
-        where: {name: payload.name }
+        where: { name: payload.name },
       });
 
-      if(existingCategory) {
-        throw new HttpException(MESSAGES.CATEGORY_ADD_SUCCESS, STATUS_CODE.SUCCESS);
-      }
-      else {
+      if (existingCategory) {
+        throw new HttpException(
+          MESSAGES.CATEGORY_ADD_SUCCESS,
+          STATUS_CODE.SUCCESS,
+        );
+      } else {
         await this.categoryRepository.create<any>({
           name: payload.name,
           image_id: payload.image_id,
         });
 
-        return { statusCode: STATUS_CODE.SUCCESS, message: MESSAGES.CATEGORY_EXISTED };
+        return {
+          statusCode: STATUS_CODE.SUCCESS,
+          message: MESSAGES.CATEGORY_EXISTED,
+        };
       }
-    }
-    catch(err) {
+    } catch (err) {
       console.log(err);
       throw err;
     }

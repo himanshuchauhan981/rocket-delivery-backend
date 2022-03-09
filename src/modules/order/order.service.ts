@@ -334,19 +334,20 @@ export class OrderService {
       const pageIndex = query.pageIndex * query.pageSize;
       const defaultQuery = [];
 
-      if(query.startDate !== '' && query.endDate !== '') {
+      if (query.startDate !== '' && query.endDate !== '') {
         defaultQuery.push({
-          created_at: { [sequelize.Op.lte]: query.endDate, [sequelize.Op.gte]: query.startDate }
+          created_at: {
+            [sequelize.Op.lte]: query.endDate,
+            [sequelize.Op.gte]: query.startDate,
+          },
         });
-      }
-      else if(query.paymentStatus !== '') {
+      } else if (query.paymentStatus !== '') {
         defaultQuery.push({
           payment_status: query.paymentStatus,
         });
-      }
-      else if(query.orderNumber !== '') {
+      } else if (query.orderNumber !== '') {
         defaultQuery.push({
-          order_number: { [sequelize.Op.iLike]: '%' + query.orderNumber + '%' }
+          order_number: { [sequelize.Op.iLike]: '%' + query.orderNumber + '%' },
         });
       }
 

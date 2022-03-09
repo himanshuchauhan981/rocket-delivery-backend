@@ -7,9 +7,7 @@ import { AdminUsersController } from './admin-users.controller';
 import { AdminUsersProvider } from './admin-users.provider';
 
 @Module({
-  imports: [
-    JwtModule.register({ secret: 'eyJhbGciOiJIUzI1NiJ9' }),
-  ],
+  imports: [JwtModule.register({ secret: 'eyJhbGciOiJIUzI1NiJ9' })],
   controllers: [AdminUsersController],
   providers: [UserService, CommonService, ...AdminUsersProvider],
 })

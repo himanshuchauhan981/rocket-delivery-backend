@@ -217,18 +217,26 @@ export class UserService {
       const pageIndex = payload.pageIndex * payload.pageSize;
 
       const query: any = [{ is_deleted: 0 }];
-      if(payload.search && payload.search !== '') {
+      if (payload.search && payload.search !== '') {
         query.push({
           [sequelize.Op.or]: [
             { name: { [sequelize.Op.iLike]: `%${payload.search}%` } },
             { email: { [sequelize.Op.iLike]: `%${payload.search}%` } },
-          ]
+          ],
         });
       }
 
       const userList = await this.userRepository.findAndCountAll({
         where: { [sequelize.Op.and]: query },
-        attributes: ['id', 'name', 'email', 'created_at', 'mobile_number', 'is_active', 'profile_image'],
+        attributes: [
+          'id',
+          'name',
+          'email',
+          'created_at',
+          'mobile_number',
+          'is_active',
+          'profile_image',
+        ],
         order: [[payload.sortColumn, payload.sortBy]],
         offset: pageIndex,
         limit: payload.pageSize,
@@ -237,10 +245,9 @@ export class UserService {
       return {
         statusCode: STATUS_CODE.SUCCESS,
         message: MESSAGES.SUCCESS,
-        data: { userList: userList.rows, count: userList.count }
+        data: { userList: userList.rows, count: userList.count },
       };
-    }
-    catch(err) {
+    } catch (err) {
       throw err;
     }
   }
@@ -249,11 +256,16 @@ export class UserService {
     try {
       const userData = await this.userRepository.findByPk(id);
 
-      if(!userData) {
-        throw new HttpException(MESSAGES.INVALID_USER_ID, STATUS_CODE.NOT_FOUND);
-      }
-      else if(!userData.is_active) {
-        throw new HttpException(MESSAGES.PASSWORD_UPDATE_ON_DISABLED_USER, STATUS_CODE.BAD_REQUEST);
+      if (!userData) {
+        throw new HttpException(
+          MESSAGES.INVALID_USER_ID,
+          STATUS_CODE.NOT_FOUND,
+        );
+      } else if (!userData.is_active) {
+        throw new HttpException(
+          MESSAGES.PASSWORD_UPDATE_ON_DISABLED_USER,
+          STATUS_CODE.BAD_REQUEST,
+        );
       }
       const hashedPassword = await this.commonService.generateHashPassword(
         newPassword,
@@ -266,10 +278,9 @@ export class UserService {
 
       return {
         statusCode: STATUS_CODE.SUCCESS,
-        message: MESSAGES.ADMIN_PASSWORD_RESET_SUCCESS
+        message: MESSAGES.ADMIN_PASSWORD_RESET_SUCCESS,
       };
-    }
-    catch(err) {
+    } catch (err) {
       throw err;
     }
   }

@@ -2,12 +2,18 @@ import { HttpException, Inject, Injectable } from '@nestjs/common';
 import sequelize from 'sequelize';
 
 import { MESSAGES } from 'src/core/constants/messages';
-import { PRODUCT_REPOSITORY, SUB_CATEGORY_REPOSITORY } from 'src/core/constants/repositories';
+import {
+  PRODUCT_REPOSITORY,
+  SUB_CATEGORY_REPOSITORY,
+} from 'src/core/constants/repositories';
 import { STATUS_CODE } from 'src/core/constants/status_code';
 import { Product } from 'src/modules/product/product.entity';
 import { SubCategory } from 'src/modules/sub-category/sub-category.entity';
 import { File } from '../file/file.entity';
-import { SubCategoryList, SubmitSubCategory } from './dto/admin-subcategory.dto';
+import {
+  SubCategoryList,
+  SubmitSubCategory,
+} from './dto/admin-subcategory.dto';
 
 @Injectable()
 export class AdminSubcategoryService {
@@ -37,10 +43,10 @@ export class AdminSubcategoryService {
 
   async findOneById(id: number) {
     try {
-      const subCategory = await this.subCategoryRepository.findByPk(
-        id,
-        { include: [ {model: File, attributes: ['id', 'url', 'name'] }], attributes: ['id', 'name'] }
-      );
+      const subCategory = await this.subCategoryRepository.findByPk(id, {
+        include: [{ model: File, attributes: ['id', 'url', 'name'] }],
+        attributes: ['id', 'name'],
+      });
 
       return {
         statusCode: STATUS_CODE.SUCCESS,
@@ -54,7 +60,12 @@ export class AdminSubcategoryService {
 
   async findAllByCategoryId(query: SubCategoryList) {
     try {
-      const defaultQuery = { [sequelize.Op.and]: [{ is_deleted: 0 }, { category_id: query.categoryId }] };
+      const defaultQuery = {
+        [sequelize.Op.and]: [
+          { is_deleted: 0 },
+          { category_id: query.categoryId },
+        ],
+      };
       const subCategoryList = await this.subCategoryRepository.findAll({
         where: defaultQuery,
         include: [
@@ -66,23 +77,24 @@ export class AdminSubcategoryService {
           'name',
           'is_active',
           'updated_at',
-          [sequelize.fn('COUNT', sequelize.col('products.id')), 'total_products']
+          [
+            sequelize.fn('COUNT', sequelize.col('products.id')),
+            'total_products',
+          ],
         ],
-        group: ['SubCategory.id', 'image.id']
+        group: ['SubCategory.id', 'image.id'],
       });
 
       const count = await this.subCategoryRepository.count({
         where: defaultQuery,
-      })
-
+      });
 
       return {
         statusCode: STATUS_CODE.SUCCESS,
         message: MESSAGES.SUCCESS,
-        data : { subCategoryList: subCategoryList, count }
-      }
-    }
-    catch (err) {
+        data: { subCategoryList: subCategoryList, count },
+      };
+    } catch (err) {
       throw err;
     }
   }
@@ -106,8 +118,7 @@ export class AdminSubcategoryService {
           message: MESSAGES.INVALID_SUB_CATEGORY,
         };
       }
-    }
-    catch (err) {
+    } catch (err) {
       throw err;
     }
   }
@@ -119,8 +130,11 @@ export class AdminSubcategoryService {
         { where: { id } },
       );
 
-      if(!response[0]) {
-        throw new HttpException(MESSAGES.SUB_CATEGORY_NOT_FOUND, STATUS_CODE.NOT_FOUND);
+      if (!response[0]) {
+        throw new HttpException(
+          MESSAGES.SUB_CATEGORY_NOT_FOUND,
+          STATUS_CODE.NOT_FOUND,
+        );
       }
 
       await this.productRepository.update(
@@ -132,8 +146,7 @@ export class AdminSubcategoryService {
         statusCode: STATUS_CODE.SUCCESS,
         message: MESSAGES.SUB_CATEGORY_UPDATE_SUCCESS,
       };
-    }
-    catch(err) {
+    } catch (err) {
       throw err;
     }
   }
