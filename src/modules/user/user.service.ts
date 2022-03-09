@@ -8,9 +8,17 @@ import {
 } from 'src/core/constants/repositories';
 import { STATUS_CODE } from 'src/core/constants/status_code';
 import { UsersList } from '../admin/admin-users/dto/admin-users.entity';
+import { ApiResponse } from '../admin/dto/interface/admin';
 import { File } from '../admin/file/file.entity';
 import { Category } from '../category/category.entity';
 import { CommonService } from '../common/common.service';
+import {
+  ListCategoriesResponse,
+  ListUsersResponse,
+  LoginUserResponse,
+  NewUserResponse,
+  UserDetailsResponse,
+} from './dto/interface';
 import { UpdateProfile, UserLogin, UserSignup } from './dto/user.dto';
 import { User } from './user.entity';
 
@@ -45,99 +53,99 @@ export class UserService {
     });
   }
 
-  async signup(payload: UserSignup) {
+  async signup(payload: UserSignup): Promise<NewUserResponse> {
     try {
       const userDetails = await this.#findExistingUser(
         payload.email,
         payload.mobile_number,
       );
 
-      if (!userDetails) {
-        const hashedPassword = await this.commonService.generateHashPassword(
-          payload.password,
-        );
-
-        const newUser = await this.userRepository.create<any>({
-          name: payload.name,
-          email: payload.email,
-          password: hashedPassword,
-          country_code: payload.country_code,
-          mobile_number: payload.mobile_number,
-          type: payload.type,
-          fcm_token: payload.fcm_token,
-        });
-
-        const token = this.commonService.generateJWTToken({
-          id: newUser.id,
-          role: 'user',
-          email: payload.email,
-        });
-
-        return {
-          statusCode: STATUS_CODE.SUCCESS,
-          message: MESSAGES.SUCCESS,
-          data: { token, name: payload.name },
-        };
-      } else {
+      if (userDetails) {
         throw new HttpException(
           MESSAGES.USER_ALREADY_EXISTED,
           STATUS_CODE.CONFLICT,
         );
       }
+
+      const hashedPassword = await this.commonService.generateHashPassword(
+        payload.password,
+      );
+
+      const newUser = await this.userRepository.create<any>({
+        name: payload.name,
+        email: payload.email,
+        password: hashedPassword,
+        country_code: payload.country_code,
+        mobile_number: payload.mobile_number,
+        type: payload.type,
+        fcm_token: payload.fcm_token,
+      });
+
+      const token = this.commonService.generateJWTToken({
+        id: newUser.id,
+        role: 'user',
+        email: payload.email,
+      });
+
+      return {
+        statusCode: STATUS_CODE.SUCCESS,
+        message: MESSAGES.SUCCESS,
+        data: { token, name: payload.name },
+      };
     } catch (err) {
       throw err;
     }
   }
 
-  async login(payload: UserLogin) {
+  async login(payload: UserLogin): Promise<LoginUserResponse> {
     try {
       const existingUser = await this.#findExistingUser(payload.email);
 
-      if (existingUser) {
-        const comparedPassword = await this.commonService.comparePassword(
-          payload.password,
-          existingUser.password,
-        );
-
-        if (comparedPassword) {
-          const token = this.commonService.generateJWTToken({
-            id: existingUser.id,
-            role: 'user',
-            email: payload.email,
-          });
-
-          await this.userRepository.update(
-            { fcm_token: payload.fcm_token },
-            { where: { id: existingUser.id } },
-          );
-
-          return {
-            statusCode: STATUS_CODE.SUCCESS,
-            data: {
-              token,
-              name: existingUser.name,
-              profile_photo: existingUser.profile_image,
-            },
-            message: MESSAGES.SUCCESS,
-          };
-        } else {
-          throw new HttpException(
-            MESSAGES.INVALID_CREDS,
-            STATUS_CODE.UNAUTHORIZED,
-          );
-        }
-      } else {
+      if (!existingUser) {
         throw new HttpException(
           MESSAGES.INVALID_CREDS,
           STATUS_CODE.UNAUTHORIZED,
         );
       }
+
+      const comparedPassword = await this.commonService.comparePassword(
+        payload.password,
+        existingUser.password,
+      );
+
+      if (!comparedPassword) {
+        throw new HttpException(
+          MESSAGES.INVALID_CREDS,
+          STATUS_CODE.UNAUTHORIZED,
+        );
+      }
+
+      const token = await this.commonService.generateJWTToken({
+        id: existingUser.id,
+        role: 'user',
+        email: payload.email,
+      });
+
+      await this.userRepository.update(
+        { fcm_token: payload.fcm_token },
+        { where: { id: existingUser.id } },
+      );
+
+      return {
+        statusCode: STATUS_CODE.SUCCESS,
+        data: {
+          token,
+          name: existingUser.name,
+          profile_photo: existingUser.profile_image,
+        },
+        message: MESSAGES.SUCCESS,
+      };
     } catch (err) {
       throw err;
     }
   }
 
-  async listCategories(limit: number) {
+  async listCategories(limit: number): Promise<ListCategoriesResponse> {
     try {
       const categoryList = await this.categoryRepository.findAll({
         where: { [sequelize.Op.and]: [{ is_active: 1 }, { is_deleted: 0 }] },
@@ -149,14 +157,14 @@ export class UserService {
       return {
         statusCode: STATUS_CODE.SUCCESS,
         message: MESSAGES.SUCCESS,
-        data: { categoryList },
+        data: { categoryList: categoryList },
       };
     } catch (err) {
       throw err;
     }
   }
 
-  async getUserDetails(user_id: number) {
+  async getUserDetails(user_id: number): Promise<UserDetailsResponse> {
     try {
       const userDetails = await this.userRepository.findByPk(user_id, {
         attributes: ['name', 'email', 'mobile_number'],
@@ -172,9 +180,19 @@ export class UserService {
     }
   }
 
-  async updateUserDetails(payload: UpdateProfile, id: number) {
+  async updateUserDetails(
+    payload: UpdateProfile,
+    id: number,
+  ): Promise<ApiResponse> {
     try {
       const existingUser = await this.userRepository.findByPk(id);
+
+      if (existingUser && existingUser.id != id) {
+        throw new HttpException(
+          MESSAGES.NEW_EMAIL_EXISTED,
+          STATUS_CODE.CONFLICT,
+        );
+      }
 
       if (payload.password && existingUser) {
         const hashedPassword = await this.commonService.generateHashPassword(
@@ -188,12 +206,6 @@ export class UserService {
         return { statusCode: STATUS_CODE.SUCCESS, message: MESSAGES.SUCCESS };
       }
 
-      if (existingUser && existingUser.id != id) {
-        throw new HttpException(
-          MESSAGES.NEW_EMAIL_EXISTED,
-          STATUS_CODE.CONFLICT,
-        );
-      }
       await this.userRepository.update(
         {
           email: payload.email,
@@ -212,7 +224,7 @@ export class UserService {
     }
   }
 
-  async listUsers(payload: UsersList) {
+  async listUsers(payload: UsersList): Promise<ListUsersResponse> {
     try {
       const pageIndex = payload.pageIndex * payload.pageSize;
 
@@ -252,7 +264,7 @@ export class UserService {
     }
   }
 
-  async resetPassword(id: number, newPassword: string) {
+  async resetPassword(id: number, newPassword: string): Promise<ApiResponse> {
     try {
       const userData = await this.userRepository.findByPk(id);
 

@@ -13,6 +13,11 @@ import { ApiTags } from '@nestjs/swagger';
 
 import { Auth } from 'src/core/decorators/auth.decorator';
 import { TransformInterceptor } from 'src/core/interceptors/transform.interceptor';
+import {
+  AdminSubCategoryListResponse,
+  ApiResponse,
+  SpecificSubCategoryResponse,
+} from '../dto/interface/admin';
 import { AdminSubcategoryService } from './admin-subcategory.service';
 import {
   SubCategoryId,
@@ -30,7 +35,7 @@ export class AdminSubcategoryController {
   @Get('all')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async findAll() {
+  async findAll(): Promise<AdminSubCategoryListResponse> {
     return await this.adminSubCategoryService.findAll();
   }
 
@@ -46,7 +51,9 @@ export class AdminSubcategoryController {
   @Get(':id')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async findOneById(@Param(new ValidationPipe()) params: SubCategoryId) {
+  async findOneById(
+    @Param(new ValidationPipe()) params: SubCategoryId,
+  ): Promise<SpecificSubCategoryResponse> {
     return await this.adminSubCategoryService.findOneById(params.id);
   }
 
@@ -63,7 +70,9 @@ export class AdminSubcategoryController {
   @Delete(':id')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async delete(@Param(new ValidationPipe()) params: SubCategoryId) {
+  async delete(
+    @Param(new ValidationPipe()) params: SubCategoryId,
+  ): Promise<ApiResponse> {
     return await this.adminSubCategoryService.delete(params.id);
   }
 }

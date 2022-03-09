@@ -11,7 +11,7 @@ module.exports = {
     await queryInterface.addColumn(
       'users',
       'is_active', 
-      { type: Sequelize.BIGINT, defaultValue: 1 },
+      { type: Sequelize.INTEGER, defaultValue: 1 },
     );
   },
 

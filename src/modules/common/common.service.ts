@@ -14,7 +14,7 @@ export class CommonService {
     return hashedPassword;
   }
 
-  comparePassword(password: string, hash: string): boolean {
+  comparePassword(password: string, hash: string): Promise<boolean> {
     return bcrypt.compare(password, hash);
   }
 

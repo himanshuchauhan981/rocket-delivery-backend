@@ -9,6 +9,10 @@ import {
 import { STATUS_CODE } from 'src/core/constants/status_code';
 import { Product } from 'src/modules/product/product.entity';
 import { SubCategory } from 'src/modules/sub-category/sub-category.entity';
+import {
+  AdminSubCategoryListResponse,
+  SpecificSubCategoryResponse,
+} from '../dto/interface/admin';
 import { File } from '../file/file.entity';
 import {
   SubCategoryList,
@@ -24,7 +28,7 @@ export class AdminSubcategoryService {
     private readonly productRepository: typeof Product,
   ) {}
 
-  async findAll() {
+  async findAll(): Promise<AdminSubCategoryListResponse> {
     try {
       const subCategoryList = await this.subCategoryRepository.findAll({
         where: { [sequelize.Op.and]: [{ is_active: 1 }, { is_deleted: 0 }] },
@@ -41,12 +45,19 @@ export class AdminSubcategoryService {
     }
   }
 
-  async findOneById(id: number) {
+  async findOneById(id: number): Promise<SpecificSubCategoryResponse> {
     try {
       const subCategory = await this.subCategoryRepository.findByPk(id, {
         include: [{ model: File, attributes: ['id', 'url', 'name'] }],
         attributes: ['id', 'name'],
       });
+
+      if (!subCategory) {
+        throw new HttpException(
+          MESSAGES.SUB_CATEGORY_NOT_FOUND,
+          STATUS_CODE.NOT_FOUND,
+        );
+      }
 
       return {
         statusCode: STATUS_CODE.SUCCESS,

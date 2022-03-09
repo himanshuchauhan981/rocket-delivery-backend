@@ -13,8 +13,15 @@ import { ApiTags } from '@nestjs/swagger';
 import { Auth } from 'src/core/decorators/auth.decorator';
 
 import { TransformInterceptor } from 'src/core/interceptors/transform.interceptor';
+import { ApiResponse } from '../admin/dto/interface/admin';
 import { ProductService } from '../product/product.service';
 import { SubCategoryService } from '../sub-category/sub-category.service';
+import {
+  ListCategoriesResponse,
+  LoginUserResponse,
+  NewUserResponse,
+  UserDetailsResponse,
+} from './dto/interface';
 import {
   UserLogin,
   UserSignup,
@@ -36,19 +43,25 @@ export class UserController {
 
   @Post('signup')
   @UseInterceptors(TransformInterceptor)
-  async signup(@Body(ValidationPipe) payload: UserSignup) {
+  async signup(
+    @Body(ValidationPipe) payload: UserSignup,
+  ): Promise<NewUserResponse> {
     return await this.userService.signup(payload);
   }
 
   @Post('login')
   @UseInterceptors(TransformInterceptor)
-  async login(@Body(ValidationPipe) payload: UserLogin) {
+  async login(
+    @Body(ValidationPipe) payload: UserLogin,
+  ): Promise<LoginUserResponse> {
     return await this.userService.login(payload);
   }
 
   @Get('categories')
   @UseInterceptors(TransformInterceptor)
-  async listCategories(@Query(new ValidationPipe()) query: UserCategoryList) {
+  async listCategories(
+    @Query(new ValidationPipe()) query: UserCategoryList,
+  ): Promise<ListCategoriesResponse> {
     return await this.userService.listCategories(query.limit);
   }
 
@@ -69,7 +82,7 @@ export class UserController {
   @Get('details')
   @Auth('user')
   @UseInterceptors(TransformInterceptor)
-  async getUserDetails(@Req() request) {
+  async getUserDetails(@Req() request): Promise<UserDetailsResponse> {
     return await this.userService.getUserDetails(request.userId);
   }
 
@@ -79,7 +92,7 @@ export class UserController {
   async updateUserDetails(
     @Body(new ValidationPipe()) payload: UpdateProfile,
     @Req() request,
-  ) {
+  ): Promise<ApiResponse> {
     return await this.userService.updateUserDetails(payload, request.userId);
   }
 }

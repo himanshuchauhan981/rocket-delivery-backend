@@ -9,10 +9,12 @@ import {
   Body,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { Auth } from 'src/core/decorators/auth.decorator';
 
+import { Auth } from 'src/core/decorators/auth.decorator';
 import { TransformInterceptor } from 'src/core/interceptors/transform.interceptor';
+import { ListUsersResponse } from 'src/modules/user/dto/interface';
 import { UserService } from 'src/modules/user/user.service';
+import { ApiResponse } from '../dto/interface/admin';
 import {
   NewPassword,
   ResetPassword,
@@ -27,7 +29,9 @@ export class AdminUsersController {
   @Get('list')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async list(@Query(new ValidationPipe()) payload: UsersList) {
+  async list(
+    @Query(new ValidationPipe()) payload: UsersList,
+  ): Promise<ListUsersResponse> {
     return await this.userService.listUsers(payload);
   }
 
@@ -37,7 +41,7 @@ export class AdminUsersController {
   async resetPassword(
     @Param(new ValidationPipe()) params: ResetPassword,
     @Body(new ValidationPipe()) payload: NewPassword,
-  ) {
+  ): Promise<ApiResponse> {
     return await this.userService.resetPassword(params.id, payload.newPassword);
   }
 }
