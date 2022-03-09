@@ -86,6 +86,12 @@ export class User extends Model<User> {
   })
   fcm_token: string;
 
+  @Column({
+    type: DataType.INTEGER,
+    defaultValue: 1,
+  })
+  is_active: number;
+
   @CreatedAt
   created_at: Date;
 

@@ -244,4 +244,33 @@ export class UserService {
       throw err;
     }
   }
+
+  async resetPassword(id: number, newPassword: string) {
+    try {
+      const userData = await this.userRepository.findByPk(id);
+
+      if(!userData) {
+        throw new HttpException(MESSAGES.INVALID_USER_ID, STATUS_CODE.NOT_FOUND);
+      }
+      else if(!userData.is_active) {
+        throw new HttpException(MESSAGES.PASSWORD_UPDATE_ON_DISABLED_USER, STATUS_CODE.BAD_REQUEST);
+      }
+      const hashedPassword = await this.commonService.generateHashPassword(
+        newPassword,
+      );
+
+      await this.userRepository.update(
+        { password: hashedPassword },
+        { where: { id } },
+      );
+
+      return {
+        statusCode: STATUS_CODE.SUCCESS,
+        message: MESSAGES.ADMIN_PASSWORD_RESET_SUCCESS
+      };
+    }
+    catch(err) {
+      throw err;
+    }
+  }
 }

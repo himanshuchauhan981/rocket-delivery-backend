@@ -21,3 +21,15 @@ export class UsersList {
   @IsNotEmpty()
   sortBy: string;
 }
+
+export class ResetPassword {
+  @IsNotEmpty()
+  @ApiProperty()
+  id: number;
+}
+
+export class NewPassword {
+  @IsNotEmpty()
+  @ApiProperty()
+  newPassword: string;
+}

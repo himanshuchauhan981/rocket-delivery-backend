@@ -41,4 +41,6 @@ export const MESSAGES = {
   SUB_CATEGORY_UPDATE_SUCCESS: 'Sub Category update successfully',
   INVALID_SUB_CATEGORY: 'Invalid sub category',
   CATEGORY_DELETED_SUCCESS: 'Category deleted successfully',
+  PASSWORD_UPDATE_ON_DISABLED_USER: 'Cannot change password for disabled user',
+  ADMIN_PASSWORD_RESET_SUCCESS: 'Password reset successfully'
 };
