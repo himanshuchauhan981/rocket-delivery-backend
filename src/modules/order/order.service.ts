@@ -8,6 +8,7 @@ import {
   ORDER_PRODUCT_REPOSITORY,
   ORDER_REPOSITORY,
   PRODUCT_REPOSITORY,
+  USER_REPOSITORY,
 } from 'src/core/constants/repositories';
 import { STATUS_CODE } from 'src/core/constants/status_code';
 import { File } from '../admin/file/file.entity';
@@ -25,6 +26,8 @@ import { CONSTANTS } from 'src/core/constants/constants';
 import { FcmService } from 'src/core/utils/fcm.service';
 import { ProductReview } from '../product-review/product-review.entity';
 import { ProductReviewFile } from '../product-review/product-review-file.entity';
+import { OrderListResponse, SpecificOrderResponse } from './dto/order-response.dto';
+import { ApiResponse } from '../admin/dto/interface/admin';
 
 @Injectable()
 export class OrderService {
@@ -34,6 +37,8 @@ export class OrderService {
     private readonly productRepository: typeof Product,
     @Inject(ORDER_PRODUCT_REPOSITORY)
     private readonly orderProductRepository: typeof OrderProduct,
+    @Inject(USER_REPOSITORY)
+    private readonly userRepository: typeof User,
     private readonly paymentService: PaymentService,
     private readonly fcmService: FcmService,
   ) {}
@@ -230,77 +235,82 @@ export class OrderService {
     }
   }
 
-  async findOneById(order_id: number) {
-    const orderDetails = await this.orderRepository.findByPk(order_id, {
-      include: [
-        {
-          model: Address,
-          attributes: [
-            'id',
-            'full_name',
-            'house_no',
-            'area',
-            'city',
-            'state',
-            'landmark',
-            'country_code',
-            'mobile_number',
-            'pincode',
-            'latitude',
-            'longitude',
-            'country_code',
-          ],
-        },
-        {
-          model: OrderProduct,
-          attributes: [
-            'id',
-            'product_id',
-            'product_name',
-            'product_image',
-            'price',
-            'quantity',
-          ],
-        },
-        {
-          model: UserPayment,
-          attributes: ['status', 'card_number', 'card_type'],
-        },
-        { model: User, attributes: ['id', 'name', 'email', 'mobile_number'] },
-        {
-          model: ProductReview,
-          where: { [sequelize.Op.and]: [{ order_id }, { is_deleted: 0 }] },
-          attributes: ['id', 'headline', 'opinion', 'ratings', 'product_id'],
-          required: false,
-          include: [{ model: ProductReviewFile, attributes: ['id', 'url'] }],
-        },
-      ],
-      attributes: [
-        'id',
-        'status',
-        'payment_method',
-        'delivery_charges',
-        'amount',
-        'net_amount',
-        'created_at',
-        'delivery_status',
-        'payment_status',
-        'order_number',
-      ],
-    });
-
-    if (!orderDetails) {
-      throw new HttpException(MESSAGES.INVALID_ORDER_ID, STATUS_CODE.NOT_FOUND);
-    } else {
+  async findOneById(order_id: number): Promise<SpecificOrderResponse> {
+    try {
+      const orderDetails = await this.orderRepository.findByPk(order_id, {
+        include: [
+          {
+            model: Address,
+            attributes: [
+              'id',
+              'full_name',
+              'house_no',
+              'area',
+              'city',
+              'state',
+              'landmark',
+              'country_code',
+              'mobile_number',
+              'pincode',
+              'latitude',
+              'longitude',
+              'country_code',
+            ],
+          },
+          {
+            model: OrderProduct,
+            attributes: [
+              'id',
+              'product_id',
+              'product_name',
+              'product_image',
+              'price',
+              'quantity',
+            ],
+          },
+          {
+            model: UserPayment,
+            attributes: ['status', 'card_number', 'card_type'],
+          },
+          { model: User, attributes: ['id', 'name', 'email', 'mobile_number'] },
+          {
+            model: ProductReview,
+            where: { [sequelize.Op.and]: [{ order_id }, { is_deleted: 0 }] },
+            attributes: ['id', 'headline', 'opinion', 'ratings', 'product_id'],
+            required: false,
+            include: [{ model: ProductReviewFile, attributes: ['id', 'url'] }],
+          },
+        ],
+        attributes: [
+          'id',
+          'status',
+          'payment_method',
+          'delivery_charges',
+          'amount',
+          'net_amount',
+          'created_at',
+          'delivery_status',
+          'payment_status',
+          'order_number',
+        ],
+      });
+  
+      if (!orderDetails) {
+        throw new HttpException(MESSAGES.INVALID_ORDER_ID, STATUS_CODE.NOT_FOUND);
+      }
+  
       return {
         statusCode: STATUS_CODE.SUCCESS,
-        message: STATUS_CODE.SUCCESS,
+        message: MESSAGES.SUCCESS,
         data: { orderDetails },
       };
     }
+    catch(err) {
+      throw err;
+    }
   }
 
-  async cancelOrder(id: number) {
+  async cancelOrder(id: number): Promise<ApiResponse> {
     const orderDetails = await this.orderRepository.findByPk(id);
 
     if (!orderDetails) {
@@ -310,48 +320,48 @@ export class OrderService {
         MESSAGES.ORDER_ALREADY_REFUNDED,
         STATUS_CODE.BAD_REQUEST,
       );
-    } else {
-      if (orderDetails.payment_method == 1) {
-        await this.paymentService.refundOrderPayment(
-          orderDetails.user_payment_id,
-          orderDetails.net_amount * 100,
-        );
-      }
-      await this.orderRepository.update(
-        { status: 'CANCELLED' },
-        { where: { id } },
-      );
-
-      return {
-        statusCode: STATUS_CODE.SUCCESS,
-        message: MESSAGES.ORDER_CANCELLED_SUCCESS,
-      };
     }
+
+    if (orderDetails.payment_method == 1) {
+      await this.paymentService.refundOrderPayment(
+        orderDetails.user_payment_id,
+        orderDetails.net_amount * 100,
+      );
+    }
+    await this.orderRepository.update(
+      { status: 'CANCELLED' },
+      { where: { id } },
+    );
+
+    return {
+      statusCode: STATUS_CODE.SUCCESS,
+      message: MESSAGES.ORDER_CANCELLED_SUCCESS,
+    };
   }
 
-  async adminOrderList(query: OrdersList) {
+  async adminOrderList(query: OrdersList): Promise<OrderListResponse> {
     try {
       const pageIndex = query.pageIndex * query.pageSize;
       const defaultQuery = [];
 
-      if (query.startDate !== '' && query.endDate !== '') {
+      if (query.startDate && query.endDate) {
         defaultQuery.push({
           created_at: {
             [sequelize.Op.lte]: query.endDate,
             [sequelize.Op.gte]: query.startDate,
           },
         });
-      } else if (query.paymentStatus !== '') {
+      } else if (query.paymentStatus) {
         defaultQuery.push({
           payment_status: query.paymentStatus,
         });
-      } else if (query.orderNumber !== '') {
+      } else if (query.orderNumber) {
         defaultQuery.push({
           order_number: { [sequelize.Op.iLike]: '%' + query.orderNumber + '%' },
         });
       }
 
-      const orderDetails = await this.orderRepository.findAndCountAll({
+      const ordersList = await this.orderRepository.findAndCountAll({
         where: { [sequelize.Op.and]: defaultQuery },
         include: [
           { model: User, attributes: ['id', 'name'] },
@@ -376,8 +386,8 @@ export class OrderService {
         statusCode: STATUS_CODE.SUCCESS,
         message: MESSAGES.SUCCESS,
         data: {
-          orderDetails: orderDetails.rows,
-          totalOrders: orderDetails.count,
+          orderList: ordersList.rows,
+          totalOrders: ordersList.count,
         },
       };
     } catch (err) {
@@ -389,7 +399,18 @@ export class OrderService {
     try {
       const orderUpdateStatus = await this.orderRepository.update(payload, {
         where: { id },
+        returning: true,
       });
+
+      console.log(orderUpdateStatus[1]); 
+
+      if(!orderUpdateStatus[0]) {
+        throw new HttpException(
+          MESSAGES.INVALID_ORDER_ID,
+          STATUS_CODE.NOT_FOUND,
+        );
+      }
+
       const orderDetails = await this.orderRepository.findByPk(id, {
         include: [{ model: User, attributes: ['id', 'fcm_token'] }],
       });

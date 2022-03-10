@@ -126,7 +126,7 @@ export class Order extends Model<Order> {
   updated_at: Date;
 
   @HasMany(() => OrderProduct)
-  order_products: OrderProduct;
+  order_products: OrderProduct[];
 
   @BelongsTo(() => Address)
   address: Address;

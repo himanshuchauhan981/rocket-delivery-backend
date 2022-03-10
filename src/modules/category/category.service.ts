@@ -8,13 +8,13 @@ import { File } from '../admin/file/file.entity';
 import { ProductService } from '../product/product.service';
 import { SubCategoryService } from '../sub-category/sub-category.service';
 import { Category } from './category.entity';
-import { CategoryList } from './dto/category.dto';
 import {
   APIResponse,
   CategoriesListResponse,
   SpecificCategoryResponse,
 } from './dto/category-response.dto';
-import { SubmitCategory } from '../admin/admin-category/dto/admin-category.dto';
+import { CategoryList, SubmitCategory } from '../admin/admin-category/dto/admin-category.dto';
+import { ApiResponse } from '../admin/dto/interface/admin';
 
 @Injectable()
 export class CategoryService {
@@ -85,50 +85,48 @@ export class CategoryService {
         { where: { id: category_id } },
       );
 
-      if (response[0]) {
-        return {
-          statusCode: STATUS_CODE.SUCCESS,
-          message: MESSAGES.CATEGORY_STATUS_UPDATE_SUCCESS,
-        };
-      } else {
+      if(!response[0]) {
         throw new HttpException(
           MESSAGES.CATEGORY_NOT_FOUND,
           STATUS_CODE.BAD_REQUEST,
         );
       }
+
+      return {
+        statusCode: STATUS_CODE.SUCCESS,
+        message: MESSAGES.CATEGORY_STATUS_UPDATE_SUCCESS,
+      };
     } catch (err) {
       throw err;
     }
   }
 
-  async delete(categoryIds: number[]): Promise<APIResponse> {
+  async delete(categoryIdList: number[]): Promise<APIResponse> {
     try {
       const categoryDetails = await this.categoryRepository.findAll({
-        where: { id: { [sequelize.Op.in]: categoryIds } },
+        where: { id: { [sequelize.Op.in]: categoryIdList } },
       });
 
-      if (categoryDetails.length == categoryIds.length) {
-        for (const categoryId of categoryIds) {
-          await this.productService.deleteByCategoryId(categoryId);
-
-          await this.subCategoryService.deleteByCategoryId(categoryId);
-
-          await this.categoryRepository.update(
-            { is_deleted: 1, is_active: 0 },
-            { where: { id: categoryId } },
-          );
-
-          return {
-            statusCode: STATUS_CODE.SUCCESS,
-            message: MESSAGES.CATEGORY_DELETED_SUCCESS,
-          };
-        }
-      } else {
+      if(categoryDetails.length !== categoryIdList.length) {
         return {
           statusCode: STATUS_CODE.BAD_REQUEST,
           message: MESSAGES.CATEGORY_NOT_FOUND,
         };
       }
+
+      await this.productService.deleteByCategoryId(categoryIdList);
+
+      await this.subCategoryService.deleteByCategoryId(categoryIdList);
+
+      await this.categoryRepository.update(
+        { is_deleted: 1, is_active: 0 },
+        { where: { id: categoryIdList } },
+      );
+
+      return {
+        statusCode: STATUS_CODE.SUCCESS,
+        message: MESSAGES.CATEGORY_DELETED_SUCCESS,
+      };
     } catch (err) {
       throw err;
     }
@@ -140,6 +138,10 @@ export class CategoryService {
         include: [{ model: File, attributes: ['id', 'name', 'url'] }],
         attributes: ['id', 'name'],
       });
+
+      if(!category) {
+        throw new HttpException(MESSAGES.CATEGORY_NOT_FOUND, STATUS_CODE.NOT_FOUND);
+      }
 
       return {
         statusCode: STATUS_CODE.SUCCESS,
@@ -160,27 +162,24 @@ export class CategoryService {
         categoryId,
       );
 
-      if (categoryDetails) {
-        await this.categoryRepository.update(payload, {
-          where: { id: categoryId },
-        });
-
-        return {
-          statusCode: STATUS_CODE.SUCCESS,
-          message: MESSAGES.CATEGORY_UPDATE_SUCCESS,
-        };
-      } else {
-        return {
-          statusCode: STATUS_CODE.NOT_FOUND,
-          message: MESSAGES.INVALID_ID,
-        };
+      if(!categoryDetails) {
+        throw new HttpException(MESSAGES.CATEGORY_NOT_FOUND, STATUS_CODE.NOT_FOUND);
       }
+
+      await this.categoryRepository.update(payload, {
+        where: { id: categoryId },
+      });
+
+      return {
+        statusCode: STATUS_CODE.SUCCESS,
+        message: MESSAGES.CATEGORY_UPDATE_SUCCESS,
+      };
     } catch (err) {
       throw err;
     }
   }
 
-  async create(payload: SubmitCategory) {
+  async create(payload: SubmitCategory): Promise<ApiResponse> {
     try {
       const existingCategory = await this.categoryRepository.findOne({
         where: { name: payload.name },
@@ -191,19 +190,18 @@ export class CategoryService {
           MESSAGES.CATEGORY_ADD_SUCCESS,
           STATUS_CODE.SUCCESS,
         );
-      } else {
-        await this.categoryRepository.create<any>({
-          name: payload.name,
-          image_id: payload.image_id,
-        });
-
-        return {
-          statusCode: STATUS_CODE.SUCCESS,
-          message: MESSAGES.CATEGORY_EXISTED,
-        };
       }
+
+      await this.categoryRepository.create<any>({
+        name: payload.name,
+        image_id: payload.image_id,
+      });
+
+      return {
+        statusCode: STATUS_CODE.SUCCESS,
+        message: MESSAGES.CATEGORY_EXISTED,
+      };
     } catch (err) {
-      console.log(err);
       throw err;
     }
   }

@@ -9,10 +9,7 @@ import {
 import { STATUS_CODE } from 'src/core/constants/status_code';
 import { Product } from 'src/modules/product/product.entity';
 import { SubCategory } from 'src/modules/sub-category/sub-category.entity';
-import {
-  AdminSubCategoryListResponse,
-  SpecificSubCategoryResponse,
-} from '../dto/interface/admin';
+import { AdminSubCategoryListResponse, ApiResponse, SpecificSubCategoryResponse } from '../dto/interface/admin';
 import { File } from '../file/file.entity';
 import {
   SubCategoryList,
@@ -52,11 +49,8 @@ export class AdminSubcategoryService {
         attributes: ['id', 'name'],
       });
 
-      if (!subCategory) {
-        throw new HttpException(
-          MESSAGES.SUB_CATEGORY_NOT_FOUND,
-          STATUS_CODE.NOT_FOUND,
-        );
+      if(!subCategory) {
+        throw new HttpException(MESSAGES.SUB_CATEGORY_NOT_FOUND, STATUS_CODE.NOT_FOUND);
       }
 
       return {
@@ -134,7 +128,7 @@ export class AdminSubcategoryService {
     }
   }
 
-  async delete(id: number) {
+  async delete(id: number): Promise<ApiResponse> {
     try {
       const response = await this.subCategoryRepository.update(
         { is_deleted: 1, is_active: 0 },

@@ -20,6 +20,7 @@ import {
   CategoriesListResponse,
   SpecificCategoryResponse,
 } from 'src/modules/category/dto/category-response.dto';
+import { ApiResponse } from '../dto/interface/admin';
 import {
   CategoryId,
   CategoryIdList,
@@ -36,7 +37,7 @@ export class AdminCategoryController {
   @Post('')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async create(@Body(new ValidationPipe()) payload: SubmitCategory) {
+  async create(@Body(new ValidationPipe()) payload: SubmitCategory): Promise<ApiResponse> {
     return await this.categoryService.create(payload);
   }
 
@@ -62,7 +63,7 @@ export class AdminCategoryController {
   async update(
     @Body(new ValidationPipe()) payload: SubmitCategory,
     @Param(new ValidationPipe()) params: CategoryId,
-  ) {
+  ): Promise<ApiResponse> {
     return await this.categoryService.update(payload, params.id);
   }
 

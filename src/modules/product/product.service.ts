@@ -109,7 +109,7 @@ export class ProductService {
     }
   }
 
-  async deleteByCategoryId(category_id: number): Promise<void> {
+  async deleteByCategoryId(category_id: number[]): Promise<void> {
     await this.productRepository.update(
       { is_deleted: 1, is_active: 0 },
       { where: { category_id } },

@@ -12,6 +12,7 @@ import { ApiTags } from '@nestjs/swagger';
 
 import { Auth } from 'src/core/decorators/auth.decorator';
 import { TransformInterceptor } from 'src/core/interceptors/transform.interceptor';
+import { OrderListResponse } from 'src/modules/order/dto/order-response.dto';
 import { OrderService } from 'src/modules/order/order.service';
 import {
   SpecificOrder,
@@ -27,7 +28,7 @@ export class AdminOrdersController {
   @Get('list')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async list(@Query(new ValidationPipe()) query: OrdersList) {
+  async list(@Query(new ValidationPipe()) query: OrdersList): Promise<OrderListResponse> {
     return await this.orderService.adminOrderList(query);
   }
 
