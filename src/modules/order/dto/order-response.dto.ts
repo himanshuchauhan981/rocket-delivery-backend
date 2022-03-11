@@ -67,7 +67,7 @@ class Order {
 class OrderListResponse extends APIResponse {
   data: {
     orderList: Order[];
-    totalOrders: number;
+    totalOrders?: number;
   }
 }
 

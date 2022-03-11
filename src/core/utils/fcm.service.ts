@@ -39,8 +39,6 @@ export class FcmService {
       await firebaseAdmin
         .messaging()
         .sendToDevice(deviceIds, payload, silent ? optionsSilent : options);
-    } catch (err) {
-      throw err;
-    }
+    } catch (err) {}
   }
 }
