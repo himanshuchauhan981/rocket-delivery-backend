@@ -22,7 +22,7 @@ import { Address } from '../address/address.entity';
 import { UserPayment } from '../payment/user-payment.entity';
 import { User } from '../user/user.entity';
 import { OrdersList } from '../admin/admin-orders/dto/admin-orders.entity';
-import { CONSTANTS } from 'src/core/constants/constants';
+import { CONSTANTS, ORDER_STATUS } from 'src/core/constants/constants';
 import { FcmService } from 'src/core/utils/fcm.service';
 import { ProductReview } from '../product-review/product-review.entity';
 import { ProductReviewFile } from '../product-review/product-review-file.entity';
@@ -435,9 +435,9 @@ export class OrderService {
         return {
           statusCode: STATUS_CODE.SUCCESS,
           message:
-            payload.status == CONSTANTS.CONFIRMED
+            payload.status == ORDER_STATUS.CONFIRMED
               ? MESSAGES.ORDER_CONFIRMED_SUCCESS
-              : payload.status == CONSTANTS.DELIVERED
+              : payload.status == ORDER_STATUS.DELIVERED
               ? MESSAGES.ORDER_DELIVERED_SUCCESS
               : MESSAGES.ORDER_CANCELLED_SUCCESS,
         };

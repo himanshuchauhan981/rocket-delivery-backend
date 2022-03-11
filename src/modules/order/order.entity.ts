@@ -9,7 +9,7 @@ import {
   ForeignKey,
   BelongsTo,
 } from 'sequelize-typescript';
-import { CONSTANTS } from 'src/core/constants/constants';
+import { ORDER_STATUS, ORDER_PAYMENT_STATUS } from 'src/core/constants/constants';
 
 import { Address } from '../address/address.entity';
 import { UserPayment } from '../payment/user-payment.entity';
@@ -46,10 +46,10 @@ export class Order extends Model<Order> {
   @Column({
     type: DataType.ENUM,
     values: [
-      CONSTANTS.REQUESTED,
-      CONSTANTS.CONFIRMED,
-      CONSTANTS.DELIVERED,
-      CONSTANTS.CANCELLED,
+      ORDER_STATUS.REQUESTED,
+      ORDER_STATUS.CONFIRMED,
+      ORDER_STATUS.DELIVERED,
+      ORDER_STATUS.CANCELLED,
     ],
     allowNull: false,
   })
@@ -102,20 +102,20 @@ export class Order extends Model<Order> {
   @Column({
     type: DataType.ENUM,
     values: [
-      CONSTANTS.PENDING,
-      CONSTANTS.CONFIRMED,
-      CONSTANTS.PICKED,
-      CONSTANTS.ON_THE_WAY,
-      CONSTANTS.DELIVERED,
+      ORDER_STATUS.PENDING,
+      ORDER_STATUS.CONFIRMED,
+      ORDER_STATUS.PICKED,
+      ORDER_STATUS.ON_THE_WAY,
+      ORDER_STATUS.DELIVERED,
     ],
-    defaultValue: CONSTANTS.PENDING,
+    defaultValue: ORDER_STATUS.PENDING,
   })
   delivery_status: string;
 
   @Column({
     type: DataType.ENUM,
-    values: [CONSTANTS.PAID, CONSTANTS.UNPAID],
-    defaultValue: CONSTANTS.UNPAID,
+    values: [ORDER_PAYMENT_STATUS.PAID, ORDER_PAYMENT_STATUS.UNPAID],
+    defaultValue: ORDER_PAYMENT_STATUS.UNPAID,
   })
   payment_status: string;
 

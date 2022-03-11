@@ -7,6 +7,8 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript';
 
+import { USER_PAYMENT_STATUS } from 'src/core/constants/constants';
+
 @Table({
   tableName: 'user_payments',
 })
@@ -35,7 +37,11 @@ export class UserPayment extends Model<UserPayment> {
 
   @Column({
     type: DataType.ENUM,
-    values: ['INITIATED', 'REFUNDED', 'CAPTURED'],
+    values: [
+      USER_PAYMENT_STATUS.INITIATED,
+      USER_PAYMENT_STATUS.REFUNDED,
+      USER_PAYMENT_STATUS.CAPTURED
+    ],
     allowNull: false,
   })
   status: string;
