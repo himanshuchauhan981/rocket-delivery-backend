@@ -9,6 +9,14 @@ export class CategoryList {
   @IsNotEmpty()
   @ApiProperty()
   pageSize: number;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  sortColumn: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  sortBy: string;
 }
 
 export class CategoryStatus {
