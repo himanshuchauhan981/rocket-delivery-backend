@@ -22,7 +22,7 @@ export class UsersList {
   sortBy: string;
 }
 
-export class ResetPassword {
+export class UserIdParams {
   @IsNotEmpty()
   @ApiProperty()
   id: number;
@@ -32,4 +32,10 @@ export class NewPassword {
   @IsNotEmpty()
   @ApiProperty()
   newPassword: string;
+}
+
+export class UserStatus {
+  @IsNotEmpty()
+  @ApiProperty()
+  is_active: number;
 }

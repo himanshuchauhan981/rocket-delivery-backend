@@ -24,7 +24,7 @@ export class AdminService {
       throw new UnauthorizedException(MESSAGES.INVALID_CREDS);
     }
 
-    const passwordStatus = this.commonService.comparePassword(
+    const passwordStatus = await this.commonService.comparePassword(
       payload.password,
       adminDetails.password,
     );

@@ -43,4 +43,6 @@ export const MESSAGES = {
   CATEGORY_DELETED_SUCCESS: 'Category deleted successfully',
   PASSWORD_UPDATE_ON_DISABLED_USER: 'Cannot change password for disabled user',
   ADMIN_PASSWORD_RESET_SUCCESS: 'Password reset successfully',
+  USER_ENABLED: 'User enabled successfully',
+  USER_DISABLED: 'User disabled successfully',
 };

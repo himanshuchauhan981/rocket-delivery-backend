@@ -17,8 +17,9 @@ import { UserService } from 'src/modules/user/user.service';
 import { ApiResponse } from '../dto/interface/admin';
 import {
   NewPassword,
-  ResetPassword,
+  UserIdParams,
   UsersList,
+  UserStatus,
 } from './dto/admin-users.entity';
 
 @Controller('admin/users')
@@ -39,9 +40,19 @@ export class AdminUsersController {
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
   async resetPassword(
-    @Param(new ValidationPipe()) params: ResetPassword,
+    @Param(new ValidationPipe()) params: UserIdParams,
     @Body(new ValidationPipe()) payload: NewPassword,
   ): Promise<ApiResponse> {
     return await this.userService.resetPassword(params.id, payload.newPassword);
+  }
+
+  @Patch(':id/status')
+  @Auth('admin')
+  @UseInterceptors(TransformInterceptor)
+  async changeUserStatus(
+    @Param(new ValidationPipe()) params: UserIdParams,
+    @Body(new ValidationPipe()) payload: UserStatus,
+  ) {
+    return await this.userService.updateUserStatus(params.id, payload.is_active)
   }
 }

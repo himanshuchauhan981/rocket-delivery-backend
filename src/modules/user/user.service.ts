@@ -296,4 +296,34 @@ export class UserService {
       throw err;
     }
   }
+
+  async updateUserStatus(id: number, is_active: number): Promise<ApiResponse> {
+    try {
+      const updatedUser = await this.userRepository.update(
+        { is_active },
+        { where: { id }, returning: true },
+      );
+
+      if (!updatedUser) {
+        throw new HttpException(
+          MESSAGES.INVALID_USER_ID,
+          STATUS_CODE.NOT_FOUND,
+        );
+      }
+
+      if (updatedUser[1][0].is_active) {
+        return {
+          statusCode: STATUS_CODE.SUCCESS,
+          message: MESSAGES.USER_ENABLED,
+        };
+      }
+
+      return {
+        statusCode: STATUS_CODE.SUCCESS,
+        message: MESSAGES.USER_DISABLED,
+      };
+    } catch (err) {
+      throw err;
+    }
+  }
 }
