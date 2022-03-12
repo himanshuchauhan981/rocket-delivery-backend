@@ -13,7 +13,10 @@ import {
   CategoriesListResponse,
   SpecificCategoryResponse,
 } from './dto/category-response.dto';
-import { CategoryList, SubmitCategory } from '../admin/admin-category/dto/admin-category.dto';
+import {
+  CategoryList,
+  SubmitCategory,
+} from '../admin/admin-category/dto/admin-category.dto';
 import { ApiResponse } from '../admin/dto/interface/admin';
 
 @Injectable()
@@ -85,7 +88,7 @@ export class CategoryService {
         { where: { id: category_id } },
       );
 
-      if(!response[0]) {
+      if (!response[0]) {
         throw new HttpException(
           MESSAGES.CATEGORY_NOT_FOUND,
           STATUS_CODE.BAD_REQUEST,
@@ -107,7 +110,7 @@ export class CategoryService {
         where: { id: { [sequelize.Op.in]: categoryIdList } },
       });
 
-      if(categoryDetails.length !== categoryIdList.length) {
+      if (categoryDetails.length !== categoryIdList.length) {
         return {
           statusCode: STATUS_CODE.BAD_REQUEST,
           message: MESSAGES.CATEGORY_NOT_FOUND,
@@ -139,8 +142,11 @@ export class CategoryService {
         attributes: ['id', 'name'],
       });
 
-      if(!category) {
-        throw new HttpException(MESSAGES.CATEGORY_NOT_FOUND, STATUS_CODE.NOT_FOUND);
+      if (!category) {
+        throw new HttpException(
+          MESSAGES.CATEGORY_NOT_FOUND,
+          STATUS_CODE.NOT_FOUND,
+        );
       }
 
       return {
@@ -162,8 +168,11 @@ export class CategoryService {
         categoryId,
       );
 
-      if(!categoryDetails) {
-        throw new HttpException(MESSAGES.CATEGORY_NOT_FOUND, STATUS_CODE.NOT_FOUND);
+      if (!categoryDetails) {
+        throw new HttpException(
+          MESSAGES.CATEGORY_NOT_FOUND,
+          STATUS_CODE.NOT_FOUND,
+        );
       }
 
       await this.categoryRepository.update(payload, {

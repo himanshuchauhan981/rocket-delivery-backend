@@ -26,7 +26,10 @@ import { CONSTANTS, ORDER_STATUS } from 'src/core/constants/constants';
 import { FcmService } from 'src/core/utils/fcm.service';
 import { ProductReview } from '../product-review/product-review.entity';
 import { ProductReviewFile } from '../product-review/product-review-file.entity';
-import { OrderListResponse, SpecificOrderResponse } from './dto/order-response.dto';
+import {
+  OrderListResponse,
+  SpecificOrderResponse,
+} from './dto/order-response.dto';
 import { ApiResponse } from '../admin/dto/interface/admin';
 
 @Injectable()
@@ -125,8 +128,7 @@ export class OrderService {
         const cartItemIndex = payload.cart_items.findIndex(
           (cartItem) => cartItem.id == item.id,
         );
-        const cartProductQuantity =
-          payload.cart_items[cartItemIndex].quantity;
+        const cartProductQuantity = payload.cart_items[cartItemIndex].quantity;
 
         if (discountDetails.discountStatus) {
           finalProductPrice = discountDetails.discountPrice;
@@ -293,18 +295,20 @@ export class OrderService {
           'order_number',
         ],
       });
-  
+
       if (!orderDetails) {
-        throw new HttpException(MESSAGES.INVALID_ORDER_ID, STATUS_CODE.NOT_FOUND);
+        throw new HttpException(
+          MESSAGES.INVALID_ORDER_ID,
+          STATUS_CODE.NOT_FOUND,
+        );
       }
-  
+
       return {
         statusCode: STATUS_CODE.SUCCESS,
         message: MESSAGES.SUCCESS,
         data: { orderDetails },
       };
-    }
-    catch(err) {
+    } catch (err) {
       throw err;
     }
   }
@@ -394,21 +398,29 @@ export class OrderService {
     }
   }
 
-  async updateOrderStatus(payload: UpdateOrder, id: number): Promise<ApiResponse> {
+  async updateOrderStatus(
+    payload: UpdateOrder,
+    id: number,
+  ): Promise<ApiResponse> {
     try {
-      const orderUpdateStatus = await this.orderRepository.update<Order>(payload, {
-        where: { id },
-        returning: true,
-      });
+      const orderUpdateStatus = await this.orderRepository.update<Order>(
+        payload,
+        {
+          where: { id },
+          returning: true,
+        },
+      );
 
-      if(!orderUpdateStatus[0]) {
+      if (!orderUpdateStatus[0]) {
         throw new HttpException(
           MESSAGES.INVALID_ORDER_ID,
           STATUS_CODE.NOT_FOUND,
         );
       }
 
-      const userDetails = await this.userRepository.findByPk(orderUpdateStatus[1][0].user_id);
+      const userDetails = await this.userRepository.findByPk(
+        orderUpdateStatus[1][0].user_id,
+      );
 
       const deviceIds = [userDetails.fcm_token];
       const notificationPayload = {
@@ -424,7 +436,7 @@ export class OrderService {
         false,
       );
 
-      if(!orderUpdateStatus[0]) {
+      if (!orderUpdateStatus[0]) {
         throw new HttpException(
           MESSAGES.INVALID_ORDER_ID,
           STATUS_CODE.NOT_FOUND,

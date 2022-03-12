@@ -53,6 +53,9 @@ export class AdminUsersController {
     @Param(new ValidationPipe()) params: UserIdParams,
     @Body(new ValidationPipe()) payload: UserStatus,
   ) {
-    return await this.userService.updateUserStatus(params.id, payload.is_active)
+    return await this.userService.updateUserStatus(
+      params.id,
+      payload.is_active,
+    );
   }
 }

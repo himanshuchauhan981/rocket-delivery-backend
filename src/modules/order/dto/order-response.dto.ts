@@ -1,4 +1,4 @@
-import { APIResponse } from "src/modules/category/dto/category-response.dto";
+import { APIResponse } from 'src/modules/category/dto/category-response.dto';
 
 class User {
   id: number;
@@ -68,13 +68,13 @@ class OrderListResponse extends APIResponse {
   data: {
     orderList: Order[];
     totalOrders?: number;
-  }
+  };
 }
 
 class SpecificOrderResponse extends APIResponse {
   data: {
     orderDetails: Order;
-  }
+  };
 }
 
 export { OrderListResponse, SpecificOrderResponse };

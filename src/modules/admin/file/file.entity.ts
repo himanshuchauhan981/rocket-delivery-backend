@@ -8,7 +8,6 @@ import {
 } from 'sequelize-typescript';
 import { FILE_SLUGS, FILE_TYPES } from 'src/core/constants/constants';
 
-
 @Table({
   tableName: 'file',
 })
@@ -43,7 +42,7 @@ export class File extends Model<File> {
   @Column({
     type: DataType.ENUM,
     allowNull: false,
-    values: [FILE_SLUGS.CATEGORY, FILE_SLUGS.PRODUCT, FILE_SLUGS.SUB_CATEGORY]
+    values: [FILE_SLUGS.CATEGORY, FILE_SLUGS.PRODUCT, FILE_SLUGS.SUB_CATEGORY],
   })
   slug: string;
 

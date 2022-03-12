@@ -24,7 +24,10 @@ export class UserOrderController {
   @Post('new')
   @Auth('user')
   @UseInterceptors(TransformInterceptor)
-  async create(@Body(new ValidationPipe()) payload: NewOrder, @Req() request): Promise<ApiResponse> {
+  async create(
+    @Body(new ValidationPipe()) payload: NewOrder,
+    @Req() request,
+  ): Promise<ApiResponse> {
     return await this.orderService.create(payload, request.userId);
   }
 
@@ -45,7 +48,9 @@ export class UserOrderController {
   @Get(':id/cancel')
   @Auth('user')
   @UseInterceptors(TransformInterceptor)
-  async cancelOrder(@Param(new ValidationPipe()) params: SpecificOrder): Promise<ApiResponse>  {
+  async cancelOrder(
+    @Param(new ValidationPipe()) params: SpecificOrder,
+  ): Promise<ApiResponse> {
     return await this.orderService.cancelOrder(params.id);
   }
 }

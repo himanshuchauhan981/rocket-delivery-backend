@@ -12,7 +12,10 @@ import { ApiTags } from '@nestjs/swagger';
 
 import { Auth } from 'src/core/decorators/auth.decorator';
 import { TransformInterceptor } from 'src/core/interceptors/transform.interceptor';
-import { OrderListResponse, SpecificOrderResponse } from 'src/modules/order/dto/order-response.dto';
+import {
+  OrderListResponse,
+  SpecificOrderResponse,
+} from 'src/modules/order/dto/order-response.dto';
 import { OrderService } from 'src/modules/order/order.service';
 import {
   SpecificOrder,
@@ -29,14 +32,18 @@ export class AdminOrdersController {
   @Get('list')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async list(@Query(new ValidationPipe()) query: OrdersList): Promise<OrderListResponse> {
+  async list(
+    @Query(new ValidationPipe()) query: OrdersList,
+  ): Promise<OrderListResponse> {
     return await this.orderService.adminOrderList(query);
   }
 
   @Get(':id')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async findOneById(@Param(new ValidationPipe()) params: SpecificOrder): Promise<SpecificOrderResponse> {
+  async findOneById(
+    @Param(new ValidationPipe()) params: SpecificOrder,
+  ): Promise<SpecificOrderResponse> {
     return await this.orderService.findOneById(params.id);
   }
 

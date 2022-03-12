@@ -40,7 +40,7 @@ export class UserPayment extends Model<UserPayment> {
     values: [
       USER_PAYMENT_STATUS.INITIATED,
       USER_PAYMENT_STATUS.REFUNDED,
-      USER_PAYMENT_STATUS.CAPTURED
+      USER_PAYMENT_STATUS.CAPTURED,
     ],
     allowNull: false,
   })

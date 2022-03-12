@@ -9,7 +9,10 @@ import {
   ForeignKey,
   BelongsTo,
 } from 'sequelize-typescript';
-import { ORDER_STATUS, ORDER_PAYMENT_STATUS } from 'src/core/constants/constants';
+import {
+  ORDER_STATUS,
+  ORDER_PAYMENT_STATUS,
+} from 'src/core/constants/constants';
 
 import { Address } from '../address/address.entity';
 import { UserPayment } from '../payment/user-payment.entity';

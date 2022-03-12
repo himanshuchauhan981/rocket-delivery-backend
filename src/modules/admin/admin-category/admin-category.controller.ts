@@ -37,7 +37,9 @@ export class AdminCategoryController {
   @Post('')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async create(@Body(new ValidationPipe()) payload: SubmitCategory): Promise<ApiResponse> {
+  async create(
+    @Body(new ValidationPipe()) payload: SubmitCategory,
+  ): Promise<ApiResponse> {
     return await this.categoryService.create(payload);
   }
 
