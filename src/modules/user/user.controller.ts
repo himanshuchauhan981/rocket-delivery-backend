@@ -102,14 +102,16 @@ export class UserController {
   @Patch('password/forget')
   @UseInterceptors(TransformInterceptor)
   async forgetPassword(
-    @Body(new ValidationPipe()) payload: UserEmail
+    @Body(new ValidationPipe()) payload: UserEmail,
   ): Promise<ForgetPasswordResponse> {
     return await this.userService.forgetPassword(payload.email);
   }
 
   @Patch('password/reset')
   @UseInterceptors(TransformInterceptor)
-  async resetPassword(@Body(new ValidationPipe()) payload: ResetPassword): Promise<ApiResponse> {
+  async resetPassword(
+    @Body(new ValidationPipe()) payload: ResetPassword,
+  ): Promise<ApiResponse> {
     return await this.userService.resetPassword(payload);
   }
 }

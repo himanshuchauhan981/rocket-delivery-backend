@@ -33,7 +33,7 @@ import { MailModule } from './core/utils/mail/mail.module';
     ProductReviewModule,
     ProductHistoryModule,
     WishlistModule,
-    MailModule
+    MailModule,
   ],
   controllers: [AppController],
   providers: [AppService, CommonService],

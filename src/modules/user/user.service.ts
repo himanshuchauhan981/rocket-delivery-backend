@@ -22,9 +22,17 @@ import {
   NewUserResponse,
   UserDetailsResponse,
 } from './dto/interface';
-import { ResetPassword, UpdateProfile, UserLogin, UserSignup } from './dto/user.dto';
+import {
+  ResetPassword,
+  UpdateProfile,
+  UserLogin,
+  UserSignup,
+} from './dto/user.dto';
 import { User } from './user.entity';
-import { MailService, MailServiceInput } from 'src/core/utils/mail/mail.service';
+import {
+  MailService,
+  MailServiceInput,
+} from 'src/core/utils/mail/mail.service';
 import { APIResponse } from '../category/dto/category-response.dto';
 
 @Injectable()
@@ -34,7 +42,7 @@ export class UserService {
     @Inject(USER_REPOSITORY) private readonly userRepository: typeof User,
     @Inject(CATEGORY_REPOSITORY)
     private readonly categoryRepository: typeof Category,
-    private readonly mailService: MailService
+    private readonly mailService: MailService,
   ) {}
 
   async #findExistingUser(
@@ -63,18 +71,18 @@ export class UserService {
     return otpGenerator.generate(6, {
       digits: true,
       alphabets: false,
-			upperCase: false,
-			specialChars: false,
+      upperCase: false,
+      specialChars: false,
     });
   }
 
   async #updateUserOTP(email: string): Promise<[number, User[]]> {
     const otp = this.#generateUserPasswordOTP();
-    const otpValidity = moment().add(2,'minutes');
+    const otpValidity = moment().add(2, 'minutes');
 
     return await this.userRepository.update(
       { otp, otp_validity: otpValidity },
-      { where: { email }, returning: true }
+      { where: { email }, returning: true },
     );
   }
 
@@ -289,7 +297,10 @@ export class UserService {
     }
   }
 
-  async adminResetPassword(id: number, newPassword: string): Promise<ApiResponse> {
+  async adminResetPassword(
+    id: number,
+    newPassword: string,
+  ): Promise<ApiResponse> {
     try {
       const userData = await this.userRepository.findByPk(id);
 
@@ -354,29 +365,31 @@ export class UserService {
 
   async forgetPassword(email: string): Promise<ForgetPasswordResponse> {
     try {
-      const userDetails = await this.userRepository.findOne({ where: { email } });
+      const userDetails = await this.userRepository.findOne({
+        where: { email },
+      });
 
-      if(userDetails) {
-
+      if (userDetails) {
         const forgetPasswordEmailObj: MailServiceInput = {
           subject: 'Forget password email',
           receivers: [userDetails.email],
           template: 'resetPassword',
           templateContext: {
             username: userDetails.name,
-            otp: ''
-          }
+            otp: '',
+          },
         };
 
-        if(userDetails.otp && userDetails.otp_validity) {
-
+        if (userDetails.otp && userDetails.otp_validity) {
           let otpValidity: string;
 
           const currentDate = moment().toISOString();
 
-          const validityStatus = moment(userDetails.otp_validity).isBefore(currentDate);
+          const validityStatus = moment(userDetails.otp_validity).isBefore(
+            currentDate,
+          );
 
-          if(validityStatus) {
+          if (validityStatus) {
             const otpDetails = await this.#updateUserOTP(email);
 
             forgetPasswordEmailObj.templateContext.otp = otpDetails[1][0].otp;
@@ -384,8 +397,7 @@ export class UserService {
             await this.mailService.sendMail(forgetPasswordEmailObj);
 
             otpValidity = otpDetails[1][0].otp_validity;
-          }
-          else {
+          } else {
             otpValidity = userDetails.otp_validity;
           }
 
@@ -408,24 +420,27 @@ export class UserService {
           message: MESSAGES.FORGET_PASSWORD_SUCCESS,
           data: { otpValidity: otpDetails[1][0].otp_validity },
         };
-
       }
-      throw new HttpException(MESSAGES.NON_EXISTED_EMAIL, STATUS_CODE.NOT_FOUND);
-    }
-    catch(err) {
+      throw new HttpException(
+        MESSAGES.NON_EXISTED_EMAIL,
+        STATUS_CODE.NOT_FOUND,
+      );
+    } catch (err) {
       throw err;
     }
   }
 
   async resetPassword(payload: ResetPassword): Promise<APIResponse> {
     try {
-      const userDetails = await this.userRepository.findOne({ where: {email: payload.email } });
+      const userDetails = await this.userRepository.findOne({
+        where: { email: payload.email },
+      });
 
-      if(userDetails) {
-        if(payload.otp === userDetails.otp) {
+      if (userDetails) {
+        if (payload.otp === userDetails.otp) {
           return {
             statusCode: STATUS_CODE.SUCCESS,
-            message: MESSAGES.RESET_PASSWORD_SUCCESS
+            message: MESSAGES.RESET_PASSWORD_SUCCESS,
           };
         }
         return {
@@ -436,10 +451,9 @@ export class UserService {
 
       return {
         statusCode: STATUS_CODE.NOT_FOUND,
-        message: MESSAGES.INVALID_EMAIL
+        message: MESSAGES.INVALID_EMAIL,
       };
-    }
-    catch(err) {
+    } catch (err) {
       throw err;
     }
   }

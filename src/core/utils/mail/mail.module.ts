@@ -6,7 +6,7 @@ import { MailService } from './mail.service';
 @Module({
   imports: [
     MailerModule.forRootAsync({
-      useFactory: () =>({
+      useFactory: () => ({
         transport: {
           host: process.env.MAIL_HOST,
           secure: false,
@@ -23,11 +23,11 @@ import { MailService } from './mail.service';
           adapter: new HandlebarsAdapter(),
           options: {
             strict: true,
-          }
-        }
+          },
+        },
       }),
     }),
   ],
-  providers: [MailService]
+  providers: [MailService],
 })
 export class MailModule {}

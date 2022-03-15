@@ -48,6 +48,7 @@ export const MESSAGES = {
   NON_EXISTED_EMAIL: 'Could not found your email',
   FORGET_PASSWORD_SUCCESS: 'Email has been sent successfully',
   RESET_PASSWORD_SUCCESS: 'OTP verified successfully',
-  INCORRECT_OTP: 'The OTP you entered is invalid. Please enter the correct OTP.',
+  INCORRECT_OTP:
+    'The OTP you entered is invalid. Please enter the correct OTP.',
   INVALID_EMAIL: 'Invalid Email',
 };

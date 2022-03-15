@@ -8,7 +8,7 @@ export class MailServiceInput {
   subject: string;
   receivers: string[];
   templateContext: any;
-  template: string
+  template: string;
 }
 
 @Injectable()
@@ -16,27 +16,27 @@ export class MailService {
   constructor(private readonly mailerService: MailerService) {}
 
   async sendMail(payload: MailServiceInput) {
-    return new Promise((resolve,reject) => {
+    return new Promise((resolve, reject) => {
       this.mailerService
-      .sendMail({
-        to: payload.receivers,
-        from: process.env.MAIL_USER,
-        subject: payload.subject,
-        template: payload.template,
-        context: payload.templateContext,
-      })
-      .then((data) => {
-        resolve({
-          statusCode: STATUS_CODE.SUCCESS,
-          message: MESSAGES.SUCCESS,
+        .sendMail({
+          to: payload.receivers,
+          from: process.env.MAIL_USER,
+          subject: payload.subject,
+          template: payload.template,
+          context: payload.templateContext,
+        })
+        .then(() => {
+          resolve({
+            statusCode: STATUS_CODE.SUCCESS,
+            message: MESSAGES.SUCCESS,
+          });
+        })
+        .catch((error) => {
+          reject({
+            statusCode: STATUS_CODE.SUCCESS,
+            message: error,
+          });
         });
-      })
-      .catch((error) => {
-        reject({
-          statusCode: STATUS_CODE.SUCCESS,
-          message: error
-        });
-      });
     });
   }
 }
