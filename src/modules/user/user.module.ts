@@ -14,6 +14,7 @@ import { UserPaymentModule } from './user-payment/user-payment.module';
 import { UserProductReviewModule } from './user-product-review/user-product-review.module';
 import { UserProductHistoryModule } from './user-product-history/user-product-history.module';
 import { UserWishlistModule } from './user-wishlist/user-wishlist.module';
+import { MailService } from 'src/core/utils/mail/mail.service';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { UserWishlistModule } from './user-wishlist/user-wishlist.module';
     CommonService,
     SubCategoryService,
     ProductService,
+    MailService,
     ...UserProvider,
   ],
 })

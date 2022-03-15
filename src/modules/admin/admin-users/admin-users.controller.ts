@@ -43,7 +43,7 @@ export class AdminUsersController {
     @Param(new ValidationPipe()) params: UserIdParams,
     @Body(new ValidationPipe()) payload: NewPassword,
   ): Promise<ApiResponse> {
-    return await this.userService.resetPassword(params.id, payload.newPassword);
+    return await this.userService.adminResetPassword(params.id, payload.newPassword);
   }
 
   @Patch(':id/status')

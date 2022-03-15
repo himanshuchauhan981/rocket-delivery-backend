@@ -60,10 +60,17 @@ interface UserDetailsResponse extends ApiResponse {
   };
 }
 
+interface ForgetPasswordResponse extends ApiResponse {
+  data: {
+    otpValidity: string;
+  }
+}
+
 export {
   ListUsersResponse,
   NewUserResponse,
   LoginUserResponse,
   ListCategoriesResponse,
   UserDetailsResponse,
+  ForgetPasswordResponse,
 };
