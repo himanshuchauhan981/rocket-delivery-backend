@@ -112,3 +112,16 @@ export class UpdateProfile {
   @ApiProperty({ required: false })
   password: string;
 }
+
+export class UserEmail {
+  @ApiProperty()
+  email: string;
+}
+
+export class ResetPassword {
+  @ApiProperty()
+  email: string;
+
+  @ApiProperty()
+  otp: string;
+}

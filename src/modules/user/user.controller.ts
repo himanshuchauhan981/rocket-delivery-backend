@@ -17,6 +17,7 @@ import { ApiResponse } from '../admin/dto/interface/admin';
 import { ProductService } from '../product/product.service';
 import { SubCategoryService } from '../sub-category/sub-category.service';
 import {
+  ForgetPasswordResponse,
   ListCategoriesResponse,
   LoginUserResponse,
   NewUserResponse,
@@ -29,6 +30,8 @@ import {
   UserSubCategoryList,
   UserCart,
   UpdateProfile,
+  UserEmail,
+  ResetPassword,
 } from './dto/user.dto';
 import { UserService } from './user.service';
 
@@ -94,5 +97,19 @@ export class UserController {
     @Req() request,
   ): Promise<ApiResponse> {
     return await this.userService.updateUserDetails(payload, request.userId);
+  }
+
+  @Patch('password/forget')
+  @UseInterceptors(TransformInterceptor)
+  async forgetPassword(
+    @Body(new ValidationPipe()) payload: UserEmail
+  ): Promise<ForgetPasswordResponse> {
+    return await this.userService.forgetPassword(payload.email);
+  }
+
+  @Patch('password/reset')
+  @UseInterceptors(TransformInterceptor)
+  async resetPassword(@Body(new ValidationPipe()) payload: ResetPassword): Promise<ApiResponse> {
+    return await this.userService.resetPassword(payload);
   }
 }

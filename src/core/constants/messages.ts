@@ -45,4 +45,9 @@ export const MESSAGES = {
   ADMIN_PASSWORD_RESET_SUCCESS: 'Password reset successfully',
   USER_ENABLED: 'User enabled successfully',
   USER_DISABLED: 'User disabled successfully',
+  NON_EXISTED_EMAIL: 'Could not found your email',
+  FORGET_PASSWORD_SUCCESS: 'Email has been sent successfully',
+  RESET_PASSWORD_SUCCESS: 'OTP verified successfully',
+  INCORRECT_OTP: 'The OTP you entered is invalid. Please enter the correct OTP.',
+  INVALID_EMAIL: 'Invalid Email',
 };
