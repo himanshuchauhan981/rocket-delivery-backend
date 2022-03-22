@@ -36,6 +36,13 @@ export class AdminUsersController {
     return await this.userService.listUsers(payload);
   }
 
+  @Get(':id')
+  @Auth('admin')
+  @UseInterceptors(TransformInterceptor)
+  async viewUser(@Param(new ValidationPipe()) params: UserIdParams) {
+    return await this.userService.getUserDetails(params.id);
+  }
+
   @Patch(':id/resetPassword')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)

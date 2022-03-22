@@ -5,7 +5,9 @@ import {
   DataType,
   CreatedAt,
   UpdatedAt,
+  ForeignKey,
 } from 'sequelize-typescript';
+import { User } from '../user/user.entity';
 
 @Table({
   tableName: 'address',
@@ -20,11 +22,12 @@ export class Address extends Model<Address> {
   id: number;
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.INTEGER,
     allowNull: false,
     unique: true,
   })
-  user_id: string;
+  @ForeignKey(() => User)
+  user_id: number;
 
   @Column({
     type: DataType.STRING,

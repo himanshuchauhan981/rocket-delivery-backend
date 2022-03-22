@@ -15,6 +15,18 @@ interface Image {
   url: string;
 }
 
+interface Address {
+  id: number;
+  area: string;
+  city: string;
+  state: string;
+  full_name: string;
+  mobile_number: string;
+  pincode: string;
+  house_no: string;
+  landmark: string;
+}
+
 interface Category {
   id: number;
   name: string;
@@ -56,6 +68,10 @@ interface UserDetailsResponse extends ApiResponse {
       name: string;
       email: string;
       mobile_number: string;
+      id: number;
+      created_at: Date;
+      is_active: number;
+      addresses: Address[];
     };
   };
 }

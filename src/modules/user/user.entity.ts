@@ -5,7 +5,9 @@ import {
   DataType,
   CreatedAt,
   UpdatedAt,
+  HasMany,
 } from 'sequelize-typescript';
+import { Address } from '../address/address.entity';
 
 @Table({
   tableName: 'users',
@@ -97,4 +99,7 @@ export class User extends Model<User> {
 
   @UpdatedAt
   updated_at: Date;
+
+  @HasMany(() => Address)
+  addresses: Address[]
 }

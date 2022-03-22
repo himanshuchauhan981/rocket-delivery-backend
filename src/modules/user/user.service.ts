@@ -34,6 +34,7 @@ import {
   MailServiceInput,
 } from 'src/core/utils/mail/mail.service';
 import { APIResponse } from '../category/dto/category-response.dto';
+import { Address } from '../address/address.entity';
 
 @Injectable()
 export class UserService {
@@ -200,7 +201,8 @@ export class UserService {
   async getUserDetails(user_id: number): Promise<UserDetailsResponse> {
     try {
       const userDetails = await this.userRepository.findByPk(user_id, {
-        attributes: ['name', 'email', 'mobile_number'],
+        attributes: ['name', 'email', 'mobile_number', 'id', 'is_active', 'created_at'],
+        include: [{ model: Address, attributes: ['id', 'full_name', 'pincode','house_no', 'area', 'city', 'state', 'mobile_number', 'landmark'] }]
       });
 
       return {
