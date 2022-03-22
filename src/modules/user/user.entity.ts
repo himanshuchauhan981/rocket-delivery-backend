@@ -101,5 +101,5 @@ export class User extends Model<User> {
   updated_at: Date;
 
   @HasMany(() => Address)
-  addresses: Address[]
+  addresses: Address[];
 }
