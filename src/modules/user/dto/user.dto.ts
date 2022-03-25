@@ -118,10 +118,18 @@ export class UserEmail {
   email: string;
 }
 
-export class ResetPassword {
+export class VerifyPassword {
   @ApiProperty()
   email: string;
 
   @ApiProperty()
   otp: string;
+}
+
+export class ResetPassword {
+  @ApiProperty()
+  id: number;
+
+  @ApiProperty()
+  new_password: string;
 }

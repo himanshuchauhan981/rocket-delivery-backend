@@ -31,6 +31,7 @@ import {
   UserCart,
   UpdateProfile,
   UserEmail,
+  VerifyPassword,
   ResetPassword,
 } from './dto/user.dto';
 import { UserService } from './user.service';
@@ -107,11 +108,19 @@ export class UserController {
     return await this.userService.forgetPassword(payload.email);
   }
 
+  @Patch('password/verify')
+  @UseInterceptors(TransformInterceptor)
+  async verifyPassword(
+    @Body(new ValidationPipe()) payload: VerifyPassword,
+  ): Promise<ApiResponse> {
+    return await this.userService.verifyPassword(payload);
+  }
+
   @Patch('password/reset')
   @UseInterceptors(TransformInterceptor)
   async resetPassword(
     @Body(new ValidationPipe()) payload: ResetPassword,
-  ): Promise<ApiResponse> {
-    return await this.userService.resetPassword(payload);
+  ) {
+    return await this.userService.resetPassword(payload.id, payload.new_password);
   }
 }

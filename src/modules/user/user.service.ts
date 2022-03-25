@@ -6,6 +6,7 @@ import * as otpGenerator from 'otp-generator';
 import { MESSAGES } from 'src/core/constants/messages';
 import {
   CATEGORY_REPOSITORY,
+  ORDER_REPOSITORY,
   USER_REPOSITORY,
 } from 'src/core/constants/repositories';
 import { STATUS_CODE } from 'src/core/constants/status_code';
@@ -21,9 +22,10 @@ import {
   LoginUserResponse,
   NewUserResponse,
   UserDetailsResponse,
+  UserOrderTransactions,
 } from './dto/interface';
 import {
-  ResetPassword,
+  VerifyPassword,
   UpdateProfile,
   UserLogin,
   UserSignup,
@@ -35,12 +37,15 @@ import {
 } from 'src/core/utils/mail/mail.service';
 import { APIResponse } from '../category/dto/category-response.dto';
 import { Address } from '../address/address.entity';
+import { Order } from '../order/order.entity';
+import { UserPayment } from '../payment/user-payment.entity';
 
 @Injectable()
 export class UserService {
   constructor(
     private readonly commonService: CommonService,
     @Inject(USER_REPOSITORY) private readonly userRepository: typeof User,
+    @Inject(ORDER_REPOSITORY) private readonly orderRepository: typeof Order,
     @Inject(CATEGORY_REPOSITORY)
     private readonly categoryRepository: typeof Category,
     private readonly mailService: MailService,
@@ -71,8 +76,8 @@ export class UserService {
   #generateUserPasswordOTP(): string {
     return otpGenerator.generate(6, {
       digits: true,
-      alphabets: false,
-      upperCase: false,
+      lowerCaseAlphabets: false,
+      upperCaseAlphabets: false,
       specialChars: false,
     });
   }
@@ -205,6 +210,7 @@ export class UserService {
           'name',
           'email',
           'mobile_number',
+          'country_code',
           'id',
           'is_active',
           'created_at',
@@ -224,7 +230,20 @@ export class UserService {
               'landmark',
             ],
           },
+          {
+            model: Order,
+            attributes: [
+              'id',
+              'order_number',
+              'net_amount',
+              'status',
+              'delivery_status',
+              'payment_status',
+              'created_at',
+            ],
+          },
         ],
+        order: [[sequelize.col('orders.created_at'), 'DESC']],
       });
 
       return {
@@ -235,6 +254,28 @@ export class UserService {
     } catch (err) {
       throw err;
     }
+  }
+
+  async userTransactions(user_id: number): Promise<any> {
+    const userTransactions =  await this.orderRepository.findAll({
+      where: { user_id: user_id },
+      attributes: ['id'],
+      include: [
+        {
+          model: UserPayment,
+          attributes: [
+            'id',
+            'payment_order_id',
+            'payment_id',
+            'status',
+            'card_type',
+            'created_at',
+          ],
+        },
+      ],
+    });
+
+    return { statusCode: STATUS_CODE.SUCCESS, message: MESSAGES.SUCCESS, data: { transactions: userTransactions } };
   }
 
   async updateUserDetails(
@@ -321,11 +362,12 @@ export class UserService {
     }
   }
 
-  async adminResetPassword(
+  async resetPassword(
     id: number,
     newPassword: string,
   ): Promise<ApiResponse> {
     try {
+      console.log('>>>id', id);
       const userData = await this.userRepository.findByPk(id);
 
       if (!userData) {
@@ -393,68 +435,68 @@ export class UserService {
         where: { email },
       });
 
-      if (userDetails) {
-        const forgetPasswordEmailObj: MailServiceInput = {
-          subject: 'Forget password email',
-          receivers: [userDetails.email],
-          template: 'resetPassword',
-          templateContext: {
-            username: userDetails.name,
-            otp: '',
-          },
-        };
+      if(!userDetails) {
+        throw new HttpException(
+          MESSAGES.NON_EXISTED_EMAIL,
+          STATUS_CODE.NOT_FOUND,
+        );
+      }
 
-        if (userDetails.otp && userDetails.otp_validity) {
-          let otpValidity: string;
+      const forgetPasswordEmailObj: MailServiceInput = {
+        subject: 'Forget password email',
+        receivers: [userDetails.email],
+        template: 'resetPassword',
+        templateContext: {
+          username: userDetails.name,
+          otp: '',
+        },
+      };
 
-          const currentDate = moment().toISOString();
+      if(userDetails.otp && userDetails.otp_validity) {
+        let otpValidity: string;
 
-          const validityStatus = moment(userDetails.otp_validity).isBefore(
-            currentDate,
-          );
+        const currentDate = moment().toISOString();
 
-          if (validityStatus) {
-            const otpDetails = await this.#updateUserOTP(email);
+        const validityStatus = moment(userDetails.otp_validity).isBefore(
+          currentDate,
+        );
 
-            forgetPasswordEmailObj.templateContext.otp = otpDetails[1][0].otp;
+        if (validityStatus) {
+          const otpDetails = await this.#updateUserOTP(email);
 
-            await this.mailService.sendMail(forgetPasswordEmailObj);
+          forgetPasswordEmailObj.templateContext.otp = otpDetails[1][0].otp;
 
-            otpValidity = otpDetails[1][0].otp_validity;
-          } else {
-            otpValidity = userDetails.otp_validity;
-          }
+          await this.mailService.sendMail(forgetPasswordEmailObj);
 
-          return {
-            statusCode: STATUS_CODE.SUCCESS,
-            message: MESSAGES.FORGET_PASSWORD_SUCCESS,
-            data: { otpValidity },
-          };
+          otpValidity = otpDetails[1][0].otp_validity;
+        } else {
+          otpValidity = userDetails.otp_validity;
         }
-
-        const otpDetails = await this.#updateUserOTP(email);
-        console.log(otpDetails);
-
-        forgetPasswordEmailObj.templateContext.otp = otpDetails[1][0].otp;
-
-        await this.mailService.sendMail(forgetPasswordEmailObj);
 
         return {
           statusCode: STATUS_CODE.SUCCESS,
           message: MESSAGES.FORGET_PASSWORD_SUCCESS,
-          data: { otpValidity: otpDetails[1][0].otp_validity },
+          data: { otpValidity, id: userDetails.id },
         };
       }
-      throw new HttpException(
-        MESSAGES.NON_EXISTED_EMAIL,
-        STATUS_CODE.NOT_FOUND,
-      );
+
+      const otpDetails = await this.#updateUserOTP(email);
+
+      forgetPasswordEmailObj.templateContext.otp = otpDetails[1][0].otp;
+
+      await this.mailService.sendMail(forgetPasswordEmailObj);
+
+      return {
+        statusCode: STATUS_CODE.SUCCESS,
+        message: MESSAGES.FORGET_PASSWORD_SUCCESS,
+        data: { otpValidity: otpDetails[1][0].otp_validity, id: userDetails.id },
+      };
     } catch (err) {
       throw err;
     }
   }
 
-  async resetPassword(payload: ResetPassword): Promise<APIResponse> {
+  async verifyPassword(payload: VerifyPassword): Promise<APIResponse> {
     try {
       const userDetails = await this.userRepository.findOne({
         where: { email: payload.email },
