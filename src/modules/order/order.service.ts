@@ -172,6 +172,7 @@ export class OrderService {
         user_address: payload.order_address,
         user_id,
         user_payment_id: payload.user_payment_id,
+        payment_status: payload.payment_method == 1 ? 'PAID' : 'UNPAID',
       });
 
       orderProducts = orderProducts.map((item) => ({
@@ -360,7 +361,7 @@ export class OrderService {
         });
       } else if (query.orderNumber) {
         defaultQuery.push({
-          order_number: { [sequelize.Op.iLike]: '%' + query.orderNumber + '%' },
+          order_number: { [sequelize.Op.like]: '%' + query.orderNumber + '%' },
         });
       }
 
@@ -382,7 +383,7 @@ export class OrderService {
         offset: pageIndex,
         order: [['created_at', 'DESC']],
         limit: query.pageSize,
-        distinct: true,
+        // distinct: true,
       });
 
       return {

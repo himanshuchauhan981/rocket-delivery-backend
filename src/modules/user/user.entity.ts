@@ -8,6 +8,7 @@ import {
   HasMany,
 } from 'sequelize-typescript';
 import { Address } from '../address/address.entity';
+import { Order } from '../order/order.entity';
 
 @Table({
   tableName: 'users',
@@ -102,4 +103,7 @@ export class User extends Model<User> {
 
   @HasMany(() => Address)
   addresses: Address[];
+
+  @HasMany(() => Order)
+  orders: Order[];
 }

@@ -43,6 +43,13 @@ export class AdminUsersController {
     return await this.userService.getUserDetails(params.id);
   }
 
+  @Get(':id/transactions')
+  @Auth('admin')
+  @UseInterceptors(TransformInterceptor)
+  async userTransactions(@Param(new ValidationPipe()) payload: UserIdParams) {
+    return await this.userService.userTransactions(payload.id);
+  }
+
   @Patch(':id/resetPassword')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
@@ -50,7 +57,7 @@ export class AdminUsersController {
     @Param(new ValidationPipe()) params: UserIdParams,
     @Body(new ValidationPipe()) payload: NewPassword,
   ): Promise<ApiResponse> {
-    return await this.userService.adminResetPassword(
+    return await this.userService.resetPassword(
       params.id,
       payload.newPassword,
     );
