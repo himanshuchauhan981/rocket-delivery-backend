@@ -31,6 +31,7 @@ import {
   SpecificOrderResponse,
 } from './dto/order-response.dto';
 import { ApiResponse } from '../admin/dto/interface/admin';
+import { UserDetailList } from '../admin/admin-users/dto/admin-users.entity';
 
 @Injectable()
 export class OrderService {
@@ -461,6 +462,37 @@ export class OrderService {
         };
       }
     } catch (err) {
+      throw err;
+    }
+  }
+
+  async adminUserOrders(user_id: number, payload: UserDetailList) {
+    try {
+      const offset = payload.pageIndex * payload.pageSize;
+
+      const orderList = await this.orderRepository.findAndCountAll({
+        where: { user_id },
+        attributes: [
+          'id',
+          'order_number',
+          'net_amount',
+          'status',
+          'delivery_status',
+          'payment_status',
+          'created_at',
+        ],
+        order: [[sequelize.col('created_at'), 'DESC']],
+        offset,
+        limit: payload.pageSize,
+      });
+
+      return {
+        statusCode: STATUS_CODE.SUCCESS,
+        message: MESSAGES.SUCCESS,
+        data: { orders: orderList.rows, totalOrders: orderList.count },
+      };
+    }
+    catch(err) {
       throw err;
     }
   }

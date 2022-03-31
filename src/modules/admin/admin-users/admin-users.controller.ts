@@ -12,6 +12,8 @@ import { ApiTags } from '@nestjs/swagger';
 
 import { Auth } from 'src/core/decorators/auth.decorator';
 import { TransformInterceptor } from 'src/core/interceptors/transform.interceptor';
+import { OrderService } from 'src/modules/order/order.service';
+
 import { ListUsersResponse } from 'src/modules/user/dto/interface';
 import { UserService } from 'src/modules/user/user.service';
 import { ApiResponse } from '../dto/interface/admin';
@@ -20,12 +22,13 @@ import {
   UserIdParams,
   UsersList,
   UserStatus,
+  UserDetailList,
 } from './dto/admin-users.entity';
 
 @Controller('admin/users')
 @ApiTags('Admin user')
 export class AdminUsersController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService, private orderService: OrderService) {}
 
   @Get('list')
   @Auth('admin')
@@ -46,8 +49,21 @@ export class AdminUsersController {
   @Get(':id/transactions')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async userTransactions(@Param(new ValidationPipe()) payload: UserIdParams) {
-    return await this.userService.userTransactions(payload.id);
+  async userTransactions(
+    @Param(new ValidationPipe()) params: UserIdParams,
+    @Query(new ValidationPipe()) payload: UserDetailList
+  ) {
+    return await this.userService.userTransactions(params.id, payload);
+  }
+
+  @Get(':id/orders')
+  @Auth('admin')
+  @UseInterceptors(TransformInterceptor)
+  async adminUserOrders(
+    @Param(new ValidationPipe()) params: UserIdParams,
+    @Query(new ValidationPipe()) payload: UserDetailList
+  ) {
+    return await this.orderService.adminUserOrders(params.id, payload);
   }
 
   @Patch(':id/resetPassword')

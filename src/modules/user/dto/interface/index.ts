@@ -34,6 +34,14 @@ interface Category {
   image: Image;
 }
 
+interface OrderPayment {
+  id: number;
+  payment_order_id: string;
+  payment_id: string;
+  card_type: string;
+  created_at: Date;
+}
+
 interface ListUsersResponse extends ApiResponse {
   data: {
     userList: User[];
@@ -68,6 +76,7 @@ interface UserDetailsResponse extends ApiResponse {
       name: string;
       email: string;
       mobile_number: string;
+      country_code: string;
       id: number;
       created_at: Date;
       is_active: number;
@@ -79,7 +88,17 @@ interface UserDetailsResponse extends ApiResponse {
 interface ForgetPasswordResponse extends ApiResponse {
   data: {
     otpValidity: string;
+    id: number;
   };
+}
+
+interface UserOrderTransactions extends ApiResponse {
+  data: {
+    transactions: {
+      id: number;
+      // order_payments: OrderPayment[];
+    }
+  }
 }
 
 export {
@@ -89,4 +108,5 @@ export {
   ListCategoriesResponse,
   UserDetailsResponse,
   ForgetPasswordResponse,
+  UserOrderTransactions,
 };

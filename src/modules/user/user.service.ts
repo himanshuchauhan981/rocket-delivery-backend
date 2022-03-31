@@ -10,7 +10,7 @@ import {
   USER_REPOSITORY,
 } from 'src/core/constants/repositories';
 import { STATUS_CODE } from 'src/core/constants/status_code';
-import { UsersList } from '../admin/admin-users/dto/admin-users.entity';
+import { UsersList, UserDetailList } from '../admin/admin-users/dto/admin-users.entity';
 import { ApiResponse } from '../admin/dto/interface/admin';
 import { File } from '../admin/file/file.entity';
 import { Category } from '../category/category.entity';
@@ -230,20 +230,7 @@ export class UserService {
               'landmark',
             ],
           },
-          {
-            model: Order,
-            attributes: [
-              'id',
-              'order_number',
-              'net_amount',
-              'status',
-              'delivery_status',
-              'payment_status',
-              'created_at',
-            ],
-          },
         ],
-        order: [[sequelize.col('orders.created_at'), 'DESC']],
       });
 
       return {
@@ -256,26 +243,39 @@ export class UserService {
     }
   }
 
-  async userTransactions(user_id: number): Promise<any> {
-    const userTransactions =  await this.orderRepository.findAll({
+  async userTransactions(user_id: number, payload: UserDetailList): Promise<any> {
+    const offset: number = payload.pageIndex * payload.pageSize;
+
+    const userTransactions =  await this.orderRepository.findAndCountAll({
       where: { user_id: user_id },
-      attributes: ['id'],
       include: [
         {
           model: UserPayment,
-          attributes: [
-            'id',
-            'payment_order_id',
-            'payment_id',
-            'status',
-            'card_type',
-            'created_at',
-          ],
+          attributes: [],
+          required: true,
         },
       ],
+      attributes: [
+        [sequelize.col('payment.payment_order_id'), 'payment_order_id'],
+        [sequelize.col('payment.payment_id'), 'payment_id'],
+        [sequelize.col('payment.status'), 'payment_status'],
+        [sequelize.col('payment.card_type'), 'card_type'],
+        [sequelize.col('payment.created_at'), 'created_at'],
+        [sequelize.col('payment.id'), 'id'],
+      ],
+      raw: true,
+      offset: offset,
+      limit: payload.pageSize,
     });
 
-    return { statusCode: STATUS_CODE.SUCCESS, message: MESSAGES.SUCCESS, data: { transactions: userTransactions } };
+    return {
+      statusCode: STATUS_CODE.SUCCESS,
+      message: MESSAGES.SUCCESS,
+      data: {
+        transactions: userTransactions.rows,
+        totalTransactions: userTransactions.count
+      }
+    };
   }
 
   async updateUserDetails(

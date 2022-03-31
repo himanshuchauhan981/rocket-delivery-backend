@@ -28,6 +28,16 @@ export class UserIdParams {
   id: number;
 }
 
+export class UserDetailList {
+  @IsNotEmpty()
+  @ApiProperty()
+  pageIndex: number;
+
+  @IsNotEmpty()
+  @ApiProperty()
+  pageSize: number;
+}
+
 export class NewPassword {
   @IsNotEmpty()
   @ApiProperty()
