@@ -10,7 +10,7 @@ import {
   USER_REPOSITORY,
 } from 'src/core/constants/repositories';
 import { STATUS_CODE } from 'src/core/constants/status_code';
-import { UsersList, UserDetailList } from '../admin/admin-users/dto/admin-users.entity';
+import { UsersList, UserDetailList } from '../admin/users/dto/admin-users.entity';
 import { ApiResponse } from '../admin/dto/interface/admin';
 import { File } from '../admin/file/file.entity';
 import { Category } from '../category/category.entity';

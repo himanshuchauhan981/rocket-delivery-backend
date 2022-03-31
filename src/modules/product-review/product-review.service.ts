@@ -12,7 +12,7 @@ import { Order } from '../order/order.entity';
 import {
   NewProductReview,
   UpdateProductReview,
-} from '../user/user-product-review/dto/product-review.dto';
+} from '../user/product-review/dto/product-review.dto';
 import { ProductReviewFile } from './product-review-file.entity';
 import { ProductReview } from './product-review.entity';
 

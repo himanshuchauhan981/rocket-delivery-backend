@@ -8,7 +8,7 @@ import { STATUS_CODE } from 'src/core/constants/status_code';
 import { File } from '../admin/file/file.entity';
 import { ProductPrice } from '../product/product-price.entity';
 import { Product } from '../product/product.entity';
-import { NewProductHistory } from '../user/user-product-history/dto/product-history.dto';
+import { NewProductHistory } from '../user/product-history/dto/product-history.dto';
 import { ProductHistory } from './product-history.entity';
 
 @Injectable()

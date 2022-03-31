@@ -9,13 +9,13 @@ import { CategoryService } from '../category/category.service';
 import { SubCategoryService } from '../sub-category/sub-category.service';
 import { ProductService } from '../product/product.service';
 import { FileModule } from './file/file.module';
-import { AdminProductModule } from './admin-product/admin-product.module';
-import { AdminCategoryModule } from './admin-category/admin-category.module';
-import { AdminSubcategoryModule } from './admin-subcategory/admin-subcategory.module';
+import { AdminProductModule } from './product/product.module';
+import { AdminCategoryModule } from './category/category.module';
+import { AdminSubcategoryModule } from './subcategory/admin-subcategory.module';
 import { MeasuringUnitModule } from '../measuring-unit/measuring-unit.module';
-import { AdminOrdersModule } from './admin-orders/admin-orders.module';
+import { AdminOrdersModule } from './orders/orders.module';
 import { AddressService } from '../address/address.service';
-import { AdminUsersModule } from './admin-users/admin-users.module';
+import { AdminUsersModule } from './users/users.module';
 
 @Module({
   imports: [

@@ -7,8 +7,8 @@ import { CommonService } from 'src/modules/common/common.service';
 import { OrderService } from 'src/modules/order/order.service';
 import { PaymentService } from 'src/modules/payment/payment.service';
 import { UserService } from 'src/modules/user/user.service';
-import { AdminUsersController } from './admin-users.controller';
-import { AdminUsersProvider } from './admin-users.provider';
+import { AdminUsersController } from './users.controller';
+import { AdminUsersProvider } from './users.provider';
 
 @Module({
   imports: [JwtModule.register({ secret: 'eyJhbGciOiJIUzI1NiJ9' })],

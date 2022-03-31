@@ -14,7 +14,7 @@ import {
 import {
   AdminProductList,
   NewProduct,
-} from '../admin/admin-product/dto/admin-product.dto';
+} from '../admin/product/dto/admin-product.dto';
 import { File } from '../admin/file/file.entity';
 import { Category } from '../category/category.entity';
 import { SubCategory } from '../sub-category/sub-category.entity';

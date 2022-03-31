@@ -6,7 +6,7 @@ import { WISHLIST_REPOSITORY } from 'src/core/constants/repositories';
 import { STATUS_CODE } from 'src/core/constants/status_code';
 import { File } from '../admin/file/file.entity';
 import { Product } from '../product/product.entity';
-import { NewWishlistItem } from '../user/user-wishlist/entity/wishlist.dto';
+import { NewWishlistItem } from '../user/wishlist/entity/wishlist.dto';
 import { Wishlist } from './wishlist.entity';
 
 @Injectable()

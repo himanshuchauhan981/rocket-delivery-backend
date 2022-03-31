@@ -4,7 +4,7 @@ import { MESSAGES } from 'src/core/constants/messages';
 
 import { ADDRESS_REPOSITORY } from 'src/core/constants/repositories';
 import { STATUS_CODE } from 'src/core/constants/status_code';
-import { NewAddress } from '../user/user-address/dto/address.dto';
+import { NewAddress } from '../user/address/dto/address.dto';
 import { Address } from './address.entity';
 
 @Injectable()

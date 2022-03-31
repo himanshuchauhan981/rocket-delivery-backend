@@ -20,7 +20,7 @@ import { OrderService } from 'src/modules/order/order.service';
 import {
   SpecificOrder,
   UpdateOrder,
-} from 'src/modules/user/user-order/dto/order.dto';
+} from 'src/modules/user/order/dto/order.dto';
 import { ApiResponse } from '../dto/interface/admin';
 import { OrdersList } from './dto/admin-orders.entity';
 

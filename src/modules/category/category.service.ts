@@ -16,7 +16,7 @@ import {
 import {
   CategoryList,
   SubmitCategory,
-} from '../admin/admin-category/dto/admin-category.dto';
+} from '../admin/category/dto/admin-category.dto';
 import { ApiResponse } from '../admin/dto/interface/admin';
 
 @Injectable()

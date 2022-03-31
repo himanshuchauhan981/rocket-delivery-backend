@@ -14,14 +14,14 @@ import { STATUS_CODE } from 'src/core/constants/status_code';
 import { File } from '../admin/file/file.entity';
 import { ProductPrice } from '../product/product-price.entity';
 import { Product } from '../product/product.entity';
-import { NewOrder, UpdateOrder } from '../user/user-order/dto/order.dto';
+import { NewOrder, UpdateOrder } from '../user/order/dto/order.dto';
 import { Order } from './order.entity';
 import { OrderProduct } from './order-product.entity';
 import { PaymentService } from '../payment/payment.service';
 import { Address } from '../address/address.entity';
 import { UserPayment } from '../payment/user-payment.entity';
 import { User } from '../user/user.entity';
-import { OrdersList } from '../admin/admin-orders/dto/admin-orders.entity';
+import { OrdersList } from '../admin/orders/dto/admin-orders.entity';
 import { CONSTANTS, ORDER_STATUS } from 'src/core/constants/constants';
 import { FcmService } from 'src/core/utils/fcm.service';
 import { ProductReview } from '../product-review/product-review.entity';
@@ -31,7 +31,7 @@ import {
   SpecificOrderResponse,
 } from './dto/order-response.dto';
 import { ApiResponse } from '../admin/dto/interface/admin';
-import { UserDetailList } from '../admin/admin-users/dto/admin-users.entity';
+import { UserDetailList } from '../admin/users/dto/admin-users.entity';
 
 @Injectable()
 export class OrderService {
