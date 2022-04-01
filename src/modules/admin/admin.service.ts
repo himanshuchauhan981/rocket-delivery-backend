@@ -45,4 +45,15 @@ export class AdminService {
       data: { token },
     };
   }
+
+  async adminDetails(id: number) {
+    try {
+      const adminDetails = await this.adminRepository.findByPk(id, {attributes: ['id', 'email']});
+
+      return { statusCode: STATUS_CODE.SUCCESS, message: MESSAGES.SUCCESS, data: { adminDetails }};
+    }
+    catch(err) {
+      throw err;
+    }
+  }
 }
