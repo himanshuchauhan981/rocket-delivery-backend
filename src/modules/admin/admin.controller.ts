@@ -1,9 +1,11 @@
 import {
   Body,
   Controller,
+  Get,
   Param,
   Post,
   Put,
+  Req,
   UseInterceptors,
   ValidationPipe,
 } from '@nestjs/common';
@@ -41,5 +43,12 @@ export class AdminController {
     @Param(new ValidationPipe()) params: AddressId,
   ) {
     return await this.addressService.update(payload, params.id);
+  }
+
+  @Get('details')
+  @Auth('admin')
+  @UseInterceptors(TransformInterceptor)
+  async adminDetails(@Req() request) {
+    return await this.adminService.adminDetails(request.userId);
   }
 }
