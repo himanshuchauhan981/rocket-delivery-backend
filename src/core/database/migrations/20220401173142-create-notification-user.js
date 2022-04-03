@@ -29,6 +29,15 @@ module.exports = {
           allowNull: false,
         },
 
+        user_type: {
+          type: Sequelize.ENUM,
+          allowNull: false,
+          values: [
+            'user',
+            'admin',
+          ]
+        },
+
         is_read: {
           type: Sequelize.INTEGER,
           allowNull: false,
@@ -75,5 +84,7 @@ module.exports = {
      * Example:
      * await queryInterface.dropTable('users');
      */
+
+     await queryInterface.dropTable('notification_user');
   }
 };

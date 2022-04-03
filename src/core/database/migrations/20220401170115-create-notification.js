@@ -25,9 +25,18 @@ module.exports = {
           allowNull: false,
         },
 
-        created_by: {
+        user_id: {
           type: Sequelize.INTEGER,
           allowNull: false,
+        },
+
+        user_type: {
+          type: Sequelize.ENUM,
+          allowNull: false,
+          values: [
+            'user',
+            'admin',
+          ]
         },
 
         is_deleted: {
@@ -77,5 +86,7 @@ module.exports = {
      * Example:
      * await queryInterface.dropTable('users');
      */
+
+     await queryInterface.dropTable('notification');
   }
 };
