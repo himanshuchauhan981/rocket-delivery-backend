@@ -18,6 +18,7 @@ import { ProductHistoryModule } from './modules/product-history/product-history.
 import { WishlistModule } from './modules/wishlist/wishlist.module';
 import { MailModule } from './core/utils/mail/mail.module';
 import { SocketsModule } from './core/sockets/sockets.module';
+import { NotificationModule } from './modules/notification/entity/notification.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { SocketsModule } from './core/sockets/sockets.module';
     WishlistModule,
     MailModule,
     SocketsModule,
+    NotificationModule,
   ],
   controllers: [AppController],
   providers: [AppService, CommonService],
