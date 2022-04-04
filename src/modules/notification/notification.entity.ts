@@ -25,7 +25,7 @@ export class Notification extends Model<Notification> {
     allowNull: false,
   })
   body: string;
-  
+
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
@@ -34,10 +34,7 @@ export class Notification extends Model<Notification> {
 
   @Column({
     type: DataType.ENUM,
-    values: [
-      USER_TYPE.ADMIN,
-      USER_TYPE.USER,
-    ],
+    values: [USER_TYPE.ADMIN, USER_TYPE.USER],
     allowNull: false,
   })
   user_type: string;
@@ -53,7 +50,7 @@ export class Notification extends Model<Notification> {
     type: DataType.JSON,
     allowNull: false,
   })
-  metadata: {};
+  metadata: any;
 
   @CreatedAt
   created_at: Date;

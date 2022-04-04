@@ -10,6 +10,13 @@ import { AdminOrdersProvider } from './orders.provider';
 
 @Module({
   controllers: [AdminOrdersController],
-  providers: [OrderService, PaymentService, FcmService, NotificationService, SocketsGateway, ...AdminOrdersProvider],
+  providers: [
+    OrderService,
+    PaymentService,
+    FcmService,
+    NotificationService,
+    SocketsGateway,
+    ...AdminOrdersProvider,
+  ],
 })
 export class AdminOrdersModule {}

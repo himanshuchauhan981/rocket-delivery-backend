@@ -15,6 +15,16 @@ import { AdminUsersProvider } from './users.provider';
 @Module({
   imports: [JwtModule.register({ secret: 'eyJhbGciOiJIUzI1NiJ9' })],
   controllers: [AdminUsersController],
-  providers: [UserService, CommonService, MailService, OrderService, PaymentService, FcmService, NotificationService, SocketsGateway, ...AdminUsersProvider],
+  providers: [
+    UserService,
+    CommonService,
+    MailService,
+    OrderService,
+    PaymentService,
+    FcmService,
+    NotificationService,
+    SocketsGateway,
+    ...AdminUsersProvider,
+  ],
 })
 export class AdminUsersModule {}

@@ -118,9 +118,10 @@ export class UserController {
 
   @Patch('password/reset')
   @UseInterceptors(TransformInterceptor)
-  async resetPassword(
-    @Body(new ValidationPipe()) payload: ResetPassword,
-  ) {
-    return await this.userService.resetPassword(payload.id, payload.new_password);
+  async resetPassword(@Body(new ValidationPipe()) payload: ResetPassword) {
+    return await this.userService.resetPassword(
+      payload.id,
+      payload.new_password,
+    );
   }
 }

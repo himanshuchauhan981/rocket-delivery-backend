@@ -8,6 +8,13 @@ import { NotificationService } from '../notification/notification.service';
 import { SocketsGateway } from 'src/core/sockets/sockets.gateway';
 
 @Module({
-  providers: [OrderService, PaymentService, FcmService, NotificationService, SocketsGateway, ...OrderProvider],
+  providers: [
+    OrderService,
+    PaymentService,
+    FcmService,
+    NotificationService,
+    SocketsGateway,
+    ...OrderProvider,
+  ],
 })
 export class OrderModule {}

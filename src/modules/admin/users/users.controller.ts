@@ -28,7 +28,10 @@ import {
 @Controller('admin/users')
 @ApiTags('Admin user')
 export class AdminUsersController {
-  constructor(private readonly userService: UserService, private orderService: OrderService) {}
+  constructor(
+    private readonly userService: UserService,
+    private orderService: OrderService,
+  ) {}
 
   @Get('list')
   @Auth('admin')
@@ -51,7 +54,7 @@ export class AdminUsersController {
   @UseInterceptors(TransformInterceptor)
   async userTransactions(
     @Param(new ValidationPipe()) params: UserIdParams,
-    @Query(new ValidationPipe()) payload: UserDetailList
+    @Query(new ValidationPipe()) payload: UserDetailList,
   ) {
     return await this.userService.userTransactions(params.id, payload);
   }
@@ -61,7 +64,7 @@ export class AdminUsersController {
   @UseInterceptors(TransformInterceptor)
   async adminUserOrders(
     @Param(new ValidationPipe()) params: UserIdParams,
-    @Query(new ValidationPipe()) payload: UserDetailList
+    @Query(new ValidationPipe()) payload: UserDetailList,
   ) {
     return await this.orderService.adminUserOrders(params.id, payload);
   }
@@ -73,10 +76,7 @@ export class AdminUsersController {
     @Param(new ValidationPipe()) params: UserIdParams,
     @Body(new ValidationPipe()) payload: NewPassword,
   ): Promise<ApiResponse> {
-    return await this.userService.resetPassword(
-      params.id,
-      payload.newPassword,
-    );
+    return await this.userService.resetPassword(params.id, payload.newPassword);
   }
 
   @Patch(':id/status')

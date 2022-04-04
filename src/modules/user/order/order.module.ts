@@ -10,6 +10,13 @@ import { UserOrderProvider } from './order.provider';
 
 @Module({
   controllers: [UserOrderController],
-  providers: [OrderService, PaymentService, FcmService, NotificationService, SocketsGateway, ...UserOrderProvider],
+  providers: [
+    OrderService,
+    PaymentService,
+    FcmService,
+    NotificationService,
+    SocketsGateway,
+    ...UserOrderProvider,
+  ],
 })
 export class UserOrderModule {}

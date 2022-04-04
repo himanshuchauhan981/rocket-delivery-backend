@@ -23,7 +23,13 @@ import { Address } from '../address/address.entity';
 import { UserPayment } from '../payment/user-payment.entity';
 import { User } from '../user/user.entity';
 import { OrdersList } from '../admin/orders/dto/admin-orders.entity';
-import { CONSTANTS, NOTIFICATION_SLUG, ORDER_PAYMENT_STATUS, ORDER_STATUS, USER_TYPE } from 'src/core/constants/constants';
+import {
+  CONSTANTS,
+  NOTIFICATION_SLUG,
+  ORDER_PAYMENT_STATUS,
+  ORDER_STATUS,
+  USER_TYPE,
+} from 'src/core/constants/constants';
 import { FcmService } from 'src/core/utils/fcm.service';
 import { ProductReview } from '../product-review/product-review.entity';
 import { ProductReviewFile } from '../product-review/product-review-file.entity';
@@ -50,7 +56,7 @@ export class OrderService {
     private readonly userRepository: typeof User,
     private readonly paymentService: PaymentService,
     private readonly fcmService: FcmService,
-    private readonly notificationService: NotificationService
+    private readonly notificationService: NotificationService,
   ) {}
 
   #calculateDiscountPrice(
@@ -179,7 +185,9 @@ export class OrderService {
         user_address: payload.order_address,
         user_id,
         user_payment_id: payload.user_payment_id,
-        payment_status: payload.payment_method ? ORDER_PAYMENT_STATUS.PAID : ORDER_PAYMENT_STATUS.UNPAID,
+        payment_status: payload.payment_method
+          ? ORDER_PAYMENT_STATUS.PAID
+          : ORDER_PAYMENT_STATUS.UNPAID,
       });
 
       orderProducts = orderProducts.map((item) => ({
@@ -203,7 +211,7 @@ export class OrderService {
           by: item.quantity,
           where: { id: item.product_id },
         });
-      };
+      }
 
       return { statusCode: STATUS_CODE.SUCCESS, message: MESSAGES.SUCCESS };
     } catch (err) {
@@ -321,18 +329,21 @@ export class OrderService {
     }
   }
 
-  async cancelOrder(order_id: number, user_id: number, user_role: string): Promise<ApiResponse> {
+  async cancelOrder(
+    order_id: number,
+    user_id: number,
+    user_role: string,
+  ): Promise<ApiResponse> {
     const orderDetails = await this.orderRepository.findByPk(order_id);
 
     if (!orderDetails) {
       throw new HttpException(MESSAGES.INVALID_ORDER_ID, STATUS_CODE.NOT_FOUND);
+    } else if (orderDetails.status === ORDER_STATUS.CANCELLED) {
+      throw new HttpException(
+        MESSAGES.ORDER_ALREADY_CANCELLED,
+        STATUS_CODE.BAD_REQUEST,
+      );
     }
-    // else if (orderDetails.status === ORDER_STATUS.CANCELLED) {
-    //   throw new HttpException(
-    //     MESSAGES.ORDER_ALREADY_CANCELLED,
-    //     STATUS_CODE.BAD_REQUEST,
-    //   );
-    // }
 
     if (orderDetails.payment_method == 1) {
       await this.paymentService.refundOrderPayment(
@@ -343,28 +354,35 @@ export class OrderService {
 
     const [_, [orderDetail]] = await this.orderRepository.update(
       { status: ORDER_STATUS.CANCELLED },
-      { where: { id: order_id } , returning: true },
+      { where: { id: order_id }, returning: true },
     );
 
-    const customerDetails = await this.userRepository.findByPk(orderDetail.user_id);
+    const customerDetails = await this.userRepository.findByPk(
+      orderDetail.user_id,
+    );
 
-    const adminDetails = await this.adminRepository.findOne({where: { super_admin: 1 }});
+    const adminDetails = await this.adminRepository.findOne({
+      where: { super_admin: 1 },
+    });
 
     const notificationArgs = {
       sender_id: user_id,
       user_role,
       slug: NOTIFICATION_SLUG.ORDER_CANCELLED,
-      receivers: [{
-        user_id: adminDetails.id,
-        user_type: user_role === USER_TYPE.USER ? USER_TYPE.ADMIN: USER_TYPE.USER,
-      }],
+      receivers: [
+        {
+          user_id: adminDetails.id,
+          user_type:
+            user_role === USER_TYPE.USER ? USER_TYPE.ADMIN : USER_TYPE.USER,
+        },
+      ],
       payload: {
         order_number: orderDetail.order_number,
         customer_name: customerDetails.name,
       },
       metadata: {
         order_id,
-      }
+      },
     };
 
     await this.notificationService.createNotification(notificationArgs);
@@ -522,8 +540,7 @@ export class OrderService {
         message: MESSAGES.SUCCESS,
         data: { orders: orderList.rows, totalOrders: orderList.count },
       };
-    }
-    catch(err) {
+    } catch (err) {
       throw err;
     }
   }

@@ -96,9 +96,9 @@ interface UserOrderTransactions extends ApiResponse {
   data: {
     transactions: {
       id: number;
-      // order_payments: OrderPayment[];
-    }
-  }
+      order_payments: OrderPayment[];
+    };
+  };
 }
 
 export {

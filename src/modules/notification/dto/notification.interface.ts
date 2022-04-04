@@ -13,6 +13,6 @@ export interface NotificationArgs {
   user_role: string;
   slug: string;
   receivers: Receivers[];
-  metadata: {};
+  metadata: any;
   payload: NotificationPayload;
 }

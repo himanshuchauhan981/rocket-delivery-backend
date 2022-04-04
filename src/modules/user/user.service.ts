@@ -10,7 +10,10 @@ import {
   USER_REPOSITORY,
 } from 'src/core/constants/repositories';
 import { STATUS_CODE } from 'src/core/constants/status_code';
-import { UsersList, UserDetailList } from '../admin/users/dto/admin-users.entity';
+import {
+  UsersList,
+  UserDetailList,
+} from '../admin/users/dto/admin-users.entity';
 import { ApiResponse } from '../admin/dto/interface/admin';
 import { File } from '../admin/file/file.entity';
 import { Category } from '../category/category.entity';
@@ -243,10 +246,13 @@ export class UserService {
     }
   }
 
-  async userTransactions(user_id: number, payload: UserDetailList): Promise<any> {
+  async userTransactions(
+    user_id: number,
+    payload: UserDetailList,
+  ): Promise<any> {
     const offset: number = payload.pageIndex * payload.pageSize;
 
-    const userTransactions =  await this.orderRepository.findAndCountAll({
+    const userTransactions = await this.orderRepository.findAndCountAll({
       where: { user_id: user_id },
       include: [
         {
@@ -273,8 +279,8 @@ export class UserService {
       message: MESSAGES.SUCCESS,
       data: {
         transactions: userTransactions.rows,
-        totalTransactions: userTransactions.count
-      }
+        totalTransactions: userTransactions.count,
+      },
     };
   }
 
@@ -362,10 +368,7 @@ export class UserService {
     }
   }
 
-  async resetPassword(
-    id: number,
-    newPassword: string,
-  ): Promise<ApiResponse> {
+  async resetPassword(id: number, newPassword: string): Promise<ApiResponse> {
     try {
       console.log('>>>id', id);
       const userData = await this.userRepository.findByPk(id);
@@ -435,7 +438,7 @@ export class UserService {
         where: { email },
       });
 
-      if(!userDetails) {
+      if (!userDetails) {
         throw new HttpException(
           MESSAGES.NON_EXISTED_EMAIL,
           STATUS_CODE.NOT_FOUND,
@@ -452,7 +455,7 @@ export class UserService {
         },
       };
 
-      if(userDetails.otp && userDetails.otp_validity) {
+      if (userDetails.otp && userDetails.otp_validity) {
         let otpValidity: string;
 
         const currentDate = moment().toISOString();
@@ -489,7 +492,10 @@ export class UserService {
       return {
         statusCode: STATUS_CODE.SUCCESS,
         message: MESSAGES.FORGET_PASSWORD_SUCCESS,
-        data: { otpValidity: otpDetails[1][0].otp_validity, id: userDetails.id },
+        data: {
+          otpValidity: otpDetails[1][0].otp_validity,
+          id: userDetails.id,
+        },
       };
     } catch (err) {
       throw err;

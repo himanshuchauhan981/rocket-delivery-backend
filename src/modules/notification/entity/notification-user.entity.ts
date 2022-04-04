@@ -25,7 +25,7 @@ export class NotificationUser extends Model<NotificationUser> {
     allowNull: false,
   })
   notification_id: number;
-  
+
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
@@ -34,10 +34,7 @@ export class NotificationUser extends Model<NotificationUser> {
 
   @Column({
     type: DataType.ENUM,
-    values: [
-      USER_TYPE.ADMIN,
-      USER_TYPE.USER,
-    ]
+    values: [USER_TYPE.ADMIN, USER_TYPE.USER],
   })
   user_type: string;
 

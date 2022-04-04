@@ -52,6 +52,10 @@ export class UserOrderController {
     @Param(new ValidationPipe()) params: SpecificOrder,
     @Req() request,
   ): Promise<ApiResponse> {
-    return await this.orderService.cancelOrder(params.id, request.userId, request.role);
+    return await this.orderService.cancelOrder(
+      params.id,
+      request.userId,
+      request.role,
+    );
   }
 }
