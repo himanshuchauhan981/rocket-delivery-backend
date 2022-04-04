@@ -28,7 +28,7 @@ module.exports = {
       let notificationBody, createdBy, userType, receiverId, receiverType;
 
       if(item.status == 'REQUESTED') {
-        notificationBody = `${userDetails.first_name} ${userDetails.last_name} had placed an order with order number ${item.order_number}`;
+        notificationBody = `${userDetails.name} had placed an order with order number ${item.order_number}`;
         createdBy = item.user_id;
         userType = 'user';
         receiverId = adminDetails.id;
@@ -42,7 +42,7 @@ module.exports = {
         receiverType = 'user';
       }
       else if(item.status === 'CANCELLED') {
-        notificationBody = `${userDetails.first_name} ${userDetails.last_name} had cancelled order with order number ${item.order_number}`;
+        notificationBody = `${userDetails.name} had cancelled order with order number ${item.order_number}`;
         createdBy = item.user_id;
         userType = 'user';
         receiverId = adminDetails.id;
