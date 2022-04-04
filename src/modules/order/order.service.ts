@@ -5,6 +5,7 @@ import * as moment from 'moment';
 import { v4 as uuidv4 } from 'uuid';
 
 import {
+  ADMIN_REPOSITORY,
   ORDER_PRODUCT_REPOSITORY,
   ORDER_REPOSITORY,
   PRODUCT_REPOSITORY,
@@ -22,7 +23,7 @@ import { Address } from '../address/address.entity';
 import { UserPayment } from '../payment/user-payment.entity';
 import { User } from '../user/user.entity';
 import { OrdersList } from '../admin/orders/dto/admin-orders.entity';
-import { CONSTANTS, ORDER_STATUS } from 'src/core/constants/constants';
+import { CONSTANTS, NOTIFICATION_SLUG, ORDER_PAYMENT_STATUS, ORDER_STATUS, USER_TYPE } from 'src/core/constants/constants';
 import { FcmService } from 'src/core/utils/fcm.service';
 import { ProductReview } from '../product-review/product-review.entity';
 import { ProductReviewFile } from '../product-review/product-review-file.entity';
@@ -32,6 +33,8 @@ import {
 } from './dto/order-response.dto';
 import { ApiResponse } from '../admin/dto/interface/admin';
 import { UserDetailList } from '../admin/users/dto/admin-users.entity';
+import { NotificationService } from '../notification/notification.service';
+import { Admin } from '../admin/admin.entity';
 
 @Injectable()
 export class OrderService {
@@ -41,10 +44,13 @@ export class OrderService {
     private readonly productRepository: typeof Product,
     @Inject(ORDER_PRODUCT_REPOSITORY)
     private readonly orderProductRepository: typeof OrderProduct,
+    @Inject(ADMIN_REPOSITORY)
+    private readonly adminRepository: typeof Admin,
     @Inject(USER_REPOSITORY)
     private readonly userRepository: typeof User,
     private readonly paymentService: PaymentService,
     private readonly fcmService: FcmService,
+    private readonly notificationService: NotificationService
   ) {}
 
   #calculateDiscountPrice(
@@ -165,7 +171,7 @@ export class OrderService {
 
       const newOrder = await this.orderRepository.create<any>({
         order_number: uuidv4(),
-        status: 'REQUESTED',
+        status: ORDER_STATUS.REQUESTED,
         delivery_charges: 10,
         payment_method: payload.payment_method,
         amount: subTotal,
@@ -173,7 +179,7 @@ export class OrderService {
         user_address: payload.order_address,
         user_id,
         user_payment_id: payload.user_payment_id,
-        payment_status: payload.payment_method == 1 ? 'PAID' : 'UNPAID',
+        payment_status: payload.payment_method ? ORDER_PAYMENT_STATUS.PAID : ORDER_PAYMENT_STATUS.UNPAID,
       });
 
       orderProducts = orderProducts.map((item) => ({
@@ -197,7 +203,7 @@ export class OrderService {
           by: item.quantity,
           where: { id: item.product_id },
         });
-      }
+      };
 
       return { statusCode: STATUS_CODE.SUCCESS, message: MESSAGES.SUCCESS };
     } catch (err) {
@@ -315,17 +321,18 @@ export class OrderService {
     }
   }
 
-  async cancelOrder(id: number): Promise<ApiResponse> {
-    const orderDetails = await this.orderRepository.findByPk(id);
+  async cancelOrder(order_id: number, user_id: number, user_role: string): Promise<ApiResponse> {
+    const orderDetails = await this.orderRepository.findByPk(order_id);
 
     if (!orderDetails) {
       throw new HttpException(MESSAGES.INVALID_ORDER_ID, STATUS_CODE.NOT_FOUND);
-    } else if (orderDetails.status == 'CANCELLED') {
-      throw new HttpException(
-        MESSAGES.ORDER_ALREADY_REFUNDED,
-        STATUS_CODE.BAD_REQUEST,
-      );
     }
+    // else if (orderDetails.status === ORDER_STATUS.CANCELLED) {
+    //   throw new HttpException(
+    //     MESSAGES.ORDER_ALREADY_CANCELLED,
+    //     STATUS_CODE.BAD_REQUEST,
+    //   );
+    // }
 
     if (orderDetails.payment_method == 1) {
       await this.paymentService.refundOrderPayment(
@@ -333,10 +340,34 @@ export class OrderService {
         orderDetails.net_amount * 100,
       );
     }
-    await this.orderRepository.update(
-      { status: 'CANCELLED' },
-      { where: { id } },
+
+    const [_, [orderDetail]] = await this.orderRepository.update(
+      { status: ORDER_STATUS.CANCELLED },
+      { where: { id: order_id } , returning: true },
     );
+
+    const customerDetails = await this.userRepository.findByPk(orderDetail.user_id);
+
+    const adminDetails = await this.adminRepository.findOne({where: { super_admin: 1 }});
+
+    const notificationArgs = {
+      sender_id: user_id,
+      user_role,
+      slug: NOTIFICATION_SLUG.ORDER_CANCELLED,
+      receivers: [{
+        user_id: adminDetails.id,
+        user_type: user_role === USER_TYPE.USER ? USER_TYPE.ADMIN: USER_TYPE.USER,
+      }],
+      payload: {
+        order_number: orderDetail.order_number,
+        customer_name: customerDetails.name,
+      },
+      metadata: {
+        order_id,
+      }
+    };
+
+    await this.notificationService.createNotification(notificationArgs);
 
     return {
       statusCode: STATUS_CODE.SUCCESS,

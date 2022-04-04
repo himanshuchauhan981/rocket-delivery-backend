@@ -60,10 +60,12 @@ export class NotificationService {
 
     await this.notificationUserRepository.bulkCreate(notificationUserList);
 
-    this.socketGateway.sendNotification({
-      sender_id: notificationArgs.sender_id,
-      receivers: notificationArgs.receivers,
-      user_type: notificationArgs.user_role,
-    });
+    for(const item of notificationArgs.receivers) {
+      this.socketGateway.sendNotification({
+        receiver_id: item.user_id,
+        receiver_type: item.user_type,
+        data: {},
+      });
+    }
   }
 }

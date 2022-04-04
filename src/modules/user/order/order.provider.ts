@@ -1,10 +1,16 @@
 import {
+  ADMIN_REPOSITORY,
+  NOTIFICATION_REPOSITORY,
+  NOTIFICATION_USER_REPOSITORY,
   ORDER_PRODUCT_REPOSITORY,
   ORDER_REPOSITORY,
   PRODUCT_REPOSITORY,
   USER_PAYMENT_REPOSITORY,
   USER_REPOSITORY,
 } from 'src/core/constants/repositories';
+import { Admin } from 'src/modules/admin/admin.entity';
+import { NotificationUser } from 'src/modules/notification/entity/notification-user.entity';
+import { Notification } from 'src/modules/notification/notification.entity';
 import { OrderProduct } from 'src/modules/order/order-product.entity';
 import { Order } from 'src/modules/order/order.entity';
 import { UserPayment } from 'src/modules/payment/user-payment.entity';
@@ -17,4 +23,7 @@ export const UserOrderProvider = [
   { provide: ORDER_PRODUCT_REPOSITORY, useValue: OrderProduct },
   { provide: USER_REPOSITORY, useValue: User },
   { provide: USER_PAYMENT_REPOSITORY, useValue: UserPayment },
+  { provide: NOTIFICATION_REPOSITORY, useValue: Notification },
+  { provide: NOTIFICATION_USER_REPOSITORY, useValue: NotificationUser },
+  { provide: ADMIN_REPOSITORY, useValue: Admin },
 ];

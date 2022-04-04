@@ -50,7 +50,8 @@ export class UserOrderController {
   @UseInterceptors(TransformInterceptor)
   async cancelOrder(
     @Param(new ValidationPipe()) params: SpecificOrder,
+    @Req() request,
   ): Promise<ApiResponse> {
-    return await this.orderService.cancelOrder(params.id);
+    return await this.orderService.cancelOrder(params.id, request.userId, request.role);
   }
 }

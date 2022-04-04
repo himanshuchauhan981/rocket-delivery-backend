@@ -22,7 +22,6 @@ import {
   LoginUserResponse,
   NewUserResponse,
   UserDetailsResponse,
-  UserOrderTransactions,
 } from './dto/interface';
 import {
   VerifyPassword,
@@ -39,6 +38,7 @@ import { APIResponse } from '../category/dto/category-response.dto';
 import { Address } from '../address/address.entity';
 import { Order } from '../order/order.entity';
 import { UserPayment } from '../payment/user-payment.entity';
+import { USER_TYPE } from 'src/core/constants/constants';
 
 @Injectable()
 export class UserService {
@@ -161,7 +161,7 @@ export class UserService {
 
       const token = await this.commonService.generateJWTToken({
         id: existingUser.id,
-        role: 'user',
+        role: USER_TYPE.USER,
         email: payload.email,
       });
 

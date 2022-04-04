@@ -17,6 +17,8 @@ import { ProductReview } from 'src/modules/product-review/product-review.entity'
 import { ProductReviewFile } from 'src/modules/product-review/product-review-file.entity';
 import { Wishlist } from 'src/modules/wishlist/wishlist.entity';
 import { ProductHistory } from 'src/modules/product-history/product-history.entity';
+import { Notification } from 'src/modules/notification/notification.entity';
+import { NotificationUser } from 'src/modules/notification/entity/notification-user.entity';
 
 let config;
 switch (process.env.NODE_ENV) {
@@ -54,6 +56,8 @@ const DatabaseModule = [
         ProductReviewFile,
         Wishlist,
         ProductHistory,
+        Notification,
+        NotificationUser,
       ],
     }),
   }),
