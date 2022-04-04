@@ -33,6 +33,12 @@ export class Admin extends Model<Admin> {
   })
   password: string;
 
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  super_admin: number;
+
   @CreatedAt
   created_at: Date;
 
