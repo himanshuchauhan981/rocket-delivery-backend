@@ -5,7 +5,7 @@ const randomNumber = (min, max) => {
 };
 
 module.exports = {
-  async up(queryInterface, Sequelize) {
+  async up(queryInterface) {
     /**
      * Add seed commands here.
      *
@@ -16,8 +16,16 @@ module.exports = {
      * }], {});
      */
 
-    await queryInterface.bulkDelete('products', null, { restartIdentity: true, truncate: true, cascade: true });
-    await queryInterface.bulkDelete('product_price', null, {restartIdentity: true, truncate: true, cascade: true });
+    await queryInterface.bulkDelete('products', null, {
+      restartIdentity: true,
+      truncate: true,
+      cascade: true,
+    });
+    await queryInterface.bulkDelete('product_price', null, {
+      restartIdentity: true,
+      truncate: true,
+      cascade: true,
+    });
 
     const product_data = [
       {
@@ -782,45 +790,49 @@ module.exports = {
       },
     ];
 
-    for (const [index, item] of product_data.entries()) {
+    for (const item of product_data.entries()) {
       const new_image = await queryInterface.bulkInsert(
         'file',
         [{ name: item.name, slug: 'product', type: 'image', url: item.image }],
         { returning: true },
       );
 
-      const newProduct = await queryInterface.bulkInsert('products', [
-        {
-          name: item.name,
-          category_id: item.category_id,
-          sub_category_id: item.sub_category_id,
-          image_id: new_image[0].id,
-          is_active: item.is_active,
-          max_quantity: randomNumber(1, 20),
-          purchase_limit: randomNumber(1, 5),
-          measuring_unit_id: item.measuring_unit_id,
-          description:
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In pharetra nibh quis eros eleifend, vel commodo augue fermentum. Nunc justo lectus, scelerisque quis pretium in, interdum ac felis. Nulla facilisi. Aenean rutrum luctus massa sit amet fringilla. Duis porttitor elit feugiat, convallis nunc a, faucibus justo. Vestibulum sed arcu felis.',
-          is_active: 1,
-          is_deleted: 0,
-        },
-      ],{ returning: true });
+      const newProduct = await queryInterface.bulkInsert(
+        'products',
+        [
+          {
+            name: item.name,
+            category_id: item.category_id,
+            sub_category_id: item.sub_category_id,
+            image_id: new_image[0].id,
+            is_active: item.is_active,
+            max_quantity: randomNumber(1, 20),
+            purchase_limit: randomNumber(1, 5),
+            measuring_unit_id: item.measuring_unit_id,
+            description:
+              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In pharetra nibh quis eros eleifend, vel commodo augue fermentum. Nunc justo lectus, scelerisque quis pretium in, interdum ac felis. Nulla facilisi. Aenean rutrum luctus massa sit amet fringilla. Duis porttitor elit feugiat, convallis nunc a, faucibus justo. Vestibulum sed arcu felis.',
+            is_active: 1,
+            is_deleted: 0,
+          },
+        ],
+        { returning: true },
+      );
 
-      await queryInterface.bulkInsert('product_price',
-        [{
+      await queryInterface.bulkInsert('product_price', [
+        {
           product_id: newProduct[0].id,
-          actual_price: randomNumber(100,300),
+          actual_price: randomNumber(100, 300),
           discount: null,
           discount_start_date: null,
           discount_end_date: null,
           discount_type: null,
           refundable: true,
-        }],
-			);
+        },
+      ]);
     }
   },
 
-  async down(queryInterface, Sequelize) {
+  async down(queryInterface) {
     /**
      * Add commands to revert seed here.
      *
@@ -828,8 +840,12 @@ module.exports = {
      * await queryInterface.bulkDelete('products', null, {});
      */
 
-    await queryInterface.bulkDelete('products', null, { resetIdSequence: true });
+    await queryInterface.bulkDelete('products', null, {
+      resetIdSequence: true,
+    });
 
-    await queryInterface.bulkDelete('product_price', null, { resetIdSequence: true });
+    await queryInterface.bulkDelete('product_price', null, {
+      resetIdSequence: true,
+    });
   },
 };

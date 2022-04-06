@@ -3,12 +3,11 @@
 const faker = require('@faker-js/faker').default;
 
 module.exports = {
-
   randomNumber(min, max) {
     return Math.floor(Math.random() * (max - min) + min);
   },
 
-  async up(queryInterface, Sequelize) {
+  async up(queryInterface) {
     /**
      * Add seed commands here.
      *
@@ -74,12 +73,18 @@ module.exports = {
     }
   },
 
-  async down(queryInterface, Sequelize) {
+  async down(queryInterface) {
     /**
      * Add commands to revert seed here.
      *
      * Example:
      * await queryInterface.bulkDelete('People', null, {});
      */
+
+    await queryInterface.bulkDelete(
+      'product_review_file',
+      {},
+      { restartIdentity: true, truncate: true },
+    );
   },
 };

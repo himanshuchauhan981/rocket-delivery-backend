@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-  async up (queryInterface, Sequelize) {
+  async up(queryInterface) {
     /**
      * Add seed commands here.
      *
@@ -10,10 +10,18 @@ module.exports = {
      *   name: 'John Doe',
      *   isBetaMember: false
      * }], {});
-    */
+     */
 
-    await queryInterface.bulkDelete('notification', null, { restartIdentity: true, truncate: true, cascade: true });
-    await queryInterface.bulkDelete('notification_user', null, { restartIdentity: true, truncate: true, cascade: true });
+    await queryInterface.bulkDelete('notification', null, {
+      restartIdentity: true,
+      truncate: true,
+      cascade: true,
+    });
+    await queryInterface.bulkDelete('notification_user', null, {
+      restartIdentity: true,
+      truncate: true,
+      cascade: true,
+    });
 
     const orderDetails = await queryInterface.rawSelect(
       'orders',
@@ -21,27 +29,33 @@ module.exports = {
       ['id', 'created_at', 'user_id', 'order_number'],
     );
 
-    for(const item of orderDetails) {
-      const [userDetails] = await queryInterface.rawSelect('users', { where: { id: item.user_id }, plain: false }, ['id', 'first_name', 'last_name']);
-      const [adminDetails] = await queryInterface.rawSelect('admin', { where: { super_admin: 1 }, plain: false }, []);
+    for (const item of orderDetails) {
+      const [userDetails] = await queryInterface.rawSelect(
+        'users',
+        { where: { id: item.user_id }, plain: false },
+        ['id', 'first_name', 'last_name'],
+      );
+      const [adminDetails] = await queryInterface.rawSelect(
+        'admin',
+        { where: { super_admin: 1 }, plain: false },
+        [],
+      );
 
       let notificationBody, createdBy, userType, receiverId, receiverType;
 
-      if(item.status == 'REQUESTED') {
+      if (item.status == 'REQUESTED') {
         notificationBody = `${userDetails.name} had placed an order with order number ${item.order_number}`;
         createdBy = item.user_id;
         userType = 'user';
         receiverId = adminDetails.id;
         receiverType = 'admin';
-      }
-      else if(item.status == 'CONFIRMED') {
+      } else if (item.status == 'CONFIRMED') {
         notificationBody = `Admin had confirmed your order with order number ${item.order_number}`;
         createdBy = adminDetails.id;
         userType = 'admin';
         receiverId = item.user_id;
         receiverType = 'user';
-      }
-      else if(item.status === 'CANCELLED') {
+      } else if (item.status === 'CANCELLED') {
         notificationBody = `${userDetails.name} had cancelled order with order number ${item.order_number}`;
         createdBy = item.user_id;
         userType = 'user';
@@ -49,7 +63,7 @@ module.exports = {
         receiverType = 'admin';
       }
 
-      if(notificationBody) {
+      if (notificationBody) {
         const notificationArgs = {
           user_id: createdBy,
           body: notificationBody,
@@ -61,7 +75,11 @@ module.exports = {
           created_at: item.created_at,
         };
 
-        const [newNotification] = await queryInterface.bulkInsert('notification', [notificationArgs], { returning: true });
+        const [newNotification] = await queryInterface.bulkInsert(
+          'notification',
+          [notificationArgs],
+          { returning: true },
+        );
 
         const notificationUserArgs = {
           notification_id: newNotification.id,
@@ -72,17 +90,21 @@ module.exports = {
           created_at: newNotification.created_at,
         };
 
-        await queryInterface.bulkInsert('notification_user',[notificationUserArgs])
+        await queryInterface.bulkInsert('notification_user', [
+          notificationUserArgs,
+        ]);
       }
     }
   },
 
-  async down (queryInterface, Sequelize) {
+  async down(queryInterface) {
     /**
      * Add commands to revert seed here.
      *
      * Example:
      * await queryInterface.bulkDelete('People', null, {});
      */
-  }
+
+    await queryInterface.bulkDelete('notifiation_user', null, {});
+  },
 };

@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-  async up(queryInterface, Sequelize) {
+  async up(queryInterface) {
     /**
      * Add seed commands here.
      *
@@ -17,7 +17,11 @@ module.exports = {
       { restartIdentity: true, truncate: true },
     );
 
-    await queryInterface.bulkDelete('categories',{}, { restartIdentity: true, truncate: true, cascade: true });
+    await queryInterface.bulkDelete(
+      'categories',
+      {},
+      { restartIdentity: true, truncate: true, cascade: true },
+    );
 
     const category_list = [
       {
@@ -96,12 +100,24 @@ module.exports = {
     }
   },
 
-  async down(queryInterface, Sequelize) {
+  async down(queryInterface) {
     /**
      * Add commands to revert seed here.
      *
      * Example:
      * await queryInterface.bulkDelete('People', null, {});
      */
+
+    await queryInterface.bulkDelete(
+      'file',
+      {},
+      { restartIdentity: true, truncate: true },
+    );
+
+    await queryInterface.bulkDelete(
+      'categories',
+      {},
+      { restartIdentity: true, truncate: true, cascade: true },
+    );
   },
 };
