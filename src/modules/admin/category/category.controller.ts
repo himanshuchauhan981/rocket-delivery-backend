@@ -14,13 +14,8 @@ import { ApiTags } from '@nestjs/swagger';
 
 import { Auth } from 'src/core/decorators/auth.decorator';
 import { TransformInterceptor } from 'src/core/interceptors/transform.interceptor';
-import { CategoryService } from 'src/modules/category/category.service';
-import {
-  APIResponse,
-  CategoriesListResponse,
-  SpecificCategoryResponse,
-} from 'src/modules/category/dto/category-response.dto';
 import { ApiResponse } from '../dto/interface/admin';
+import { CategoryService } from './category.service';
 import {
   CategoryId,
   CategoryIdList,
@@ -28,6 +23,10 @@ import {
   CategoryStatus,
   SubmitCategory,
 } from './dto/admin-category.dto';
+import {
+  CategoriesListResponse,
+  SpecificCategoryResponse,
+} from './dto/interface/response.interface';
 
 @Controller('admin/category')
 @ApiTags('Admin Categories')
@@ -75,7 +74,7 @@ export class AdminCategoryController {
   async statusUpdate(
     @Param() params: CategoryId,
     @Body(new ValidationPipe()) payload: CategoryStatus,
-  ): Promise<APIResponse> {
+  ): Promise<ApiResponse> {
     return await this.categoryService.statusUpdate(payload.status, params.id);
   }
 
@@ -84,7 +83,7 @@ export class AdminCategoryController {
   @UseInterceptors(TransformInterceptor)
   async delete(
     @Body(new ValidationPipe()) payload: CategoryIdList,
-  ): Promise<APIResponse> {
+  ): Promise<ApiResponse> {
     return await this.categoryService.delete(payload.categoryIds);
   }
 }
