@@ -1,11 +1,12 @@
 import { Module } from '@nestjs/common';
 
-import { AddressService } from 'src/modules/address/address.service';
 import { UserAddressController } from './address.controller';
 import { UserAddressProvider } from './address.provider';
+import { AddressService } from './address.service';
+import { AddressService as CommonAddressService } from '../../address/address.service';
 
 @Module({
   controllers: [UserAddressController],
-  providers: [AddressService, ...UserAddressProvider],
+  providers: [AddressService, CommonAddressService, ...UserAddressProvider],
 })
 export class UserAddressModule {}

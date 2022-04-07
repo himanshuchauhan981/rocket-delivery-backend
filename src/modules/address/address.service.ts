@@ -44,23 +44,6 @@ export class AddressService {
     }
   }
 
-  async add(payload: NewAddress, user_id: number) {
-    try {
-      const latitude = parseFloat(payload.latitude);
-
-      await this.addressRepository.create<any>({
-        user_id,
-        latitude,
-        longitude: parseFloat(payload.longitude),
-        ...payload,
-      });
-
-      return { statusCode: STATUS_CODE.SUCCESS, message: MESSAGES.SUCCESS };
-    } catch (err) {
-      throw err;
-    }
-  }
-
   async update(payload: NewAddress, id: number) {
     try {
       const addressDetails = await this.addressRepository.findByPk(id);
