@@ -13,9 +13,8 @@ import { ApiTags } from '@nestjs/swagger';
 import { Auth } from 'src/core/decorators/auth.decorator';
 import { TransformInterceptor } from 'src/core/interceptors/transform.interceptor';
 import { OrderService } from 'src/modules/order/order.service';
-
-import { ListUsersResponse } from 'src/modules/user/dto/interface';
-import { UserService } from 'src/modules/user/user.service';
+import { UsersService } from './users.service';
+import { UserService as UserCommonService } from '../../user/user.service';
 import { ApiResponse } from '../dto/interface/admin';
 import {
   NewPassword,
@@ -24,13 +23,15 @@ import {
   UserStatus,
   UserDetailList,
 } from './dto/admin-users.entity';
+import { ListUsersResponse } from './dto/interface/response.interface';
 
 @Controller('admin/users')
 @ApiTags('Admin user')
 export class AdminUsersController {
   constructor(
-    private readonly userService: UserService,
-    private orderService: OrderService,
+    private readonly userService: UsersService,
+    private readonly orderService: OrderService,
+    private readonly userCommonService: UserCommonService,
   ) {}
 
   @Get('list')
@@ -46,7 +47,7 @@ export class AdminUsersController {
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
   async viewUser(@Param(new ValidationPipe()) params: UserIdParams) {
-    return await this.userService.getUserDetails(params.id);
+    return await this.userCommonService.getUserDetails(params.id);
   }
 
   @Get(':id/transactions')
@@ -76,7 +77,10 @@ export class AdminUsersController {
     @Param(new ValidationPipe()) params: UserIdParams,
     @Body(new ValidationPipe()) payload: NewPassword,
   ): Promise<ApiResponse> {
-    return await this.userService.resetPassword(params.id, payload.newPassword);
+    return await this.userCommonService.resetPassword(
+      params.id,
+      payload.newPassword,
+    );
   }
 
   @Patch(':id/status')

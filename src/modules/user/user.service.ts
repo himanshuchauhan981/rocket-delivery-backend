@@ -6,14 +6,9 @@ import * as otpGenerator from 'otp-generator';
 import { MESSAGES } from 'src/core/constants/messages';
 import {
   CATEGORY_REPOSITORY,
-  ORDER_REPOSITORY,
   USER_REPOSITORY,
 } from 'src/core/constants/repositories';
 import { STATUS_CODE } from 'src/core/constants/status_code';
-import {
-  UsersList,
-  UserDetailList,
-} from '../admin/users/dto/admin-users.entity';
 import { ApiResponse } from '../admin/dto/interface/admin';
 import { File } from '../admin/file/file.entity';
 import { Category } from '../category/category.entity';
@@ -21,7 +16,6 @@ import { CommonService } from '../common/common.service';
 import {
   ForgetPasswordResponse,
   ListCategoriesResponse,
-  ListUsersResponse,
   LoginUserResponse,
   NewUserResponse,
   UserDetailsResponse,
@@ -37,18 +31,14 @@ import {
   MailService,
   MailServiceInput,
 } from 'src/core/utils/mail/mail.service';
-import { APIResponse } from '../category/dto/category-response.dto';
-import { Address } from '../address/address.entity';
-import { Order } from '../order/order.entity';
-import { UserPayment } from '../payment/user-payment.entity';
 import { USER_TYPE } from 'src/core/constants/constants';
+import { Address } from '../address/address.entity';
 
 @Injectable()
 export class UserService {
   constructor(
     private readonly commonService: CommonService,
     @Inject(USER_REPOSITORY) private readonly userRepository: typeof User,
-    @Inject(ORDER_REPOSITORY) private readonly orderRepository: typeof Order,
     @Inject(CATEGORY_REPOSITORY)
     private readonly categoryRepository: typeof Category,
     private readonly mailService: MailService,
@@ -246,44 +236,6 @@ export class UserService {
     }
   }
 
-  async userTransactions(
-    user_id: number,
-    payload: UserDetailList,
-  ): Promise<any> {
-    const offset: number = payload.pageIndex * payload.pageSize;
-
-    const userTransactions = await this.orderRepository.findAndCountAll({
-      where: { user_id: user_id },
-      include: [
-        {
-          model: UserPayment,
-          attributes: [],
-          required: true,
-        },
-      ],
-      attributes: [
-        [sequelize.col('payment.payment_order_id'), 'payment_order_id'],
-        [sequelize.col('payment.payment_id'), 'payment_id'],
-        [sequelize.col('payment.status'), 'payment_status'],
-        [sequelize.col('payment.card_type'), 'card_type'],
-        [sequelize.col('payment.created_at'), 'created_at'],
-        [sequelize.col('payment.id'), 'id'],
-      ],
-      raw: true,
-      offset: offset,
-      limit: payload.pageSize,
-    });
-
-    return {
-      statusCode: STATUS_CODE.SUCCESS,
-      message: MESSAGES.SUCCESS,
-      data: {
-        transactions: userTransactions.rows,
-        totalTransactions: userTransactions.count,
-      },
-    };
-  }
-
   async updateUserDetails(
     payload: UpdateProfile,
     id: number,
@@ -322,110 +274,6 @@ export class UserService {
       return {
         statusCode: STATUS_CODE.SUCCESS,
         message: MESSAGES.USER_PROFILE_UPDATE_SUCCESS,
-      };
-    } catch (err) {
-      throw err;
-    }
-  }
-
-  async listUsers(payload: UsersList): Promise<ListUsersResponse> {
-    try {
-      const pageIndex = payload.pageIndex * payload.pageSize;
-
-      const query: any = [{ is_deleted: 0 }];
-      if (payload.search && payload.search !== '') {
-        query.push({
-          [sequelize.Op.or]: [
-            { name: { [sequelize.Op.iLike]: `%${payload.search}%` } },
-            { email: { [sequelize.Op.iLike]: `%${payload.search}%` } },
-          ],
-        });
-      }
-
-      const userList = await this.userRepository.findAndCountAll({
-        where: { [sequelize.Op.and]: query },
-        attributes: [
-          'id',
-          'name',
-          'email',
-          'created_at',
-          'mobile_number',
-          'is_active',
-          'profile_image',
-        ],
-        order: [[payload.sortColumn, payload.sortBy]],
-        offset: pageIndex,
-        limit: payload.pageSize,
-      });
-
-      return {
-        statusCode: STATUS_CODE.SUCCESS,
-        message: MESSAGES.SUCCESS,
-        data: { userList: userList.rows, count: userList.count },
-      };
-    } catch (err) {
-      throw err;
-    }
-  }
-
-  async resetPassword(id: number, newPassword: string): Promise<ApiResponse> {
-    try {
-      console.log('>>>id', id);
-      const userData = await this.userRepository.findByPk(id);
-
-      if (!userData) {
-        throw new HttpException(
-          MESSAGES.INVALID_USER_ID,
-          STATUS_CODE.NOT_FOUND,
-        );
-      } else if (!userData.is_active) {
-        throw new HttpException(
-          MESSAGES.PASSWORD_UPDATE_ON_DISABLED_USER,
-          STATUS_CODE.BAD_REQUEST,
-        );
-      }
-      const hashedPassword = await this.commonService.generateHashPassword(
-        newPassword,
-      );
-
-      await this.userRepository.update(
-        { password: hashedPassword },
-        { where: { id } },
-      );
-
-      return {
-        statusCode: STATUS_CODE.SUCCESS,
-        message: MESSAGES.ADMIN_PASSWORD_RESET_SUCCESS,
-      };
-    } catch (err) {
-      throw err;
-    }
-  }
-
-  async updateUserStatus(id: number, is_active: number): Promise<ApiResponse> {
-    try {
-      const updatedUser = await this.userRepository.update(
-        { is_active },
-        { where: { id }, returning: true },
-      );
-
-      if (!updatedUser) {
-        throw new HttpException(
-          MESSAGES.INVALID_USER_ID,
-          STATUS_CODE.NOT_FOUND,
-        );
-      }
-
-      if (updatedUser[1][0].is_active) {
-        return {
-          statusCode: STATUS_CODE.SUCCESS,
-          message: MESSAGES.USER_ENABLED,
-        };
-      }
-
-      return {
-        statusCode: STATUS_CODE.SUCCESS,
-        message: MESSAGES.USER_DISABLED,
       };
     } catch (err) {
       throw err;
@@ -502,7 +350,7 @@ export class UserService {
     }
   }
 
-  async verifyPassword(payload: VerifyPassword): Promise<APIResponse> {
+  async verifyPassword(payload: VerifyPassword): Promise<ApiResponse> {
     try {
       const userDetails = await this.userRepository.findOne({
         where: { email: payload.email },
@@ -524,6 +372,39 @@ export class UserService {
       return {
         statusCode: STATUS_CODE.NOT_FOUND,
         message: MESSAGES.INVALID_EMAIL,
+      };
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async resetPassword(id: number, newPassword: string): Promise<ApiResponse> {
+    try {
+      const userData = await this.userRepository.findByPk(id);
+
+      if (!userData) {
+        throw new HttpException(
+          MESSAGES.INVALID_USER_ID,
+          STATUS_CODE.NOT_FOUND,
+        );
+      } else if (!userData.is_active) {
+        throw new HttpException(
+          MESSAGES.PASSWORD_UPDATE_ON_DISABLED_USER,
+          STATUS_CODE.BAD_REQUEST,
+        );
+      }
+      const hashedPassword = await this.commonService.generateHashPassword(
+        newPassword,
+      );
+
+      await this.userRepository.update(
+        { password: hashedPassword },
+        { where: { id } },
+      );
+
+      return {
+        statusCode: STATUS_CODE.SUCCESS,
+        message: MESSAGES.ADMIN_PASSWORD_RESET_SUCCESS,
       };
     } catch (err) {
       throw err;
