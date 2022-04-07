@@ -11,13 +11,17 @@ import { ApiTags } from '@nestjs/swagger';
 import { Auth } from 'src/core/decorators/auth.decorator';
 
 import { TransformInterceptor } from 'src/core/interceptors/transform.interceptor';
-import { ProductService } from 'src/modules/product/product.service';
+import { ProductService } from './product.service';
+import { ProductService as CommonProductService } from '../../product/product.service';
 import { UserProducts, SpecificProduct } from '../dto/user.dto';
 
 @Controller('user/product')
 @ApiTags('User products')
 export class UserProductController {
-  constructor(private readonly productService: ProductService) {}
+  constructor(
+    private readonly productService: ProductService,
+    private readonly commonProductService: CommonProductService,
+  ) {}
 
   @Get('list')
   @UseInterceptors(TransformInterceptor)
@@ -41,6 +45,6 @@ export class UserProductController {
   @Get(':id')
   @UseInterceptors(TransformInterceptor)
   async findOneById(@Param(new ValidationPipe()) params: SpecificProduct) {
-    return await this.productService.findOneById(params.id);
+    return await this.commonProductService.findOneById(params.id);
   }
 }
