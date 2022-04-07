@@ -13,13 +13,17 @@ import { ApiTags } from '@nestjs/swagger';
 import { Auth } from 'src/core/decorators/auth.decorator';
 import { TransformInterceptor } from 'src/core/interceptors/transform.interceptor';
 import { ApiResponse } from 'src/modules/admin/dto/interface/admin';
-import { OrderService } from 'src/modules/order/order.service';
+import { OrderService } from './order.service';
 import { NewOrder, SpecificOrder } from './dto/order.dto';
+import { OrderService as CommonOrderService } from '../../order/order.service';
 
 @Controller('user/order')
 @ApiTags('User order')
 export class UserOrderController {
-  constructor(private readonly orderService: OrderService) {}
+  constructor(
+    private readonly orderService: OrderService,
+    private readonly commonOrderService: CommonOrderService,
+  ) {}
 
   @Post('new')
   @Auth('user')
@@ -42,7 +46,7 @@ export class UserOrderController {
   @Auth('user')
   @UseInterceptors(TransformInterceptor)
   async findOneById(@Param(new ValidationPipe()) params: SpecificOrder) {
-    return await this.orderService.findOneById(params.id);
+    return await this.commonOrderService.findOneById(params.id);
   }
 
   @Get(':id/cancel')

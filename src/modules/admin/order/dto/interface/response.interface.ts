@@ -1,19 +1,5 @@
 import { ApiResponse } from 'src/modules/admin/dto/interface/admin';
-
-interface Order {
-  id: number;
-  order_number: string;
-  status: string;
-  net_amount: number;
-  payment_method: number;
-  created_at: Date;
-  payment_status: string;
-  user: User;
-  order_products: OrderProducts[];
-  address: OrderAddress;
-  payment: UserPayment;
-  product_review: ProductReview[];
-}
+import { Order } from 'src/modules/order/dto/order-response.dto';
 
 interface User {
   id: number;
@@ -64,17 +50,17 @@ interface UserPayment {
   id: number;
 }
 
-interface OrderListResponse extends ApiResponse {
-  data: {
-    orderList: Order[];
-    totalOrders?: number;
-  };
-}
-
 interface SpecificOrderResponse extends ApiResponse {
   data: {
     orderDetails: Order;
   };
 }
 
-export { OrderListResponse, SpecificOrderResponse };
+export {
+  SpecificOrderResponse,
+  UserPayment,
+  ProductReview,
+  OrderAddress,
+  OrderProducts,
+  User,
+};

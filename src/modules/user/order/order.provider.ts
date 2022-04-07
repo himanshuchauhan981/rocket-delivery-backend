@@ -1,20 +1,30 @@
 import {
   ADMIN_REPOSITORY,
+  CATEGORY_REPOSITORY,
+  MEASURING_UNIT_REPOSITORY,
   NOTIFICATION_REPOSITORY,
   NOTIFICATION_USER_REPOSITORY,
   ORDER_PRODUCT_REPOSITORY,
   ORDER_REPOSITORY,
+  PRODUCT_HISTORY_REPOSITORY,
+  PRODUCT_PRICE_REPOSITORY,
   PRODUCT_REPOSITORY,
+  SUB_CATEGORY_REPOSITORY,
   USER_PAYMENT_REPOSITORY,
   USER_REPOSITORY,
 } from 'src/core/constants/repositories';
 import { Admin } from 'src/modules/admin/admin.entity';
+import { Category } from 'src/modules/category/category.entity';
+import { MeasuringUnit } from 'src/modules/measuring-unit/measuring-unit.entity';
 import { NotificationUser } from 'src/modules/notification/entity/notification-user.entity';
 import { Notification } from 'src/modules/notification/notification.entity';
 import { OrderProduct } from 'src/modules/order/order-product.entity';
 import { Order } from 'src/modules/order/order.entity';
 import { UserPayment } from 'src/modules/payment/user-payment.entity';
+import { ProductHistory } from 'src/modules/product-history/product-history.entity';
+import { ProductPrice } from 'src/modules/product/product-price.entity';
 import { Product } from 'src/modules/product/product.entity';
+import { SubCategory } from 'src/modules/sub-category/sub-category.entity';
 import { User } from '../user.entity';
 
 export const UserOrderProvider = [
@@ -26,4 +36,9 @@ export const UserOrderProvider = [
   { provide: NOTIFICATION_REPOSITORY, useValue: Notification },
   { provide: NOTIFICATION_USER_REPOSITORY, useValue: NotificationUser },
   { provide: ADMIN_REPOSITORY, useValue: Admin },
+  { provide: CATEGORY_REPOSITORY, useValue: Category },
+  { provide: SUB_CATEGORY_REPOSITORY, useValue: SubCategory },
+  { provide: PRODUCT_PRICE_REPOSITORY, useValue: ProductPrice },
+  { provide: MEASURING_UNIT_REPOSITORY, useValue: MeasuringUnit },
+  { provide: PRODUCT_HISTORY_REPOSITORY, useValue: ProductHistory },
 ];
