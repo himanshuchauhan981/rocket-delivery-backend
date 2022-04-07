@@ -8,7 +8,7 @@ import { UserOrderController } from './order.controller';
 import { UserOrderProvider } from './order.provider';
 import { OrderService } from './order.service';
 import { ProductService as CommonProductService } from '../../product/product.service';
-// import {} from ""
+import { OrderService as CommonOrderService } from '../../order/order.service';
 
 @Module({
   controllers: [UserOrderController],
@@ -19,6 +19,7 @@ import { ProductService as CommonProductService } from '../../product/product.se
     NotificationService,
     SocketsGateway,
     CommonProductService,
+    CommonOrderService,
     ...UserOrderProvider,
   ],
 })

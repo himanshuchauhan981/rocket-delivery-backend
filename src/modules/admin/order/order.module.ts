@@ -7,6 +7,7 @@ import { PaymentService } from 'src/modules/payment/payment.service';
 import { AdminOrdersController } from './order.controller';
 import { AdminOrdersProvider } from './order.provider';
 import { OrderService } from './order.service';
+import { OrderService as CommonOrderService } from '../../order/order.service';
 
 @Module({
   controllers: [AdminOrdersController],
@@ -16,6 +17,7 @@ import { OrderService } from './order.service';
     FcmService,
     NotificationService,
     SocketsGateway,
+    CommonOrderService,
     ...AdminOrdersProvider,
   ],
 })
