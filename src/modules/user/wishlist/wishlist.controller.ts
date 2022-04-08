@@ -13,7 +13,7 @@ import { ApiTags } from '@nestjs/swagger';
 
 import { Auth } from 'src/core/decorators/auth.decorator';
 import { TransformInterceptor } from 'src/core/interceptors/transform.interceptor';
-import { WishlistService } from 'src/modules/wishlist/wishlist.service';
+import { WishlistService } from './wishlist.service';
 import { NewWishlistItem, SpecificWishlistItem } from './entity/wishlist.dto';
 
 @Controller('user/wishlist')
@@ -36,7 +36,6 @@ export class UserWishlistController {
     @Req() req,
   ) {
     const data = await this.wishlistService.create(payload, req.userId);
-    console.log(data);
     return data;
   }
 
