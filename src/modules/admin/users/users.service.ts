@@ -100,6 +100,36 @@ export class UsersService {
     };
   }
 
+  async adminUserOrders(user_id: number, payload: UserDetailList) {
+    try {
+      const offset = payload.pageIndex * payload.pageSize;
+
+      const orderList = await this.orderRepository.findAndCountAll({
+        where: { user_id },
+        attributes: [
+          'id',
+          'order_number',
+          'net_amount',
+          'status',
+          'delivery_status',
+          'payment_status',
+          'created_at',
+        ],
+        order: [[sequelize.col('created_at'), 'DESC']],
+        offset,
+        limit: payload.pageSize,
+      });
+
+      return {
+        statusCode: STATUS_CODE.SUCCESS,
+        message: MESSAGES.SUCCESS,
+        data: { orders: orderList.rows, totalOrders: orderList.count },
+      };
+    } catch (err) {
+      throw err;
+    }
+  }
+
   async updateUserStatus(id: number, is_active: number): Promise<ApiResponse> {
     try {
       const updatedUser = await this.userRepository.update(

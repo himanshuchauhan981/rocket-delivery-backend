@@ -18,7 +18,7 @@ import { ApiResponse } from '../dto/interface/admin';
 import { OrdersList, UpdateOrder } from './dto/admin-orders.entity';
 import { SpecificOrderResponse } from './dto/interface/response.interface';
 import { OrderService } from './order.service';
-import { OrderService as CommonOrderService } from '../../order/order.service';
+import { CommonOrderService } from '../../order/order.service';
 
 @Controller('admin/orders')
 @ApiTags('Admin orders')

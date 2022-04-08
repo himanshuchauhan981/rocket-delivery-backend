@@ -5,7 +5,6 @@ import { MESSAGES } from 'src/core/constants/messages';
 import { ORDER_REPOSITORY } from 'src/core/constants/repositories';
 import { STATUS_CODE } from 'src/core/constants/status_code';
 import { Order } from './order.entity';
-import { UserDetailList } from '../admin/users/dto/admin-users.entity';
 import { Address } from '../address/address.entity';
 import { SpecificOrderResponse } from '../admin/order/dto/interface/response.interface';
 import { UserPayment } from '../payment/user-payment.entity';
@@ -15,40 +14,10 @@ import { User } from '../user/user.entity';
 import { OrderProduct } from './order-product.entity';
 
 @Injectable()
-export class OrderService {
+export class CommonOrderService {
   constructor(
     @Inject(ORDER_REPOSITORY) private readonly orderRepository: typeof Order,
   ) {}
-
-  async adminUserOrders(user_id: number, payload: UserDetailList) {
-    try {
-      const offset = payload.pageIndex * payload.pageSize;
-
-      const orderList = await this.orderRepository.findAndCountAll({
-        where: { user_id },
-        attributes: [
-          'id',
-          'order_number',
-          'net_amount',
-          'status',
-          'delivery_status',
-          'payment_status',
-          'created_at',
-        ],
-        order: [[sequelize.col('created_at'), 'DESC']],
-        offset,
-        limit: payload.pageSize,
-      });
-
-      return {
-        statusCode: STATUS_CODE.SUCCESS,
-        message: MESSAGES.SUCCESS,
-        data: { orders: orderList.rows, totalOrders: orderList.count },
-      };
-    } catch (err) {
-      throw err;
-    }
-  }
 
   async findOneById(order_id: number): Promise<SpecificOrderResponse> {
     try {

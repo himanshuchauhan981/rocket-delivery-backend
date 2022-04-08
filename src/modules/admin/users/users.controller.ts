@@ -12,7 +12,6 @@ import { ApiTags } from '@nestjs/swagger';
 
 import { Auth } from 'src/core/decorators/auth.decorator';
 import { TransformInterceptor } from 'src/core/interceptors/transform.interceptor';
-import { OrderService } from 'src/modules/order/order.service';
 import { UsersService } from './users.service';
 import { UserService as UserCommonService } from '../../user/user.service';
 import { ApiResponse } from '../dto/interface/admin';
@@ -30,7 +29,6 @@ import { ListUsersResponse } from './dto/interface/response.interface';
 export class AdminUsersController {
   constructor(
     private readonly userService: UsersService,
-    private readonly orderService: OrderService,
     private readonly userCommonService: UserCommonService,
   ) {}
 
@@ -67,7 +65,7 @@ export class AdminUsersController {
     @Param(new ValidationPipe()) params: UserIdParams,
     @Query(new ValidationPipe()) payload: UserDetailList,
   ) {
-    return await this.orderService.adminUserOrders(params.id, payload);
+    return await this.userService.adminUserOrders(params.id, payload);
   }
 
   @Patch(':id/resetPassword')

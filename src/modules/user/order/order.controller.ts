@@ -15,7 +15,7 @@ import { TransformInterceptor } from 'src/core/interceptors/transform.intercepto
 import { ApiResponse } from 'src/modules/admin/dto/interface/admin';
 import { OrderService } from './order.service';
 import { NewOrder, SpecificOrder } from './dto/order.dto';
-import { OrderService as CommonOrderService } from '../../order/order.service';
+import { CommonOrderService } from '../../order/order.service';
 
 @Controller('user/order')
 @ApiTags('User order')

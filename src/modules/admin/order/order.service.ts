@@ -9,17 +9,12 @@ import {
 } from 'src/core/constants/repositories';
 import { STATUS_CODE } from 'src/core/constants/status_code';
 import { FcmService } from 'src/core/utils/fcm.service';
-import { Address } from 'src/modules/address/address.entity';
 import { OrderListResponse } from 'src/modules/order/dto/order-response.dto';
 import { OrderProduct } from 'src/modules/order/order-product.entity';
 import { Order } from 'src/modules/order/order.entity';
-import { UserPayment } from 'src/modules/payment/user-payment.entity';
-import { ProductReviewFile } from 'src/modules/product-review/product-review-file.entity';
-import { ProductReview } from 'src/modules/product-review/product-review.entity';
 import { User } from 'src/modules/user/user.entity';
 import { ApiResponse } from '../dto/interface/admin';
 import { OrdersList, UpdateOrder } from './dto/admin-orders.entity';
-import { SpecificOrderResponse } from './dto/interface/response.interface';
 
 @Injectable()
 export class OrderService {
