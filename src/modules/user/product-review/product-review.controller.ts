@@ -13,7 +13,7 @@ import { ApiTags } from '@nestjs/swagger';
 
 import { Auth } from 'src/core/decorators/auth.decorator';
 import { TransformInterceptor } from 'src/core/interceptors/transform.interceptor';
-import { ProductReviewService } from 'src/modules/product-review/product-review.service';
+import { ProductReviewService } from './product-review.service';
 import {
   NewProductReview,
   SpecificProductReview,
