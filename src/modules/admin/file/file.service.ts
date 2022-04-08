@@ -10,7 +10,7 @@ import {
 import { FILE_REPOSITORY } from 'src/core/constants/repositories';
 import { STATUS_CODE } from 'src/core/constants/status_code';
 import { MESSAGES } from 'src/core/constants/messages';
-import { APIResponse } from 'src/modules/category/dto/category-response.dto';
+import { ApiResponse } from 'src/modules/admin/dto/interface/admin';
 
 @Injectable()
 export class FileService {
@@ -57,7 +57,7 @@ export class FileService {
     }
   }
 
-  async delete(id: number): Promise<APIResponse> {
+  async delete(id: number): Promise<ApiResponse> {
     try {
       const deleteFileResponse = await this.fileRepository.destroy({
         where: { id },
