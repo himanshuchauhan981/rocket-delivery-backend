@@ -1,5 +1,4 @@
 import { HttpException, Inject, Injectable } from '@nestjs/common';
-import sequelize from 'sequelize';
 import { MESSAGES } from 'src/core/constants/messages';
 
 import { ADDRESS_REPOSITORY } from 'src/core/constants/repositories';
@@ -13,36 +12,6 @@ export class AddressService {
     @Inject(ADDRESS_REPOSITORY)
     private readonly addressRepository: typeof Address,
   ) {}
-
-  async findAllByUserId(userId: number) {
-    try {
-      const addressList = await this.addressRepository.findAll({
-        where: { [sequelize.Op.and]: [{ is_deleted: 0 }, { user_id: userId }] },
-        attributes: [
-          'id',
-          'full_name',
-          'pincode',
-          'house_no',
-          'area',
-          'city',
-          'state',
-          'landmark',
-          'latitude',
-          'longitude',
-          'country_code',
-          'mobile_number',
-        ],
-      });
-
-      return {
-        statusCode: STATUS_CODE.SUCCESS,
-        message: MESSAGES.SUCCESS,
-        data: { addressList },
-      };
-    } catch (err) {
-      throw err;
-    }
-  }
 
   async update(payload: NewAddress, id: number) {
     try {

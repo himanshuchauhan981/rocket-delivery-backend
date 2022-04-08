@@ -29,7 +29,7 @@ export class UserAddressController {
   @Auth('user')
   @UseInterceptors(TransformInterceptor)
   async findByUserId(@Req() req) {
-    return await this.commonAddressService.findAllByUserId(req.userId);
+    return await this.addressService.findAllByUserId(req.userId);
   }
 
   @Post('')
