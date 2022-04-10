@@ -6,7 +6,7 @@ import {
   USER_REPOSITORY,
 } from 'src/core/constants/repositories';
 import { NotificationUser } from '../notification/entity/notification-user.entity';
-import { Notification } from '../notification/notification.entity';
+import { Notification } from '../notification/entity/notification.entity';
 import { UserPayment } from '../payment/user-payment.entity';
 import { User } from '../user/user.entity';
 import { Order } from './order.entity';

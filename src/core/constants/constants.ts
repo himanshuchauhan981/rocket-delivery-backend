@@ -44,6 +44,12 @@ const USER_TYPE = {
   USER: 'user',
 };
 
+const NOTIFICATION_TYPE = {
+  ORDER_REQUEST: 'order_request',
+  ORDER_CONFIRM: 'order_confirm',
+  ORDER_CANCEL: 'order_cancel',
+};
+
 export {
   CONSTANTS,
   FILE_SLUGS,
@@ -53,4 +59,5 @@ export {
   USER_PAYMENT_STATUS,
   NOTIFICATION_SLUG,
   USER_TYPE,
+  NOTIFICATION_TYPE,
 };

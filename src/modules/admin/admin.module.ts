@@ -16,6 +16,7 @@ import { MeasuringUnitModule } from '../measuring-unit/measuring-unit.module';
 import { AdminOrdersModule } from './order/order.module';
 import { AddressService } from '../address/address.service';
 import { AdminUsersModule } from './users/users.module';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { AdminUsersModule } from './users/users.module';
     MeasuringUnitModule,
     AdminOrdersModule,
     AdminUsersModule,
+    NotificationModule,
   ],
   controllers: [AdminController],
   providers: [

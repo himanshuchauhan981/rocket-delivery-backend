@@ -5,8 +5,13 @@ import {
   DataType,
   CreatedAt,
   UpdatedAt,
+  ForeignKey,
+  BelongsTo,
 } from 'sequelize-typescript';
+
 import { USER_TYPE } from 'src/core/constants/constants';
+import { User } from 'src/modules/user/user.entity';
+import { Notification } from './notification.entity';
 
 @Table({
   tableName: 'notification_user',
@@ -24,12 +29,14 @@ export class NotificationUser extends Model<NotificationUser> {
     type: DataType.INTEGER,
     allowNull: false,
   })
+  @ForeignKey(() => Notification)
   notification_id: number;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
   })
+  @ForeignKey(() => User)
   user_id: number;
 
   @Column({
@@ -55,4 +62,10 @@ export class NotificationUser extends Model<NotificationUser> {
 
   @UpdatedAt
   updated_at: Date;
+
+  @BelongsTo(() => Notification)
+  notification: Notification;
+
+  @BelongsTo(() => User)
+  user: User;
 }

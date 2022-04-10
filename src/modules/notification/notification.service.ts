@@ -11,7 +11,7 @@ import {
   NotificationPayload,
 } from './dto/notification.interface';
 import { NotificationUser } from './entity/notification-user.entity';
-import { Notification } from './notification.entity';
+import { Notification } from './entity/notification.entity';
 
 @Injectable()
 export class NotificationService {
