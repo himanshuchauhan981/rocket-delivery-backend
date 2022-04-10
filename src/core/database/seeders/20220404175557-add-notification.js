@@ -41,7 +41,12 @@ module.exports = {
         [],
       );
 
-      let notificationBody, createdBy, userType, receiverId, receiverType;
+      let notificationBody,
+        createdBy,
+        userType,
+        receiverId,
+        receiverType,
+        notificationType;
 
       if (item.status == 'REQUESTED') {
         notificationBody = `${userDetails.name} had placed an order with order number ${item.order_number}`;
@@ -49,18 +54,21 @@ module.exports = {
         userType = 'user';
         receiverId = adminDetails.id;
         receiverType = 'admin';
+        notificationType = 'order_request';
       } else if (item.status == 'CONFIRMED') {
         notificationBody = `Admin had confirmed your order with order number ${item.order_number}`;
         createdBy = adminDetails.id;
         userType = 'admin';
         receiverId = item.user_id;
         receiverType = 'user';
+        notificationType = 'order_confirm';
       } else if (item.status === 'CANCELLED') {
         notificationBody = `${userDetails.name} had cancelled order with order number ${item.order_number}`;
         createdBy = item.user_id;
         userType = 'user';
         receiverId = adminDetails.id;
         receiverType = 'admin';
+        notificationType = 'order_cancel';
       }
 
       if (notificationBody) {
@@ -73,6 +81,7 @@ module.exports = {
             order_id: item.id,
           }),
           created_at: item.created_at,
+          notification_type: notificationType,
         };
 
         const [newNotification] = await queryInterface.bulkInsert(

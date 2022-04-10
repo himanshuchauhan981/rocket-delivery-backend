@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-  async up (queryInterface, Sequelize) {
+  async up(queryInterface, Sequelize) {
     /**
      * Add altering commands here.
      *
@@ -32,10 +32,7 @@ module.exports = {
         user_type: {
           type: Sequelize.ENUM,
           allowNull: false,
-          values: [
-            'user',
-            'admin',
-          ]
+          values: ['user', 'admin'],
         },
 
         is_read: {
@@ -77,7 +74,7 @@ module.exports = {
     );
   },
 
-  async down (queryInterface, Sequelize) {
+  async down(queryInterface) {
     /**
      * Add reverting commands here.
      *
@@ -85,6 +82,6 @@ module.exports = {
      * await queryInterface.dropTable('users');
      */
 
-     await queryInterface.dropTable('notification_user');
-  }
+    await queryInterface.dropTable('notification_user');
+  },
 };

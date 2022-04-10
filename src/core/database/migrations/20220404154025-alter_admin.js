@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-  async up (queryInterface, Sequelize) {
+  async up(queryInterface, Sequelize) {
     /**
      * Add altering commands here.
      *
@@ -12,11 +12,10 @@ module.exports = {
     await queryInterface.addColumn('admin', 'super_admin', {
       type: Sequelize.INTEGER,
       defaultValue: 1,
-
     });
   },
 
-  async down (queryInterface, Sequelize) {
+  async down(queryInterface) {
     await queryInterface.removeColumn('admin', 'super_admin');
     /**
      * Add reverting commands here.
@@ -24,5 +23,5 @@ module.exports = {
      * Example:
      * await queryInterface.dropTable('users');
      */
-  }
+  },
 };

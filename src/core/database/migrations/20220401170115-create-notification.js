@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-  async up (queryInterface, Sequelize) {
+  async up(queryInterface, Sequelize) {
     /**
      * Add altering commands here.
      *
@@ -30,13 +30,16 @@ module.exports = {
           allowNull: false,
         },
 
+        notification_type: {
+          type: Sequelize.ENUM,
+          allowNull: false,
+          values: ['order_request', 'order_confirm', 'order_cancel'],
+        },
+
         user_type: {
           type: Sequelize.ENUM,
           allowNull: false,
-          values: [
-            'user',
-            'admin',
-          ]
+          values: ['user', 'admin'],
         },
 
         is_deleted: {
@@ -79,7 +82,7 @@ module.exports = {
     );
   },
 
-  async down (queryInterface, Sequelize) {
+  async down(queryInterface) {
     /**
      * Add reverting commands here.
      *
@@ -87,6 +90,6 @@ module.exports = {
      * await queryInterface.dropTable('users');
      */
 
-     await queryInterface.dropTable('notification');
-  }
+    await queryInterface.dropTable('notification');
+  },
 };
