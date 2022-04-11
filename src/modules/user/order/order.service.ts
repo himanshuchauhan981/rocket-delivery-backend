@@ -8,6 +8,7 @@ import {
   ORDER_PAYMENT_STATUS,
   NOTIFICATION_SLUG,
   USER_TYPE,
+  NOTIFICATION_TYPE,
 } from 'src/core/constants/constants';
 import { MESSAGES } from 'src/core/constants/messages';
 import {
@@ -244,6 +245,7 @@ export class OrderService {
     });
 
     const notificationArgs = {
+      notification_type: NOTIFICATION_TYPE.ORDER_CANCEL,
       sender_id: user_id,
       user_role,
       slug: NOTIFICATION_SLUG.ORDER_CANCELLED,

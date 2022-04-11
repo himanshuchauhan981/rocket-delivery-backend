@@ -6,3 +6,13 @@ export class NotficationList {
   @IsNotEmpty()
   pageSize: number;
 }
+
+export class UpdateNotificationStatus {
+  @ApiProperty()
+  @IsNotEmpty()
+  id: number;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  all_read: boolean;
+}

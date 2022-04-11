@@ -14,5 +14,6 @@ export interface NotificationArgs {
   slug: string;
   receivers: Receivers[];
   metadata: any;
+  notification_type: string;
   payload: NotificationPayload;
 }

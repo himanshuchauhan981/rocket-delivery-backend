@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import sequelize from 'sequelize';
 
 import { NOTIFICATION_SLUG } from 'src/core/constants/constants';
 import {
@@ -6,6 +7,7 @@ import {
   NOTIFICATION_USER_REPOSITORY,
 } from 'src/core/constants/repositories';
 import { SocketsGateway } from 'src/core/sockets/sockets.gateway';
+import { User } from '../user/user.entity';
 import {
   NotificationArgs,
   NotificationPayload,
@@ -52,6 +54,7 @@ export class NotificationService {
       user_id: notificationArgs.sender_id,
       user_type: notificationArgs.user_role,
       metadata: notificationArgs.metadata,
+      notification_type: notificationArgs.notification_type,
     };
 
     const newNotification = await this.notificationRepository.create<any>(
@@ -72,10 +75,30 @@ export class NotificationService {
     await this.notificationUserRepository.bulkCreate(notificationUserList);
 
     for (const item of notificationArgs.receivers) {
+      const notificationDetails = await this.notificationUserRepository.findOne(
+        {
+          where: {
+            [sequelize.Op.and]: [
+              { notification_id: newNotification.id },
+              { user_type: item.user_type },
+              { user_id: item.user_id },
+            ],
+          },
+          include: [
+            {
+              model: Notification,
+              attributes: ['id', 'body', 'metadata', 'notification_type'],
+            },
+            { model: User, attributes: ['id', 'profile_image'] },
+          ],
+          attributes: ['id', 'is_read', 'is_sent', 'created_at'],
+        },
+      );
+
       this.socketGateway.sendNotification({
         receiver_id: item.user_id,
         receiver_type: item.user_type,
-        data: {},
+        data: notificationDetails,
       });
     }
   }

@@ -30,8 +30,8 @@ export class SocketsGateway {
         `${notificationArgs.receiver_id}-${notificationArgs.receiver_type}`
       ];
 
-    client.emit('admin_notification', {
-      data: notificationArgs.data,
-    });
+    if (client) {
+      client.emit('admin_notification', notificationArgs.data);
+    }
   }
 }
