@@ -56,6 +56,13 @@ interface SpecificOrderResponse extends ApiResponse {
   };
 }
 
+interface OrderInvoiceResponse extends ApiResponse {
+  responseType: string;
+  data: {
+    pdf: Buffer;
+  };
+}
+
 export {
   SpecificOrderResponse,
   UserPayment,
@@ -63,4 +70,5 @@ export {
   OrderAddress,
   OrderProducts,
   User,
+  OrderInvoiceResponse,
 };

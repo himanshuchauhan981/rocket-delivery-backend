@@ -55,4 +55,11 @@ export class AdminOrdersController {
   ): Promise<ApiResponse> {
     return await this.orderService.updateOrderStatus(payload, params.id);
   }
+
+  @Get(':id/invoice')
+  @Auth('admin')
+  @UseInterceptors(TransformInterceptor)
+  async downloadInvoice(@Param(new ValidationPipe()) params: SpecificOrder) {
+    return await this.orderService.downloadInvoice(params.id);
+  }
 }

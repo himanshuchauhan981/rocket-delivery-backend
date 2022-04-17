@@ -1,5 +1,6 @@
 import { HttpException, Inject, Injectable } from '@nestjs/common';
 import sequelize from 'sequelize';
+import * as htmlPDF from 'html-pdf';
 
 import { CONSTANTS, ORDER_STATUS } from 'src/core/constants/constants';
 import { MESSAGES } from 'src/core/constants/messages';
@@ -15,6 +16,9 @@ import { Order } from 'src/modules/order/order.entity';
 import { User } from 'src/modules/user/user.entity';
 import { ApiResponse } from '../dto/interface/admin';
 import { OrdersList, UpdateOrder } from './dto/admin-orders.entity';
+import { OrderInvoiceResponse } from './dto/interface/response.interface';
+import { orderInvoice } from '../../../core/utils/invoice';
+import { Address } from 'src/modules/address/address.entity';
 
 @Injectable()
 export class OrderService {
@@ -145,5 +149,50 @@ export class OrderService {
     } catch (err) {
       throw err;
     }
+  }
+
+  async downloadInvoice(order_id: number): Promise<OrderInvoiceResponse> {
+    const orderDetails = await this.orderRepository.findByPk(order_id, {
+      include: [
+        {
+          model: Address,
+          attributes: [
+            'id',
+            'full_name',
+            'pincode',
+            'house_no',
+            'area',
+            'city',
+            'state',
+            'landmark',
+            'mobile_number',
+          ],
+        },
+        {
+          model: OrderProduct,
+          attributes: ['id', 'product_name', 'quantity', 'price'],
+        },
+      ],
+    });
+
+    if (!orderDetails) {
+      throw new HttpException(MESSAGES.INVALID_ORDER_ID, STATUS_CODE.NOT_FOUND);
+    }
+
+    return new Promise((resolve, reject) => {
+      const orderInvoiceHTML = orderInvoice(orderDetails);
+
+      htmlPDF.create(orderInvoiceHTML).toBuffer(function (err, pdfBuffer) {
+        if (err) {
+          reject(err);
+        }
+        resolve({
+          responseType: 'blob',
+          statusCode: STATUS_CODE.SUCCESS,
+          message: MESSAGES.SUCCESS,
+          data: { pdf: pdfBuffer },
+        });
+      });
+    });
   }
 }

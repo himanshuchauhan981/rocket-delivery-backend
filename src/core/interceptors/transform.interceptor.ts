@@ -3,6 +3,7 @@ import {
   ExecutionContext,
   Injectable,
   NestInterceptor,
+  StreamableFile,
 } from '@nestjs/common';
 import { map } from 'rxjs/operators';
 
@@ -10,6 +11,7 @@ export interface Response<T> {
   statusCode: number;
   message: number;
   data: T;
+  responseType: string;
 }
 
 @Injectable()
@@ -21,6 +23,10 @@ export class TransformInterceptor<T> implements NestInterceptor<T, any> {
 
     return next.handle().pipe(
       map((response) => {
+        if (response.responseType === 'blob') {
+          return new StreamableFile(response.data.pdf);
+        }
+
         if (apiRequest.role == 'admin') {
           return {
             statusCode: apiResponse.statusCode,
