@@ -59,11 +59,9 @@ export class FileService {
 
   async delete(id: number): Promise<ApiResponse> {
     try {
-      const deleteFileResponse = await this.fileRepository.destroy({
+      await this.fileRepository.destroy({
         where: { id },
       });
-
-      console.log(deleteFileResponse);
 
       return {
         statusCode: STATUS_CODE.SUCCESS,

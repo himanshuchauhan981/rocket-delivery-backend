@@ -104,7 +104,6 @@ export class ProductReviewService {
         message: MESSAGES.REVIEW_NOT_FOUND,
       };
     } catch (err) {
-      console.log('>>>Errr', err);
       throw err;
     }
   }

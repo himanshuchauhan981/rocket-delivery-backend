@@ -7,8 +7,6 @@ const orderInvoice = (order: Order) => {
   let subTotal = 0;
   const deliveryCharges = 10;
 
-  console.log(order.order_products);
-
   for (const product of order.order_products) {
     subTotal = subTotal + product.price * product.quantity;
     orderProductHtml =

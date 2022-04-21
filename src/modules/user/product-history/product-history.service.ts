@@ -108,7 +108,6 @@ export class ProductHistoryService {
         data: { productHistoryList },
       };
     } catch (err) {
-      console.log('>>>Err', err);
       throw err;
     }
   }

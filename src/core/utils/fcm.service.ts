@@ -5,7 +5,6 @@ import * as firebaseAdmin from 'firebase-admin';
 @Injectable()
 export class FcmService {
   async #initializeFirebaseAdmin() {
-    console.log('initialize firebase');
     if (firebaseAdmin.apps.length == 0) {
       firebaseAdmin.initializeApp({
         credential: firebaseAdmin.credential.cert({
