@@ -1,4 +1,7 @@
-import { ApiResponse } from 'src/modules/admin/dto/interface/admin';
+import {
+  ApiResponse,
+  FileResponse,
+} from 'src/modules/admin/dto/interface/admin';
 
 interface User {
   id: number;
@@ -17,4 +20,10 @@ interface ListUsersResponse extends ApiResponse {
   };
 }
 
-export { ListUsersResponse };
+interface DownloadUserCSVResponse extends FileResponse {
+  data: {
+    csv: string;
+  };
+}
+
+export { ListUsersResponse, DownloadUserCSVResponse };

@@ -2,7 +2,11 @@ import { HttpException, Inject, Injectable } from '@nestjs/common';
 import sequelize from 'sequelize';
 import * as htmlPDF from 'html-pdf';
 
-import { CONSTANTS, ORDER_STATUS } from 'src/core/constants/constants';
+import {
+  CONSTANTS,
+  ORDER_STATUS,
+  RESPONSE_TYPE,
+} from 'src/core/constants/constants';
 import { MESSAGES } from 'src/core/constants/messages';
 import {
   ORDER_REPOSITORY,
@@ -187,7 +191,7 @@ export class OrderService {
           reject(err);
         }
         resolve({
-          responseType: 'blob',
+          responseType: RESPONSE_TYPE.BLOB,
           statusCode: STATUS_CODE.SUCCESS,
           message: MESSAGES.SUCCESS,
           data: { pdf: pdfBuffer },

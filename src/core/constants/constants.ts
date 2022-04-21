@@ -50,6 +50,11 @@ const NOTIFICATION_TYPE = {
   ORDER_CANCEL: 'order_cancel',
 };
 
+const RESPONSE_TYPE = {
+  BLOB: 'BLOB',
+  CSV: 'CSV',
+};
+
 export {
   CONSTANTS,
   FILE_SLUGS,
@@ -60,4 +65,5 @@ export {
   NOTIFICATION_SLUG,
   USER_TYPE,
   NOTIFICATION_TYPE,
+  RESPONSE_TYPE,
 };

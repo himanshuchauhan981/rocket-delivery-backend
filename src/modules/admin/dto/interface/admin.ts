@@ -3,6 +3,12 @@ interface ApiResponse {
   message: string;
 }
 
+interface FileResponse {
+  statusCode: number;
+  message: string;
+  responseType: string;
+}
+
 interface SubCategory {
   id: number;
   name: string;
@@ -41,6 +47,7 @@ interface SpecificSubCategoryResponse extends ApiResponse {
 
 export {
   ApiResponse,
+  FileResponse,
   AdminLoginResponse,
   AdminSubCategoryListResponse,
   SpecificSubCategoryResponse,

@@ -6,6 +6,8 @@ import {
   StreamableFile,
 } from '@nestjs/common';
 import { map } from 'rxjs/operators';
+import { RESPONSE_TYPE } from '../constants/constants';
+import { STATUS_CODE } from '../constants/status_code';
 
 export interface Response<T> {
   statusCode: number;
@@ -23,11 +25,17 @@ export class TransformInterceptor<T> implements NestInterceptor<T, any> {
 
     return next.handle().pipe(
       map((response) => {
-        if (response.responseType === 'blob') {
+        if (response.responseType === RESPONSE_TYPE.BLOB) {
           return new StreamableFile(response.data.pdf);
-        }
+        } else if (response.responseType === RESPONSE_TYPE.CSV) {
+          apiResponse.setHeader(
+            'Content-Disposition',
+            'attachment; filename=transaction.csv',
+          );
 
-        if (apiRequest.role == 'admin') {
+          apiResponse.setHeader('Content-Type', 'text/csv');
+          apiResponse.status(STATUS_CODE.SUCCESS).end(response.data.csv);
+        } else if (apiRequest.role == 'admin') {
           return {
             statusCode: apiResponse.statusCode,
             message: response.message,

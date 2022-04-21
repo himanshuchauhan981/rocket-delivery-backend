@@ -1,5 +1,7 @@
 import { HttpException, Inject, Injectable } from '@nestjs/common';
 import sequelize from 'sequelize';
+import * as moment from 'moment';
+import { Parser } from 'json2csv';
 
 import { MESSAGES } from 'src/core/constants/messages';
 import {
@@ -7,20 +9,22 @@ import {
   USER_REPOSITORY,
 } from 'src/core/constants/repositories';
 import { STATUS_CODE } from 'src/core/constants/status_code';
-import { CommonService } from 'src/modules/common/common.service';
 import { Order } from 'src/modules/order/order.entity';
 import { UserPayment } from 'src/modules/payment/user-payment.entity';
 import { User } from 'src/modules/user/user.entity';
 import { ApiResponse } from '../dto/interface/admin';
 import { UserDetailList, UsersList } from './dto/admin-users.entity';
-import { ListUsersResponse } from './dto/interface/response.interface';
+import {
+  DownloadUserCSVResponse,
+  ListUsersResponse,
+} from './dto/interface/response.interface';
+import { RESPONSE_TYPE } from 'src/core/constants/constants';
 
 @Injectable()
 export class UsersService {
   constructor(
     @Inject(USER_REPOSITORY) private readonly userRepository: typeof User,
     @Inject(ORDER_REPOSITORY) private readonly orderRepository: typeof Order,
-    private readonly commonService: CommonService,
   ) {}
   async listUsers(payload: UsersList): Promise<ListUsersResponse> {
     try {
@@ -154,6 +158,45 @@ export class UsersService {
       return {
         statusCode: STATUS_CODE.SUCCESS,
         message: MESSAGES.USER_DISABLED,
+      };
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async downloadUsersCSV(): Promise<DownloadUserCSVResponse> {
+    try {
+      const csvData = [];
+      const userList = await this.userRepository.findAll({
+        where: { is_deleted: 0 },
+      });
+
+      const csvFields = [
+        'Name',
+        'Email',
+        'Mobile Number',
+        'Profile Image',
+        'Created At',
+      ];
+
+      for (const item of userList) {
+        csvData.push({
+          Name: item.name,
+          Email: item.email,
+          'Mobile Number': item.mobile_number,
+          'Profile Image': item.profile_image,
+          'Created At': moment(item.created_at).format('YYYY-MM-DD HH:mm:ss'),
+        });
+      }
+
+      const csvParser = new Parser({ fields: csvFields });
+      const userCSV = csvParser.parse(csvData);
+
+      return {
+        responseType: RESPONSE_TYPE.CSV,
+        statusCode: STATUS_CODE.SUCCESS,
+        message: MESSAGES.SUCCESS,
+        data: { csv: userCSV },
       };
     } catch (err) {
       throw err;

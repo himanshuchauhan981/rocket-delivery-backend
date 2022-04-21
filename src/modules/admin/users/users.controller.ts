@@ -22,7 +22,10 @@ import {
   UserStatus,
   UserDetailList,
 } from './dto/admin-users.entity';
-import { ListUsersResponse } from './dto/interface/response.interface';
+import {
+  DownloadUserCSVResponse,
+  ListUsersResponse,
+} from './dto/interface/response.interface';
 
 @Controller('admin/users')
 @ApiTags('Admin user')
@@ -39,6 +42,13 @@ export class AdminUsersController {
     @Query(new ValidationPipe()) payload: UsersList,
   ): Promise<ListUsersResponse> {
     return await this.userService.listUsers(payload);
+  }
+
+  @Get('csv')
+  @Auth('admin')
+  @UseInterceptors(TransformInterceptor)
+  async downloadUsersCSV(): Promise<DownloadUserCSVResponse> {
+    return await this.userService.downloadUsersCSV();
   }
 
   @Get(':id')
