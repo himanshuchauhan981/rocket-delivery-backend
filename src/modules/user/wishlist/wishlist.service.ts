@@ -1,18 +1,22 @@
 import { HttpException, Inject, Injectable } from '@nestjs/common';
 import sequelize from 'sequelize';
+
 import { MESSAGES } from 'src/core/constants/messages';
 import { WISHLIST_REPOSITORY } from 'src/core/constants/repositories';
 import { STATUS_CODE } from 'src/core/constants/status_code';
 import { File } from 'src/modules/admin/file/file.entity';
+import { ProductPrice } from 'src/modules/product/product-price.entity';
 import { Product } from 'src/modules/product/product.entity';
 import { Wishlist } from 'src/modules/wishlist/wishlist.entity';
 import { NewWishlistItem } from './entity/wishlist.dto';
+import { ProductService as CommonProductService } from '../../product/product.service';
 
 @Injectable()
 export class WishlistService {
   constructor(
     @Inject(WISHLIST_REPOSITORY)
     private readonly wishlistRepository: typeof Wishlist,
+    private readonly commonProductService: CommonProductService,
   ) {}
 
   async findAll(user_id: number) {
@@ -25,11 +29,41 @@ export class WishlistService {
           {
             model: Product,
             attributes: ['id', 'name'],
-            include: [{ model: File, attributes: ['id', 'url'] }],
+            include: [
+              { model: File, attributes: ['id', 'url'] },
+              {
+                model: ProductPrice,
+                attributes: [
+                  'actual_price',
+                  'discount_start_date',
+                  'discount_end_date',
+                  'discount_type',
+                  'discount',
+                  'refundable',
+                ],
+              },
+            ],
           },
         ],
         attributes: ['id'],
       });
+
+      for (const item of userWishlist) {
+        const productPrice = item.product.product_price;
+
+        const discountDetails =
+          this.commonProductService.calculateDiscountPrice(
+            productPrice.discount_start_date,
+            productPrice.discount_end_date,
+            productPrice.discount,
+            productPrice.actual_price,
+            productPrice.discount_type,
+          );
+
+        item.product.product_price.discount = discountDetails.discountPrice;
+        item.product.product_price.discount_status =
+          discountDetails.discountStatus;
+      }
 
       return {
         statusCode: STATUS_CODE.SUCCESS,
