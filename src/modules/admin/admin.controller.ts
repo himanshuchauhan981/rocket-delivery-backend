@@ -51,4 +51,11 @@ export class AdminController {
   async adminDetails(@Req() request) {
     return await this.adminService.adminDetails(request.userId);
   }
+
+  @Get('dashboard')
+  @Auth('admin')
+  @UseInterceptors(TransformInterceptor)
+  async dashboardDetails() {
+    return await this.adminService.dashboardDetails();
+  }
 }

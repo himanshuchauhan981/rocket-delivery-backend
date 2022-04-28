@@ -45,10 +45,20 @@ interface SpecificSubCategoryResponse extends ApiResponse {
   };
 }
 
+interface AdminDashboardResponse extends ApiResponse {
+  data: {
+    totalOrders: number;
+    totalCategories: number;
+    totalUsers: number;
+    totalProducts: number;
+  };
+}
+
 export {
   ApiResponse,
   FileResponse,
   AdminLoginResponse,
   AdminSubCategoryListResponse,
   SpecificSubCategoryResponse,
+  AdminDashboardResponse,
 };
