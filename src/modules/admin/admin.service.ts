@@ -1,6 +1,8 @@
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
-import { MESSAGES } from 'src/core/constants/messages';
+import sequelize from 'sequelize';
+import * as moment from 'moment';
 
+import { MESSAGES } from 'src/core/constants/messages';
 import {
   ADMIN_REPOSITORY,
   CATEGORY_REPOSITORY,
@@ -11,6 +13,7 @@ import {
 import { STATUS_CODE } from 'src/core/constants/status_code';
 import { Category } from '../category/category.entity';
 import { CommonService } from '../common/common.service';
+import { OrderProduct } from '../order/order-product.entity';
 import { Order } from '../order/order.entity';
 import { Product } from '../product/product.entity';
 import { User } from '../user/user.entity';
@@ -18,6 +21,7 @@ import { Admin } from './admin.entity';
 import { AdminLogin } from './dto/admin.dto';
 import {
   AdminDashboardResponse,
+  AdminDetailsResponse,
   AdminLoginResponse,
 } from './dto/interface/admin';
 
@@ -34,6 +38,49 @@ export class AdminService {
     @Inject(PRODUCT_REPOSITORY)
     private readonly productRepository: typeof Product,
   ) {}
+
+  async #categoryWiseSales(): Promise<Category[]> {
+    return this.categoryRepository.findAll({
+      where: { is_deleted: 0 },
+      include: [
+        {
+          model: Product,
+          include: [{ model: OrderProduct, attributes: [] }],
+          attributes: [],
+        },
+      ],
+      attributes: [
+        'id',
+        'name',
+        [
+          sequelize.fn('COUNT', sequelize.col('categoryProducts.id')),
+          'totalSale',
+        ],
+      ],
+      group: ['categoryProducts.category_id', 'Category.name', 'Category.id'],
+    });
+  }
+
+  async #findWeeklyOrderSales(): Promise<Order[]> {
+    const dateTo = moment().format('YYYY-MM-DD');
+    const dateFrom = moment().subtract(2, 'month').format('YYYY-MM-DD');
+
+    console.log(dateTo, dateFrom);
+
+    return this.orderRepository.findAll({
+      where: { created_at: { [sequelize.Op.between]: [dateFrom, dateTo] } },
+      attributes: [
+        [sequelize.fn('COUNT', sequelize.col('created_at')), 'sale'],
+        [
+          sequelize.fn('date_trunc', 'day', sequelize.col('created_at')),
+          'createdOn',
+        ],
+      ],
+      order: [[sequelize.literal('"createdOn"'), 'DESC']],
+      group: 'createdOn',
+      subQuery: false,
+    });
+  }
 
   async login(payload: AdminLogin): Promise<AdminLoginResponse> {
     const adminDetails = await this.adminRepository.findOne({
@@ -66,7 +113,7 @@ export class AdminService {
     };
   }
 
-  async adminDetails(id: number) {
+  async adminDetails(id: number): Promise<AdminDetailsResponse> {
     try {
       const adminDetails = await this.adminRepository.findByPk(id, {
         attributes: ['id', 'email'],
@@ -88,9 +135,7 @@ export class AdminService {
         where: { is_deleted: 0 },
       });
 
-      const totalCategories = await this.categoryRepository.count({
-        where: { is_deleted: 0 },
-      });
+      const categoryWiseSales = await this.#categoryWiseSales();
 
       const totalOrders = await this.orderRepository.count();
 
@@ -98,10 +143,21 @@ export class AdminService {
         where: { is_deleted: 0 },
       });
 
+      const weeklyOrderSales = await this.#findWeeklyOrderSales();
+
+      console.log('>>>>weeekly order sales', weeklyOrderSales);
+
       return {
         statusCode: STATUS_CODE.SUCCESS,
         message: MESSAGES.SUCCESS,
-        data: { totalOrders, totalCategories, totalUsers, totalProducts },
+        data: {
+          totalOrders,
+          totalCategories: categoryWiseSales.length,
+          totalUsers,
+          totalProducts,
+          categoryWiseSales: categoryWiseSales,
+          weeklyOrderSales,
+        },
       };
     } catch (err) {
       throw err;

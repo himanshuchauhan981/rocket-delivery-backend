@@ -17,7 +17,11 @@ import { AddressService } from '../address/address.service';
 import { AddressId, NewAddress } from '../user/address/dto/address.dto';
 import { AdminService } from './admin.service';
 import { AdminLogin } from './dto/admin.dto';
-import { AdminLoginResponse } from './dto/interface/admin';
+import {
+  AdminDashboardResponse,
+  AdminDetailsResponse,
+  AdminLoginResponse,
+} from './dto/interface/admin';
 
 @Controller('admin')
 @ApiTags('Admin')
@@ -48,14 +52,14 @@ export class AdminController {
   @Get('details')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async adminDetails(@Req() request) {
+  async adminDetails(@Req() request): Promise<AdminDetailsResponse> {
     return await this.adminService.adminDetails(request.userId);
   }
 
   @Get('dashboard')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async dashboardDetails() {
+  async dashboardDetails(): Promise<AdminDashboardResponse> {
     return await this.adminService.dashboardDetails();
   }
 }

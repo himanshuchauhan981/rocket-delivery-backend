@@ -10,6 +10,7 @@ import {
   HasMany,
 } from 'sequelize-typescript';
 import { File } from '../admin/file/file.entity';
+import { Product } from '../product/product.entity';
 import { SubCategory } from '../sub-category/sub-category.entity';
 
 @Table({
@@ -76,4 +77,7 @@ export class Category extends Model<Category> {
     type: DataType.VIRTUAL,
   })
   productsCount: number;
+
+  @HasMany(() => Product)
+  categoryProducts: Product[];
 }
