@@ -62,24 +62,27 @@ export class AdminService {
   }
 
   async #findWeeklyOrderSales(): Promise<Order[]> {
-    const dateTo = moment().format('YYYY-MM-DD');
-    const dateFrom = moment().subtract(2, 'month').format('YYYY-MM-DD');
+    const dateTo = moment().format('YYYY-MM-DD HH:mm:ss');
+    const dateFrom = moment()
+      .subtract(2, 'month')
+      .format('YYYY-MM-DD HH:mm:ss');
 
-    console.log(dateTo, dateFrom);
-
-    return this.orderRepository.findAll({
-      where: { created_at: { [sequelize.Op.between]: [dateFrom, dateTo] } },
-      attributes: [
-        [sequelize.fn('COUNT', sequelize.col('created_at')), 'sale'],
-        [
-          sequelize.fn('date_trunc', 'day', sequelize.col('created_at')),
-          'createdOn',
-        ],
-      ],
-      order: [[sequelize.literal('"createdOn"'), 'DESC']],
-      group: 'createdOn',
-      subQuery: false,
-    });
+    return this.orderRepository.sequelize.query(
+      `
+        SELECT
+          COUNT(created_at) AS totalSales,
+          TO_DATE(cast(created_at as TEXT), 'YYYY/MM/DD') AS orderDate
+        FROM
+          orders
+        WHERE
+          created_at BETWEEN '${dateFrom}' AND '${dateTo}'
+        GROUP BY
+          orderDate
+        ORDER BY
+          orderDate ASC;
+      `,
+      { type: sequelize.QueryTypes.SELECT },
+    );
   }
 
   async login(payload: AdminLogin): Promise<AdminLoginResponse> {
@@ -144,8 +147,6 @@ export class AdminService {
       });
 
       const weeklyOrderSales = await this.#findWeeklyOrderSales();
-
-      console.log('>>>>weeekly order sales', weeklyOrderSales);
 
       return {
         statusCode: STATUS_CODE.SUCCESS,
