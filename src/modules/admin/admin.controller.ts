@@ -18,7 +18,6 @@ import { AddressId, NewAddress } from '../user/address/dto/address.dto';
 import { AdminService } from './admin.service';
 import { AdminLogin } from './dto/admin.dto';
 import {
-  AdminDashboardResponse,
   AdminDetailsResponse,
   AdminLoginResponse,
 } from './dto/interface/admin';
@@ -54,12 +53,5 @@ export class AdminController {
   @UseInterceptors(TransformInterceptor)
   async adminDetails(@Req() request): Promise<AdminDetailsResponse> {
     return await this.adminService.adminDetails(request.userId);
-  }
-
-  @Get('dashboard')
-  @Auth('admin')
-  @UseInterceptors(TransformInterceptor)
-  async dashboardDetails(): Promise<AdminDashboardResponse> {
-    return await this.adminService.dashboardDetails();
   }
 }
