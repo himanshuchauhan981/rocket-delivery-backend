@@ -1,4 +1,5 @@
 import { Controller, Get, UseInterceptors } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 
 import { Auth } from 'src/core/decorators/auth.decorator';
 import { TransformInterceptor } from 'src/core/interceptors/transform.interceptor';
@@ -6,6 +7,7 @@ import { DashboardService } from './dashboard.service';
 import { AdminDashboardResponse } from './dto/dashboard';
 
 @Controller('admin/dashboard')
+@ApiTags('Admin Dashboard')
 export class DashboardController {
   constructor(private readonly dashboardService: DashboardService) {}
 

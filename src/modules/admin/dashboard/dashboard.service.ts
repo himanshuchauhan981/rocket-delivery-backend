@@ -121,7 +121,7 @@ export class DashboardService {
         },
         attributes: [
           [sequelize.fn('COUNT', sequelize.col('id')), 'total'],
-          'status`',
+          'status',
         ],
         group: ['status'],
       });
@@ -132,16 +132,16 @@ export class DashboardService {
       const orderRevenue = await this.orderRepository.sequelize.query(
         `
           SELECT
-            SUM(net_amount) AS totalRevenue,
-            TO_DATE(cast(created_at as TEXT), 'YYYY/MM/DD') AS orderDate
+            SUM(net_amount) AS "totalRevenue",
+            TO_DATE(cast(created_at as TEXT), 'YYYY/MM/DD') AS "orderDate"
           FROM
             orders
           WHERE
             created_at BETWEEN '${startOfWeek}' AND '${endOfWeek}'
           GROUP BY
-            orderDate
+            "orderDate"
           ORDER BY
-            orderDate ASC;
+            "orderDate" ASC;
         `,
         { type: sequelize.QueryTypes.SELECT },
       );
