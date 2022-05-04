@@ -1,18 +1,14 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { HttpException, Inject, Injectable } from '@nestjs/common';
 import sequelize from 'sequelize';
 import * as moment from 'moment';
 
-import {
-  ORDER_REPOSITORY,
-  PRODUCT_REPOSITORY,
-} from 'src/core/constants/repositories';
+import { PRODUCT_REPOSITORY } from 'src/core/constants/repositories';
 import { File } from '../admin/file/file.entity';
 import { ProductPrice } from './product-price.entity';
 import { Product } from './product.entity';
 import { MESSAGES } from 'src/core/constants/messages';
 import { STATUS_CODE } from 'src/core/constants/status_code';
 import { UserCart } from '../user/dto/user.dto';
-import { Order } from '../order/order.entity';
 import { Category } from '../category/category.entity';
 import { MeasuringUnit } from '../measuring-unit/measuring-unit.entity';
 import { ProductReview } from '../product-review/product-review.entity';
@@ -23,7 +19,6 @@ export class ProductService {
   constructor(
     @Inject(PRODUCT_REPOSITORY)
     private readonly productRepository: typeof Product,
-    @Inject(ORDER_REPOSITORY) private readonly orderRepository: typeof Order,
   ) {}
 
   calculateDiscountPrice(
@@ -165,10 +160,18 @@ export class ProductService {
             model: ProductReview,
             attributes: ['id', 'ratings'],
             where: { is_deleted: 0 },
+            required: false,
           },
         ],
         attributes: ['name', 'max_quantity', 'purchase_limit', 'description'],
       });
+
+      if (!productDetails) {
+        throw new HttpException(
+          MESSAGES.INVALID_PRODUCT_ID,
+          STATUS_CODE.NOT_FOUND,
+        );
+      }
 
       const productPrice = productDetails.product_price;
       let ratingCount = 0;

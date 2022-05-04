@@ -19,6 +19,7 @@ import { STATUS_CODE } from 'src/core/constants/status_code';
 import { MeasuringUnit } from 'src/modules/measuring-unit/measuring-unit.entity';
 import { MESSAGES } from 'src/core/constants/messages';
 import { ProductService as CommonProductService } from '../../product/product.service';
+import { ApiResponse } from '../dto/interface/admin';
 
 @Injectable()
 export class ProductService {
@@ -154,7 +155,7 @@ export class ProductService {
     }
   }
 
-  async update(payload: NewProduct, productId: number) {
+  async update(payload: NewProduct, productId: number): Promise<ApiResponse> {
     try {
       const productDetails = await this.productRepository.findByPk(productId);
 
@@ -205,7 +206,7 @@ export class ProductService {
     }
   }
 
-  async delete(id: number) {
+  async delete(id: number): Promise<ApiResponse> {
     try {
       const productDetails = await this.productRepository.findByPk(id);
 
@@ -225,7 +226,7 @@ export class ProductService {
     }
   }
 
-  async createNew(payload: NewProduct) {
+  async createNew(payload: NewProduct): Promise<ApiResponse> {
     try {
       const categoryDetails = await this.categoryRepository.findByPk(
         payload.category,

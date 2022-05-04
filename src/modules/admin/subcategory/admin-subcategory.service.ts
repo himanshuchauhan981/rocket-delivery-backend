@@ -9,16 +9,16 @@ import {
 import { STATUS_CODE } from 'src/core/constants/status_code';
 import { Product } from 'src/modules/product/product.entity';
 import { SubCategory } from 'src/modules/sub-category/sub-category.entity';
-import {
-  AdminSubCategoryListResponse,
-  ApiResponse,
-  SpecificSubCategoryResponse,
-} from '../dto/interface/admin';
+import { ApiResponse } from '../dto/interface/admin';
 import { File } from '../file/file.entity';
 import {
   SubCategoryList,
   SubmitSubCategory,
 } from './dto/admin-subcategory.dto';
+import {
+  AdminSubCategoryListResponse,
+  SpecificSubCategoryResponse,
+} from './dto/interface/admin-subcategory';
 
 @Injectable()
 export class AdminSubcategoryService {

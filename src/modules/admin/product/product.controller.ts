@@ -21,6 +21,7 @@ import {
   NewProduct,
   SpecificProduct,
 } from './dto/admin-product.dto';
+import { ApiResponse } from '../dto/interface/admin';
 
 @Controller('admin/product')
 @ApiTags('Admin products')
@@ -50,21 +51,25 @@ export class AdminProductController {
   async update(
     @Param(new ValidationPipe()) params: SpecificProduct,
     @Body(new ValidationPipe()) payload: NewProduct,
-  ) {
+  ): Promise<ApiResponse> {
     return await this.productService.update(payload, params.id);
   }
 
   @Delete(':id')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async delete(@Param(new ValidationPipe()) params: SpecificProduct) {
+  async delete(
+    @Param(new ValidationPipe()) params: SpecificProduct,
+  ): Promise<ApiResponse> {
     return await this.productService.delete(params.id);
   }
 
   @Post('new')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async createNew(@Body(new ValidationPipe()) payload: NewProduct) {
+  async createNew(
+    @Body(new ValidationPipe()) payload: NewProduct,
+  ): Promise<ApiResponse> {
     return await this.productService.createNew(payload);
   }
 }
