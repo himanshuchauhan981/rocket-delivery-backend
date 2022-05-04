@@ -24,4 +24,11 @@ export class DashboardController {
   async dashboardOrderDetails() {
     return await this.dashboardService.dashboardOrderDetails();
   }
+
+  @Get('products')
+  @Auth('admin')
+  @UseInterceptors(TransformInterceptor)
+  async productDetails() {
+    return await this.dashboardService.productDetails();
+  }
 }

@@ -16,6 +16,8 @@ import { User } from 'src/modules/user/user.entity';
 import { AdminDashboardResponse } from './dto/dashboard';
 import { STATUS_CODE } from 'src/core/constants/status_code';
 import { MESSAGES } from 'src/core/constants/messages';
+import { ProductPrice } from 'src/modules/product/product-price.entity';
+import { File } from '../file/file.entity';
 
 @Injectable()
 export class DashboardService {
@@ -152,6 +154,40 @@ export class DashboardService {
         data: {
           orderDetails,
           orderRevenue,
+        },
+      };
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async productDetails() {
+    try {
+      const recentProducts = await this.productRepository.findAll({
+        where: { is_deleted: 0 },
+        include: [
+          {
+            model: ProductPrice,
+            attributes: [
+              'actual_price',
+              'discount',
+              'discount_type',
+              'discount_start_date',
+              'discount_end_date',
+            ],
+          },
+          { model: File, attributes: ['id', 'url'] },
+        ],
+        attributes: ['id', 'name', 'max_quantity'],
+        order: [['created_at', 'DESC']],
+        limit: 7,
+      });
+
+      return {
+        statusCode: STATUS_CODE.SUCCESS,
+        message: MESSAGES.SUCCESS,
+        data: {
+          recentProducts,
         },
       };
     } catch (err) {
