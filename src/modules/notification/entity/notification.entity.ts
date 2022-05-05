@@ -6,7 +6,11 @@ import {
   CreatedAt,
   UpdatedAt,
 } from 'sequelize-typescript';
-import { NOTIFICATION_TYPE, USER_TYPE } from 'src/core/constants/constants';
+
+import {
+  NOTIFICATION_TYPE,
+  USER_TYPE,
+} from '../../../core/constants/constants';
 
 @Table({
   tableName: 'notification',

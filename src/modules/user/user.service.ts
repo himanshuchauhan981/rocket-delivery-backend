@@ -3,12 +3,12 @@ import sequelize from 'sequelize';
 import * as moment from 'moment';
 import * as otpGenerator from 'otp-generator';
 
-import { MESSAGES } from 'src/core/constants/messages';
+import { MESSAGES } from '../../core/constants/messages';
 import {
   CATEGORY_REPOSITORY,
   USER_REPOSITORY,
-} from 'src/core/constants/repositories';
-import { STATUS_CODE } from 'src/core/constants/status_code';
+} from '../../core/constants/repositories';
+import { STATUS_CODE } from '../../core/constants/status_code';
 import { ApiResponse } from '../admin/dto/interface/admin';
 import { File } from '../admin/file/file.entity';
 import { Category } from '../category/category.entity';
@@ -30,8 +30,8 @@ import { User } from './user.entity';
 import {
   MailService,
   MailServiceInput,
-} from 'src/core/utils/mail/mail.service';
-import { USER_TYPE } from 'src/core/constants/constants';
+} from '../../core/utils/mail/mail.service';
+import { USER_TYPE } from '../../core/constants/constants';
 import { Address } from '../address/address.entity';
 
 @Injectable()

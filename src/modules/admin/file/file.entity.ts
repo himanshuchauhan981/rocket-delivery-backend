@@ -6,7 +6,8 @@ import {
   CreatedAt,
   UpdatedAt,
 } from 'sequelize-typescript';
-import { FILE_SLUGS, FILE_TYPES } from 'src/core/constants/constants';
+
+import { FILE_SLUGS, FILE_TYPES } from '../../../core/constants/constants';
 
 @Table({
   tableName: 'file',

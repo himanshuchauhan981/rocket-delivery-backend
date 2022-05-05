@@ -2,12 +2,12 @@ import { HttpException, Inject, Injectable } from '@nestjs/common';
 import sequelize from 'sequelize';
 import * as moment from 'moment';
 
-import { PRODUCT_REPOSITORY } from 'src/core/constants/repositories';
+import { PRODUCT_REPOSITORY } from '../../core/constants/repositories';
 import { File } from '../admin/file/file.entity';
 import { ProductPrice } from './product-price.entity';
 import { Product } from './product.entity';
-import { MESSAGES } from 'src/core/constants/messages';
-import { STATUS_CODE } from 'src/core/constants/status_code';
+import { MESSAGES } from '../../core/constants/messages';
+import { STATUS_CODE } from '../../core/constants/status_code';
 import { UserCart } from '../user/dto/user.dto';
 import { Category } from '../category/category.entity';
 import { MeasuringUnit } from '../measuring-unit/measuring-unit.entity';

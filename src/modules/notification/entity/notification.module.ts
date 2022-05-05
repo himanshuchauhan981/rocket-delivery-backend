@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { SocketsGateway } from 'src/core/sockets/sockets.gateway';
+import { SocketsGateway } from '../../../core/sockets/sockets.gateway';
 import { NotificationProvider } from '../notification.provider';
 import { NotificationService } from '../notification.service';
 

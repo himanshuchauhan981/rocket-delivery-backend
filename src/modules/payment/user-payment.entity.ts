@@ -7,7 +7,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript';
 
-import { USER_PAYMENT_STATUS } from 'src/core/constants/constants';
+import { USER_PAYMENT_STATUS } from '../../core/constants/constants';
 
 @Table({
   tableName: 'user_payments',

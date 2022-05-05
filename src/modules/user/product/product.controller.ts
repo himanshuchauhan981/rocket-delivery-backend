@@ -8,9 +8,9 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { Auth } from 'src/core/decorators/auth.decorator';
 
-import { TransformInterceptor } from 'src/core/interceptors/transform.interceptor';
+import { Auth } from '../../../core/decorators/auth.decorator';
+import { TransformInterceptor } from '../../../core/interceptors/transform.interceptor';
 import { ProductService } from './product.service';
 import { ProductService as CommonProductService } from '../../product/product.service';
 import { UserProducts, SpecificProduct } from '../dto/user.dto';

@@ -11,8 +11,8 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
-import { Auth } from 'src/core/decorators/auth.decorator';
-import { TransformInterceptor } from 'src/core/interceptors/transform.interceptor';
+import { Auth } from '../../../core/decorators/auth.decorator';
+import { TransformInterceptor } from '../../../core/interceptors/transform.interceptor';
 import { ProductHistoryService } from './product-history.service';
 import {
   NewProductHistory,

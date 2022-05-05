@@ -1,12 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 import sequelize from 'sequelize';
 
-import { NOTIFICATION_SLUG } from 'src/core/constants/constants';
+import { NOTIFICATION_SLUG } from '../../core/constants/constants';
 import {
   NOTIFICATION_REPOSITORY,
   NOTIFICATION_USER_REPOSITORY,
-} from 'src/core/constants/repositories';
-import { SocketsGateway } from 'src/core/sockets/sockets.gateway';
+} from '../../core/constants/repositories';
+import { SocketsGateway } from '../../core/sockets/sockets.gateway';
 import { User } from '../user/user.entity';
 import {
   NotificationArgs,

@@ -6,7 +6,7 @@ import {
   PRODUCT_REPOSITORY,
   SUB_CATEGORY_REPOSITORY,
   USER_REPOSITORY,
-} from 'src/core/constants/repositories';
+} from '../../core/constants/repositories';
 import { Address } from '../address/address.entity';
 import { Category } from '../category/category.entity';
 import { Order } from '../order/order.entity';

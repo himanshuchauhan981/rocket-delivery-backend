@@ -7,16 +7,16 @@ import {
   ORDER_REPOSITORY,
   PRODUCT_REPOSITORY,
   USER_REPOSITORY,
-} from 'src/core/constants/repositories';
-import { Category } from 'src/modules/category/category.entity';
-import { OrderProduct } from 'src/modules/order/order-product.entity';
-import { Order } from 'src/modules/order/order.entity';
-import { Product } from 'src/modules/product/product.entity';
-import { User } from 'src/modules/user/user.entity';
+} from '../../../core/constants/repositories';
+import { Category } from '../../../modules/category/category.entity';
+import { OrderProduct } from '../../../modules/order/order-product.entity';
+import { Order } from '../../../modules/order/order.entity';
+import { Product } from '../../../modules/product/product.entity';
+import { User } from '../../../modules/user/user.entity';
 import { AdminDashboardResponse } from './dto/dashboard';
-import { STATUS_CODE } from 'src/core/constants/status_code';
-import { MESSAGES } from 'src/core/constants/messages';
-import { ProductPrice } from 'src/modules/product/product-price.entity';
+import { STATUS_CODE } from '../../../core/constants/status_code';
+import { MESSAGES } from '../../../core/constants/messages';
+import { ProductPrice } from '../../../modules/product/product-price.entity';
 import { File } from '../file/file.entity';
 
 @Injectable()

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 
-import { ProductService } from 'src/modules/product/product.service';
-import { SubCategoryService } from 'src/modules/sub-category/sub-category.service';
+import { ProductService } from '../../../modules/product/product.service';
+import { SubCategoryService } from '../../../modules/sub-category/sub-category.service';
 import { AdminCategoryController } from './category.controller';
 import { AdminCategoryProvider } from './category.provider';
 import { CategoryService } from './category.service';

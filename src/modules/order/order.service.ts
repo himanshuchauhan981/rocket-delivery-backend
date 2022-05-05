@@ -1,9 +1,9 @@
 import { HttpException, Inject, Injectable } from '@nestjs/common';
 import sequelize from 'sequelize';
-import { MESSAGES } from 'src/core/constants/messages';
+import { MESSAGES } from '../../core/constants/messages';
 
-import { ORDER_REPOSITORY } from 'src/core/constants/repositories';
-import { STATUS_CODE } from 'src/core/constants/status_code';
+import { ORDER_REPOSITORY } from '../../core/constants/repositories';
+import { STATUS_CODE } from '../../core/constants/status_code';
 import { Order } from './order.entity';
 import { Address } from '../address/address.entity';
 import { SpecificOrderResponse } from '../admin/order/dto/interface/response.interface';

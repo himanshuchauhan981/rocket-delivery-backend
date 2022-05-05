@@ -11,9 +11,9 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
-import { TransformInterceptor } from 'src/core/interceptors/transform.interceptor';
-import { Auth } from 'src/core/decorators/auth.decorator';
-import { AddressService as CommonAddressService } from 'src/modules/address/address.service';
+import { TransformInterceptor } from '../../../core/interceptors/transform.interceptor';
+import { Auth } from '../../../core/decorators/auth.decorator';
+import { AddressService as CommonAddressService } from '../../../modules/address/address.service';
 import { NewAddress, AddressId } from './dto/address.dto';
 import { AddressService } from './address.service';
 

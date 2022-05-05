@@ -7,14 +7,14 @@ import {
   PRODUCT_REPOSITORY,
   USER_PAYMENT_REPOSITORY,
   USER_REPOSITORY,
-} from 'src/core/constants/repositories';
-import { Admin } from 'src/modules/admin/admin.entity';
-import { NotificationUser } from 'src/modules/notification/entity/notification-user.entity';
-import { Notification } from 'src/modules/notification/entity/notification.entity';
-import { OrderProduct } from 'src/modules/order/order-product.entity';
-import { Order } from 'src/modules/order/order.entity';
-import { UserPayment } from 'src/modules/payment/user-payment.entity';
-import { Product } from 'src/modules/product/product.entity';
+} from '../../../core/constants/repositories';
+import { Admin } from '../../../modules/admin/admin.entity';
+import { NotificationUser } from '../../../modules/notification/entity/notification-user.entity';
+import { Notification } from '../../../modules/notification/entity/notification.entity';
+import { OrderProduct } from '../../../modules/order/order-product.entity';
+import { Order } from '../../../modules/order/order.entity';
+import { UserPayment } from '../../../modules/payment/user-payment.entity';
+import { Product } from '../../../modules/product/product.entity';
 import { User } from '../user.entity';
 
 export const UserOrderProvider = [

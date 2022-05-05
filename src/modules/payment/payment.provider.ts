@@ -1,7 +1,7 @@
 import {
   USER_PAYMENT_REPOSITORY,
   USER_REPOSITORY,
-} from 'src/core/constants/repositories';
+} from '../../core/constants/repositories';
 import { User } from '../user/user.entity';
 import { UserPayment } from './user-payment.entity';
 

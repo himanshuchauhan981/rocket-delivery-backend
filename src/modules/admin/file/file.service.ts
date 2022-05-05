@@ -7,10 +7,10 @@ import {
   CreateFileResponse,
   GetAllFilesResponse,
 } from './dto/file-response.dto';
-import { FILE_REPOSITORY } from 'src/core/constants/repositories';
-import { STATUS_CODE } from 'src/core/constants/status_code';
-import { MESSAGES } from 'src/core/constants/messages';
-import { ApiResponse } from 'src/modules/admin/dto/interface/admin';
+import { FILE_REPOSITORY } from '../../../core/constants/repositories';
+import { STATUS_CODE } from '../../../core/constants/status_code';
+import { MESSAGES } from '../../../core/constants/messages';
+import { ApiResponse } from '../../../modules/admin/dto/interface/admin';
 
 @Injectable()
 export class FileService {

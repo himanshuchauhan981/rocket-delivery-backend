@@ -4,7 +4,7 @@ import {
   ORDER_REPOSITORY,
   USER_PAYMENT_REPOSITORY,
   USER_REPOSITORY,
-} from 'src/core/constants/repositories';
+} from '../../core/constants/repositories';
 import { NotificationUser } from '../notification/entity/notification-user.entity';
 import { Notification } from '../notification/entity/notification.entity';
 import { UserPayment } from '../payment/user-payment.entity';

@@ -1,13 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
 import * as Razorpay from 'razorpay';
 
-import { MESSAGES } from 'src/core/constants/messages';
+import { MESSAGES } from '../../../core/constants/messages';
 import {
   USER_PAYMENT_REPOSITORY,
   USER_REPOSITORY,
-} from 'src/core/constants/repositories';
-import { STATUS_CODE } from 'src/core/constants/status_code';
-import { UserPayment } from 'src/modules/payment/user-payment.entity';
+} from '../../../core/constants/repositories';
+import { STATUS_CODE } from '../../../core/constants/status_code';
+import { UserPayment } from '../../../modules/payment/user-payment.entity';
 import { User } from '../user.entity';
 
 @Injectable()

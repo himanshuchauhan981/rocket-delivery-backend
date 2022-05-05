@@ -10,10 +10,10 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
-import { Auth } from 'src/core/decorators/auth.decorator';
-import { TransformInterceptor } from 'src/core/interceptors/transform.interceptor';
-import { OrderListResponse } from 'src/modules/order/dto/order-response.dto';
-import { SpecificOrder } from 'src/modules/user/order/dto/order.dto';
+import { Auth } from '../../../core/decorators/auth.decorator';
+import { TransformInterceptor } from '../../../core/interceptors/transform.interceptor';
+import { OrderListResponse } from '../../../modules/order/dto/order-response.dto';
+import { SpecificOrder } from '../../../modules/user/order/dto/order.dto';
 import { ApiResponse } from '../dto/interface/admin';
 import { OrdersList, UpdateOrder } from './dto/admin-orders.entity';
 import { SpecificOrderResponse } from './dto/interface/response.interface';

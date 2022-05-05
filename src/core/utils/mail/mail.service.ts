@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
 
-import { STATUS_CODE } from 'src/core/constants/status_code';
-import { MESSAGES } from 'src/core/constants/messages';
+import { STATUS_CODE } from '../../../core/constants/status_code';
+import { MESSAGES } from '../../../core/constants/messages';
 
 export class MailServiceInput {
   subject: string;

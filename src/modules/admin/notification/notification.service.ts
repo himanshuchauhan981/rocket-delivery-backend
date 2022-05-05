@@ -1,13 +1,13 @@
 import { HttpException, Inject, Injectable } from '@nestjs/common';
 import sequelize from 'sequelize';
 
-import { USER_TYPE } from 'src/core/constants/constants';
-import { MESSAGES } from 'src/core/constants/messages';
-import { NOTIFICATION_USER_REPOSITORY } from 'src/core/constants/repositories';
-import { STATUS_CODE } from 'src/core/constants/status_code';
-import { NotificationUser } from 'src/modules/notification/entity/notification-user.entity';
-import { Notification } from 'src/modules/notification/entity/notification.entity';
-import { User } from 'src/modules/user/user.entity';
+import { USER_TYPE } from '../../../core/constants/constants';
+import { MESSAGES } from '../../../core/constants/messages';
+import { NOTIFICATION_USER_REPOSITORY } from '../../../core/constants/repositories';
+import { STATUS_CODE } from '../../../core/constants/status_code';
+import { NotificationUser } from '../../../modules/notification/entity/notification-user.entity';
+import { Notification } from '../../../modules/notification/entity/notification.entity';
+import { User } from '../../../modules/user/user.entity';
 
 @Injectable()
 export class NotificationService {

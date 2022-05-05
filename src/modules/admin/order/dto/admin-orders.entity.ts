@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
 
-import { ORDER_STATUS } from 'src/core/constants/constants';
+import { ORDER_STATUS } from '../../../../core/constants/constants';
 
 export class OrdersList {
   @IsNotEmpty()

@@ -1,14 +1,14 @@
 import { HttpException, Inject, Injectable } from '@nestjs/common';
 import sequelize from 'sequelize';
 
-import { MESSAGES } from 'src/core/constants/messages';
+import { MESSAGES } from '../../../core/constants/messages';
 import {
   PRODUCT_REPOSITORY,
   SUB_CATEGORY_REPOSITORY,
-} from 'src/core/constants/repositories';
-import { STATUS_CODE } from 'src/core/constants/status_code';
-import { Product } from 'src/modules/product/product.entity';
-import { SubCategory } from 'src/modules/sub-category/sub-category.entity';
+} from '../../../core/constants/repositories';
+import { STATUS_CODE } from '../../../core/constants/status_code';
+import { Product } from '../../../modules/product/product.entity';
+import { SubCategory } from '../../../modules/sub-category/sub-category.entity';
 import { ApiResponse } from '../dto/interface/admin';
 import { File } from '../file/file.entity';
 import {

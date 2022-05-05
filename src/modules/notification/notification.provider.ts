@@ -1,7 +1,7 @@
 import {
   NOTIFICATION_REPOSITORY,
   NOTIFICATION_USER_REPOSITORY,
-} from 'src/core/constants/repositories';
+} from '../../core/constants/repositories';
 import { NotificationUser } from './entity/notification-user.entity';
 import { Notification } from './entity/notification.entity';
 

@@ -1,8 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 import sequelize from 'sequelize';
-import { MESSAGES } from 'src/core/constants/messages';
-import { SUB_CATEGORY_REPOSITORY } from 'src/core/constants/repositories';
-import { STATUS_CODE } from 'src/core/constants/status_code';
+
+import { MESSAGES } from '../../core/constants/messages';
+import { SUB_CATEGORY_REPOSITORY } from '../../core/constants/repositories';
+import { STATUS_CODE } from '../../core/constants/status_code';
 import { File } from '../admin/file/file.entity';
 import { Category } from '../category/category.entity';
 import { SubCategory } from './sub-category.entity';

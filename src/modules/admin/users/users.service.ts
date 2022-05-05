@@ -3,22 +3,22 @@ import sequelize from 'sequelize';
 import * as moment from 'moment';
 import { Parser } from 'json2csv';
 
-import { MESSAGES } from 'src/core/constants/messages';
+import { MESSAGES } from '../../../core/constants/messages';
 import {
   ORDER_REPOSITORY,
   USER_REPOSITORY,
-} from 'src/core/constants/repositories';
-import { STATUS_CODE } from 'src/core/constants/status_code';
-import { Order } from 'src/modules/order/order.entity';
-import { UserPayment } from 'src/modules/payment/user-payment.entity';
-import { User } from 'src/modules/user/user.entity';
+} from '../../../core/constants/repositories';
+import { STATUS_CODE } from '../../../core/constants/status_code';
+import { Order } from '../../../modules/order/order.entity';
+import { UserPayment } from '../../../modules/payment/user-payment.entity';
+import { User } from '../../../modules/user/user.entity';
 import { ApiResponse } from '../dto/interface/admin';
 import { UserDetailList, UsersList } from './dto/admin-users.entity';
 import {
   DownloadUserCSVResponse,
   ListUsersResponse,
 } from './dto/interface/response.interface';
-import { RESPONSE_TYPE } from 'src/core/constants/constants';
+import { RESPONSE_TYPE } from '../../../core/constants/constants';
 
 @Injectable()
 export class UsersService {

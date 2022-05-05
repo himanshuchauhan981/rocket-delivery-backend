@@ -8,16 +8,16 @@ import {
   PRODUCT_PRICE_REPOSITORY,
   PRODUCT_REPOSITORY,
   SUB_CATEGORY_REPOSITORY,
-} from 'src/core/constants/repositories';
-import { Category } from 'src/modules/category/category.entity';
-import { ProductPrice } from 'src/modules/product/product-price.entity';
-import { Product } from 'src/modules/product/product.entity';
-import { SubCategory } from 'src/modules/sub-category/sub-category.entity';
+} from '../../../core/constants/repositories';
+import { Category } from '../../../modules/category/category.entity';
+import { ProductPrice } from '../../../modules/product/product-price.entity';
+import { Product } from '../../../modules/product/product.entity';
+import { SubCategory } from '../../../modules/sub-category/sub-category.entity';
 import { AdminProductList, NewProduct } from './dto/admin-product.dto';
-import { File } from 'src/modules/admin/file/file.entity';
-import { STATUS_CODE } from 'src/core/constants/status_code';
-import { MeasuringUnit } from 'src/modules/measuring-unit/measuring-unit.entity';
-import { MESSAGES } from 'src/core/constants/messages';
+import { File } from '../../../modules/admin/file/file.entity';
+import { STATUS_CODE } from '../../../core/constants/status_code';
+import { MeasuringUnit } from '../../../modules/measuring-unit/measuring-unit.entity';
+import { MESSAGES } from '../../../core/constants/messages';
 import { ProductService as CommonProductService } from '../../product/product.service';
 import { ApiResponse } from '../dto/interface/admin';
 

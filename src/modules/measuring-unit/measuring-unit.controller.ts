@@ -1,8 +1,8 @@
 import { Controller, Get, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
-import { JWTAuthGuard } from 'src/core/guard/jwt.guard';
-import { TransformInterceptor } from 'src/core/interceptors/transform.interceptor';
+import { JWTAuthGuard } from '../../core/guard/jwt.guard';
+import { TransformInterceptor } from '../../core/interceptors/transform.interceptor';
 import { MeasuringUnitService } from './measuring-unit.service';
 
 @Controller('admin/measuringUnit')

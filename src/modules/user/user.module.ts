@@ -7,7 +7,7 @@ import { UserController } from './user.controller';
 import { UserProvider } from './user.provider';
 import { UserService } from './user.service';
 import { ProductService } from '../product/product.service';
-import { MailService } from 'src/core/utils/mail/mail.service';
+import { MailService } from '../../core/utils/mail/mail.service';
 import { UserAddressModule } from './address/address.module';
 import { UserOrderModule } from './order/order.module';
 import { UserPaymentModule } from './payment/payment.module';

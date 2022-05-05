@@ -9,8 +9,8 @@ import {
   BelongsTo,
 } from 'sequelize-typescript';
 
-import { USER_TYPE } from 'src/core/constants/constants';
-import { User } from 'src/modules/user/user.entity';
+import { USER_TYPE } from '../../../core/constants/constants';
+import { User } from '../../../modules/user/user.entity';
 import { Notification } from './notification.entity';
 
 @Table({

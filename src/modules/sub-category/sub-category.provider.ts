@@ -1,4 +1,4 @@
-import { SUB_CATEGORY_REPOSITORY } from 'src/core/constants/repositories';
+import { SUB_CATEGORY_REPOSITORY } from '../../core/constants/repositories';
 import { SubCategory } from './sub-category.entity';
 
 export const SubCategoryProvider = [

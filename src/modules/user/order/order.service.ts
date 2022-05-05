@@ -9,29 +9,29 @@ import {
   NOTIFICATION_SLUG,
   USER_TYPE,
   NOTIFICATION_TYPE,
-} from 'src/core/constants/constants';
-import { MESSAGES } from 'src/core/constants/messages';
+} from '../../../core/constants/constants';
+import { MESSAGES } from '../../../core/constants/messages';
 import {
   ADMIN_REPOSITORY,
   ORDER_PRODUCT_REPOSITORY,
   ORDER_REPOSITORY,
   PRODUCT_REPOSITORY,
   USER_REPOSITORY,
-} from 'src/core/constants/repositories';
-import { STATUS_CODE } from 'src/core/constants/status_code';
-import { ApiResponse } from 'src/modules/admin/dto/interface/admin';
-import { File } from 'src/modules/admin/file/file.entity';
-import { OrderProduct } from 'src/modules/order/order-product.entity';
-import { Order } from 'src/modules/order/order.entity';
-import { PaymentService } from 'src/modules/payment/payment.service';
-import { ProductPrice } from 'src/modules/product/product-price.entity';
-import { Product } from 'src/modules/product/product.entity';
+} from '../../../core/constants/repositories';
+import { STATUS_CODE } from '../../../core/constants/status_code';
+import { ApiResponse } from '../../../modules/admin/dto/interface/admin';
+import { File } from '../../../modules/admin/file/file.entity';
+import { OrderProduct } from '../../../modules/order/order-product.entity';
+import { Order } from '../../../modules/order/order.entity';
+import { PaymentService } from '../../../modules/payment/payment.service';
+import { ProductPrice } from '../../../modules/product/product-price.entity';
+import { Product } from '../../../modules/product/product.entity';
 import { NewOrder } from './dto/order.dto';
 import { ProductService as CommonProductService } from '../../product/product.service';
-import { Admin } from 'src/modules/admin/admin.entity';
+import { Admin } from '../../../modules/admin/admin.entity';
 import { User } from '../user.entity';
-import { NotificationService } from 'src/modules/notification/notification.service';
-import { OrderListResponse } from 'src/modules/order/dto/order-response.dto';
+import { NotificationService } from '../../../modules/notification/notification.service';
+import { OrderListResponse } from '../../../modules/order/dto/order-response.dto';
 
 @Injectable()
 export class OrderService {

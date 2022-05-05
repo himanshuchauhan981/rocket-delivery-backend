@@ -1,8 +1,8 @@
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 
-import { MESSAGES } from 'src/core/constants/messages';
-import { ADMIN_REPOSITORY } from 'src/core/constants/repositories';
-import { STATUS_CODE } from 'src/core/constants/status_code';
+import { MESSAGES } from '../../core/constants/messages';
+import { ADMIN_REPOSITORY } from '../../core/constants/repositories';
+import { STATUS_CODE } from '../../core/constants/status_code';
 import { CommonService } from '../common/common.service';
 import { Admin } from './admin.entity';
 import { AdminLogin } from './dto/admin.dto';

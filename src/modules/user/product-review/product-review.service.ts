@@ -1,16 +1,16 @@
 import { Injectable, Inject, HttpException } from '@nestjs/common';
 import sequelize from 'sequelize';
 
-import { MESSAGES } from 'src/core/constants/messages';
+import { MESSAGES } from '../../../core/constants/messages';
 import {
   ORDER_REPOSITORY,
   PRODUCT_REVIEW_FILE_REPOSITORY,
   PRODUCT_REVIEW_REPOSITORY,
-} from 'src/core/constants/repositories';
-import { STATUS_CODE } from 'src/core/constants/status_code';
-import { Order } from 'src/modules/order/order.entity';
-import { ProductReviewFile } from 'src/modules/product-review/product-review-file.entity';
-import { ProductReview } from 'src/modules/product-review/product-review.entity';
+} from '../../../core/constants/repositories';
+import { STATUS_CODE } from '../../../core/constants/status_code';
+import { Order } from '../../../modules/order/order.entity';
+import { ProductReviewFile } from '../../../modules/product-review/product-review-file.entity';
+import { ProductReview } from '../../../modules/product-review/product-review.entity';
 import {
   NewProductReview,
   UpdateProductReview,

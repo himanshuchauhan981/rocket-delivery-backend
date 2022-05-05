@@ -1,13 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
 import sequelize from 'sequelize';
 
-import { MESSAGES } from 'src/core/constants/messages';
-import { PRODUCT_HISTORY_REPOSITORY } from 'src/core/constants/repositories';
-import { STATUS_CODE } from 'src/core/constants/status_code';
-import { File } from 'src/modules/admin/file/file.entity';
-import { ProductHistory } from 'src/modules/product-history/product-history.entity';
-import { ProductPrice } from 'src/modules/product/product-price.entity';
-import { Product } from 'src/modules/product/product.entity';
+import { MESSAGES } from '../../../core/constants/messages';
+import { PRODUCT_HISTORY_REPOSITORY } from '../../../core/constants/repositories';
+import { STATUS_CODE } from '../../../core/constants/status_code';
+import { File } from '../../../modules/admin/file/file.entity';
+import { ProductHistory } from '../../../modules/product-history/product-history.entity';
+import { ProductPrice } from '../../../modules/product/product-price.entity';
+import { Product } from '../../../modules/product/product.entity';
 import { NewProductHistory } from './dto/product-history.dto';
 import { ProductService as CommonProductService } from '../../product/product.service';
 
