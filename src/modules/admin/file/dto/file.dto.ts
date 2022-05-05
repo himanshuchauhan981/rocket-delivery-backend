@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
 
-export class FileList {
+export class FileListBySlug {
   @IsNotEmpty()
   @ApiProperty({ enum: ['product', 'category', 'sub_category'] })
   slug: string;
@@ -36,4 +36,14 @@ export class SpecificFile {
   @IsNotEmpty()
   @ApiProperty()
   id: number;
+}
+
+export class FileList {
+  @IsNotEmpty()
+  @ApiProperty()
+  pageIndex: number;
+
+  @IsNotEmpty()
+  @ApiProperty()
+  pageSize: number;
 }

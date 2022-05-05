@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import sequelize from 'sequelize';
 
-import { CreateFile, FileList } from './dto/file.dto';
+import { CreateFile, FileList, FileListBySlug } from './dto/file.dto';
 import { File } from './file.entity';
 import {
   CreateFileResponse,
@@ -19,23 +19,48 @@ export class FileService {
   ) {}
 
   async getAll(query: FileList): Promise<GetAllFilesResponse> {
-    const defaultQuery: any = [{ slug: query.slug }];
+    try {
+      const offset = query.pageIndex * query.pageSize;
 
-    if (query.name) {
-      defaultQuery.push({
-        name: { [sequelize.Op.iLike]: `%${query.name}%` },
+      const imageList = await this.fileRepository.findAll({
+        where: { is_deleted: 0 },
+        attributes: ['id', 'name', 'url', 'created_at', 'type'],
+        offset: offset,
+        limit: query.pageSize,
       });
-    }
-    const imageList = await this.fileRepository.findAll({
-      where: { [sequelize.Op.and]: defaultQuery },
-      attributes: ['id', 'name', 'url'],
-    });
 
-    return {
-      statusCode: STATUS_CODE.SUCCESS,
-      data: { imageList },
-      message: MESSAGES.SUCCESS,
-    };
+      return {
+        statusCode: STATUS_CODE.SUCCESS,
+        data: { imageList },
+        message: MESSAGES.SUCCESS,
+      };
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async getBySlug(query: FileListBySlug): Promise<GetAllFilesResponse> {
+    try {
+      const defaultQuery: any = [{ slug: query.slug }];
+
+      if (query.name) {
+        defaultQuery.push({
+          name: { [sequelize.Op.iLike]: `%${query.name}%` },
+        });
+      }
+      const imageList = await this.fileRepository.findAll({
+        where: { [sequelize.Op.and]: defaultQuery },
+        attributes: ['id', 'name', 'url'],
+      });
+
+      return {
+        statusCode: STATUS_CODE.SUCCESS,
+        data: { imageList },
+        message: MESSAGES.SUCCESS,
+      };
+    } catch (err) {
+      throw err;
+    }
   }
 
   async create(payload: CreateFile): Promise<CreateFileResponse> {

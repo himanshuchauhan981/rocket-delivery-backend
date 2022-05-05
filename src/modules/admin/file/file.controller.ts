@@ -6,20 +6,23 @@ import {
   Param,
   Post,
   Query,
-  UseGuards,
   UseInterceptors,
   ValidationPipe,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { Auth } from 'src/core/decorators/auth.decorator';
 
-import { JWTAuthGuard } from 'src/core/guard/jwt.guard';
 import { TransformInterceptor } from 'src/core/interceptors/transform.interceptor';
 import {
   CreateFileResponse,
   GetAllFilesResponse,
 } from './dto/file-response.dto';
-import { CreateFile, FileList, SpecificFile } from './dto/file.dto';
+import {
+  CreateFile,
+  FileList,
+  FileListBySlug,
+  SpecificFile,
+} from './dto/file.dto';
 import { FileService } from './file.service';
 
 @Controller('admin/file')
@@ -27,9 +30,8 @@ import { FileService } from './file.service';
 export class FileController {
   constructor(private fileService: FileService) {}
 
-  @Get('')
-  @ApiBearerAuth('Authorization')
-  @UseGuards(JWTAuthGuard)
+  @Get('all')
+  @Auth('admin')
   @UseInterceptors(TransformInterceptor)
   async getAll(
     @Query(new ValidationPipe()) query: FileList,
@@ -37,9 +39,17 @@ export class FileController {
     return await this.fileService.getAll(query);
   }
 
+  @Get('')
+  @Auth('admin')
+  @UseInterceptors(TransformInterceptor)
+  async getBySlug(
+    @Query(new ValidationPipe()) query: FileListBySlug,
+  ): Promise<GetAllFilesResponse> {
+    return await this.fileService.getBySlug(query);
+  }
+
   @Post('')
-  @ApiBearerAuth('Authorization')
-  @UseGuards(JWTAuthGuard)
+  @Auth('admin')
   @UseInterceptors(TransformInterceptor)
   async create(
     @Body(new ValidationPipe()) payload: CreateFile,
@@ -49,6 +59,7 @@ export class FileController {
 
   @Delete(':id')
   @Auth('admin')
+  @UseInterceptors(TransformInterceptor)
   async delete(@Param(new ValidationPipe()) params: SpecificFile) {
     return await this.fileService.delete(params.id);
   }
