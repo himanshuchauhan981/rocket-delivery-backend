@@ -148,6 +148,7 @@ module.exports = {
             slug: 'sub-category',
             type: 'image',
             url: item.image,
+            extension: 'jpeg',
           },
         ],
         { returning: true },

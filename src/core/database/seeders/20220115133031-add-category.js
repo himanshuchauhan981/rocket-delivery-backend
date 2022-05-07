@@ -84,6 +84,7 @@ module.exports = {
             slug: 'category',
             type: 'image',
             url: item.image,
+            extension: 'png',
           },
         ],
         { returning: true },

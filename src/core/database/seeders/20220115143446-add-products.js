@@ -790,12 +790,22 @@ module.exports = {
       },
     ];
 
-    for (const item of product_data.entries()) {
+    for (const [index, item] of product_data.entries()) {
       const new_image = await queryInterface.bulkInsert(
         'file',
-        [{ name: item.name, slug: 'product', type: 'image', url: item.image }],
+        [
+          {
+            name: item.name,
+            slug: 'product',
+            type: 'image',
+            url: item.image,
+            extension: 'jpg',
+          },
+        ],
         { returning: true },
       );
+
+      console.log('>>>>>new Image', new_image);
 
       const newProduct = await queryInterface.bulkInsert(
         'products',
