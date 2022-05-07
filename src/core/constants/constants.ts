@@ -55,6 +55,12 @@ const RESPONSE_TYPE = {
   CSV: 'CSV',
 };
 
+const FILE_EXTENSIONS = {
+  JPEG: 'jpeg',
+  JPG: 'jpg',
+  PNG: 'png',
+};
+
 export {
   CONSTANTS,
   FILE_SLUGS,
@@ -66,4 +72,5 @@ export {
   USER_TYPE,
   NOTIFICATION_TYPE,
   RESPONSE_TYPE,
+  FILE_EXTENSIONS,
 };

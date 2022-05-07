@@ -7,7 +7,11 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript';
 
-import { FILE_SLUGS, FILE_TYPES } from '../../../core/constants/constants';
+import {
+  FILE_SLUGS,
+  FILE_TYPES,
+  FILE_EXTENSIONS,
+} from '../../../core/constants/constants';
 
 @Table({
   tableName: 'file',
@@ -46,6 +50,13 @@ export class File extends Model<File> {
     values: [FILE_SLUGS.CATEGORY, FILE_SLUGS.PRODUCT, FILE_SLUGS.SUB_CATEGORY],
   })
   slug: string;
+
+  @Column({
+    type: DataType.ENUM,
+    allowNull: false,
+    values: [FILE_EXTENSIONS.JPEG, FILE_EXTENSIONS.JPG, FILE_EXTENSIONS.PNG],
+  })
+  extension: string;
 
   @Column({
     type: DataType.BIGINT,
