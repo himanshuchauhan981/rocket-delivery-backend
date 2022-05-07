@@ -33,7 +33,7 @@ export class Category extends Model<Category> {
 
   @Column({
     type: DataType.BIGINT,
-    allowNull: false,
+    allowNull: true,
   })
   @ForeignKey(() => File)
   image_id: number;

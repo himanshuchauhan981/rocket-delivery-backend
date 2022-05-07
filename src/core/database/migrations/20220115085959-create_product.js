@@ -27,7 +27,7 @@ module.exports = {
 
         image_id: {
           type: Sequelize.BIGINT,
-          allowNull: false,
+          allowNull: true,
         },
 
         category_id: {

@@ -39,7 +39,7 @@ export class Product extends Model<Product> {
 
   @Column({
     type: DataType.BIGINT,
-    allowNull: false,
+    allowNull: true,
   })
   @ForeignKey(() => File)
   image_id: number;

@@ -34,7 +34,7 @@ export class SubCategory extends Model<SubCategory> {
 
   @Column({
     type: DataType.BIGINT,
-    allowNull: false,
+    allowNull: true,
   })
   @ForeignKey(() => File)
   image_id: number;

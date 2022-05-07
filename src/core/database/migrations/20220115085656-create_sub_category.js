@@ -32,7 +32,7 @@ module.exports = {
 
         image_id: {
           type: Sequelize.INTEGER,
-          allowNull: false,
+          allowNull: true,
         },
 
         is_active: {
