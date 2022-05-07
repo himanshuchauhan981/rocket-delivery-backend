@@ -16,6 +16,7 @@ import { TransformInterceptor } from '../../../core/interceptors/transform.inter
 import {
   CreateFileResponse,
   GetAllFilesResponse,
+  GetFilesBySlugResponse,
 } from './dto/file-response.dto';
 import {
   CreateFile,
@@ -44,7 +45,7 @@ export class FileController {
   @UseInterceptors(TransformInterceptor)
   async getBySlug(
     @Query(new ValidationPipe()) query: FileListBySlug,
-  ): Promise<GetAllFilesResponse> {
+  ): Promise<GetFilesBySlugResponse> {
     return await this.fileService.getBySlug(query);
   }
 

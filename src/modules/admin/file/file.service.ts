@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { HttpException, Inject, Injectable } from '@nestjs/common';
 import sequelize from 'sequelize';
 
 import { CreateFile, FileList, FileListBySlug } from './dto/file.dto';
@@ -6,32 +6,48 @@ import { File } from './file.entity';
 import {
   CreateFileResponse,
   GetAllFilesResponse,
+  GetFilesBySlugResponse,
 } from './dto/file-response.dto';
-import { FILE_REPOSITORY } from '../../../core/constants/repositories';
+import {
+  CATEGORY_REPOSITORY,
+  FILE_REPOSITORY,
+  PRODUCT_REPOSITORY,
+  SUB_CATEGORY_REPOSITORY,
+} from '../../../core/constants/repositories';
 import { STATUS_CODE } from '../../../core/constants/status_code';
 import { MESSAGES } from '../../../core/constants/messages';
 import { ApiResponse } from '../../../modules/admin/dto/interface/admin';
+import { FILE_SLUGS } from '../../../core/constants/constants';
+import { Category } from '../../../modules/category/category.entity';
+import { SubCategory } from '../../../modules/sub-category/sub-category.entity';
+import { Product } from '../../../modules/product/product.entity';
 
 @Injectable()
 export class FileService {
   constructor(
     @Inject(FILE_REPOSITORY) private readonly fileRepository: typeof File,
+    @Inject(CATEGORY_REPOSITORY)
+    private readonly categoryRepository: typeof Category,
+    @Inject(SUB_CATEGORY_REPOSITORY)
+    private readonly subCategoryRepository: typeof SubCategory,
+    @Inject(PRODUCT_REPOSITORY)
+    private readonly productRepository: typeof Product,
   ) {}
 
   async getAll(query: FileList): Promise<GetAllFilesResponse> {
     try {
       const offset = query.pageIndex * query.pageSize;
 
-      const imageList = await this.fileRepository.findAll({
+      const imageList = await this.fileRepository.findAndCountAll({
         where: { is_deleted: 0 },
-        attributes: ['id', 'name', 'url', 'created_at', 'type'],
+        attributes: ['id', 'name', 'url', 'created_at', 'type', 'extension'],
         offset: offset,
         limit: query.pageSize,
       });
 
       return {
         statusCode: STATUS_CODE.SUCCESS,
-        data: { imageList },
+        data: { imageList: imageList.rows, count: imageList.count },
         message: MESSAGES.SUCCESS,
       };
     } catch (err) {
@@ -39,7 +55,7 @@ export class FileService {
     }
   }
 
-  async getBySlug(query: FileListBySlug): Promise<GetAllFilesResponse> {
+  async getBySlug(query: FileListBySlug): Promise<GetFilesBySlugResponse> {
     try {
       const defaultQuery: any = [{ slug: query.slug }];
 
@@ -84,9 +100,43 @@ export class FileService {
 
   async delete(id: number): Promise<ApiResponse> {
     try {
-      await this.fileRepository.destroy({
-        where: { id },
-      });
+      const [, [file]] = await this.fileRepository.update(
+        { is_deleted: 1 },
+        { where: { id }, returning: true },
+      );
+
+      if (!file) {
+        throw new HttpException(
+          MESSAGES.INVALID_FILE_ID,
+          STATUS_CODE.NOT_FOUND,
+        );
+      }
+
+      switch (file.slug) {
+        case FILE_SLUGS.CATEGORY:
+          await this.categoryRepository.update(
+            { image_id: null },
+            { where: { image_id: file.id } },
+          );
+          break;
+
+        case FILE_SLUGS.SUB_CATEGORY:
+          await this.subCategoryRepository.update(
+            { image_id: null },
+            { where: { image_id: file.id } },
+          );
+          break;
+
+        case FILE_SLUGS.PRODUCT:
+          await this.productRepository.update(
+            { image_id: null },
+            { where: { image_id: file.id } },
+          );
+          break;
+
+        default:
+          break;
+      }
 
       return {
         statusCode: STATUS_CODE.SUCCESS,

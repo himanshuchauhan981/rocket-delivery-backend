@@ -13,5 +13,11 @@ export class ImageList {
 export class GetAllFilesResponse {
   statusCode: number;
   message: string;
+  data: { imageList: ImageList[]; count: number };
+}
+
+export class GetFilesBySlugResponse {
+  statusCode: number;
+  message: string;
   data: { imageList: ImageList[] };
 }
