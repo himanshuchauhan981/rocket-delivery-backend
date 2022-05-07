@@ -805,8 +805,6 @@ module.exports = {
         { returning: true },
       );
 
-      console.log('>>>>>new Image', new_image);
-
       const newProduct = await queryInterface.bulkInsert(
         'products',
         [
@@ -819,8 +817,7 @@ module.exports = {
             max_quantity: randomNumber(1, 20),
             purchase_limit: randomNumber(1, 5),
             measuring_unit_id: item.measuring_unit_id,
-            description:
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In pharetra nibh quis eros eleifend, vel commodo augue fermentum. Nunc justo lectus, scelerisque quis pretium in, interdum ac felis. Nulla facilisi. Aenean rutrum luctus massa sit amet fringilla. Duis porttitor elit feugiat, convallis nunc a, faucibus justo. Vestibulum sed arcu felis.',
+            description: item.description,
             is_active: 1,
             is_deleted: 0,
           },

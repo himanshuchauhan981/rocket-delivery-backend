@@ -80,7 +80,7 @@ module.exports = {
         'file',
         [
           {
-            name: 'category_image',
+            name: item.name,
             slug: 'category',
             type: 'image',
             url: item.image,

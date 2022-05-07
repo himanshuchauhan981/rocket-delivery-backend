@@ -11,7 +11,11 @@ module.exports = {
      *   isBetaMember: false
      * }], {});
      */
-    await queryInterface.bulkDelete('admin', null, {});
+    await queryInterface.bulkDelete(
+      'admin',
+      {},
+      { restartIdentity: true, truncate: true },
+    );
 
     await queryInterface.bulkInsert(
       'admin',
@@ -34,6 +38,10 @@ module.exports = {
      * await queryInterface.bulkDelete('People', null, {});
      */
 
-    await queryInterface.bulkDelete('admin', null, {});
+    await queryInterface.bulkDelete(
+      'admin',
+      {},
+      { restartIdentity: true, truncate: true },
+    );
   },
 };

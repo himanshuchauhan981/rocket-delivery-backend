@@ -144,7 +144,7 @@ module.exports = {
         'file',
         [
           {
-            name: 'sub category',
+            name: item.name,
             slug: 'sub-category',
             type: 'image',
             url: item.image,
