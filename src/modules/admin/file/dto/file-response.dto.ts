@@ -8,6 +8,10 @@ export class ImageList {
   id: number;
   name: string;
   url: string;
+  created_at: string;
+  type: string;
+  extension: string;
+  size: number;
 }
 
 export class GetAllFilesResponse {

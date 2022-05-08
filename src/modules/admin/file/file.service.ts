@@ -7,6 +7,7 @@ import {
   CreateFileResponse,
   GetAllFilesResponse,
   GetFilesBySlugResponse,
+  ImageList,
 } from './dto/file-response.dto';
 import {
   CATEGORY_REPOSITORY,
@@ -52,7 +53,15 @@ export class FileService {
 
       const imageList = await this.fileRepository.findAndCountAll({
         where: { [sequelize.Op.and]: sqlQuery },
-        attributes: ['id', 'name', 'url', 'created_at', 'type', 'extension'],
+        attributes: [
+          'id',
+          'name',
+          'url',
+          'created_at',
+          'type',
+          'extension',
+          [sequelize.literal('size / 1000000'), 'size'],
+        ],
         order: sortBy ? [[sortBy.field, sortBy.method]] : [['id', 'ASC']],
         offset: offset,
         limit: query.pageSize,
@@ -60,7 +69,10 @@ export class FileService {
 
       return {
         statusCode: STATUS_CODE.SUCCESS,
-        data: { imageList: imageList.rows, count: imageList.count },
+        data: {
+          imageList: imageList.rows as unknown as ImageList[],
+          count: imageList.count,
+        },
         message: MESSAGES.SUCCESS,
       };
     } catch (err) {
@@ -84,7 +96,7 @@ export class FileService {
 
       return {
         statusCode: STATUS_CODE.SUCCESS,
-        data: { imageList },
+        data: { imageList: imageList as unknown as ImageList[] },
         message: MESSAGES.SUCCESS,
       };
     } catch (err) {
