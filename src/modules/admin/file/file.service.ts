@@ -17,7 +17,11 @@ import {
 import { STATUS_CODE } from '../../../core/constants/status_code';
 import { MESSAGES } from '../../../core/constants/messages';
 import { ApiResponse } from '../../../modules/admin/dto/interface/admin';
-import { FILE_SLUGS } from '../../../core/constants/constants';
+import {
+  FILE_FILTER_BY,
+  FILE_SLUGS,
+  FILE_SORT_BY,
+} from '../../../core/constants/constants';
 import { Category } from '../../../modules/category/category.entity';
 import { SubCategory } from '../../../modules/sub-category/sub-category.entity';
 import { Product } from '../../../modules/product/product.entity';
@@ -37,10 +41,19 @@ export class FileService {
   async getAll(query: FileList): Promise<GetAllFilesResponse> {
     try {
       const offset = query.pageIndex * query.pageSize;
+      const filterBy = parseInt(query.filterBy, 10);
+      const sortBy = FILE_SORT_BY[parseInt(query.sortBy, 10)];
+
+      const sqlQuery: any = [{ is_deleted: 0 }];
+
+      if (filterBy) {
+        sqlQuery.push({ slug: FILE_FILTER_BY[filterBy] });
+      }
 
       const imageList = await this.fileRepository.findAndCountAll({
-        where: { is_deleted: 0 },
+        where: { [sequelize.Op.and]: sqlQuery },
         attributes: ['id', 'name', 'url', 'created_at', 'type', 'extension'],
+        order: sortBy ? [[sortBy.field, sortBy.method]] : [['id', 'ASC']],
         offset: offset,
         limit: query.pageSize,
       });

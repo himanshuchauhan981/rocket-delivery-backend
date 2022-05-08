@@ -46,4 +46,12 @@ export class FileList {
   @IsNotEmpty()
   @ApiProperty()
   pageSize: number;
+
+  @IsNotEmpty()
+  @ApiProperty()
+  filterBy: string;
+
+  @IsNotEmpty()
+  @ApiProperty()
+  sortBy: string;
 }

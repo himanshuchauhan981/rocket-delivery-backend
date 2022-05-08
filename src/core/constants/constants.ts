@@ -61,6 +61,20 @@ const FILE_EXTENSIONS = {
   PNG: 'png',
 };
 
+const FILE_FILTER_BY = {
+  1: 'category',
+  2: 'sub-category',
+  3: 'product',
+};
+
+const FILE_SORT_BY = {
+  0: { field: 'id', method: 'ASC' },
+  1: { field: 'created_at', method: 'DESC' },
+  2: { field: 'created_at', method: 'ASC' },
+  3: { field: 'size', method: 'ASC' },
+  4: { field: 'size', method: 'DESC' },
+};
+
 export {
   CONSTANTS,
   FILE_SLUGS,
@@ -73,4 +87,6 @@ export {
   NOTIFICATION_TYPE,
   RESPONSE_TYPE,
   FILE_EXTENSIONS,
+  FILE_FILTER_BY,
+  FILE_SORT_BY,
 };

@@ -59,6 +59,12 @@ export class File extends Model<File> {
   extension: string;
 
   @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  size: number;
+
+  @Column({
     type: DataType.BIGINT,
     allowNull: false,
     defaultValue: 0,
