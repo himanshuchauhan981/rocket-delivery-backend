@@ -13,14 +13,22 @@ module.exports = {
 
     await queryInterface.renameColumn('file', 'type', 'slug');
 
-    await queryInterface.addColumn('file', 'type', Sequelize.STRING, {
-      after: 'slug',
-    });
+    await queryInterface.addColumn(
+      'file',
+      'type',
+      {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      {
+        after: 'slug',
+      },
+    );
 
     await queryInterface.bulkUpdate('file', { type: 'image' }, {});
   },
 
-  async down(queryInterface, Sequelize) {
+  async down(queryInterface) {
     await queryInterface.renameTable('file', 'image');
 
     /**

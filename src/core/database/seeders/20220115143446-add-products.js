@@ -790,7 +790,7 @@ module.exports = {
       },
     ];
 
-    for (const [index, item] of product_data.entries()) {
+    for (const [, item] of product_data.entries()) {
       const new_image = await queryInterface.bulkInsert(
         'file',
         [
@@ -800,6 +800,7 @@ module.exports = {
             type: 'image',
             url: item.image,
             extension: 'jpg',
+            size: randomNumber(1, 1000) * 1000,
           },
         ],
         { returning: true },

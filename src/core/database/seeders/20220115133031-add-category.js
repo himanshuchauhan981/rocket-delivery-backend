@@ -1,5 +1,9 @@
 'use strict';
 
+const randomNumber = (min, max) => {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+};
+
 module.exports = {
   async up(queryInterface) {
     /**
@@ -85,6 +89,7 @@ module.exports = {
             type: 'image',
             url: item.image,
             extension: 'png',
+            size: randomNumber(1, 1000) * 1000,
           },
         ],
         { returning: true },
