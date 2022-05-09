@@ -28,7 +28,13 @@ module.exports = {
      * await queryInterface.dropTable('users');
      */
 
-    await queryInterface.removeColumn('file', 'extension');
+    await queryInterface
+      .removeColumn('file', 'extension')
+      .then(
+        queryInterface.sequelize.query(
+          'DROP TYPE IF EXISTS "enum_file_extension";',
+        ),
+      );
 
     await queryInterface.removeColumn('file', 'size');
   },

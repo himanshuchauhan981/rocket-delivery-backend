@@ -31,7 +31,8 @@ module.exports = {
         },
 
         status: {
-          type: Sequelize.INTEGER,
+          type: Sequelize.ENUM(),
+          values: ['INITIATED', 'CAPTURED', 'REFUNDED'],
           allowNull: false,
         },
 
@@ -75,7 +76,7 @@ module.exports = {
     );
   },
 
-  async down(queryInterface, Sequelize) {
+  async down(queryInterface) {
     /**
      * Add reverting commands here.
      *

@@ -70,6 +70,16 @@ module.exports = {
           allowNull: true,
         },
 
+        delivery_status: {
+          type: Sequelize.ENUM,
+          values: ['PENDING', 'CONFIRMED', 'PICKED', 'ON_THE_WAY', 'DELIVERED'],
+        },
+
+        payment_status: {
+          type: Sequelize.ENUM,
+          values: ['PAID', 'UNPAID'],
+        },
+
         // Timestamps
         created_at: {
           type: Sequelize.DATE,
@@ -99,7 +109,7 @@ module.exports = {
     );
   },
 
-  async down(queryInterface, Sequelize) {
+  async down(queryInterface) {
     /**
      * Add reverting commands here.
      *
