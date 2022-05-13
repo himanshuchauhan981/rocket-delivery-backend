@@ -69,11 +69,11 @@ export class OrderService {
           'payment_method',
           'created_at',
           'payment_status',
+          'delivery_status',
         ],
         offset: pageIndex,
         order: [['created_at', 'DESC']],
         limit: query.pageSize,
-        // distinct: true,
       });
 
       return {
@@ -94,20 +94,28 @@ export class OrderService {
     id: number,
   ): Promise<ApiResponse> {
     try {
-      const orderUpdateStatus = await this.orderRepository.update<Order>(
-        payload,
-        {
-          where: { id },
-          returning: true,
-        },
-      );
+      const uploadPayload = { ...payload };
 
-      if (!orderUpdateStatus[0]) {
+      const orderDetails = await this.orderRepository.findByPk<Order>(id);
+
+      if (!orderDetails) {
         throw new HttpException(
           MESSAGES.INVALID_ORDER_ID,
           STATUS_CODE.NOT_FOUND,
         );
       }
+
+      if (payload.delivery_status && payload.delivery_status === 'DELIVERED') {
+        uploadPayload.status = 'DELIVERED';
+      }
+
+      const orderUpdateStatus = await this.orderRepository.update<Order>(
+        uploadPayload,
+        {
+          where: { id },
+          returning: true,
+        },
+      );
 
       const userDetails = await this.userRepository.findByPk(
         orderUpdateStatus[1][0].user_id,
@@ -127,13 +135,6 @@ export class OrderService {
         false,
       );
 
-      if (!orderUpdateStatus[0]) {
-        throw new HttpException(
-          MESSAGES.INVALID_ORDER_ID,
-          STATUS_CODE.NOT_FOUND,
-        );
-      }
-
       if (CONSTANTS.ORDER_STATUS in payload) {
         return {
           statusCode: STATUS_CODE.SUCCESS,
@@ -150,6 +151,11 @@ export class OrderService {
           message: MESSAGES.PAYMENT_STATUS_UPDATE_SUCCESS,
         };
       }
+
+      return {
+        statusCode: STATUS_CODE.SUCCESS,
+        message: MESSAGES.DELIVERY_STATUS_UPDATE_SUCCESS,
+      };
     } catch (err) {
       throw err;
     }

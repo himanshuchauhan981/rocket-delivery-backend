@@ -1,6 +1,7 @@
 const CONSTANTS = {
   ORDER_STATUS: 'status',
   PAYMENT_STATUS: 'payment_status',
+  DELIVERY_STATUS: 'delivery_status',
 };
 
 const FILE_SLUGS = {

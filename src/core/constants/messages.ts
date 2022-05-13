@@ -54,4 +54,5 @@ export const MESSAGES = {
     'The OTP you entered is invalid. Please enter the correct OTP.',
   INVALID_EMAIL: 'Invalid Email',
   INVALID_NOTIFICATION_USER_ID: 'Invalid notification user id',
+  DELIVERY_STATUS_UPDATE_SUCCESS: 'Delivery status updated successfully',
 };
