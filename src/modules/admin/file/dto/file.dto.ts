@@ -30,6 +30,14 @@ export class CreateFile {
   @IsNotEmpty()
   @ApiProperty()
   name: string;
+
+  @IsNotEmpty()
+  @ApiProperty()
+  extension: string;
+
+  @IsNotEmpty()
+  @ApiProperty()
+  size: number;
 }
 
 export class SpecificFile {

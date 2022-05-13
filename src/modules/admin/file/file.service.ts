@@ -111,6 +111,8 @@ export class FileService {
         name: payload.name,
         type: payload.type,
         slug: payload.slug,
+        extension: payload.extension,
+        size: payload.size,
       });
 
       return {
