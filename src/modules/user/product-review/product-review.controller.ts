@@ -53,7 +53,7 @@ export class UserProductReviewController {
   @Delete(':id')
   @Auth('user')
   @UseInterceptors(TransformInterceptor)
-  async delete(@Body(new ValidationPipe()) payload: SpecificProductReview) {
+  async delete(@Param(new ValidationPipe()) payload: SpecificProductReview) {
     return await this.productReviewService.delete(payload.id);
   }
 }
