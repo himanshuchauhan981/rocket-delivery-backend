@@ -4,6 +4,7 @@ import * as htmlPDF from 'html-pdf';
 
 import {
   CONSTANTS,
+  DELIVERY_STATUS,
   ORDER_STATUS,
   RESPONSE_TYPE,
 } from '../../../core/constants/constants';
@@ -96,20 +97,16 @@ export class OrderService {
     try {
       const uploadPayload = { ...payload };
 
-      const orderDetails = await this.orderRepository.findByPk<Order>(id);
-
-      if (!orderDetails) {
-        throw new HttpException(
-          MESSAGES.INVALID_ORDER_ID,
-          STATUS_CODE.NOT_FOUND,
-        );
+      if (
+        payload.delivery_status &&
+        payload.delivery_status === DELIVERY_STATUS.DELIVERED
+      ) {
+        uploadPayload.status = DELIVERY_STATUS.DELIVERED;
       }
 
-      if (payload.delivery_status && payload.delivery_status === 'DELIVERED') {
-        uploadPayload.status = 'DELIVERED';
-      }
+      console.log('>>>>>upload payload', uploadPayload);
 
-      const orderUpdateStatus = await this.orderRepository.update<Order>(
+      const [status, [orderDetails]] = await this.orderRepository.update<Order>(
         uploadPayload,
         {
           where: { id },
@@ -117,8 +114,17 @@ export class OrderService {
         },
       );
 
+      if (!status) {
+        throw new HttpException(
+          MESSAGES.INVALID_ORDER_ID,
+          STATUS_CODE.NOT_FOUND,
+        );
+      }
+
+      console.log('>>>>orderUpdate', orderDetails);
+
       const userDetails = await this.userRepository.findByPk(
-        orderUpdateStatus[1][0].user_id,
+        orderDetails.user_id,
       );
 
       const deviceIds = [userDetails.fcm_token];

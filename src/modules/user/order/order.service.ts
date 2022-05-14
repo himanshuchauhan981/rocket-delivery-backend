@@ -231,7 +231,7 @@ export class OrderService {
       );
     }
 
-    const [_, [orderDetail]] = await this.orderRepository.update(
+    const [, [orderDetail]] = await this.orderRepository.update(
       { status: ORDER_STATUS.CANCELLED },
       { where: { id: order_id }, returning: true },
     );

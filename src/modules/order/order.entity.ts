@@ -13,6 +13,7 @@ import {
 import {
   ORDER_STATUS,
   ORDER_PAYMENT_STATUS,
+  DELIVERY_STATUS,
 } from '../../core/constants/constants';
 import { Address } from '../address/address.entity';
 import { UserPayment } from '../payment/user-payment.entity';
@@ -105,13 +106,13 @@ export class Order extends Model<Order> {
   @Column({
     type: DataType.ENUM,
     values: [
-      ORDER_STATUS.PENDING,
-      ORDER_STATUS.CONFIRMED,
-      ORDER_STATUS.PICKED,
-      ORDER_STATUS.ON_THE_WAY,
-      ORDER_STATUS.DELIVERED,
+      DELIVERY_STATUS.PENDING,
+      DELIVERY_STATUS.CONFIRMED,
+      DELIVERY_STATUS.PICKED,
+      DELIVERY_STATUS.ON_THE_WAY,
+      DELIVERY_STATUS.DELIVERED,
     ],
-    defaultValue: ORDER_STATUS.PENDING,
+    defaultValue: DELIVERY_STATUS.PENDING,
   })
   delivery_status: string;
 

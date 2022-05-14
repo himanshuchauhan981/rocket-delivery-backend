@@ -1,7 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional } from 'class-validator';
 
-import { ORDER_STATUS } from '../../../../core/constants/constants';
+import {
+  DELIVERY_STATUS,
+  ORDER_PAYMENT_STATUS,
+  ORDER_STATUS,
+} from '../../../../core/constants/constants';
 
 export class OrdersList {
   @IsNotEmpty()
@@ -33,19 +37,15 @@ export class SpecificProduct {
 
 export class UpdateOrder {
   @ApiProperty({ required: false })
+  @IsEnum(ORDER_PAYMENT_STATUS, { always: false })
   payment_status: string;
 
-  @ApiProperty({
-    required: false,
-    enum: [
-      ORDER_STATUS.REQUESTED,
-      ORDER_STATUS.CONFIRMED,
-      ORDER_STATUS.DELIVERED,
-      ORDER_STATUS.CANCELLED,
-    ],
-  })
+  @ApiProperty({ required: false })
+  @IsEnum(ORDER_STATUS, { always: false })
   status: string;
 
   @ApiProperty({ required: false })
+  @IsOptional()
+  @IsEnum(DELIVERY_STATUS, { always: false })
   delivery_status: string;
 }
