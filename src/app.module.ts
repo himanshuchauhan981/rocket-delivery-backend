@@ -14,7 +14,7 @@ import DatabaseModule from './core/database/database.module';
 import { CommonService } from './modules/common/common.service';
 import { MailModule } from './core/utils/mail/mail.module';
 import { SocketsModule } from './core/sockets/sockets.module';
-import { NotificationModule } from './modules/notification/entity/notification.module';
+import { NotificationModule } from './modules/notification/notification.module';
 
 @Module({
   imports: [
