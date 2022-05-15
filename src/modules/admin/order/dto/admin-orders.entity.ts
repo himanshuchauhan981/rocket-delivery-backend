@@ -37,10 +37,12 @@ export class SpecificProduct {
 
 export class UpdateOrder {
   @ApiProperty({ required: false })
+  @IsOptional()
   @IsEnum(ORDER_PAYMENT_STATUS, { always: false })
   payment_status: string;
 
   @ApiProperty({ required: false })
+  @IsOptional()
   @IsEnum(ORDER_STATUS, { always: false })
   status: string;
 

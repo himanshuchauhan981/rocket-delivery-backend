@@ -5,11 +5,13 @@ import * as htmlPDF from 'html-pdf';
 import {
   CONSTANTS,
   DELIVERY_STATUS,
+  NOTIFICATION_TEMPLATE_SLUG,
   ORDER_STATUS,
   RESPONSE_TYPE,
 } from '../../../core/constants/constants';
 import { MESSAGES } from '../../../core/constants/messages';
 import {
+  NOTIFICATION_TEMPLATE_REPOSITORY,
   ORDER_REPOSITORY,
   USER_REPOSITORY,
 } from '../../../core/constants/repositories';
@@ -24,6 +26,7 @@ import { OrdersList, UpdateOrder } from './dto/admin-orders.entity';
 import { OrderInvoiceResponse } from './dto/interface/response.interface';
 import { orderInvoice } from '../../../core/utils/invoice';
 import { Address } from '../../../modules/address/address.entity';
+import { NotificationTemplate } from '../../../modules/notification/entity/notification-template.entity';
 
 @Injectable()
 export class OrderService {
@@ -32,7 +35,56 @@ export class OrderService {
     @Inject(USER_REPOSITORY)
     private readonly userRepository: typeof User,
     private readonly fcmService: FcmService,
+    @Inject(NOTIFICATION_TEMPLATE_REPOSITORY)
+    private readonly notificationTemplateRepository: typeof NotificationTemplate,
   ) {}
+
+  async #generateOrderNotifications(
+    key: string,
+    status: string,
+  ): Promise<NotificationTemplate> {
+    let slug: string;
+
+    if (key === 'status') {
+      switch (status) {
+        case ORDER_STATUS.REQUESTED:
+          slug = NOTIFICATION_TEMPLATE_SLUG.ORDER_REQUESTED;
+          break;
+
+        case ORDER_STATUS.CONFIRMED:
+          slug = NOTIFICATION_TEMPLATE_SLUG.ORDER_CONFIRMED;
+          break;
+
+        case ORDER_STATUS.DELIVERED:
+          slug = NOTIFICATION_TEMPLATE_SLUG.ORDER_DELIVERED;
+          break;
+
+        case ORDER_STATUS.CANCELLED:
+          slug = NOTIFICATION_TEMPLATE_SLUG.ORDER_CANCELLED;
+          break;
+      }
+    } else {
+      switch (status) {
+        case DELIVERY_STATUS.CONFIRMED:
+          slug = NOTIFICATION_TEMPLATE_SLUG.DELIVERY_CONFIRMED;
+          break;
+
+        case DELIVERY_STATUS.PICKED:
+          slug = NOTIFICATION_TEMPLATE_SLUG.DELIVERY_PICKED;
+          break;
+
+        case DELIVERY_STATUS.ON_THE_WAY:
+          slug = NOTIFICATION_TEMPLATE_SLUG.DELIVERY_ON_THE_WAY;
+          break;
+
+        case DELIVERY_STATUS.DELIVERED:
+          slug = NOTIFICATION_TEMPLATE_SLUG.DELIVERY_COMPLETED;
+          break;
+      }
+    }
+
+    return this.notificationTemplateRepository.findOne({ where: { slug } });
+  }
 
   async adminOrderList(query: OrdersList): Promise<OrderListResponse> {
     try {
@@ -104,8 +156,6 @@ export class OrderService {
         uploadPayload.status = DELIVERY_STATUS.DELIVERED;
       }
 
-      console.log('>>>>>upload payload', uploadPayload);
-
       const [status, [orderDetails]] = await this.orderRepository.update<Order>(
         uploadPayload,
         {
@@ -121,25 +171,33 @@ export class OrderService {
         );
       }
 
-      console.log('>>>>orderUpdate', orderDetails);
+      const [key] = Object.keys(uploadPayload);
 
-      const userDetails = await this.userRepository.findByPk(
-        orderDetails.user_id,
-      );
+      if (key === 'status' || key === 'delivery_status') {
+        const [payloadStatus] = Object.values(uploadPayload);
 
-      const deviceIds = [userDetails.fcm_token];
-      const notificationPayload = {
-        notification: {
-          title: 'Test title',
-          body: 'Test body',
-        },
-      };
+        const userDetails = await this.userRepository.findByPk(
+          orderDetails.user_id,
+        );
 
-      await this.fcmService.sendNotification(
-        deviceIds,
-        notificationPayload,
-        false,
-      );
+        const notificationTemplateDetails =
+          await this.#generateOrderNotifications(key, payloadStatus);
+
+        const deviceIds = [userDetails.fcm_token];
+
+        const notificationPayload = {
+          notification: {
+            title: notificationTemplateDetails.title,
+            body: notificationTemplateDetails.body,
+          },
+        };
+
+        await this.fcmService.sendNotification(
+          deviceIds,
+          notificationPayload,
+          false,
+        );
+      }
 
       if (CONSTANTS.ORDER_STATUS in payload) {
         return {
