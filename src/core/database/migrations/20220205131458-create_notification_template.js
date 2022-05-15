@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-  async up (queryInterface, Sequelize) {
+  async up(queryInterface, Sequelize) {
     /**
      * Add altering commands here.
      *
@@ -21,23 +21,27 @@ module.exports = {
         },
 
         slug: {
-          type: Sequelize.STRING,
+          type: Sequelize.ENUM(
+            'ORDER_REQUESTED',
+            'ORDER_CONFIRMED',
+            'ORDER_DELIVERED',
+            'ORDER_CANCELLED',
+            'DELIVERY_CONFIRMED',
+            'DELIVERY_PICKED',
+            'DELIVERY_ON_THE_WAY',
+            'DELIVERY_COMPLETED',
+          ),
           allowNull: false,
         },
-        
+
         title: {
           type: Sequelize.STRING,
           allowNull: false,
         },
 
-        description: {
+        body: {
           type: Sequelize.STRING,
           allowNull: false,
-        },
-
-        created_by: {
-          type: Sequelize.ENUM,
-          values: ['ADMIN', 'USER']
         },
 
         is_deleted: {
@@ -73,7 +77,7 @@ module.exports = {
     );
   },
 
-  async down (queryInterface, Sequelize) {
+  async down(queryInterface) {
     /**
      * Add reverting commands here.
      *
@@ -81,6 +85,6 @@ module.exports = {
      * await queryInterface.dropTable('users');
      */
 
-     await queryInterface.dropTable('notification_template');
-  }
+    await queryInterface.dropTable('notification_template');
+  },
 };
