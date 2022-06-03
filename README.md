@@ -42,18 +42,7 @@ Setup local dev environment and run the backend.
 
 ### Setup local environment
 - Install **PostgresSQL**
-- Create .env file with following data :-
-
-```
-PORT = 3000
-SQL_HOST = 'localhost'
-SQL_USER = 'postgres'
-SQL_PASSWORD = <SQL_PASSWORD>
-SQL_DATABASE = <SQL_DATABASE>
-SQL_DIALECT = 'postgres'
-SQL_LOGGING  = false
-JWT_KEY = 'eyJhbGciOiJIUzI1NiJ9'
-```
+- Create **.env** file from provided **.env.example** file.
 
 ### Installation
 
