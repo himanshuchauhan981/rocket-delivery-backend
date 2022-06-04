@@ -1,8 +1,8 @@
 {
   "name": "rocket-delivery-backend",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "Backend API for admin and App",
+  "author": "Himanshu Chauhan",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
