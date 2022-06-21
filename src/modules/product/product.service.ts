@@ -13,6 +13,7 @@ import { Category } from '../category/category.entity';
 import { MeasuringUnit } from '../measuring-unit/measuring-unit.entity';
 import { ProductReview } from '../product-review/product-review.entity';
 import { SubCategory } from '../sub-category/sub-category.entity';
+import { DISCOUNT_TYPE } from 'src/core/constants/constants';
 
 @Injectable()
 export class ProductService {
@@ -39,7 +40,7 @@ export class ProductService {
       discountEndDate.isAfter(discountStartDate)
     ) {
       discountStatus = true;
-      if (discount_type == 'FLAT') {
+      if (discount_type == DISCOUNT_TYPE.FLAT) {
         discountPrice = actual_price - discount;
       } else {
         discountPrice = (discount / 100) * actual_price;

@@ -185,7 +185,9 @@ export class ProductService {
             discount_end_date: payload.discountEndDate
               ? payload.discountEndDate
               : null,
-            discount_type: payload.discountType ? payload.discountType : null,
+            discount_type: payload.discountType
+              ? payload.discountType.toLocaleUpperCase()
+              : null,
             refundable: payload.refundable,
           },
           { where: { product_id: productId } },
