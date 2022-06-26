@@ -5,6 +5,7 @@ import * as moment from 'moment';
 import {
   CATEGORY_REPOSITORY,
   MEASURING_UNIT_REPOSITORY,
+  PRODUCT_DESCRIPTION_REPOSITORY,
   PRODUCT_PRICE_REPOSITORY,
   PRODUCT_REPOSITORY,
   SUB_CATEGORY_REPOSITORY,
@@ -20,6 +21,7 @@ import { MeasuringUnit } from '../../../modules/measuring-unit/measuring-unit.en
 import { MESSAGES } from '../../../core/constants/messages';
 import { ProductService as CommonProductService } from '../../product/product.service';
 import { ApiResponse } from '../dto/interface/admin';
+import { ProductDescription } from '../../../modules/product/product-description.entity';
 
 @Injectable()
 export class ProductService {
@@ -34,6 +36,8 @@ export class ProductService {
     private readonly subCategoryRepository: typeof SubCategory,
     @Inject(MEASURING_UNIT_REPOSITORY)
     private readonly measuringUnitRepository: typeof MeasuringUnit,
+    @Inject(PRODUCT_DESCRIPTION_REPOSITORY)
+    private readonly productDescriptionRepository: typeof ProductDescription,
     private readonly commonProductService: CommonProductService,
   ) {}
 
@@ -167,9 +171,9 @@ export class ProductService {
             category_id: payload.category,
             sub_category_id: payload.subCategory,
             max_quantity: payload.productStock,
-            purchase_limit: payload.purchaseLimit,
+            // purchase_limit: payload.purchaseLimit,
             measuring_unit_id: payload.measuringUnit,
-            description: payload.description,
+            // description: payload.description,
           },
           { where: { id: productId } },
         );
@@ -276,15 +280,28 @@ export class ProductService {
         }
       }
 
+      const newDescriptionObj = {
+        description: payload.description,
+        benefits: payload.benefitsList,
+        features: payload.featuresList,
+        ingredients: payload.ingredients,
+      };
+
+      const newDescription =
+        await this.productDescriptionRepository.create<any>(newDescriptionObj);
+
       const newProductObj = {
         category_id: payload.category,
         sub_category_id: payload.subCategory,
         max_quantity: payload.productStock,
-        purchase_limit: payload.purchaseLimit,
         measuring_unit_id: payload.measuringUnit,
         name: payload.name,
-        description: payload.description,
         image_id: payload.image,
+        description_id: newDescription.id,
+        refundable: payload.refundable,
+        stock_visibility: payload.stockVisibility,
+        minimum_cart_quantity: payload.minimumCartQuantity,
+        maximum_cart_quantity: payload.maximumCartQuantity,
       };
 
       const newProduct = await this.productRepository.create<any>(
