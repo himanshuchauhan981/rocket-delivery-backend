@@ -10,13 +10,18 @@ import {
   HasOne,
   HasMany,
 } from 'sequelize-typescript';
+
+import {
+  PAYMENT_METHOD_SLUG,
+  STOCK_VISIBILITY_SLUG,
+} from 'src/core/constants/constants';
 import { File } from '../admin/file/file.entity';
 import { Category } from '../category/category.entity';
 import { MeasuringUnit } from '../measuring-unit/measuring-unit.entity';
 import { OrderProduct } from '../order/order-product.entity';
 import { ProductReview } from '../product-review/product-review.entity';
-
 import { SubCategory } from '../sub-category/sub-category.entity';
+import { ProductDescription } from './product-description.entity';
 import { ProductPrice } from './product-price.entity';
 
 @Table({
@@ -38,7 +43,7 @@ export class Product extends Model<Product> {
   name: string;
 
   @Column({
-    type: DataType.BIGINT,
+    type: DataType.INTEGER,
     allowNull: true,
   })
   @ForeignKey(() => File)
@@ -68,20 +73,15 @@ export class Product extends Model<Product> {
     type: DataType.BIGINT,
     allowNull: false,
   })
-  purchase_limit: number;
-
-  @Column({
-    type: DataType.BIGINT,
-    allowNull: false,
-  })
   @ForeignKey(() => MeasuringUnit)
   measuring_unit_id: number;
 
   @Column({
-    type: DataType.TEXT,
+    type: DataType.INTEGER,
     allowNull: false,
   })
-  description: string;
+  @ForeignKey(() => ProductDescription)
+  description_id: number;
 
   @Column({
     type: DataType.BIGINT,
@@ -94,6 +94,40 @@ export class Product extends Model<Product> {
     defaultValue: 0,
   })
   is_deleted: number;
+
+  @Column({
+    type: DataType.INTEGER,
+    defaultValue: 0,
+  })
+  minimum_cart_quantity: number;
+
+  @Column({
+    type: DataType.INTEGER,
+    defaultValue: 0,
+  })
+  maximum_cart_quantity: number;
+
+  @Column({
+    type: DataType.ENUM,
+    allowNull: false,
+    values: [
+      STOCK_VISIBILITY_SLUG.HIDE_STOCK,
+      STOCK_VISIBILITY_SLUG.STOCK_QUANTITY,
+      STOCK_VISIBILITY_SLUG.STOCK_TEXT,
+    ],
+  })
+  stock_visibility: string;
+
+  @Column({
+    type: DataType.ENUM,
+    allowNull: false,
+    values: [
+      PAYMENT_METHOD_SLUG.CASH_ON_DELIVERY,
+      PAYMENT_METHOD_SLUG.DEBIT_OR_CREDIT,
+      PAYMENT_METHOD_SLUG.BOTH,
+    ],
+  })
+  payment_method: string;
 
   @CreatedAt
   created_at: Date;
@@ -136,4 +170,7 @@ export class Product extends Model<Product> {
 
   @HasMany(() => OrderProduct)
   orderProducts: OrderProduct[];
+
+  @BelongsTo(() => ProductDescription)
+  product_description: ProductDescription;
 }

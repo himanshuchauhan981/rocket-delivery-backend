@@ -29,6 +29,30 @@ export class NewProduct {
 
   @ApiProperty()
   @IsNotEmpty()
+  ingredients: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  stockVisibility: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  benefitsList: string[];
+
+  @ApiProperty()
+  @IsNotEmpty()
+  featuresList: string[];
+
+  @ApiProperty()
+  @IsNotEmpty()
+  maximumCartQuantity: number;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  minimumCartQuantity: number;
+
+  @ApiProperty()
+  @IsNotEmpty()
   category: number;
 
   @ApiProperty({ required: false })
@@ -49,10 +73,6 @@ export class NewProduct {
   @ApiProperty()
   @IsNotEmpty()
   productStock: number;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  purchaseLimit: number;
 
   @ApiProperty()
   @IsNotEmpty()

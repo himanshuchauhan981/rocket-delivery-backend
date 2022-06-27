@@ -1,7 +1,9 @@
+import { ProductDescription } from 'src/modules/product/product-description.entity';
 import {
   CATEGORY_REPOSITORY,
   MEASURING_UNIT_REPOSITORY,
   ORDER_REPOSITORY,
+  PRODUCT_DESCRIPTION_REPOSITORY,
   PRODUCT_PRICE_REPOSITORY,
   PRODUCT_REPOSITORY,
   SUB_CATEGORY_REPOSITORY,
@@ -20,4 +22,5 @@ export const AdminProductProvider = [
   { provide: SUB_CATEGORY_REPOSITORY, useValue: SubCategory },
   { provide: MEASURING_UNIT_REPOSITORY, useValue: MeasuringUnit },
   { provide: ORDER_REPOSITORY, useValue: Order },
+  { provide: PRODUCT_DESCRIPTION_REPOSITORY, useValue: ProductDescription },
 ];

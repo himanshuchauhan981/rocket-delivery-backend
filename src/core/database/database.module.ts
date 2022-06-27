@@ -19,7 +19,8 @@ import { Wishlist } from '../../modules/wishlist/wishlist.entity';
 import { ProductHistory } from '../../modules/product-history/product-history.entity';
 import { Notification } from '../../modules/notification/entity/notification.entity';
 import { NotificationUser } from '../../modules/notification/entity/notification-user.entity';
-import { NotificationTemplate } from 'src/modules/notification/entity/notification-template.entity';
+import { NotificationTemplate } from '../../modules/notification/entity/notification-template.entity';
+import { ProductDescription } from '../../modules/product/product-description.entity';
 
 let config;
 switch (process.env.NODE_ENV) {
@@ -60,6 +61,7 @@ const DatabaseModule = [
         Notification,
         NotificationUser,
         NotificationTemplate,
+        ProductDescription,
       ],
     }),
   }),
