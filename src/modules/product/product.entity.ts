@@ -11,7 +11,10 @@ import {
   HasMany,
 } from 'sequelize-typescript';
 
-import { STOCK_VISIBILITY_SLUG } from 'src/core/constants/constants';
+import {
+  PAYMENT_METHOD_SLUG,
+  STOCK_VISIBILITY_SLUG,
+} from 'src/core/constants/constants';
 import { File } from '../admin/file/file.entity';
 import { Category } from '../category/category.entity';
 import { MeasuringUnit } from '../measuring-unit/measuring-unit.entity';
@@ -99,11 +102,6 @@ export class Product extends Model<Product> {
   minimum_cart_quantity: number;
 
   @Column({
-    type: DataType.BOOLEAN,
-  })
-  refundable: boolean;
-
-  @Column({
     type: DataType.INTEGER,
     defaultValue: 0,
   })
@@ -119,6 +117,17 @@ export class Product extends Model<Product> {
     ],
   })
   stock_visibility: string;
+
+  @Column({
+    type: DataType.ENUM,
+    allowNull: false,
+    values: [
+      PAYMENT_METHOD_SLUG.CASH_ON_DELIVERY,
+      PAYMENT_METHOD_SLUG.DEBIT_OR_CREDIT,
+      PAYMENT_METHOD_SLUG.BOTH,
+    ],
+  })
+  payment_method: string;
 
   @CreatedAt
   created_at: Date;
@@ -161,4 +170,7 @@ export class Product extends Model<Product> {
 
   @HasMany(() => OrderProduct)
   orderProducts: OrderProduct[];
+
+  @BelongsTo(() => ProductDescription)
+  product_description: ProductDescription;
 }

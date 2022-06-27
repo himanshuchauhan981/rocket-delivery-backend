@@ -12,7 +12,7 @@ import {
 })
 export class ProductDescription extends Model<ProductDescription> {
   @Column({
-    type: DataType.BIGINT,
+    type: DataType.INTEGER,
     allowNull: false,
     autoIncrement: true,
     primaryKey: true,

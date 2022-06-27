@@ -171,9 +171,10 @@ export class ProductService {
             category_id: payload.category,
             sub_category_id: payload.subCategory,
             max_quantity: payload.productStock,
-            // purchase_limit: payload.purchaseLimit,
             measuring_unit_id: payload.measuringUnit,
-            // description: payload.description,
+            minimum_cart_quantity: payload.minimumCartQuantity,
+            maximum_cart_quantity: payload.maximumCartQuantity,
+            stock_visibility: payload.stockVisibility,
           },
           { where: { id: productId } },
         );
@@ -193,6 +194,16 @@ export class ProductService {
             refundable: payload.refundable,
           },
           { where: { product_id: productId } },
+        );
+
+        await this.productDescriptionRepository.update(
+          {
+            description: payload.description,
+            benefits: payload.benefitsList.length ? payload.benefitsList : [],
+            features: payload.featuresList.length ? payload.featuresList : [],
+            ingredients: payload.ingredients,
+          },
+          { where: { id: productDetails.description_id } },
         );
 
         return {
@@ -282,8 +293,8 @@ export class ProductService {
 
       const newDescriptionObj = {
         description: payload.description,
-        benefits: payload.benefitsList,
-        features: payload.featuresList,
+        benefitsList: payload.benefitsList,
+        featuresList: payload.featuresList,
         ingredients: payload.ingredients,
       };
 
@@ -298,7 +309,6 @@ export class ProductService {
         name: payload.name,
         image_id: payload.image,
         description_id: newDescription.id,
-        refundable: payload.refundable,
         stock_visibility: payload.stockVisibility,
         minimum_cart_quantity: payload.minimumCartQuantity,
         maximum_cart_quantity: payload.maximumCartQuantity,

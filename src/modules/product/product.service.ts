@@ -13,6 +13,7 @@ import { Category } from '../category/category.entity';
 import { MeasuringUnit } from '../measuring-unit/measuring-unit.entity';
 import { ProductReview } from '../product-review/product-review.entity';
 import { SubCategory } from '../sub-category/sub-category.entity';
+import { ProductDescription } from './product-description.entity';
 
 @Injectable()
 export class ProductService {
@@ -162,8 +163,25 @@ export class ProductService {
             where: { is_deleted: 0 },
             required: false,
           },
+          {
+            model: ProductDescription,
+            attributes: [
+              'id',
+              'benefits',
+              'ingredients',
+              'features',
+              'description',
+            ],
+          },
         ],
-        attributes: ['name', 'max_quantity', 'purchase_limit', 'description'],
+        attributes: [
+          'name',
+          'max_quantity',
+          'minimum_cart_quantity',
+          'maximum_cart_quantity',
+          'payment_method',
+          'stock_visibility',
+        ],
       });
 
       if (!productDetails) {
