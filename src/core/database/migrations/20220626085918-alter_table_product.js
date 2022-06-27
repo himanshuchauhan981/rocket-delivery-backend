@@ -17,12 +17,6 @@ module.exports = {
 
     await queryInterface.removeColumn('products', 'purchase_limit');
 
-    await queryInterface.addColumn('products', 'refundable', {
-      type: Sequelize.BOOLEAN,
-      allowNull: false,
-      defaultValue: true,
-    });
-
     // await queryInterface.removeColumn('products', 'description');
 
     await queryInterface.addColumn('products', 'description_id', {
