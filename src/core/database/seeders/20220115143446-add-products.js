@@ -27,6 +27,18 @@ module.exports = {
       cascade: true,
     });
 
+    const default_payment_method = [
+      'CASH_ON_DELIVERY',
+      'DEBIT_OR_CREDIT',
+      'BOTH',
+    ];
+
+    const default_stock_visibility_options = [
+      'STOCK_QUANTITY',
+      'STOCK_TEXT',
+      'HIDE_STOCK',
+    ];
+
     const product_data = [
       {
         name: 'Raisins',
@@ -806,6 +818,15 @@ module.exports = {
         { returning: true },
       );
 
+      const minimum_cart_quantity = randomNumber(1, 5);
+      const maximum_cart_quantity = randomNumber(minimum_cart_quantity, 15);
+
+      const newProductDescription = await queryInterface.bulkInsert(
+        'product_description',
+        [{ description: item.description }],
+        { returning: true },
+      );
+
       const newProduct = await queryInterface.bulkInsert(
         'products',
         [
@@ -816,11 +837,20 @@ module.exports = {
             image_id: new_image[0].id,
             is_active: item.is_active,
             max_quantity: randomNumber(1, 20),
-            purchase_limit: randomNumber(1, 5),
             measuring_unit_id: item.measuring_unit_id,
-            description: item.description,
             is_active: 1,
             is_deleted: 0,
+            minimum_cart_quantity,
+            maximum_cart_quantity,
+            stock_visibility:
+              default_stock_visibility_options[
+                randomNumber(0, default_stock_visibility_options.length - 1)
+              ],
+            description_id: newProductDescription[0].id,
+            payment_method:
+              default_payment_method[
+                randomNumber(0, default_payment_method.length - 1)
+              ],
           },
         ],
         { returning: true },

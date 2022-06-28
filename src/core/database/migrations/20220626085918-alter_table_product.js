@@ -17,7 +17,7 @@ module.exports = {
 
     await queryInterface.removeColumn('products', 'purchase_limit');
 
-    // await queryInterface.removeColumn('products', 'description');
+    await queryInterface.removeColumn('products', 'description');
 
     await queryInterface.addColumn('products', 'description_id', {
       type: Sequelize.INTEGER,
