@@ -221,7 +221,6 @@ export class ProductService {
           'id',
           'name',
           'max_quantity',
-          'purchase_limit',
           payload.sub_category_id
             ? [sequelize.col('subCategory.name'), 'subCategoryName']
             : [sequelize.col('category.name'), 'subCategoryName'],

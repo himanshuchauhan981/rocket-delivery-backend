@@ -23,7 +23,7 @@ module.exports = {
           allowNull: true,
         },
 
-        featuresList: {
+        features: {
           type: Sequelize.ARRAY(Sequelize.TEXT),
           allowNull: true,
         },
