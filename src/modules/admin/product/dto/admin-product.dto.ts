@@ -27,8 +27,7 @@ export class NewProduct {
   @IsNotEmpty()
   description: string;
 
-  @ApiProperty()
-  @IsNotEmpty()
+  @ApiProperty({ required: false })
   ingredients: string;
 
   @ApiProperty()
