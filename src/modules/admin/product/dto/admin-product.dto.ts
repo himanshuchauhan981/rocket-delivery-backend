@@ -35,12 +35,10 @@ export class NewProduct {
   @IsNotEmpty()
   stockVisibility: string;
 
-  @ApiProperty()
-  @IsNotEmpty()
+  @ApiProperty({ required: false })
   benefitsList: string[];
 
-  @ApiProperty()
-  @IsNotEmpty()
+  @ApiProperty({ required: false })
   featuresList: string[];
 
   @ApiProperty()

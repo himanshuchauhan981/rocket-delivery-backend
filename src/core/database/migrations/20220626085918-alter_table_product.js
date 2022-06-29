@@ -2,7 +2,7 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.addColumn('products', 'minumum_cart_quantity', {
+    await queryInterface.addColumn('products', 'minimum_cart_quantity', {
       type: Sequelize.INTEGER,
     });
 
@@ -17,7 +17,7 @@ module.exports = {
 
     await queryInterface.removeColumn('products', 'purchase_limit');
 
-    // await queryInterface.removeColumn('products', 'description');
+    await queryInterface.removeColumn('products', 'description');
 
     await queryInterface.addColumn('products', 'description_id', {
       type: Sequelize.INTEGER,
