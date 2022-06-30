@@ -175,6 +175,7 @@ export class ProductService {
           },
         ],
         attributes: [
+          'id',
           'name',
           'max_quantity',
           'minimum_cart_quantity',
