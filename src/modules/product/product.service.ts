@@ -95,7 +95,14 @@ export class ProductService {
         },
         { model: File, attributes: ['id', 'url'] },
       ],
-      attributes: ['id', 'name', 'is_active', 'max_quantity'],
+      attributes: [
+        'id',
+        'name',
+        'is_active',
+        'max_quantity',
+        'minimum_cart_quantity',
+        'maximum_cart_quantity',
+      ],
     });
 
     for (const item of productDetails) {
