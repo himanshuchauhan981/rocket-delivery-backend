@@ -95,7 +95,7 @@ export class ProductService {
         },
         { model: File, attributes: ['id', 'url'] },
       ],
-      attributes: ['id', 'name', 'is_active', 'max_quantity', 'purchase_limit'],
+      attributes: ['id', 'name', 'is_active', 'max_quantity'],
     });
 
     for (const item of productDetails) {
