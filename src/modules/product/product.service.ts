@@ -167,7 +167,7 @@ export class ProductService {
           },
           {
             model: ProductReview,
-            attributes: ['id', 'ratings', 'headline', 'opinion'],
+            attributes: ['id', 'ratings', 'headline', 'opinion', 'created_at'],
             where: { is_deleted: 0 },
             required: false,
             limit: 2,
