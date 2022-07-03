@@ -81,4 +81,9 @@ export class ProductReview extends Model<ProductReview> {
 
   @HasMany(() => ProductReviewFile)
   review_images: ProductReviewFile[];
+
+  @Column({
+    type: DataType.VIRTUAL,
+  })
+  average_ratings: string;
 }

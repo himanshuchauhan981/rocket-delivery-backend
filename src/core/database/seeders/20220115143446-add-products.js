@@ -818,7 +818,7 @@ module.exports = {
         { returning: true },
       );
 
-      const minimum_cart_quantity = randomNumber(1, 5);
+      const minimum_cart_quantity = 1;
       const maximum_cart_quantity = randomNumber(minimum_cart_quantity, 15);
 
       const newProductDescription = await queryInterface.bulkInsert(

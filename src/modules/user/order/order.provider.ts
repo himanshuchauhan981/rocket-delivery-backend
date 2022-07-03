@@ -5,6 +5,7 @@ import {
   ORDER_PRODUCT_REPOSITORY,
   ORDER_REPOSITORY,
   PRODUCT_REPOSITORY,
+  PRODUCT_REVIEW_REPOSITORY,
   USER_PAYMENT_REPOSITORY,
   USER_REPOSITORY,
 } from '../../../core/constants/repositories';
@@ -15,6 +16,7 @@ import { OrderProduct } from '../../../modules/order/order-product.entity';
 import { Order } from '../../../modules/order/order.entity';
 import { UserPayment } from '../../../modules/payment/user-payment.entity';
 import { Product } from '../../../modules/product/product.entity';
+import { ProductReview } from 'src/modules/product-review/product-review.entity';
 import { User } from '../user.entity';
 
 export const UserOrderProvider = [
@@ -26,4 +28,5 @@ export const UserOrderProvider = [
   { provide: NOTIFICATION_REPOSITORY, useValue: Notification },
   { provide: NOTIFICATION_USER_REPOSITORY, useValue: NotificationUser },
   { provide: ADMIN_REPOSITORY, useValue: Admin },
+  { provide: PRODUCT_REVIEW_REPOSITORY, useValue: ProductReview },
 ];
