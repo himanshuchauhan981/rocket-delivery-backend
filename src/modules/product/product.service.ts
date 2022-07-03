@@ -170,6 +170,8 @@ export class ProductService {
             attributes: ['id', 'ratings', 'headline', 'opinion'],
             where: { is_deleted: 0 },
             required: false,
+            limit: 2,
+            order: [['ratings', 'DESC']],
           },
           {
             model: ProductDescription,
