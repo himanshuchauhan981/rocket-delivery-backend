@@ -2,7 +2,10 @@ import { HttpException, Inject, Injectable } from '@nestjs/common';
 import sequelize from 'sequelize';
 import * as moment from 'moment';
 
-import { PRODUCT_REPOSITORY } from '../../core/constants/repositories';
+import {
+  PRODUCT_REPOSITORY,
+  PRODUCT_REVIEW_REPOSITORY,
+} from '../../core/constants/repositories';
 import { File } from '../admin/file/file.entity';
 import { ProductPrice } from './product-price.entity';
 import { Product } from './product.entity';
@@ -14,12 +17,15 @@ import { MeasuringUnit } from '../measuring-unit/measuring-unit.entity';
 import { ProductReview } from '../product-review/product-review.entity';
 import { SubCategory } from '../sub-category/sub-category.entity';
 import { ProductDescription } from './product-description.entity';
+import { DISCOUNT_TYPE } from 'src/core/constants/constants';
 
 @Injectable()
 export class ProductService {
   constructor(
     @Inject(PRODUCT_REPOSITORY)
     private readonly productRepository: typeof Product,
+    @Inject(PRODUCT_REVIEW_REPOSITORY)
+    private readonly productReviewRepository: typeof ProductReview,
   ) {}
 
   calculateDiscountPrice(
@@ -40,7 +46,7 @@ export class ProductService {
       discountEndDate.isAfter(discountStartDate)
     ) {
       discountStatus = true;
-      if (discount_type == 'FLAT') {
+      if (discount_type == DISCOUNT_TYPE.FLAT) {
         discountPrice = actual_price - discount;
       } else {
         discountPrice = (discount / 100) * actual_price;
@@ -169,8 +175,8 @@ export class ProductService {
             attributes: ['id', 'ratings', 'headline', 'opinion'],
             where: { is_deleted: 0 },
             required: false,
-            limit: 2,
             order: [['ratings', 'DESC']],
+            limit: 2,
           },
           {
             model: ProductDescription,
@@ -202,7 +208,6 @@ export class ProductService {
       }
 
       const productPrice = productDetails.product_price;
-      let ratingCount = 0;
 
       const discountDetails = this.calculateDiscountPrice(
         productPrice.discount_start_date,
@@ -212,16 +217,23 @@ export class ProductService {
         productPrice.discount_type,
       );
 
+      const [productReviewDetails] = await this.productReviewRepository.findAll(
+        {
+          where: { product_id: productId },
+          attributes: [
+            [sequelize.fn('AVG', sequelize.col('ratings')), 'average_ratings'],
+          ],
+          raw: true,
+        },
+      );
+
       productDetails.product_price.discount_status =
         discountDetails.discountStatus;
       productDetails.product_price.discount = discountDetails.discountPrice;
 
-      for (let i = 0; i < productDetails.product_review.length; i++) {
-        ratingCount = ratingCount + productDetails.product_review[i].ratings;
-      }
-
-      const avergeRating = ratingCount / productDetails.product_review.length;
-      productDetails.average_ratings = parseFloat(avergeRating.toFixed(2));
+      productDetails.average_ratings = parseFloat(
+        productReviewDetails.average_ratings,
+      );
 
       return {
         statusCode: STATUS_CODE.SUCCESS,

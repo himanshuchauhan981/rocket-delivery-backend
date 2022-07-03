@@ -4,12 +4,14 @@ import {
   CATEGORY_REPOSITORY,
   ORDER_REPOSITORY,
   PRODUCT_REPOSITORY,
+  PRODUCT_REVIEW_REPOSITORY,
   SUB_CATEGORY_REPOSITORY,
   USER_REPOSITORY,
 } from '../../core/constants/repositories';
 import { Address } from '../address/address.entity';
 import { Category } from '../category/category.entity';
 import { Order } from '../order/order.entity';
+import { ProductReview } from '../product-review/product-review.entity';
 import { Product } from '../product/product.entity';
 import { SubCategory } from '../sub-category/sub-category.entity';
 import { User } from '../user/user.entity';
@@ -23,4 +25,5 @@ export const AdminProvider = [
   { provide: ORDER_REPOSITORY, useValue: Order },
   { provide: ADDRESS_REPOSITORY, useValue: Address },
   { provide: USER_REPOSITORY, useValue: User },
+  { provide: PRODUCT_REVIEW_REPOSITORY, useValue: ProductReview },
 ];
