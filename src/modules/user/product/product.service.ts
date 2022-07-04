@@ -22,7 +22,7 @@ import { ProductPrice } from '../../../modules/product/product-price.entity';
 import { Product } from '../../../modules/product/product.entity';
 import { SubCategory } from '../../../modules/sub-category/sub-category.entity';
 import { ProductService as CommonProductService } from '../../product/product.service';
-import { UserProducts } from '../dto/user.dto';
+import { SimilarProducts, UserProducts } from '../dto/user.dto';
 
 @Injectable()
 export class ProductService {
@@ -317,6 +317,60 @@ export class ProductService {
         statusCode: STATUS_CODE.SUCCESS,
         message: MESSAGES.SUCCESS,
         data: { productDetails },
+      };
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async findSimilarProducts(query: SimilarProducts) {
+    try {
+      const similarProducts = await this.productRepository.findAll({
+        where: {
+          [sequelize.Op.and]: [
+            { id: { [sequelize.Op.ne]: query.product_id } },
+            { category_id: query.category_id },
+            { is_deleted: 0 },
+            { is_active: 1 },
+          ],
+        },
+        include: [
+          {
+            model: ProductReview,
+            attributes: [],
+            required: true,
+          },
+          { model: File, attributes: ['id', 'url'] },
+          {
+            model: ProductPrice,
+            attributes: [
+              'id',
+              'actual_price',
+              'discount',
+              'discount_start_date',
+              'discount_end_date',
+              'discount_type',
+            ],
+          },
+        ],
+        attributes: [
+          'id',
+          'name',
+          [
+            sequelize.fn('AVG', sequelize.col('product_review.ratings')),
+            'average_ratings',
+          ],
+        ],
+        subQuery: false,
+        group: ['Product.id', 'file.id', 'product_price.id'],
+        order: [[sequelize.literal('average_ratings'), 'DESC']],
+        limit: 6,
+      });
+
+      return {
+        statusCode: STATUS_CODE.SUCCESS,
+        message: MESSAGES.SUCCESS,
+        data: { similarProducts },
       };
     } catch (err) {
       throw err;
