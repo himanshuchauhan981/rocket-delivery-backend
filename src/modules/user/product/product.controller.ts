@@ -13,7 +13,11 @@ import { Auth } from '../../../core/decorators/auth.decorator';
 import { TransformInterceptor } from '../../../core/interceptors/transform.interceptor';
 import { ProductService } from './product.service';
 import { ProductService as CommonProductService } from '../../product/product.service';
-import { UserProducts, SpecificProduct } from '../dto/user.dto';
+import {
+  UserProducts,
+  SpecificProduct,
+  SimilarProducts,
+} from '../dto/user.dto';
 
 @Controller('user/product')
 @ApiTags('User products')
@@ -40,6 +44,14 @@ export class UserProductController {
   @UseInterceptors(TransformInterceptor)
   async discountOffers() {
     return await this.productService.discountOffers();
+  }
+
+  @Get('similar')
+  @UseInterceptors(TransformInterceptor)
+  async findSimilarProducts(
+    @Query(new ValidationPipe()) query: SimilarProducts,
+  ) {
+    return await this.productService.findSimilarProducts(query);
   }
 
   @Get(':id')

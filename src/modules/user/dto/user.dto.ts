@@ -79,6 +79,16 @@ export class SpecificProduct {
   id: number;
 }
 
+export class SimilarProducts {
+  @IsNotEmpty()
+  @ApiProperty()
+  category_id: number;
+
+  @IsNotEmpty()
+  @ApiProperty()
+  product_id: number;
+}
+
 class Cart {
   @IsNotEmpty()
   @ApiProperty()
