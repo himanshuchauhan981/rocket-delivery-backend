@@ -68,3 +68,17 @@ export class SpecificProductReview {
   @IsNotEmpty()
   id: number;
 }
+
+export class ProductReviewList {
+  @ApiProperty()
+  @IsNotEmpty()
+  pageIndex: number;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  pageSize: number;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  product_id: number;
+}

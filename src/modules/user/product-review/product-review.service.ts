@@ -14,6 +14,7 @@ import { ProductReviewFile } from '../../../modules/product-review/product-revie
 import { ProductReview } from '../../../modules/product-review/product-review.entity';
 import {
   NewProductReview,
+  ProductReviewList,
   UpdateProductReview,
 } from './dto/product-review.dto';
 
@@ -131,6 +132,32 @@ export class ProductReviewService {
       }
 
       return { statusCode: STATUS_CODE.SUCCESS, message: MESSAGES.SUCCESS };
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async list(query: ProductReviewList) {
+    try {
+      const pageIndex = query.pageIndex * query.pageSize;
+
+      const productReviewList = await this.productReviewRepository.findAll({
+        where: {
+          [sequelize.Op.and]: [
+            { product_id: query.product_id },
+            { is_deleted: 0 },
+          ],
+        },
+        attributes: ['id', 'headline', 'opinion', 'ratings', 'created_at'],
+        offset: pageIndex,
+        limit: query.pageSize,
+      });
+
+      return {
+        statusCode: STATUS_CODE.SUCCESS,
+        message: MESSAGES.SUCCESS,
+        data: { productReviewList },
+      };
     } catch (err) {
       throw err;
     }

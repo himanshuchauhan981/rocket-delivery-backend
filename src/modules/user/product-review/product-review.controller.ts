@@ -2,9 +2,11 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Param,
   Patch,
   Post,
+  Query,
   Req,
   UseInterceptors,
   ValidationPipe,
@@ -16,6 +18,7 @@ import { TransformInterceptor } from '../../../core/interceptors/transform.inter
 import { ProductReviewService } from './product-review.service';
 import {
   NewProductReview,
+  ProductReviewList,
   SpecificProductReview,
   UpdateProductReview,
 } from './dto/product-review.dto';
@@ -41,7 +44,7 @@ export class UserProductReviewController {
   async update(
     @Body(new ValidationPipe()) payload: UpdateProductReview,
     @Req() request,
-    @Param() params: SpecificProductReview,
+    @Param(new ValidationPipe()) params: SpecificProductReview,
   ) {
     return await this.productReviewService.update(
       payload,
@@ -55,5 +58,12 @@ export class UserProductReviewController {
   @UseInterceptors(TransformInterceptor)
   async delete(@Param(new ValidationPipe()) payload: SpecificProductReview) {
     return await this.productReviewService.delete(payload.id);
+  }
+
+  @Get('all')
+  @Auth('user')
+  @UseInterceptors(TransformInterceptor)
+  async list(@Query(new ValidationPipe()) query: ProductReviewList) {
+    return await this.productReviewService.list(query);
   }
 }
