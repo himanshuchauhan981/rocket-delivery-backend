@@ -61,7 +61,6 @@ export class UserProductReviewController {
   }
 
   @Get('all')
-  @Auth('user')
   @UseInterceptors(TransformInterceptor)
   async list(@Query(new ValidationPipe()) query: ProductReviewList) {
     return await this.productReviewService.list(query);
