@@ -144,10 +144,13 @@ export class ProductReviewService {
       const productReviewList = await this.productReviewRepository.findAll({
         where: {
           [sequelize.Op.and]: [
-            { product_id: query.product_id },
+            { product_id: query.productId },
             { is_deleted: 0 },
           ],
         },
+        include: [
+          { model: ProductReviewFile, attributes: ['id', 'url', 'created_at'] },
+        ],
         attributes: ['id', 'headline', 'opinion', 'ratings', 'created_at'],
         offset: pageIndex,
         limit: query.pageSize,
