@@ -80,5 +80,5 @@ export class ProductReviewList {
 
   @ApiProperty()
   @IsNotEmpty()
-  product_id: number;
+  productId: number;
 }
