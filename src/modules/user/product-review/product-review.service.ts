@@ -2,6 +2,7 @@ import { Injectable, Inject, HttpException } from '@nestjs/common';
 import sequelize from 'sequelize';
 
 import { ApiResponse } from 'src/modules/admin/dto/interface/admin';
+import { File } from 'src/modules/admin/file/file.entity';
 import { MESSAGES } from '../../../core/constants/messages';
 import {
   ORDER_REPOSITORY,
@@ -12,6 +13,7 @@ import { STATUS_CODE } from '../../../core/constants/status_code';
 import { Order } from '../../../modules/order/order.entity';
 import { ProductReviewFile } from '../../../modules/product-review/product-review-file.entity';
 import { ProductReview } from '../../../modules/product-review/product-review.entity';
+import { User } from '../user.entity';
 import {
   NewProductReview,
   ProductReviewList,
@@ -150,6 +152,7 @@ export class ProductReviewService {
         },
         include: [
           { model: ProductReviewFile, attributes: ['id', 'url', 'created_at'] },
+          { model: User, attributes: ['id', 'name'] },
         ],
         attributes: ['id', 'headline', 'opinion', 'ratings', 'created_at'],
         offset: pageIndex,
