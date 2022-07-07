@@ -12,6 +12,7 @@ import {
 
 import { Order } from '../order/order.entity';
 import { Product } from '../product/product.entity';
+import { User } from '../user/user.entity';
 import { ProductReviewFile } from './product-review-file.entity';
 
 @Table({
@@ -42,6 +43,7 @@ export class ProductReview extends Model<ProductReview> {
     type: DataType.INTEGER,
     allowNull: false,
   })
+  @ForeignKey(() => User)
   user_id: number;
 
   @Column({
@@ -86,4 +88,7 @@ export class ProductReview extends Model<ProductReview> {
     type: DataType.VIRTUAL,
   })
   average_ratings: string;
+
+  @BelongsTo(() => User)
+  user: User;
 }
