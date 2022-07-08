@@ -180,7 +180,7 @@ export class ProductReviewService {
           ratingCount['average'] =
             (parseInt(item.ratingCount) / totalRatingCount) * 100;
         } else if (item.ratings == 4) {
-          ratingCount['poor'] =
+          ratingCount['good'] =
             (parseInt(item.ratingCount) / totalRatingCount) * 100;
         } else {
           ratingCount['excellent'] =
