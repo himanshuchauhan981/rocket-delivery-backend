@@ -91,4 +91,9 @@ export class ProductReview extends Model<ProductReview> {
 
   @BelongsTo(() => User)
   user: User;
+
+  @Column({
+    type: DataType.VIRTUAL,
+  })
+  ratingCount: string;
 }

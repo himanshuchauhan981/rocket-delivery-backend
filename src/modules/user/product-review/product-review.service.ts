@@ -2,7 +2,6 @@ import { Injectable, Inject, HttpException } from '@nestjs/common';
 import sequelize from 'sequelize';
 
 import { ApiResponse } from 'src/modules/admin/dto/interface/admin';
-import { File } from 'src/modules/admin/file/file.entity';
 import { MESSAGES } from '../../../core/constants/messages';
 import {
   ORDER_REPOSITORY,
@@ -142,6 +141,52 @@ export class ProductReviewService {
   async list(query: ProductReviewList) {
     try {
       const pageIndex = query.pageIndex * query.pageSize;
+      const ratingCount = {};
+
+      const reviewRatings = await this.productReviewRepository.findAndCountAll({
+        where: {
+          [sequelize.Op.and]: [
+            { product_id: query.productId },
+            { is_deleted: 0 },
+          ],
+        },
+        group: ['ratings'],
+        attributes: [
+          'ratings',
+          [sequelize.fn('sum', sequelize.col('ratings')), 'ratingCount'],
+        ],
+      });
+
+      let totalRatingCount = 0;
+      reviewRatings.rows.forEach(
+        (item) =>
+          (totalRatingCount = totalRatingCount + parseInt(item.ratingCount)),
+      );
+
+      let totalReviewCount = 0;
+
+      reviewRatings.count.forEach((item: any) => {
+        totalReviewCount = totalReviewCount + item.count;
+      });
+
+      for (const item of reviewRatings.rows) {
+        if (item.ratings == 1) {
+          ratingCount['poor'] =
+            (parseInt(item.ratingCount) / totalRatingCount) * 100;
+        } else if (item.ratings == 2) {
+          ratingCount['belowAverage'] =
+            (parseInt(item.ratingCount) / totalRatingCount) * 100;
+        } else if (item.ratings == 3) {
+          ratingCount['average'] =
+            (parseInt(item.ratingCount) / totalRatingCount) * 100;
+        } else if (item.ratings == 4) {
+          ratingCount['poor'] =
+            (parseInt(item.ratingCount) / totalRatingCount) * 100;
+        } else {
+          ratingCount['excellent'] =
+            (parseInt(item.ratingCount) / totalRatingCount) * 100;
+        }
+      }
 
       const productReviewList = await this.productReviewRepository.findAll({
         where: {
@@ -162,7 +207,12 @@ export class ProductReviewService {
       return {
         statusCode: STATUS_CODE.SUCCESS,
         message: MESSAGES.SUCCESS,
-        data: { productReviewList },
+        data: {
+          productReviewList,
+          count: totalReviewCount,
+          ratingCount,
+          averageRatings: totalRatingCount / totalReviewCount,
+        },
       };
     } catch (err) {
       throw err;
