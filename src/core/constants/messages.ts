@@ -55,4 +55,7 @@ export const MESSAGES = {
   INVALID_EMAIL: 'Invalid Email',
   INVALID_NOTIFICATION_USER_ID: 'Invalid notification user id',
   DELIVERY_STATUS_UPDATE_SUCCESS: 'Delivery status updated successfully',
+  COUNTRY_NOT_FOUND: 'Invalid Country Id',
+  COUNTRY_STATUS_UPDATE_SUCCESS: 'Country status updated successfully',
+  COUNTRY_DELETE_SUCCESSFULL: 'Country delete successfully',
 };
