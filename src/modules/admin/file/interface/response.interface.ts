@@ -1,10 +1,10 @@
-export class CreateFileResponse {
+interface CreateFileResponse {
   statusCode: number;
   message: string;
   data: { id: string; name: string };
 }
 
-export class ImageList {
+interface ImageList {
   id: number;
   name: string;
   url: string;
@@ -14,14 +14,21 @@ export class ImageList {
   size: number;
 }
 
-export class GetAllFilesResponse {
+interface GetAllFilesResponse {
   statusCode: number;
   message: string;
   data: { imageList: ImageList[]; count: number };
 }
 
-export class GetFilesBySlugResponse {
+interface GetFilesBySlugResponse {
   statusCode: number;
   message: string;
   data: { imageList: ImageList[] };
 }
+
+export {
+  CreateFileResponse,
+  ImageList,
+  GetAllFilesResponse,
+  GetFilesBySlugResponse,
+};

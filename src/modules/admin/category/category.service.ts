@@ -13,7 +13,7 @@ import { CategoryList, SubmitCategory } from './dto/admin-category.dto';
 import {
   CategoriesListResponse,
   SpecificCategoryResponse,
-} from './dto/interface/response.interface';
+} from './interface/response.interface';
 
 @Injectable()
 export class CategoryService {

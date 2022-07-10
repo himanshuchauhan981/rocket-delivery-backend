@@ -8,6 +8,8 @@ import { STATUS_CODE } from '../../../core/constants/status_code';
 import { NotificationUser } from '../../../modules/notification/entity/notification-user.entity';
 import { Notification } from '../../../modules/notification/entity/notification.entity';
 import { User } from '../../../modules/user/user.entity';
+import { ApiResponse } from '../dto/interface/admin';
+import { NotificationListResponse } from './interface/response.interface';
 
 @Injectable()
 export class NotificationService {
@@ -16,7 +18,7 @@ export class NotificationService {
     private readonly notificationUserRepository: typeof NotificationUser,
   ) {}
 
-  async notificationList(limit: number) {
+  async notificationList(limit: number): Promise<NotificationListResponse> {
     try {
       const notifications = await this.notificationUserRepository.findAll({
         where: {
@@ -44,7 +46,10 @@ export class NotificationService {
     }
   }
 
-  async updateNotificationStatus(id: number, all_read_status: boolean) {
+  async updateNotificationStatus(
+    id: number,
+    all_read_status: boolean,
+  ): Promise<ApiResponse> {
     try {
       if (all_read_status) {
         await this.notificationUserRepository.update(

@@ -6,7 +6,7 @@ import { ORDER_REPOSITORY } from '../../core/constants/repositories';
 import { STATUS_CODE } from '../../core/constants/status_code';
 import { Order } from './order.entity';
 import { Address } from '../address/address.entity';
-import { SpecificOrderResponse } from '../admin/order/dto/interface/response.interface';
+import { SpecificOrderResponse } from '../admin/order/interface/response.interface';
 import { UserPayment } from '../payment/user-payment.entity';
 import { ProductReviewFile } from '../product-review/product-review-file.entity';
 import { ProductReview } from '../product-review/product-review.entity';
