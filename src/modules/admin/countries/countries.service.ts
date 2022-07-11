@@ -4,7 +4,7 @@ import sequelize from 'sequelize';
 
 import { COUNTRIES_REPOSITORY } from 'src/core/constants/repositories';
 import { STATUS_CODE } from 'src/core/constants/status_code';
-import { Countries } from 'src/modules/countries/countries.entity';
+import { Countries } from 'src/modules/shipping/countries.entity';
 import { ApiResponse } from '../dto/interface/admin';
 import { CountriesList } from './dto/countries.dto';
 
