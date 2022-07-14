@@ -1,10 +1,10 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   Param,
   Put,
+  Post,
   Query,
   UseInterceptors,
   ValidationPipe,
@@ -15,7 +15,14 @@ import { Auth } from 'src/core/decorators/auth.decorator';
 import { TransformInterceptor } from 'src/core/interceptors/transform.interceptor';
 import { ApiResponse } from '../dto/interface/admin';
 import { AdminCountriesService } from './countries.service';
-import { CountriesList, CountryId, CountryStatus } from './dto/countries.dto';
+import {
+  CountriesList,
+  CountryId,
+  CountryStatus,
+  EditCountry,
+  NewState,
+  StateList,
+} from './dto/countries.dto';
 
 @Controller('admin/countries')
 @ApiTags('Admin Countries')
@@ -42,12 +49,27 @@ export class AdminCountriesController {
     );
   }
 
-  @Delete(':id')
+  @Put(':id')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
   async delete(
     @Param(new ValidationPipe()) params: CountryId,
+    @Body(new ValidationPipe()) payload: EditCountry,
   ): Promise<ApiResponse> {
-    return await this.adminCountriesService.delete(params.id);
+    return await this.adminCountriesService.update(params.id, payload);
+  }
+
+  @Post('state/new')
+  @Auth('admin')
+  @UseInterceptors(TransformInterceptor)
+  async addNewState(@Body(new ValidationPipe()) payload: NewState) {
+    return await this.adminCountriesService.addNewState(payload);
+  }
+
+  @Get('states/list')
+  @Auth('admin')
+  @UseInterceptors(TransformInterceptor)
+  async stateList(@Query(new ValidationPipe()) query: StateList) {
+    return await this.adminCountriesService.getStateList(query);
   }
 }

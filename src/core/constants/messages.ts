@@ -58,4 +58,5 @@ export const MESSAGES = {
   COUNTRY_NOT_FOUND: 'Invalid Country Id',
   COUNTRY_STATUS_UPDATE_SUCCESS: 'Country status updated successfully',
   COUNTRY_DELETE_SUCCESSFULL: 'Country delete successfully',
+  STATE_ADDED_SUCCESSFULL: 'State added successfully',
 };

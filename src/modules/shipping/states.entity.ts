@@ -5,7 +5,11 @@ import {
   DataType,
   CreatedAt,
   UpdatedAt,
+  ForeignKey,
+  HasOne,
+  BelongsTo,
 } from 'sequelize-typescript';
+import { Countries } from './countries.entity';
 
 @Table({
   tableName: 'states',
@@ -29,6 +33,7 @@ export class States extends Model<States> {
     type: DataType.INTEGER,
     allowNull: false,
   })
+  @ForeignKey(() => Countries)
   country_id: number;
 
   @Column({
@@ -48,4 +53,7 @@ export class States extends Model<States> {
 
   @UpdatedAt
   updated_at: Date;
+
+  @BelongsTo(() => Countries)
+  country: Countries;
 }

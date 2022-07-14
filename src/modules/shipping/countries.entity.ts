@@ -43,12 +43,6 @@ export class Countries extends Model<Countries> {
   })
   is_active: number;
 
-  @Column({
-    type: DataType.INTEGER,
-    defaultValue: 0,
-  })
-  is_deleted: number;
-
   @CreatedAt
   created_at: Date;
 
