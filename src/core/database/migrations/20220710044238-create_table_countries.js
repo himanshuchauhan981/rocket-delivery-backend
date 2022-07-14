@@ -40,12 +40,6 @@ module.exports = {
           defaultValue: 0,
         },
 
-        is_deleted: {
-          type: Sequelize.INTEGER,
-          allowNull: false,
-          defaultValue: 0,
-        },
-
         // Timestamps
         created_at: {
           type: Sequelize.DATE,
