@@ -12,6 +12,8 @@ import { ApiResponse } from '../dto/interface/admin';
 import {
   CountriesList,
   EditCountry,
+  EditStateParams,
+  EditStatePayload,
   NewState,
   StateList,
 } from './dto/countries.dto';
@@ -36,6 +38,10 @@ export class AdminCountriesService {
           name: {
             [sequelize.Op.iLike]: `%${payload.search}%`,
           },
+        });
+      } else if (payload.isActive) {
+        query.push({
+          is_active: payload.isActive,
         });
       }
 
@@ -86,7 +92,7 @@ export class AdminCountriesService {
 
       if (payload.name) {
         updatePayload.name = payload.name;
-      } else if (payload.name) {
+      } else if (payload.status) {
         updatePayload.is_active = payload.status;
       }
 
@@ -104,7 +110,7 @@ export class AdminCountriesService {
 
       return {
         statusCode: STATUS_CODE.SUCCESS,
-        message: MESSAGES.COUNTRY_DELETE_SUCCESSFULL,
+        message: MESSAGES.COUNTRY_UPDATE_SUCCESSFULL,
       };
     } catch (err) {
       throw err;
@@ -142,7 +148,7 @@ export class AdminCountriesService {
     try {
       const page = payload.pageIndex * payload.pageSize;
 
-      const query: any = [{ is_active: 1, is_deleted: 0 }];
+      const query: any = [{ is_deleted: 0 }];
 
       if (payload.countryId) {
         const existingCountry = this.countriesRepository.findByPk(
@@ -160,17 +166,54 @@ export class AdminCountriesService {
       }
 
       const states = await this.statesRepository.findAndCountAll({
-        where: { is_active: 1, is_deleted: 0 },
+        where: query,
         offset: page,
         limit: payload.pageSize,
         include: [{ model: Countries, attributes: ['id', 'name'] }],
-        attributes: ['id', 'name', 'is_active'],
+        attributes: ['id', 'name', 'is_active', 'created_at'],
       });
 
       return {
         statusCode: STATUS_CODE.SUCCESS,
-        message: STATUS_CODE.SUCCESS,
+        message: MESSAGES.SUCCESS,
         data: { states: states.rows, count: states.count },
+      };
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async updateState(
+    params: EditStateParams,
+    payload: EditStatePayload,
+  ): Promise<ApiResponse> {
+    try {
+      const updatePayload: any = {};
+
+      if (payload.name) {
+        updatePayload.name = payload.name;
+      } else if (payload.status) {
+        updatePayload.is_deleted = 1;
+      } else if (payload.active !== null) {
+        updatePayload.is_active = payload.active;
+      }
+
+      console.log('>..updatePayoad', updatePayload, payload, params.state);
+
+      const [updateStatus] = await this.statesRepository.update(updatePayload, {
+        where: { id: params.state },
+      });
+
+      if (!updateStatus) {
+        throw new HttpException(
+          MESSAGES.STATE_NOT_FOUND,
+          STATUS_CODE.NOT_FOUND,
+        );
+      }
+
+      return {
+        statusCode: STATUS_CODE.SUCCESS,
+        message: MESSAGES.STATE_UPDATED_SUCCESSFULL,
       };
     } catch (err) {
       throw err;

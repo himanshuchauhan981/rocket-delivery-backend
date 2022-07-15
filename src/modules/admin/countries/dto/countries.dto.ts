@@ -12,6 +12,9 @@ class CountriesList {
 
   @ApiProperty({ required: false })
   search: string;
+
+  @ApiProperty({ required: false })
+  isActive: number;
 }
 
 class CountryId {
@@ -51,13 +54,28 @@ class StateList {
 }
 
 class EditCountry {
-  @ApiProperty()
-  @IsNotEmpty()
+  @ApiProperty({ required: false })
   name: string;
 
+  @ApiProperty({ required: false })
+  status: string;
+}
+
+class EditStateParams {
   @ApiProperty()
   @IsNotEmpty()
-  status: string;
+  state: number;
+}
+
+class EditStatePayload {
+  @ApiProperty({ required: false })
+  name: string;
+
+  @ApiProperty({ required: false })
+  status: boolean;
+
+  @ApiProperty({ required: false })
+  active: number;
 }
 
 export {
@@ -67,4 +85,6 @@ export {
   CountryId,
   CountriesList,
   EditCountry,
+  EditStateParams,
+  EditStatePayload,
 };

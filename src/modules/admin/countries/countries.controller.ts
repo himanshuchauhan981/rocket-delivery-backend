@@ -20,6 +20,8 @@ import {
   CountryId,
   CountryStatus,
   EditCountry,
+  EditStateParams,
+  EditStatePayload,
   NewState,
   StateList,
 } from './dto/countries.dto';
@@ -71,5 +73,15 @@ export class AdminCountriesController {
   @UseInterceptors(TransformInterceptor)
   async stateList(@Query(new ValidationPipe()) query: StateList) {
     return await this.adminCountriesService.getStateList(query);
+  }
+
+  @Put('state/:state')
+  @Auth('admin')
+  @UseInterceptors(TransformInterceptor)
+  async updateState(
+    @Param(new ValidationPipe()) params: EditStateParams,
+    @Body(new ValidationPipe()) payload: EditStatePayload,
+  ) {
+    return await this.adminCountriesService.updateState(params, payload);
   }
 }
