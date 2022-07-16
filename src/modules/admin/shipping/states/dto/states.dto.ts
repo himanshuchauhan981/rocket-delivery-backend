@@ -9,9 +9,6 @@ class EditStateParams {
 
 class EditStatePayload {
   @ApiProperty({ required: false })
-  name: string;
-
-  @ApiProperty({ required: false })
   status: boolean;
 
   @ApiProperty({ required: false })
@@ -25,7 +22,7 @@ class NewState {
 
   @ApiProperty()
   @IsNotEmpty()
-  name: number;
+  name: string;
 }
 
 class StateList {
@@ -42,6 +39,9 @@ class StateList {
 
   @ApiProperty({ required: false })
   active: number;
+
+  @ApiProperty({ required: false })
+  name: string;
 }
 
 export { EditStateParams, EditStatePayload, NewState, StateList };

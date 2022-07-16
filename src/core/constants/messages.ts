@@ -63,4 +63,5 @@ export const MESSAGES = {
   STATE_NOT_FOUND: 'State not found',
   CITY_NOT_FOUND: 'City not found',
   CITY_UPDATED_SUCCESSFULL: 'City updated successfully',
+  STATE_EXISTED: 'State already existed',
 };

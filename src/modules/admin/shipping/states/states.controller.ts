@@ -30,14 +30,14 @@ export class StatesController {
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
   async addNewState(@Body(new ValidationPipe()) payload: NewState) {
-    return await this.statesService.addNewState(payload);
+    return await this.statesService.create(payload);
   }
 
   @Get('list')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
   async stateList(@Query(new ValidationPipe()) query: StateList) {
-    return await this.statesService.getStateList(query);
+    return await this.statesService.findAll(query);
   }
 
   @Put(':id')

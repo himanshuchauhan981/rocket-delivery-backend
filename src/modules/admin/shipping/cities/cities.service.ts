@@ -4,7 +4,6 @@ import sequelize from 'sequelize';
 import { MESSAGES } from 'src/core/constants/messages';
 import {
   CITIES_REPOSITORY,
-  COUNTRIES_REPOSITORY,
   STATES_REPOSITORY,
 } from 'src/core/constants/repositories';
 import { STATUS_CODE } from 'src/core/constants/status_code';
@@ -24,8 +23,6 @@ export class CitiesService {
   constructor(
     @Inject(CITIES_REPOSITORY)
     private readonly citiesRepository: typeof Cities,
-    @Inject(COUNTRIES_REPOSITORY)
-    private readonly countriesRepository: typeof Countries,
     @Inject(STATES_REPOSITORY)
     private readonly statesRepository: typeof Countries,
   ) {}
@@ -76,13 +73,27 @@ export class CitiesService {
         query.push({ state_id: payload.state_id });
       }
 
+      if (payload.name) {
+        query.push({
+          name: { [sequelize.Op.iLike]: `%${payload.name}%` },
+        });
+      }
+
+      console.log(query);
+
       const cities = await this.citiesRepository.findAndCountAll({
         where: {
           [sequelize.Op.and]: query,
         },
         offset: page,
         limit: payload.pageSize,
-        include: [{ model: States, attributes: ['id', 'name'] }],
+        include: [
+          {
+            model: States,
+            attributes: ['id', 'name'],
+            include: [{ model: Countries, attributes: ['id', 'name'] }],
+          },
+        ],
         attributes: ['id', 'name', 'is_active', 'created_at'],
       });
 

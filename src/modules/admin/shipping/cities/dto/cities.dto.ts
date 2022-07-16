@@ -22,6 +22,9 @@ class CitiesList {
 
   @ApiProperty({ required: false })
   state_id: number;
+
+  @ApiProperty({ required: false })
+  name: string;
 }
 
 class EditCitiesPayload {
