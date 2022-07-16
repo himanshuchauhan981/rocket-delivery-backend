@@ -14,7 +14,7 @@ import { States } from 'src/modules/shipping/states.entity';
 import { ApiResponse } from '../../dto/interface/admin';
 import {
   CitiesList,
-  EditCitiesParams,
+  CityId,
   EditCitiesPayload,
   NewCity,
 } from './dto/cities.dto';
@@ -63,23 +63,22 @@ export class CitiesService {
 
       const query: any = [{ is_deleted: 0 }];
 
-      const existingState = this.statesRepository.findByPk(payload.state_id);
+      if (payload.state_id) {
+        const existingState = this.statesRepository.findByPk(payload.state_id);
 
-      if (!existingState) {
-        throw new HttpException(
-          MESSAGES.STATE_NOT_FOUND,
-          STATUS_CODE.NOT_FOUND,
-        );
+        if (!existingState) {
+          throw new HttpException(
+            MESSAGES.STATE_NOT_FOUND,
+            STATUS_CODE.NOT_FOUND,
+          );
+        }
+
+        query.push({ state_id: payload.state_id });
       }
 
-      query.push({ state_id: payload.state_id });
-
-      const cities = await this.statesRepository.findAndCountAll({
+      const cities = await this.citiesRepository.findAndCountAll({
         where: {
-          [sequelize.Op.and]: [
-            { is_deleted: 0 },
-            { state_id: payload.state_id },
-          ],
+          [sequelize.Op.and]: query,
         },
         offset: page,
         limit: payload.pageSize,
@@ -90,7 +89,7 @@ export class CitiesService {
       return {
         statusCode: STATUS_CODE.SUCCESS,
         message: MESSAGES.SUCCESS,
-        data: { states: cities.rows, count: cities.count },
+        data: { cities: cities.rows, count: cities.count },
       };
     } catch (err) {
       throw err;
@@ -98,7 +97,7 @@ export class CitiesService {
   }
 
   async update(
-    params: EditCitiesParams,
+    params: CityId,
     payload: EditCitiesPayload,
   ): Promise<ApiResponse> {
     try {
@@ -106,26 +105,41 @@ export class CitiesService {
 
       if (payload.name) {
         updatePayload.name = payload.name;
-      } else if (payload.status) {
-        updatePayload.is_deleted = 1;
       } else if (payload.active !== null) {
         updatePayload.is_active = payload.active;
       }
 
-      const [updateStatus] = await this.statesRepository.update(updatePayload, {
+      const [updateStatus] = await this.citiesRepository.update(updatePayload, {
         where: { id: params.id },
       });
 
       if (!updateStatus) {
-        throw new HttpException(
-          MESSAGES.STATE_NOT_FOUND,
-          STATUS_CODE.NOT_FOUND,
-        );
+        throw new HttpException(MESSAGES.CITY_NOT_FOUND, STATUS_CODE.NOT_FOUND);
       }
 
       return {
         statusCode: STATUS_CODE.SUCCESS,
-        message: MESSAGES.STATE_UPDATED_SUCCESSFULL,
+        message: MESSAGES.CITY_UPDATED_SUCCESSFULL,
+      };
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async delete(id: number) {
+    try {
+      const [updateStatus] = await this.citiesRepository.update(
+        { is_deleted: 1 },
+        { where: { id } },
+      );
+
+      if (!updateStatus) {
+        throw new HttpException(MESSAGES.CITY_NOT_FOUND, STATUS_CODE.NOT_FOUND);
+      }
+
+      return {
+        statusCode: STATUS_CODE.SUCCESS,
+        message: MESSAGES.CITY_UPDATED_SUCCESSFULL,
       };
     } catch (err) {
       throw err;

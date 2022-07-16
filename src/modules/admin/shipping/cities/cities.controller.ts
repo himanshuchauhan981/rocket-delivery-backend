@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -16,7 +17,7 @@ import { TransformInterceptor } from 'src/core/interceptors/transform.intercepto
 import { CitiesService } from './cities.service';
 import {
   CitiesList,
-  EditCitiesParams,
+  CityId,
   EditCitiesPayload,
   NewCity,
 } from './dto/cities.dto';
@@ -44,9 +45,16 @@ export class CitiesController {
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
   async updateState(
-    @Param(new ValidationPipe()) params: EditCitiesParams,
+    @Param(new ValidationPipe()) params: CityId,
     @Body(new ValidationPipe()) payload: EditCitiesPayload,
   ) {
     return await this.citiesService.update(params, payload);
+  }
+
+  @Delete(':id')
+  @Auth('admin')
+  @UseInterceptors(TransformInterceptor)
+  async delete(@Param(new ValidationPipe()) params: CityId) {
+    return await this.citiesService.delete(params.id);
   }
 }

@@ -20,8 +20,7 @@ class CitiesList {
   @IsNotEmpty()
   pageSize: number;
 
-  @ApiProperty()
-  @IsNotEmpty()
+  @ApiProperty({ required: false })
   state_id: number;
 }
 
@@ -30,16 +29,13 @@ class EditCitiesPayload {
   name: string;
 
   @ApiProperty({ required: false })
-  status: boolean;
-
-  @ApiProperty({ required: false })
   active: number;
 }
 
-class EditCitiesParams {
+class CityId {
   @ApiProperty()
   @IsNotEmpty()
   id: number;
 }
 
-export { NewCity, CitiesList, EditCitiesPayload, EditCitiesParams };
+export { NewCity, CitiesList, EditCitiesPayload, CityId };

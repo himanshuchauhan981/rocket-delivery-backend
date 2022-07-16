@@ -73,6 +73,10 @@ export class StatesService {
         query.push({ country_id: payload.countryId });
       }
 
+      if (payload.active) {
+        query.push({ is_active: payload.active });
+      }
+
       const states = await this.statesRepository.findAndCountAll({
         where: query,
         offset: page,

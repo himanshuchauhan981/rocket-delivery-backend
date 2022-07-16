@@ -23,6 +23,7 @@ import { NotificationTemplate } from '../../modules/notification/entity/notifica
 import { ProductDescription } from '../../modules/product/product-description.entity';
 import { Countries } from 'src/modules/shipping/countries.entity';
 import { States } from 'src/modules/shipping/states.entity';
+import { Cities } from 'src/modules/shipping/cities.entity';
 
 let config;
 switch (process.env.NODE_ENV) {
@@ -66,6 +67,7 @@ const DatabaseModule = [
         ProductDescription,
         Countries,
         States,
+        Cities,
       ],
     }),
   }),

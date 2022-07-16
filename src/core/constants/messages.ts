@@ -61,4 +61,6 @@ export const MESSAGES = {
   STATE_ADDED_SUCCESSFULL: 'State added successfully',
   STATE_UPDATED_SUCCESSFULL: 'State updated successfully',
   STATE_NOT_FOUND: 'State not found',
+  CITY_NOT_FOUND: 'City not found',
+  CITY_UPDATED_SUCCESSFULL: 'City updated successfully',
 };

@@ -39,6 +39,9 @@ class StateList {
 
   @ApiProperty({ required: false })
   countryId: number;
+
+  @ApiProperty({ required: false })
+  active: number;
 }
 
 export { EditStateParams, EditStatePayload, NewState, StateList };

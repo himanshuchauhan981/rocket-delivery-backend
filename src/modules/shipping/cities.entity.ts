@@ -6,6 +6,7 @@ import {
   CreatedAt,
   UpdatedAt,
   ForeignKey,
+  BelongsTo,
 } from 'sequelize-typescript';
 
 import { States } from './states.entity';
@@ -46,6 +47,9 @@ export class Cities extends Model<Cities> {
     defaultValue: 0,
   })
   is_deleted: number;
+
+  @BelongsTo(() => States)
+  state: States;
 
   @CreatedAt
   created_at: Date;
