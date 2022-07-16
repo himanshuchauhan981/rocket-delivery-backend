@@ -18,7 +18,7 @@ import { AddressService } from '../address/address.service';
 import { AdminUsersModule } from './users/users.module';
 import { NotificationModule } from './notification/notification.module';
 import { DashboardModule } from './dashboard/dashboard.module';
-import { AdminCountriesModule } from './countries/countries.module';
+import { ShippingModule } from './shipping/shipping.module';
 
 @Module({
   imports: [
@@ -32,7 +32,7 @@ import { AdminCountriesModule } from './countries/countries.module';
     AdminUsersModule,
     NotificationModule,
     DashboardModule,
-    AdminCountriesModule,
+    ShippingModule,
   ],
   controllers: [AdminController],
   providers: [

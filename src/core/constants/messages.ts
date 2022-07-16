@@ -57,6 +57,8 @@ export const MESSAGES = {
   DELIVERY_STATUS_UPDATE_SUCCESS: 'Delivery status updated successfully',
   COUNTRY_NOT_FOUND: 'Invalid Country Id',
   COUNTRY_STATUS_UPDATE_SUCCESS: 'Country status updated successfully',
-  COUNTRY_DELETE_SUCCESSFULL: 'Country delete successfully',
+  COUNTRY_UPDATE_SUCCESSFULL: 'Country updated successfully',
   STATE_ADDED_SUCCESSFULL: 'State added successfully',
+  STATE_UPDATED_SUCCESSFULL: 'State updated successfully',
+  STATE_NOT_FOUND: 'State not found',
 };
