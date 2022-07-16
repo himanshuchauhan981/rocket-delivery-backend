@@ -23,7 +23,7 @@ import { Order } from '../../../modules/order/order.entity';
 import { User } from '../../../modules/user/user.entity';
 import { ApiResponse } from '../dto/interface/admin';
 import { OrdersList, UpdateOrder } from './dto/admin-orders.entity';
-import { OrderInvoiceResponse } from './dto/interface/response.interface';
+import { OrderInvoiceResponse } from './interface/response.interface';
 import { orderInvoice } from '../../../core/utils/invoice';
 import { Address } from '../../../modules/address/address.entity';
 import { NotificationTemplate } from '../../../modules/notification/entity/notification-template.entity';

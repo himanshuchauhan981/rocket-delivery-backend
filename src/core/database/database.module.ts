@@ -21,6 +21,9 @@ import { Notification } from '../../modules/notification/entity/notification.ent
 import { NotificationUser } from '../../modules/notification/entity/notification-user.entity';
 import { NotificationTemplate } from '../../modules/notification/entity/notification-template.entity';
 import { ProductDescription } from '../../modules/product/product-description.entity';
+import { Countries } from 'src/modules/shipping/countries.entity';
+import { States } from 'src/modules/shipping/states.entity';
+import { Cities } from 'src/modules/shipping/cities.entity';
 
 let config;
 switch (process.env.NODE_ENV) {
@@ -62,6 +65,9 @@ const DatabaseModule = [
         NotificationUser,
         NotificationTemplate,
         ProductDescription,
+        Countries,
+        States,
+        Cities,
       ],
     }),
   }),

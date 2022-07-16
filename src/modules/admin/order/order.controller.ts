@@ -16,7 +16,7 @@ import { OrderListResponse } from '../../../modules/order/dto/order-response.dto
 import { SpecificOrder } from '../../../modules/user/order/dto/order.dto';
 import { ApiResponse } from '../dto/interface/admin';
 import { OrdersList, UpdateOrder } from './dto/admin-orders.entity';
-import { SpecificOrderResponse } from './dto/interface/response.interface';
+import { SpecificOrderResponse } from './interface/response.interface';
 import { OrderService } from './order.service';
 import { CommonOrderService } from '../../order/order.service';
 

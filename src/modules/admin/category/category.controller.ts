@@ -26,7 +26,7 @@ import {
 import {
   CategoriesListResponse,
   SpecificCategoryResponse,
-} from './dto/interface/response.interface';
+} from './interface/response.interface';
 
 @Controller('admin/category')
 @ApiTags('Admin Categories')

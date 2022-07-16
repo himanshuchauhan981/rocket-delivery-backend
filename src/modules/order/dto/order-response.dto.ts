@@ -5,7 +5,7 @@ import {
   User,
   UserPayment,
   OrderAddress,
-} from 'src/modules/admin/order/dto/interface/response.interface';
+} from 'src/modules/admin/order/interface/response.interface';
 
 interface Order {
   id: number;

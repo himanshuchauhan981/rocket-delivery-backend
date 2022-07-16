@@ -17,7 +17,7 @@ import {
   CreateFileResponse,
   GetAllFilesResponse,
   GetFilesBySlugResponse,
-} from './dto/file-response.dto';
+} from './interface/response.interface';
 import {
   CreateFile,
   FileList,

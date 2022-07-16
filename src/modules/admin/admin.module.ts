@@ -18,6 +18,7 @@ import { AddressService } from '../address/address.service';
 import { AdminUsersModule } from './users/users.module';
 import { NotificationModule } from './notification/notification.module';
 import { DashboardModule } from './dashboard/dashboard.module';
+import { ShippingModule } from './shipping/shipping.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { DashboardModule } from './dashboard/dashboard.module';
     AdminUsersModule,
     NotificationModule,
     DashboardModule,
+    ShippingModule,
   ],
   controllers: [AdminController],
   providers: [

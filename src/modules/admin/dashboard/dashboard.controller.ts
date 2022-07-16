@@ -4,7 +4,11 @@ import { ApiTags } from '@nestjs/swagger';
 import { Auth } from '../../../core/decorators/auth.decorator';
 import { TransformInterceptor } from '../../../core/interceptors/transform.interceptor';
 import { DashboardService } from './dashboard.service';
-import { AdminDashboardResponse } from './dto/dashboard';
+import {
+  AdminDashboardOrderResponse,
+  AdminDashboardProductResponse,
+  AdminDashboardSalesResponse,
+} from './interface/response.interface';
 
 @Controller('admin/dashboard')
 @ApiTags('Admin Dashboard')
@@ -14,21 +18,21 @@ export class DashboardController {
   @Get('sales')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async dashboardSalesDetails(): Promise<AdminDashboardResponse> {
+  async dashboardSalesDetails(): Promise<AdminDashboardSalesResponse> {
     return await this.dashboardService.dashboardSalesDetails();
   }
 
   @Get('order')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async dashboardOrderDetails() {
+  async dashboardOrderDetails(): Promise<AdminDashboardOrderResponse> {
     return await this.dashboardService.dashboardOrderDetails();
   }
 
   @Get('products')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async productDetails() {
+  async productDetails(): Promise<AdminDashboardProductResponse> {
     return await this.dashboardService.productDetails();
   }
 }

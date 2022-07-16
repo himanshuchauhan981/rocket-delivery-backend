@@ -8,7 +8,7 @@ import {
   GetAllFilesResponse,
   GetFilesBySlugResponse,
   ImageList,
-} from './dto/file-response.dto';
+} from './interface/response.interface';
 import {
   CATEGORY_REPOSITORY,
   FILE_REPOSITORY,

@@ -55,4 +55,13 @@ export const MESSAGES = {
   INVALID_EMAIL: 'Invalid Email',
   INVALID_NOTIFICATION_USER_ID: 'Invalid notification user id',
   DELIVERY_STATUS_UPDATE_SUCCESS: 'Delivery status updated successfully',
+  COUNTRY_NOT_FOUND: 'Invalid Country Id',
+  COUNTRY_STATUS_UPDATE_SUCCESS: 'Country status updated successfully',
+  COUNTRY_UPDATE_SUCCESSFULL: 'Country updated successfully',
+  STATE_ADDED_SUCCESSFULL: 'State added successfully',
+  STATE_UPDATED_SUCCESSFULL: 'State updated successfully',
+  STATE_NOT_FOUND: 'State not found',
+  CITY_NOT_FOUND: 'City not found',
+  CITY_UPDATED_SUCCESSFULL: 'City updated successfully',
+  STATE_EXISTED: 'State already existed',
 };

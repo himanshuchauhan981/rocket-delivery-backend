@@ -13,7 +13,11 @@ import { OrderProduct } from '../../../modules/order/order-product.entity';
 import { Order } from '../../../modules/order/order.entity';
 import { Product } from '../../../modules/product/product.entity';
 import { User } from '../../../modules/user/user.entity';
-import { AdminDashboardResponse } from './dto/dashboard';
+import {
+  AdminDashboardOrderResponse,
+  AdminDashboardProductResponse,
+  AdminDashboardSalesResponse,
+} from './interface/response.interface';
 import { STATUS_CODE } from '../../../core/constants/status_code';
 import { MESSAGES } from '../../../core/constants/messages';
 import { ProductPrice } from '../../../modules/product/product-price.entity';
@@ -77,7 +81,7 @@ export class DashboardService {
     );
   }
 
-  async dashboardSalesDetails(): Promise<AdminDashboardResponse> {
+  async dashboardSalesDetails(): Promise<AdminDashboardSalesResponse> {
     try {
       const totalUsers = await this.userRepository.count({
         where: { is_deleted: 0 },
@@ -110,12 +114,12 @@ export class DashboardService {
     }
   }
 
-  async dashboardOrderDetails() {
+  async dashboardOrderDetails(): Promise<AdminDashboardOrderResponse> {
     try {
       const startOfYear = moment().startOf('year').format('YYYY-MM-DD');
       const endOfYear = moment().endOf('year').format('YYYY-MM-DD');
 
-      const orderDetails = await this.orderRepository.findAll({
+      const orderDetails: any = await this.orderRepository.findAll({
         where: {
           created_at: {
             [sequelize.Op.between]: [startOfYear, endOfYear],
@@ -131,7 +135,7 @@ export class DashboardService {
       const startOfWeek = '2022-02-27';
       const endOfWeek = '2022-03-05';
 
-      const orderRevenue = await this.orderRepository.sequelize.query(
+      const orderRevenue: any = await this.orderRepository.sequelize.query(
         `
           SELECT
             SUM(net_amount) AS "totalRevenue",
@@ -161,7 +165,7 @@ export class DashboardService {
     }
   }
 
-  async productDetails() {
+  async productDetails(): Promise<AdminDashboardProductResponse> {
     try {
       const recentProducts = await this.productRepository.findAll({
         where: { is_deleted: 0 },

@@ -16,6 +16,8 @@ import {
   NotficationList,
   UpdateNotificationStatus,
 } from './dto/notification.dto';
+import { NotificationListResponse } from './interface/response.interface';
+import { ApiResponse } from '../dto/interface/admin';
 
 @Controller('admin/notification')
 @ApiTags('Admin notifications')
@@ -25,7 +27,9 @@ export class NotificationController {
   @Get('list')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async notificationList(@Query(new ValidationPipe()) query: NotficationList) {
+  async notificationList(
+    @Query(new ValidationPipe()) query: NotficationList,
+  ): Promise<NotificationListResponse> {
     return await this.notificationService.notificationList(query.pageSize);
   }
 
@@ -34,7 +38,7 @@ export class NotificationController {
   @UseInterceptors(TransformInterceptor)
   async updateNotificationStatus(
     @Body(new ValidationPipe()) payload: UpdateNotificationStatus,
-  ) {
+  ): Promise<ApiResponse> {
     return this.notificationService.updateNotificationStatus(
       payload.id,
       payload.all_read,
