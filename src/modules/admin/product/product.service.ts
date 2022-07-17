@@ -76,7 +76,7 @@ export class ProductService {
   async findAll(payload: AdminProductList) {
     try {
       const sortBy = this.#sortProduct(payload.sort) || [];
-      const pageIndex = payload.pageIndex * payload.pageSize;
+      const page = payload.page * payload.limit;
 
       const tempProductData = await this.productRepository.findAndCountAll({
         where: payload.search
@@ -125,8 +125,8 @@ export class ProductService {
           ],
         ],
         order: sortBy,
-        limit: payload.pageSize,
-        offset: pageIndex,
+        limit: payload.limit,
+        offset: page,
       });
 
       for (const item of tempProductData.rows) {

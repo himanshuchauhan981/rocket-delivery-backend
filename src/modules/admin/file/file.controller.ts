@@ -31,7 +31,7 @@ import { FileService } from './file.service';
 export class FileController {
   constructor(private fileService: FileService) {}
 
-  @Get('all')
+  @Get('list')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
   async getAll(

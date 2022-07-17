@@ -21,7 +21,7 @@ import { NewWishlistItem, SpecificWishlistItem } from './entity/wishlist.dto';
 export class UserWishlistController {
   constructor(private readonly wishlistService: WishlistService) {}
 
-  @Get('all')
+  @Get('list')
   @Auth('user')
   @UseInterceptors(TransformInterceptor)
   async findAll(@Req() req) {

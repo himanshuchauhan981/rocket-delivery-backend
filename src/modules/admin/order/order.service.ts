@@ -88,23 +88,23 @@ export class OrderService {
 
   async adminOrderList(query: OrdersList): Promise<OrderListResponse> {
     try {
-      const pageIndex = query.pageIndex * query.pageSize;
+      const page = query.page * query.limit;
       const defaultQuery = [];
 
-      if (query.startDate && query.endDate) {
+      if (query.start_date && query.end_date) {
         defaultQuery.push({
           created_at: {
-            [sequelize.Op.lte]: query.endDate,
-            [sequelize.Op.gte]: query.startDate,
+            [sequelize.Op.lte]: query.end_date,
+            [sequelize.Op.gte]: query.start_date,
           },
         });
-      } else if (query.paymentStatus) {
+      } else if (query.payment_status) {
         defaultQuery.push({
-          payment_status: query.paymentStatus,
+          payment_status: query.payment_status,
         });
-      } else if (query.orderNumber) {
+      } else if (query.order_number) {
         defaultQuery.push({
-          order_number: { [sequelize.Op.like]: '%' + query.orderNumber + '%' },
+          order_number: { [sequelize.Op.like]: '%' + query.order_number + '%' },
         });
       }
 
@@ -124,9 +124,9 @@ export class OrderService {
           'payment_status',
           'delivery_status',
         ],
-        offset: pageIndex,
+        offset: page,
         order: [['created_at', 'DESC']],
-        limit: query.pageSize,
+        limit: query.limit,
       });
 
       return {

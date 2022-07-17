@@ -32,7 +32,7 @@ export class AdminSubcategoryController {
     private readonly adminSubCategoryService: AdminSubcategoryService,
   ) {}
 
-  @Get('all')
+  @Get('list')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
   async findAll(): Promise<AdminSubCategoryListResponse> {

@@ -87,7 +87,7 @@ export class AdminUsersController {
   ): Promise<ApiResponse> {
     return await this.userCommonService.resetPassword(
       params.id,
-      payload.newPassword,
+      payload.new_password,
     );
   }
 

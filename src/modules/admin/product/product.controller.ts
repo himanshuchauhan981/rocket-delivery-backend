@@ -31,7 +31,7 @@ export class AdminProductController {
     private readonly commonProductService: CommonProductService,
   ) {}
 
-  @Get('all')
+  @Get('list')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
   async findAll(@Query(new ValidationPipe()) payload: AdminProductList) {

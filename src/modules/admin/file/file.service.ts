@@ -41,9 +41,9 @@ export class FileService {
 
   async getAll(query: FileList): Promise<GetAllFilesResponse> {
     try {
-      const offset = query.pageIndex * query.pageSize;
-      const filterBy = parseInt(query.filterBy, 10);
-      const sortBy = FILE_SORT_BY[parseInt(query.sortBy, 10)];
+      const page = query.page * query.limit;
+      const filterBy = parseInt(query.filter_by, 10);
+      const sortBy = FILE_SORT_BY[parseInt(query.sort_by, 10)];
 
       const sqlQuery: any = [{ is_deleted: 0 }];
 
@@ -63,8 +63,8 @@ export class FileService {
           [sequelize.literal('size / 1000000'), 'size'],
         ],
         order: sortBy ? [[sortBy.field, sortBy.method]] : [['id', 'ASC']],
-        offset: offset,
-        limit: query.pageSize,
+        offset: page,
+        limit: query.limit,
       });
 
       return {
