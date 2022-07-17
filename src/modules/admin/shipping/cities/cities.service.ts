@@ -1,5 +1,4 @@
 import { HttpException, Inject, Injectable } from '@nestjs/common';
-import sequelize from 'sequelize';
 
 import { MESSAGES } from 'src/core/constants/messages';
 import {
@@ -7,16 +6,10 @@ import {
   STATES_REPOSITORY,
 } from 'src/core/constants/repositories';
 import { STATUS_CODE } from 'src/core/constants/status_code';
-import { Cities } from 'src/modules/shipping/cities.entity';
-import { Countries } from 'src/modules/shipping/countries.entity';
-import { States } from 'src/modules/shipping/states.entity';
+import { Cities } from 'src/modules/shipping/cities/cities.entity';
+import { Countries } from 'src/modules/shipping/countries/countries.entity';
 import { ApiResponse } from '../../dto/interface/admin';
-import {
-  CitiesList,
-  CityId,
-  EditCitiesPayload,
-  NewCity,
-} from './dto/cities.dto';
+import { CityId, EditCitiesPayload, NewCity } from './dto/cities.dto';
 
 @Injectable()
 export class CitiesService {
@@ -48,59 +41,6 @@ export class CitiesService {
       return {
         statusCode: STATUS_CODE.SUCCESS,
         message: MESSAGES.STATE_ADDED_SUCCESSFULL,
-      };
-    } catch (err) {
-      throw err;
-    }
-  }
-
-  async list(payload: CitiesList) {
-    try {
-      const page = payload.pageIndex * payload.pageSize;
-
-      const query: any = [{ is_deleted: 0 }];
-
-      if (payload.state_id) {
-        const existingState = this.statesRepository.findByPk(payload.state_id);
-
-        if (!existingState) {
-          throw new HttpException(
-            MESSAGES.STATE_NOT_FOUND,
-            STATUS_CODE.NOT_FOUND,
-          );
-        }
-
-        query.push({ state_id: payload.state_id });
-      }
-
-      if (payload.name) {
-        query.push({
-          name: { [sequelize.Op.iLike]: `%${payload.name}%` },
-        });
-      }
-
-      console.log(query);
-
-      const cities = await this.citiesRepository.findAndCountAll({
-        where: {
-          [sequelize.Op.and]: query,
-        },
-        offset: page,
-        limit: payload.pageSize,
-        include: [
-          {
-            model: States,
-            attributes: ['id', 'name'],
-            include: [{ model: Countries, attributes: ['id', 'name'] }],
-          },
-        ],
-        attributes: ['id', 'name', 'is_active', 'created_at'],
-      });
-
-      return {
-        statusCode: STATUS_CODE.SUCCESS,
-        message: MESSAGES.SUCCESS,
-        data: { cities: cities.rows, count: cities.count },
       };
     } catch (err) {
       throw err;

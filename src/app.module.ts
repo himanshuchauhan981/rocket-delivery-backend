@@ -15,6 +15,7 @@ import { CommonService } from './modules/common/common.service';
 import { MailModule } from './core/utils/mail/mail.module';
 import { SocketsModule } from './core/sockets/sockets.module';
 import { NotificationModule } from './modules/notification/notification.module';
+import { ShippingModule } from './modules/shipping/shipping.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { NotificationModule } from './modules/notification/notification.module';
     MailModule,
     SocketsModule,
     NotificationModule,
+    ShippingModule,
   ],
   controllers: [AppController],
   providers: [AppService, CommonService],

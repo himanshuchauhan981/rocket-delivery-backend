@@ -7,15 +7,10 @@ import {
   STATES_REPOSITORY,
 } from 'src/core/constants/repositories';
 import { STATUS_CODE } from 'src/core/constants/status_code';
-import { Countries } from 'src/modules/shipping/countries.entity';
-import { States } from 'src/modules/shipping/states.entity';
+import { Countries } from 'src/modules/shipping/countries/countries.entity';
+import { States } from 'src/modules/shipping/states/states.entity';
 import { ApiResponse } from '../../dto/interface/admin';
-import {
-  EditStateParams,
-  EditStatePayload,
-  NewState,
-  StateList,
-} from './dto/states.dto';
+import { EditStateParams, EditStatePayload, NewState } from './dto/states.dto';
 
 @Injectable()
 export class StatesService {
@@ -57,54 +52,6 @@ export class StatesService {
       return {
         statusCode: STATUS_CODE.SUCCESS,
         message: MESSAGES.STATE_ADDED_SUCCESSFULL,
-      };
-    } catch (err) {
-      throw err;
-    }
-  }
-
-  async findAll(payload: StateList) {
-    try {
-      const page = payload.pageIndex * payload.pageSize;
-
-      const query: any = [{ is_deleted: 0 }];
-
-      if (payload.countryId) {
-        const existingCountry = this.countriesRepository.findByPk(
-          payload.countryId,
-        );
-
-        if (!existingCountry) {
-          throw new HttpException(
-            MESSAGES.COUNTRY_NOT_FOUND,
-            STATUS_CODE.NOT_FOUND,
-          );
-        }
-
-        query.push({ country_id: payload.countryId });
-      }
-
-      if (payload.active) {
-        query.push({ is_active: payload.active });
-      }
-
-      if (payload.name) {
-        query.push({ name: { [sequelize.Op.iLike]: `%${payload.name}%` } });
-      }
-
-      const states = await this.statesRepository.findAndCountAll({
-        where: query,
-        offset: page,
-        limit: payload.pageSize,
-        include: [{ model: Countries, attributes: ['id', 'name'] }],
-        attributes: ['id', 'name', 'is_active', 'created_at'],
-        order: [['name', 'ASC']],
-      });
-
-      return {
-        statusCode: STATUS_CODE.SUCCESS,
-        message: MESSAGES.SUCCESS,
-        data: { states: states.rows, count: states.count },
       };
     } catch (err) {
       throw err;

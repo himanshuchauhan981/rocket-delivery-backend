@@ -13,6 +13,7 @@ import { ApiTags } from '@nestjs/swagger';
 
 import { Auth } from 'src/core/decorators/auth.decorator';
 import { TransformInterceptor } from 'src/core/interceptors/transform.interceptor';
+
 import {
   EditStateParams,
   EditStatePayload,
@@ -20,11 +21,15 @@ import {
   StateList,
 } from './dto/states.dto';
 import { StatesService } from './states.service';
+import { StatesService as CommonStatesService } from '../../../shipping/states/states.service';
 
 @Controller('admin/shipping/states')
 @ApiTags('Admin Shipping States')
 export class StatesController {
-  constructor(private readonly statesService: StatesService) {}
+  constructor(
+    private readonly statesService: StatesService,
+    private readonly commonStatesService: CommonStatesService,
+  ) {}
 
   @Post('new')
   @Auth('admin')
@@ -37,7 +42,7 @@ export class StatesController {
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
   async stateList(@Query(new ValidationPipe()) query: StateList) {
-    return await this.statesService.findAll(query);
+    return await this.commonStatesService.findAll(query);
   }
 
   @Put(':id')

@@ -1,12 +1,11 @@
 import { HttpException, Inject, Injectable } from '@nestjs/common';
-import sequelize from 'sequelize';
 
 import { MESSAGES } from 'src/core/constants/messages';
 import { COUNTRIES_REPOSITORY } from 'src/core/constants/repositories';
 import { STATUS_CODE } from 'src/core/constants/status_code';
-import { Countries } from 'src/modules/shipping/countries.entity';
+import { Countries } from 'src/modules/shipping/countries/countries.entity';
 import { ApiResponse } from '../../dto/interface/admin';
-import { CountriesList, EditCountry } from './dto/countries.dto';
+import { EditCountry } from './dto/countries.dto';
 
 @Injectable()
 export class CountriesService {
@@ -14,42 +13,6 @@ export class CountriesService {
     @Inject(COUNTRIES_REPOSITORY)
     private readonly countriesRepository: typeof Countries,
   ) {}
-
-  async findAll(payload: CountriesList) {
-    try {
-      payload.pageIndex = payload.pageIndex * payload.pageSize;
-
-      const query: any = [];
-
-      if (payload.search) {
-        query.push({
-          name: {
-            [sequelize.Op.iLike]: `%${payload.search}%`,
-          },
-        });
-      } else if (payload.isActive) {
-        query.push({
-          is_active: payload.isActive,
-        });
-      }
-
-      const countries = await this.countriesRepository.findAndCountAll({
-        where: { [sequelize.Op.and]: query },
-        order: [['name', 'ASC']],
-        offset: payload.pageIndex,
-        limit: payload.pageSize,
-        attributes: ['id', 'name', 'iso_code', 'is_active'],
-      });
-
-      return {
-        statusCode: STATUS_CODE.SUCCESS,
-        message: MESSAGES.SUCCESS,
-        data: { countries: countries.rows, count: countries.count },
-      };
-    } catch (err) {
-      throw err;
-    }
-  }
 
   async statusUpdate(country_id: number, status: number): Promise<ApiResponse> {
     try {
