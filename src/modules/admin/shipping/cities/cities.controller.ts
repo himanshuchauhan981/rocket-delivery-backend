@@ -41,7 +41,7 @@ export class CitiesController {
   @Get('list')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async stateList(@Query(new ValidationPipe()) query: CitiesList) {
+  async citiesList(@Query(new ValidationPipe()) query: CitiesList) {
     return await this.commonCitiesService.findAll(query);
   }
 
