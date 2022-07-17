@@ -23,12 +23,12 @@ export class CitiesService {
 
   async findAll(payload: CitiesList) {
     try {
-      const page = payload.pageIndex * payload.pageSize;
+      const page = payload.page * payload.limit;
 
       const query: any = [{ is_deleted: 0 }];
 
-      if (payload.state_id) {
-        const existingState = this.statesRepository.findByPk(payload.state_id);
+      if (payload.stateId) {
+        const existingState = this.statesRepository.findByPk(payload.stateId);
 
         if (!existingState) {
           throw new HttpException(
@@ -37,12 +37,18 @@ export class CitiesService {
           );
         }
 
-        query.push({ state_id: payload.state_id });
+        query.push({ state_id: payload.stateId });
       }
 
       if (payload.name) {
         query.push({
           name: { [sequelize.Op.iLike]: `%${payload.name}%` },
+        });
+      }
+
+      if (payload.active) {
+        query.push({
+          is_active: payload.active,
         });
       }
 
@@ -53,7 +59,7 @@ export class CitiesService {
           [sequelize.Op.and]: query,
         },
         offset: page,
-        limit: payload.pageSize,
+        limit: payload.limit,
         include: [
           {
             model: States,

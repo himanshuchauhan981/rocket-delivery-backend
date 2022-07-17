@@ -72,13 +72,13 @@ export class SpecificProductReview {
 export class ProductReviewList {
   @ApiProperty()
   @IsNotEmpty()
-  pageIndex: number;
+  page: number;
 
   @ApiProperty()
   @IsNotEmpty()
-  pageSize: number;
+  limit: number;
 
   @ApiProperty()
   @IsNotEmpty()
-  productId: number;
+  product_id: number;
 }

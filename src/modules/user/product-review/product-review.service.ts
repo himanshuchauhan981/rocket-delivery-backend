@@ -140,13 +140,13 @@ export class ProductReviewService {
 
   async list(query: ProductReviewList) {
     try {
-      const pageIndex = query.pageIndex * query.pageSize;
+      const page = query.page * query.limit;
       const ratingCount = {};
 
       const reviewRatings = await this.productReviewRepository.findAndCountAll({
         where: {
           [sequelize.Op.and]: [
-            { product_id: query.productId },
+            { product_id: query.product_id },
             { is_deleted: 0 },
           ],
         },
@@ -191,7 +191,7 @@ export class ProductReviewService {
       const productReviewList = await this.productReviewRepository.findAll({
         where: {
           [sequelize.Op.and]: [
-            { product_id: query.productId },
+            { product_id: query.product_id },
             { is_deleted: 0 },
           ],
         },
@@ -200,8 +200,8 @@ export class ProductReviewService {
           { model: User, attributes: ['id', 'name'] },
         ],
         attributes: ['id', 'headline', 'opinion', 'ratings', 'created_at'],
-        offset: pageIndex,
-        limit: query.pageSize,
+        offset: page,
+        limit: query.limit,
       });
 
       return {

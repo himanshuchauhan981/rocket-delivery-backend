@@ -4,11 +4,11 @@ import { ApiProperty } from '@nestjs/swagger';
 class CountriesList {
   @ApiProperty()
   @IsNotEmpty()
-  pageIndex: number;
+  page: number;
 
   @ApiProperty()
   @IsNotEmpty()
-  pageSize: number;
+  limit: number;
 
   @ApiProperty({ required: false })
   search: string;

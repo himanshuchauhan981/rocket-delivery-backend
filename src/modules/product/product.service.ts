@@ -79,7 +79,7 @@ export class ProductService {
   }
 
   async cartItems(payload: UserCart) {
-    const productIds = payload.cartItems.map((items) => items.id);
+    const productIds = payload.cart_items.map((items) => items.id);
 
     const productDetails = await this.productRepository.findAll({
       where: { id: { [sequelize.Op.in]: productIds } },
@@ -122,16 +122,16 @@ export class ProductService {
         item.product_price.discount_status = discountDetails.discountStatus;
       }
 
-      const productQuantity = payload.cartItems.filter(
+      const productQuantity = payload.cart_items.filter(
         (cartItem) => cartItem.id === item.id,
       )[0].quantity;
 
       if (
         productQuantity < item.max_quantity &&
-        payload.removeCartItem === true
+        payload.remove_cart_item === true
       ) {
         item.quantity = productQuantity;
-      } else if (payload.removeCartItem === false) {
+      } else if (payload.remove_cart_item === false) {
         item.quantity = productQuantity;
       }
     }

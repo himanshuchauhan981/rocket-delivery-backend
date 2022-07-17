@@ -14,14 +14,17 @@ class NewCity {
 class CitiesList {
   @ApiProperty()
   @IsNotEmpty()
-  pageIndex: number;
+  page: number;
 
   @ApiProperty()
   @IsNotEmpty()
-  pageSize: number;
+  limit: number;
 
   @ApiProperty({ required: false })
-  state_id: number;
+  stateId: number;
+
+  @ApiProperty({ required: false })
+  active: number;
 
   @ApiProperty({ required: false })
   name: string;
