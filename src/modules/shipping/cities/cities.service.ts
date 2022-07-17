@@ -27,8 +27,8 @@ export class CitiesService {
 
       const query: any = [{ is_deleted: 0 }];
 
-      if (payload.state_id) {
-        const existingState = this.statesRepository.findByPk(payload.state_id);
+      if (payload.stateId) {
+        const existingState = this.statesRepository.findByPk(payload.stateId);
 
         if (!existingState) {
           throw new HttpException(
@@ -37,12 +37,18 @@ export class CitiesService {
           );
         }
 
-        query.push({ state_id: payload.state_id });
+        query.push({ state_id: payload.stateId });
       }
 
       if (payload.name) {
         query.push({
           name: { [sequelize.Op.iLike]: `%${payload.name}%` },
+        });
+      }
+
+      if (payload.active) {
+        query.push({
+          is_active: payload.active,
         });
       }
 

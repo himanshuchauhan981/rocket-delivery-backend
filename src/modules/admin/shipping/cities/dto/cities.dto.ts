@@ -21,7 +21,10 @@ class CitiesList {
   pageSize: number;
 
   @ApiProperty({ required: false })
-  state_id: number;
+  stateId: number;
+
+  @ApiProperty({ required: false })
+  active: number;
 
   @ApiProperty({ required: false })
   name: string;
