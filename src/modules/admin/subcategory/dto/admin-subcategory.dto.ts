@@ -4,15 +4,15 @@ import { IsNotEmpty } from 'class-validator';
 export class SubCategoryList {
   @IsNotEmpty()
   @ApiProperty()
-  pageIndex: number;
+  page: number;
 
   @IsNotEmpty()
   @ApiProperty()
-  pageSize: number;
+  limit: number;
 
   @IsNotEmpty()
   @ApiProperty()
-  categoryId: number;
+  category_id: number;
 }
 
 export class SubmitSubCategory {

@@ -28,7 +28,7 @@ export class UsersService {
   ) {}
   async listUsers(payload: UsersList): Promise<ListUsersResponse> {
     try {
-      const pageIndex = payload.pageIndex * payload.pageSize;
+      const page = payload.page * payload.limit;
 
       const query: any = [{ is_deleted: 0 }];
       if (payload.search && payload.search !== '') {
@@ -51,9 +51,9 @@ export class UsersService {
           'is_active',
           'profile_image',
         ],
-        order: [[payload.sortColumn, payload.sortBy]],
-        offset: pageIndex,
-        limit: payload.pageSize,
+        order: [[payload.sort_column, payload.sort_by]],
+        offset: page,
+        limit: payload.limit,
       });
 
       return {
@@ -70,7 +70,7 @@ export class UsersService {
     user_id: number,
     payload: UserDetailList,
   ): Promise<any> {
-    const offset: number = payload.pageIndex * payload.pageSize;
+    const page: number = payload.page * payload.limit;
 
     const userTransactions = await this.orderRepository.findAndCountAll({
       where: { user_id: user_id },
@@ -90,8 +90,8 @@ export class UsersService {
         [sequelize.col('payment.id'), 'id'],
       ],
       raw: true,
-      offset: offset,
-      limit: payload.pageSize,
+      offset: page,
+      limit: payload.limit,
     });
 
     return {
@@ -106,7 +106,7 @@ export class UsersService {
 
   async adminUserOrders(user_id: number, payload: UserDetailList) {
     try {
-      const offset = payload.pageIndex * payload.pageSize;
+      const offset = payload.page * payload.limit;
 
       const orderList = await this.orderRepository.findAndCountAll({
         where: { user_id },
@@ -121,7 +121,7 @@ export class UsersService {
         ],
         order: [[sequelize.col('created_at'), 'DESC']],
         offset,
-        limit: payload.pageSize,
+        limit: payload.limit,
       });
 
       return {

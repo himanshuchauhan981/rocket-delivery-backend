@@ -84,6 +84,6 @@ export class AdminCategoryController {
   async delete(
     @Body(new ValidationPipe()) payload: CategoryIdList,
   ): Promise<ApiResponse> {
-    return await this.categoryService.delete(payload.categoryIds);
+    return await this.categoryService.delete(payload.category_ids);
   }
 }

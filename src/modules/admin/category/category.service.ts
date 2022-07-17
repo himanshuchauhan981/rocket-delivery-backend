@@ -53,15 +53,15 @@ export class CategoryService {
 
   async list(payload: CategoryList): Promise<CategoriesListResponse> {
     try {
-      const pageIndex = payload.pageIndex * payload.pageSize;
+      const page = payload.page * payload.limit;
 
       const categories = await this.categoryRepository.findAndCountAll({
         where: { is_deleted: 0 },
         attributes: ['name', 'is_active', 'id', 'updated_at'],
         include: [{ model: File, attributes: ['id', 'url'] }],
-        order: [[payload.sortColumn, payload.sortBy]],
-        offset: pageIndex,
-        limit: payload.pageSize,
+        order: [[payload.sort_column, payload.sort_by]],
+        offset: page,
+        limit: payload.limit,
       });
 
       for (const item of categories.rows) {

@@ -49,17 +49,17 @@ export class SpecificFile {
 export class FileList {
   @IsNotEmpty()
   @ApiProperty()
-  pageIndex: number;
+  page: number;
 
   @IsNotEmpty()
   @ApiProperty()
-  pageSize: number;
+  limit: number;
 
   @IsNotEmpty()
   @ApiProperty()
-  filterBy: string;
+  filter_by: string;
 
   @IsNotEmpty()
   @ApiProperty()
-  sortBy: string;
+  sort_by: string;
 }

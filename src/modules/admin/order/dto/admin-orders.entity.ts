@@ -10,23 +10,23 @@ import {
 export class OrdersList {
   @IsNotEmpty()
   @ApiProperty()
-  pageIndex: number;
+  page: number;
 
   @IsNotEmpty()
   @ApiProperty()
-  pageSize: number;
+  limit: number;
 
   @ApiProperty({ required: false })
-  paymentStatus: string;
+  payment_status: string;
 
   @ApiProperty({ required: false })
-  startDate: string;
+  start_date: string;
 
   @ApiProperty({ required: false })
-  endDate: string;
+  end_date: string;
 
   @ApiProperty({ required: false })
-  orderNumber: string;
+  order_number: string;
 }
 
 export class SpecificProduct {

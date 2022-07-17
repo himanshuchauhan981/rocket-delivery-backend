@@ -75,7 +75,7 @@ export class AdminSubcategoryService {
       const defaultQuery = {
         [sequelize.Op.and]: [
           { is_deleted: 0 },
-          { category_id: query.categoryId },
+          { category_id: query.category_id },
         ],
       };
       const subCategoryList = await this.subCategoryRepository.findAll({

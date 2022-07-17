@@ -4,11 +4,11 @@ import { IsNotEmpty } from 'class-validator';
 export class AdminProductList {
   @ApiProperty()
   @IsNotEmpty()
-  pageIndex: number;
+  page: number;
 
   @ApiProperty()
   @IsNotEmpty()
-  pageSize: number;
+  limit: number;
 
   @ApiProperty()
   @IsNotEmpty()

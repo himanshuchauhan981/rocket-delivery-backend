@@ -4,19 +4,19 @@ import { IsInt, IsNotEmpty } from 'class-validator';
 export class CategoryList {
   @IsNotEmpty()
   @ApiProperty()
-  pageIndex: number;
+  page: number;
 
   @IsNotEmpty()
   @ApiProperty()
-  pageSize: number;
+  limit: number;
 
   @ApiProperty()
   @IsNotEmpty()
-  sortColumn: string;
+  sort_column: string;
 
   @ApiProperty()
   @IsNotEmpty()
-  sortBy: string;
+  sort_by: string;
 }
 
 export class CategoryStatus {
@@ -35,7 +35,7 @@ export class CategoryId {
 export class CategoryIdList {
   @IsNotEmpty()
   @ApiProperty()
-  categoryIds: number[];
+  category_ids: number[];
 }
 
 export class SubmitCategory {

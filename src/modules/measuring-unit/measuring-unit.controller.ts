@@ -10,7 +10,7 @@ import { MeasuringUnitService } from './measuring-unit.service';
 export class MeasuringUnitController {
   constructor(private measuringUnitService: MeasuringUnitService) {}
 
-  @Get('all')
+  @Get('list')
   @ApiBearerAuth('Authorization')
   @UseGuards(JWTAuthGuard)
   @UseInterceptors(TransformInterceptor)

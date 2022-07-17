@@ -4,22 +4,22 @@ import { IsNotEmpty } from 'class-validator';
 export class UsersList {
   @IsNotEmpty()
   @ApiProperty()
-  pageIndex: number;
+  page: number;
 
   @IsNotEmpty()
   @ApiProperty()
-  pageSize: number;
+  limit: number;
 
   @ApiProperty({ required: false })
   search: string;
 
   @ApiProperty()
   @IsNotEmpty()
-  sortColumn: string;
+  sort_column: string;
 
   @ApiProperty()
   @IsNotEmpty()
-  sortBy: string;
+  sort_by: string;
 }
 
 export class UserIdParams {
@@ -31,17 +31,17 @@ export class UserIdParams {
 export class UserDetailList {
   @IsNotEmpty()
   @ApiProperty()
-  pageIndex: number;
+  page: number;
 
   @IsNotEmpty()
   @ApiProperty()
-  pageSize: number;
+  limit: number;
 }
 
 export class NewPassword {
   @IsNotEmpty()
   @ApiProperty()
-  newPassword: string;
+  new_password: string;
 }
 
 export class UserStatus {
