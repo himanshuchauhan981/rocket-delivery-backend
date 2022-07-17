@@ -102,11 +102,11 @@ class Cart {
 export class UserCart {
   @ApiProperty()
   @IsNotEmpty()
-  cartItems: Cart[];
+  cart_items: Cart[];
 
   @ApiProperty()
   @IsNotEmpty()
-  removeCartItem: boolean;
+  remove_cart_item: boolean;
 }
 
 export class UpdateProfile {

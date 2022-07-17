@@ -60,7 +60,7 @@ export class UserProductReviewController {
     return await this.productReviewService.delete(payload.id);
   }
 
-  @Get('all')
+  @Get('list')
   @UseInterceptors(TransformInterceptor)
   async list(@Query(new ValidationPipe()) query: ProductReviewList) {
     return await this.productReviewService.list(query);

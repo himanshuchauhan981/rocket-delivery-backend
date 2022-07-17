@@ -16,7 +16,7 @@ export class CountriesService {
 
   async findAll(payload: CountriesList) {
     try {
-      payload.pageIndex = payload.pageIndex * payload.pageSize;
+      const page = payload.page * payload.limit;
 
       const query: any = [];
 
@@ -35,8 +35,8 @@ export class CountriesService {
       const countries = await this.countriesRepository.findAndCountAll({
         where: { [sequelize.Op.and]: query },
         order: [['name', 'ASC']],
-        offset: payload.pageIndex,
-        limit: payload.pageSize,
+        offset: page,
+        limit: payload.limit,
         attributes: ['id', 'name', 'iso_code', 'is_active'],
       });
 

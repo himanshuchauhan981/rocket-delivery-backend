@@ -23,7 +23,7 @@ export class CitiesService {
 
   async findAll(payload: CitiesList) {
     try {
-      const page = payload.pageIndex * payload.pageSize;
+      const page = payload.page * payload.limit;
 
       const query: any = [{ is_deleted: 0 }];
 
@@ -59,7 +59,7 @@ export class CitiesService {
           [sequelize.Op.and]: query,
         },
         offset: page,
-        limit: payload.pageSize,
+        limit: payload.limit,
         include: [
           {
             model: States,

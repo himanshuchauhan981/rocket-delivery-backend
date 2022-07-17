@@ -28,11 +28,11 @@ class NewState {
 class StateList {
   @ApiProperty()
   @IsNotEmpty()
-  pageIndex: number;
+  page: number;
 
   @ApiProperty()
   @IsNotEmpty()
-  pageSize: number;
+  limit: number;
 
   @ApiProperty({ required: false })
   countryId: number;

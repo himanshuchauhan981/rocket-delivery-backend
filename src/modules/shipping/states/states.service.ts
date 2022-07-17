@@ -22,7 +22,7 @@ export class StatesService {
 
   async findAll(payload: StateList) {
     try {
-      const page = payload.pageIndex * payload.pageSize;
+      const page = payload.page * payload.limit;
 
       const query: any = [{ is_deleted: 0 }];
 
@@ -52,7 +52,7 @@ export class StatesService {
       const states = await this.statesRepository.findAndCountAll({
         where: query,
         offset: page,
-        limit: payload.pageSize,
+        limit: payload.limit,
         include: [{ model: Countries, attributes: ['id', 'name'] }],
         attributes: ['id', 'name', 'is_active', 'created_at'],
         order: [['name', 'ASC']],
