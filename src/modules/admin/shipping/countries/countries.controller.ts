@@ -14,6 +14,7 @@ import { Auth } from 'src/core/decorators/auth.decorator';
 import { TransformInterceptor } from 'src/core/interceptors/transform.interceptor';
 import { ApiResponse } from '../../dto/interface/admin';
 import { CountriesService } from './countries.service';
+import { CountriesService as CommonCountriesService } from '../../../shipping/countries/countries.service';
 import {
   CountriesList,
   CountryId,
@@ -24,13 +25,16 @@ import {
 @Controller('admin/shipping/countries')
 @ApiTags('Admin Shipping countries')
 export class CountriesController {
-  constructor(private readonly countryService: CountriesService) {}
+  constructor(
+    private readonly countryService: CountriesService,
+    private readonly commonCountryService: CommonCountriesService,
+  ) {}
 
   @Get('list')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
   async findAll(@Query(new ValidationPipe()) query: CountriesList) {
-    return await this.countryService.findAll(query);
+    return await this.commonCountryService.findAll(query);
   }
 
   @Put(':id/status')

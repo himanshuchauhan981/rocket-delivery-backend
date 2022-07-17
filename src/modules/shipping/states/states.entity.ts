@@ -8,13 +8,12 @@ import {
   ForeignKey,
   BelongsTo,
 } from 'sequelize-typescript';
-
-import { States } from './states.entity';
+import { Countries } from '../countries/countries.entity';
 
 @Table({
-  tableName: 'cities',
+  tableName: 'states',
 })
-export class Cities extends Model<Cities> {
+export class States extends Model<States> {
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
@@ -33,8 +32,8 @@ export class Cities extends Model<Cities> {
     type: DataType.INTEGER,
     allowNull: false,
   })
-  @ForeignKey(() => States)
-  state_id: number;
+  @ForeignKey(() => Countries)
+  country_id: number;
 
   @Column({
     type: DataType.INTEGER,
@@ -48,12 +47,12 @@ export class Cities extends Model<Cities> {
   })
   is_deleted: number;
 
-  @BelongsTo(() => States)
-  state: States;
-
   @CreatedAt
   created_at: Date;
 
   @UpdatedAt
   updated_at: Date;
+
+  @BelongsTo(() => Countries)
+  country: Countries;
 }

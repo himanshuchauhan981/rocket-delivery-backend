@@ -9,12 +9,12 @@ import {
   BelongsTo,
 } from 'sequelize-typescript';
 
-import { Countries } from './countries.entity';
+import { States } from '../states/states.entity';
 
 @Table({
-  tableName: 'states',
+  tableName: 'cities',
 })
-export class States extends Model<States> {
+export class Cities extends Model<Cities> {
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
@@ -33,8 +33,8 @@ export class States extends Model<States> {
     type: DataType.INTEGER,
     allowNull: false,
   })
-  @ForeignKey(() => Countries)
-  country_id: number;
+  @ForeignKey(() => States)
+  state_id: number;
 
   @Column({
     type: DataType.INTEGER,
@@ -48,12 +48,12 @@ export class States extends Model<States> {
   })
   is_deleted: number;
 
+  @BelongsTo(() => States)
+  state: States;
+
   @CreatedAt
   created_at: Date;
 
   @UpdatedAt
   updated_at: Date;
-
-  @BelongsTo(() => Countries)
-  country: Countries;
 }

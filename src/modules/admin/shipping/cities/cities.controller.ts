@@ -15,6 +15,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { Auth } from 'src/core/decorators/auth.decorator';
 import { TransformInterceptor } from 'src/core/interceptors/transform.interceptor';
 import { CitiesService } from './cities.service';
+import { CitiesService as CommonCitiesService } from '../../../shipping/cities/cities.service';
 import {
   CitiesList,
   CityId,
@@ -25,7 +26,10 @@ import {
 @Controller('admin/shipping/cities')
 @ApiTags('Admin Shipping Cities')
 export class CitiesController {
-  constructor(private readonly citiesService: CitiesService) {}
+  constructor(
+    private readonly citiesService: CitiesService,
+    private readonly commonCitiesService: CommonCitiesService,
+  ) {}
 
   @Post('new')
   @Auth('admin')
@@ -38,7 +42,7 @@ export class CitiesController {
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
   async stateList(@Query(new ValidationPipe()) query: CitiesList) {
-    return await this.citiesService.list(query);
+    return await this.commonCitiesService.findAll(query);
   }
 
   @Put(':id')
