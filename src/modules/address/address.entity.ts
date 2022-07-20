@@ -57,19 +57,19 @@ export class Address extends Model<Address> {
     type: DataType.INTEGER,
     allowNull: false,
   })
-  country_id: string;
+  country_id: number;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
   })
-  state_id: string;
+  state_id: number;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
   })
-  city_id: string;
+  city_id: number;
 
   @Column({
     type: DataType.STRING,

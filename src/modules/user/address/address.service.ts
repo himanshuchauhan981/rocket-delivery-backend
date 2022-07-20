@@ -54,7 +54,7 @@ export class AddressService {
       }
 
       const existingCity = await this.citiesRepository.findByPk(
-        payload.state_id,
+        payload.city_id,
       );
 
       if (!existingCity) {
