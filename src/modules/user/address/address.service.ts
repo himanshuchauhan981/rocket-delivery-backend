@@ -1,8 +1,17 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { HttpException, Inject, Injectable } from '@nestjs/common';
 import sequelize from 'sequelize';
 
+import { ApiResponse } from 'src/modules/admin/dto/interface/admin';
+import { Cities } from 'src/modules/shipping/cities/cities.entity';
+import { Countries } from 'src/modules/shipping/countries/countries.entity';
+import { States } from 'src/modules/shipping/states/states.entity';
 import { MESSAGES } from '../../../core/constants/messages';
-import { ADDRESS_REPOSITORY } from '../../../core/constants/repositories';
+import {
+  ADDRESS_REPOSITORY,
+  CITIES_REPOSITORY,
+  COUNTRIES_REPOSITORY,
+  STATES_REPOSITORY,
+} from '../../../core/constants/repositories';
 import { STATUS_CODE } from '../../../core/constants/status_code';
 import { Address } from '../../../modules/address/address.entity';
 import { NewAddress } from './dto/address.dto';
@@ -12,15 +21,49 @@ export class AddressService {
   constructor(
     @Inject(ADDRESS_REPOSITORY)
     private readonly addressRepository: typeof Address,
+    @Inject(COUNTRIES_REPOSITORY)
+    private readonly countriesRepository: typeof Countries,
+    @Inject(STATES_REPOSITORY)
+    private readonly statesRepository: typeof States,
+    @Inject(CITIES_REPOSITORY)
+    private readonly citiesRepository: typeof Cities,
   ) {}
 
-  async add(payload: NewAddress, user_id: number) {
+  async add(payload: NewAddress, user_id: number): Promise<ApiResponse> {
     try {
-      const latitude = parseFloat(payload.latitude);
+      const existingCountry = await this.countriesRepository.findByPk(
+        payload.country_id,
+      );
+
+      if (!existingCountry) {
+        throw new HttpException(
+          MESSAGES.COUNTRY_NOT_FOUND,
+          STATUS_CODE.NOT_FOUND,
+        );
+      }
+
+      const existingState = await this.statesRepository.findByPk(
+        payload.state_id,
+      );
+
+      if (!existingState) {
+        throw new HttpException(
+          MESSAGES.STATE_NOT_FOUND,
+          STATUS_CODE.NOT_FOUND,
+        );
+      }
+
+      const existingCity = await this.citiesRepository.findByPk(
+        payload.state_id,
+      );
+
+      if (!existingCity) {
+        throw new HttpException(MESSAGES.CITY_NOT_FOUND, STATUS_CODE.NOT_FOUND);
+      }
 
       await this.addressRepository.create<any>({
         user_id,
-        latitude,
+        latitude: parseFloat(payload.latitude),
         longitude: parseFloat(payload.longitude),
         ...payload,
       });

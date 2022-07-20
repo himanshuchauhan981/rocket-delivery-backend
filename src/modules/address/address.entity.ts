@@ -54,16 +54,22 @@ export class Address extends Model<Address> {
   area: string;
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.INTEGER,
     allowNull: false,
   })
-  city: string;
+  country_id: string;
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.INTEGER,
     allowNull: false,
   })
-  state: string;
+  state_id: string;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  city_id: string;
 
   @Column({
     type: DataType.STRING,
@@ -82,12 +88,6 @@ export class Address extends Model<Address> {
     allowNull: false,
   })
   longitude: number;
-
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  country_code: string;
 
   @Column({
     type: DataType.STRING,

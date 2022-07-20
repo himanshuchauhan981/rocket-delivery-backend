@@ -85,11 +85,10 @@ const orderInvoice = (order: Order) => {
         </td>
       </tr>
       <tr>
-        <td style="font-size: 10px;">${order.address.city}</td>
+        <td style="font-size: 10px;"></td>
       </tr>
       <tr>
         <td style="font-size: 10px; padding-bottom: 15px;">
-          ${order.address.state}
         </td>
       </tf>
     </table>

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty } from 'class-validator';
+import { IsInt, IsNotEmpty } from 'class-validator';
 
 export class NewAddress {
   @ApiProperty()
@@ -20,11 +20,18 @@ export class NewAddress {
 
   @ApiProperty()
   @IsNotEmpty()
-  city: string;
+  @IsInt()
+  country_id: number;
 
   @ApiProperty()
   @IsNotEmpty()
-  state: string;
+  @IsInt()
+  state_id: number;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsInt()
+  city_id: number;
 
   @ApiProperty()
   @IsNotEmpty()
@@ -37,10 +44,6 @@ export class NewAddress {
   @ApiProperty()
   @IsNotEmpty()
   longitude: string;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  country_code: string;
 
   @ApiProperty()
   @IsNotEmpty()
