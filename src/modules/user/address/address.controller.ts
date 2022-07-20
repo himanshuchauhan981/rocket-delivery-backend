@@ -32,7 +32,7 @@ export class UserAddressController {
     return await this.addressService.findAllByUserId(req.userId);
   }
 
-  @Post('')
+  @Post('new')
   @Auth('user')
   @UseInterceptors(TransformInterceptor)
   async add(@Body(new ValidationPipe()) payload: NewAddress, @Req() req) {

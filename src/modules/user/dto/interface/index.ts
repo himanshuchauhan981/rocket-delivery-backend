@@ -8,8 +8,8 @@ interface Image {
 interface Address {
   id: number;
   area: string;
-  city: string;
-  state: string;
+  // city: string;
+  // state: string;
   full_name: string;
   mobile_number: string;
   pincode: string;

@@ -22,10 +22,10 @@ interface OrderAddress {
   full_name: string;
   house_no: string;
   area: string;
-  city: string;
-  state: string;
+  // city: string;
+  // state: string;
   landmark: string;
-  country_code: string;
+  // country_code: string;
   mobile_number: string;
   pincode: string;
   latitude: number;
