@@ -59,16 +59,20 @@ module.exports = {
         );
 
         const totalProductReviewImages = this.randomNumber(1, 5);
+        let productReviewFileList = [];
 
         for (let i = 0; i < totalProductReviewImages; i++) {
-          await queryInterface.bulkInsert('product_review_file', [
-            {
-              url: 'https://firebasestorage.googleapis.com/v0/b/rocket-delivery-f95dc.appspot.com/o/rn_image_picker_lib_temp_59ea0069-0917-4e10-a6a1-526dc7887a40.jpg?alt=media&token=fd557248-ea11-4b03-8867-d8de6f1a0192',
-              review_id: productReviewDetails[0].id,
-              type: 'image/jpeg',
-            },
-          ]);
+          productReviewFileList.push({
+            url: 'https://firebasestorage.googleapis.com/v0/b/rocket-delivery-f95dc.appspot.com/o/rn_image_picker_lib_temp_59ea0069-0917-4e10-a6a1-526dc7887a40.jpg?alt=media&token=fd557248-ea11-4b03-8867-d8de6f1a0192',
+            review_id: productReviewDetails[0].id,
+            type: 'image/jpeg',
+          });
         }
+
+        await queryInterface.bulkInsert(
+          'product_review_file',
+          productReviewFileList,
+        );
       }
     }
   },
@@ -83,6 +87,12 @@ module.exports = {
 
     await queryInterface.bulkDelete(
       'product_review_file',
+      {},
+      { restartIdentity: true, truncate: true },
+    );
+
+    await queryInterface.bulkDelete(
+      'product_review',
       {},
       { restartIdentity: true, truncate: true },
     );
