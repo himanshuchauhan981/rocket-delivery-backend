@@ -6,7 +6,11 @@ import {
   CreatedAt,
   UpdatedAt,
   ForeignKey,
+  BelongsTo,
 } from 'sequelize-typescript';
+import { Cities } from '../shipping/cities/cities.entity';
+
+import { States } from '../shipping/states/states.entity';
 import { User } from '../user/user.entity';
 
 @Table({
@@ -63,12 +67,14 @@ export class Address extends Model<Address> {
     type: DataType.INTEGER,
     allowNull: false,
   })
+  @ForeignKey(() => States)
   state_id: number;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
   })
+  @ForeignKey(() => Cities)
   city_id: number;
 
   @Column({
@@ -106,4 +112,10 @@ export class Address extends Model<Address> {
 
   @UpdatedAt
   updated_at: Date;
+
+  @BelongsTo(() => States)
+  state: States;
+
+  @BelongsTo(() => Cities)
+  city: Cities;
 }
