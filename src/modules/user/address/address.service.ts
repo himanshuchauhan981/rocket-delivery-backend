@@ -84,13 +84,14 @@ export class AddressService {
           'pincode',
           'house_no',
           'area',
-          'city',
-          'state',
           'landmark',
           'latitude',
           'longitude',
-          'country_code',
           'mobile_number',
+        ],
+        include: [
+          { model: States, attributes: ['id', 'name'] },
+          { model: Cities, attributes: ['id', 'name'] },
         ],
       });
 
