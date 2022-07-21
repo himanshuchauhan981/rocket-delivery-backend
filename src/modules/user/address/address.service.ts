@@ -92,6 +92,7 @@ export class AddressService {
         include: [
           { model: States, attributes: ['id', 'name'] },
           { model: Cities, attributes: ['id', 'name'] },
+          { model: Countries, attributes: ['id', 'name'] },
         ],
       });
 

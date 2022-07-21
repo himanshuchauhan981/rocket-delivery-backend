@@ -9,6 +9,7 @@ import {
   BelongsTo,
 } from 'sequelize-typescript';
 import { Cities } from '../shipping/cities/cities.entity';
+import { Countries } from '../shipping/countries/countries.entity';
 
 import { States } from '../shipping/states/states.entity';
 import { User } from '../user/user.entity';
@@ -61,6 +62,7 @@ export class Address extends Model<Address> {
     type: DataType.INTEGER,
     allowNull: false,
   })
+  @ForeignKey(() => Countries)
   country_id: number;
 
   @Column({
@@ -118,4 +120,7 @@ export class Address extends Model<Address> {
 
   @BelongsTo(() => Cities)
   city: Cities;
+
+  @BelongsTo(() => Countries)
+  country: Countries;
 }
