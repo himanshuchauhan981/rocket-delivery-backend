@@ -10,25 +10,35 @@ module.exports = {
      */
 
     await queryInterface.addColumn(
-      'product_review_file',
-      'order_product_id',
-      Sequelize.INTEGER,
+      'admin',
+      'latitude',
       {
-        after: 'review_id',
+        type: Sequelize.DECIMAL,
+        defaultValue: 30.7322335,
       },
+      {},
+    );
+
+    await queryInterface.addColumn(
+      'admin',
+      'longitude',
+      {
+        type: Sequelize.DECIMAL,
+        defaultValue: 76.7815603,
+      },
+      {},
     );
   },
 
   async down(queryInterface) {
+    await queryInterface.removeColumn('admin', 'latitude');
+
+    await queryInterface.removeColumn('admin', 'longitude');
     /**
      * Add reverting commands here.
      *
      * Example:
      * await queryInterface.dropTable('users');
      */
-    await queryInterface.removeColumn(
-      'product_review_file',
-      'order_product_id',
-    );
   },
 };

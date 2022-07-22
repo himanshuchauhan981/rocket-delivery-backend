@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-  up: async (queryInterface, Sequelize) => {
+  up: async (queryInterface) => {
     await queryInterface.addConstraint('product_history', {
       type: 'FOREIGN KEY',
       fields: ['user_id'],
@@ -27,7 +27,7 @@ module.exports = {
     });
   },
 
-  down: async (queryInterface, Sequelize) => {
+  down: async (queryInterface) => {
     await queryInterface.removeConstraint(
       'product_history',
       'fk_product_history_users',
