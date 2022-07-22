@@ -173,4 +173,9 @@ export class Product extends Model<Product> {
 
   @BelongsTo(() => ProductDescription)
   product_description: ProductDescription;
+
+  @Column({
+    type: DataType.VIRTUAL,
+  })
+  available_quantity: number;
 }

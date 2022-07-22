@@ -103,6 +103,7 @@ export class ProductService {
         'max_quantity',
         'minimum_cart_quantity',
         'maximum_cart_quantity',
+        'available_quantity',
       ],
     });
 
@@ -122,17 +123,14 @@ export class ProductService {
         item.product_price.discount_status = discountDetails.discountStatus;
       }
 
-      const productQuantity = payload.cart_items.filter(
+      const [cartProduct] = payload.cart_items.filter(
         (cartItem) => cartItem.id === item.id,
-      )[0].quantity;
+      );
 
-      if (
-        productQuantity < item.max_quantity &&
-        payload.remove_cart_item === true
-      ) {
-        item.quantity = productQuantity;
-      } else if (payload.remove_cart_item === false) {
-        item.quantity = productQuantity;
+      if (cartProduct.quantity > item.max_quantity) {
+        item.available_quantity = item.max_quantity;
+      } else {
+        item.available_quantity = cartProduct.quantity;
       }
     }
 
