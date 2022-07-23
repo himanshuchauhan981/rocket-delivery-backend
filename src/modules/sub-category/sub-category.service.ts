@@ -6,6 +6,7 @@ import { SUB_CATEGORY_REPOSITORY } from '../../core/constants/repositories';
 import { STATUS_CODE } from '../../core/constants/status_code';
 import { File } from '../admin/file/file.entity';
 import { Category } from '../category/category.entity';
+import { ListSubCategoriesResponse } from '../user/interface';
 import { SubCategory } from './sub-category.entity';
 
 @Injectable()
@@ -34,7 +35,7 @@ export class SubCategoryService {
     );
   }
 
-  async list(category_id: number) {
+  async list(category_id: number): Promise<ListSubCategoriesResponse> {
     try {
       const subCategories = await this.subCategoryRepository.findAll({
         where: {

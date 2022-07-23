@@ -18,6 +18,7 @@ import { ProductReview } from '../product-review/product-review.entity';
 import { SubCategory } from '../sub-category/sub-category.entity';
 import { ProductDescription } from './product-description.entity';
 import { DISCOUNT_TYPE } from 'src/core/constants/constants';
+import { UserCartDetailsResponse } from '../user/interface';
 
 @Injectable()
 export class ProductService {
@@ -83,7 +84,7 @@ export class ProductService {
     );
   }
 
-  async cartItems(payload: UserCart) {
+  async cartItems(payload: UserCart): Promise<UserCartDetailsResponse> {
     const productIds = payload.cart_items.map((items) => items.id);
 
     const productDetails = await this.productRepository.findAll({

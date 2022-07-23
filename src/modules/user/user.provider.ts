@@ -1,4 +1,5 @@
 import {
+  ADMIN_REPOSITORY,
   CATEGORY_REPOSITORY,
   ORDER_REPOSITORY,
   PRODUCT_REPOSITORY,
@@ -6,6 +7,7 @@ import {
   SUB_CATEGORY_REPOSITORY,
   USER_REPOSITORY,
 } from '../../core/constants/repositories';
+import { Admin } from '../admin/admin.entity';
 import { Category } from '../category/category.entity';
 import { Order } from '../order/order.entity';
 import { ProductReview } from '../product-review/product-review.entity';
@@ -20,4 +22,5 @@ export const UserProvider = [
   { provide: PRODUCT_REPOSITORY, useValue: Product },
   { provide: ORDER_REPOSITORY, useValue: Order },
   { provide: PRODUCT_REVIEW_REPOSITORY, useValue: ProductReview },
+  { provide: ADMIN_REPOSITORY, useValue: Admin },
 ];
