@@ -17,7 +17,7 @@ import { AddressService } from '../address/address.service';
 import { AddressId, NewAddress } from '../user/address/dto/address.dto';
 import { AdminService } from './admin.service';
 import { AdminLogin } from './dto/admin.dto';
-import { AdminDetailsResponse, AdminLoginResponse } from './interface/admin';
+import { AdminDetailsResponse, AdminLoginResponse } from './interface';
 
 @Controller('admin')
 @ApiTags('Admin')

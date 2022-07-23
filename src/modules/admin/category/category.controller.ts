@@ -11,10 +11,10 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { ApiResponse } from 'src/modules/common/interface';
 
 import { Auth } from '../../../core/decorators/auth.decorator';
 import { TransformInterceptor } from '../../../core/interceptors/transform.interceptor';
-import { ApiResponse } from '../interface/admin';
 import { CategoryService } from './category.service';
 import {
   CategoryId,

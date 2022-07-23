@@ -14,7 +14,6 @@ import { Auth } from '../../../core/decorators/auth.decorator';
 import { TransformInterceptor } from '../../../core/interceptors/transform.interceptor';
 import { UsersService } from './users.service';
 import { UserService as UserCommonService } from '../../user/user.service';
-import { ApiResponse } from '../interface/admin';
 import {
   NewPassword,
   UserIdParams,
@@ -26,6 +25,7 @@ import {
   DownloadUserCSVResponse,
   ListUsersResponse,
 } from './interface/response.interface';
+import { ApiResponse } from 'src/modules/common/interface';
 
 @Controller('admin/users')
 @ApiTags('Admin user')

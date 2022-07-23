@@ -1,5 +1,6 @@
 import { HttpException, Inject, Injectable } from '@nestjs/common';
 import sequelize from 'sequelize';
+import { ApiResponse } from 'src/modules/common/interface';
 
 import { USER_TYPE } from '../../../core/constants/constants';
 import { MESSAGES } from '../../../core/constants/messages';
@@ -8,7 +9,6 @@ import { STATUS_CODE } from '../../../core/constants/status_code';
 import { NotificationUser } from '../../../modules/notification/entity/notification-user.entity';
 import { Notification } from '../../../modules/notification/entity/notification.entity';
 import { User } from '../../../modules/user/user.entity';
-import { ApiResponse } from '../interface/admin';
 import { NotificationListResponse } from './interface/response.interface';
 
 @Injectable()

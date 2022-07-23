@@ -19,7 +19,6 @@ import {
   USER_REPOSITORY,
 } from '../../../core/constants/repositories';
 import { STATUS_CODE } from '../../../core/constants/status_code';
-import { ApiResponse } from '../../admin/interface/admin';
 import { File } from '../../../modules/admin/file/file.entity';
 import { OrderProduct } from '../../../modules/order/order-product.entity';
 import { Order } from '../../../modules/order/order.entity';
@@ -31,7 +30,8 @@ import { ProductService as CommonProductService } from '../../product/product.se
 import { Admin } from '../../../modules/admin/admin.entity';
 import { User } from '../user.entity';
 import { NotificationService } from '../../../modules/notification/notification.service';
-import { OrderListResponse } from '../../../modules/order/dto/order-response.dto';
+import { OrderListResponse } from '../../order/interface/response.interface';
+import { ApiResponse } from 'src/modules/common/interface';
 
 @Injectable()
 export class OrderService {

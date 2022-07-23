@@ -12,13 +12,13 @@ import { ApiTags } from '@nestjs/swagger';
 
 import { Auth } from '../../../core/decorators/auth.decorator';
 import { TransformInterceptor } from '../../../core/interceptors/transform.interceptor';
-import { OrderListResponse } from '../../../modules/order/dto/order-response.dto';
+import { OrderListResponse } from '../../order/interface/response.interface';
 import { SpecificOrder } from '../../../modules/user/order/dto/order.dto';
-import { ApiResponse } from '../interface/admin';
 import { OrdersList, UpdateOrder } from './dto/admin-orders.entity';
 import { SpecificOrderResponse } from './interface/response.interface';
 import { OrderService } from './order.service';
 import { CommonOrderService } from '../../order/order.service';
+import { ApiResponse } from 'src/modules/common/interface';
 
 @Controller('admin/orders')
 @ApiTags('Admin orders')

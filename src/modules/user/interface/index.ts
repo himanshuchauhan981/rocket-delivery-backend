@@ -1,4 +1,5 @@
-import { ApiResponse } from 'src/modules/admin/interface/admin';
+import { ApiResponse } from 'src/modules/common/interface';
+import { ProductPrice } from 'src/modules/product/interface';
 
 interface Image {
   id: number;
@@ -27,10 +28,6 @@ interface SubCategory {
   name: string;
   category: Category;
   image: Image;
-}
-
-interface ProductPrice {
-  actual_price: number;
 }
 
 interface CartProducts {

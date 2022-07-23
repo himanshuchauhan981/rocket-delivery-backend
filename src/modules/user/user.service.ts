@@ -11,7 +11,6 @@ import {
   USER_REPOSITORY,
 } from '../../core/constants/repositories';
 import { STATUS_CODE } from '../../core/constants/status_code';
-import { ApiResponse } from '../admin/interface/admin';
 import { File } from '../admin/file/file.entity';
 import { Category } from '../category/category.entity';
 import { CommonService } from '../common/common.service';
@@ -38,6 +37,7 @@ import { USER_TYPE } from '../../core/constants/constants';
 import { Address } from '../address/address.entity';
 import { Admin } from '../admin/admin.entity';
 import { Order } from '../order/order.entity';
+import { ApiResponse } from '../common/interface';
 
 @Injectable()
 export class UserService {

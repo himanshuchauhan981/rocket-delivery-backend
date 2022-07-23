@@ -12,7 +12,6 @@ import { ApiTags } from '@nestjs/swagger';
 
 import { Auth } from 'src/core/decorators/auth.decorator';
 import { TransformInterceptor } from 'src/core/interceptors/transform.interceptor';
-import { ApiResponse } from '../../interface/admin';
 import { CountriesService } from './countries.service';
 import { CountriesService as CommonCountriesService } from '../../../shipping/countries/countries.service';
 import {
@@ -21,6 +20,7 @@ import {
   CountryStatus,
   EditCountry,
 } from './dto/countries.dto';
+import { ApiResponse } from 'src/modules/common/interface';
 
 @Controller('admin/shipping/countries')
 @ApiTags('Admin Shipping countries')

@@ -1,4 +1,4 @@
-import { ApiResponse } from 'src/modules/admin/interface/admin';
+import { ApiResponse } from 'src/modules/common/interface';
 
 interface SubCategory {
   id: number;

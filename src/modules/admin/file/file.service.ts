@@ -17,7 +17,6 @@ import {
 } from '../../../core/constants/repositories';
 import { STATUS_CODE } from '../../../core/constants/status_code';
 import { MESSAGES } from '../../../core/constants/messages';
-import { ApiResponse } from '../interface/admin';
 import {
   FILE_FILTER_BY,
   FILE_SLUGS,
@@ -26,6 +25,7 @@ import {
 import { Category } from '../../../modules/category/category.entity';
 import { SubCategory } from '../../../modules/sub-category/sub-category.entity';
 import { Product } from '../../../modules/product/product.entity';
+import { ApiResponse } from 'src/modules/common/interface';
 
 @Injectable()
 export class FileService {

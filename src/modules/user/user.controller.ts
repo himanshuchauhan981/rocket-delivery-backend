@@ -13,7 +13,6 @@ import { ApiTags } from '@nestjs/swagger';
 
 import { Auth } from '../../core/decorators/auth.decorator';
 import { TransformInterceptor } from '../../core/interceptors/transform.interceptor';
-import { ApiResponse } from '../admin/interface/admin';
 import { ProductService } from '../product/product.service';
 import { SubCategoryService } from '../sub-category/sub-category.service';
 import {
@@ -38,6 +37,7 @@ import {
   DeliveryCharges,
 } from './dto/user.dto';
 import { UserService } from './user.service';
+import { ApiResponse } from '../common/interface';
 
 @Controller('user')
 @ApiTags('User')

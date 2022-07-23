@@ -11,6 +11,7 @@ import { CitiesList } from 'src/modules/admin/shipping/cities/dto/cities.dto';
 import { Countries } from '../countries/countries.entity';
 import { States } from '../states/states.entity';
 import { Cities } from './cities.entity';
+import { CitiesListResponse } from './interface/response.interface';
 
 @Injectable()
 export class CitiesService {
@@ -21,7 +22,7 @@ export class CitiesService {
     private readonly statesRepository: typeof Countries,
   ) {}
 
-  async findAll(payload: CitiesList) {
+  async findAll(payload: CitiesList): Promise<CitiesListResponse> {
     try {
       const page = payload.page * payload.limit;
 
@@ -51,8 +52,6 @@ export class CitiesService {
           is_active: payload.active,
         });
       }
-
-      console.log(query);
 
       const cities = await this.citiesRepository.findAndCountAll({
         where: {

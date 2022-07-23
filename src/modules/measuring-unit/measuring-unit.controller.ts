@@ -3,6 +3,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { JWTAuthGuard } from '../../core/guard/jwt.guard';
 import { TransformInterceptor } from '../../core/interceptors/transform.interceptor';
+import { MeasuringUnitListInterface } from './interface/response.interface';
 import { MeasuringUnitService } from './measuring-unit.service';
 
 @Controller('admin/measuringUnit')
@@ -14,7 +15,7 @@ export class MeasuringUnitController {
   @ApiBearerAuth('Authorization')
   @UseGuards(JWTAuthGuard)
   @UseInterceptors(TransformInterceptor)
-  async findAll() {
-    return await this.measuringUnitService.findAll();
+  findAll(): Promise<MeasuringUnitListInterface> {
+    return this.measuringUnitService.findAll();
   }
 }

@@ -1,7 +1,7 @@
 import { Injectable, Inject, HttpException } from '@nestjs/common';
 import sequelize from 'sequelize';
+import { ApiResponse } from 'src/modules/common/interface';
 
-import { ApiResponse } from 'src/modules/admin/interface/admin';
 import { MESSAGES } from '../../../core/constants/messages';
 import {
   ORDER_REPOSITORY,

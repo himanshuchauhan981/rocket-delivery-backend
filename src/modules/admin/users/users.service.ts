@@ -12,13 +12,13 @@ import { STATUS_CODE } from '../../../core/constants/status_code';
 import { Order } from '../../../modules/order/order.entity';
 import { UserPayment } from '../../../modules/payment/user-payment.entity';
 import { User } from '../../../modules/user/user.entity';
-import { ApiResponse } from '../interface/admin';
 import { UserDetailList, UsersList } from './dto/admin-users.entity';
 import {
   DownloadUserCSVResponse,
   ListUsersResponse,
 } from './interface/response.interface';
 import { RESPONSE_TYPE } from '../../../core/constants/constants';
+import { ApiResponse } from 'src/modules/common/interface';
 
 @Injectable()
 export class UsersService {

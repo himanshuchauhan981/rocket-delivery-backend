@@ -6,9 +6,9 @@ import {
   STATES_REPOSITORY,
 } from 'src/core/constants/repositories';
 import { STATUS_CODE } from 'src/core/constants/status_code';
+import { ApiResponse } from 'src/modules/common/interface';
 import { Cities } from 'src/modules/shipping/cities/cities.entity';
 import { Countries } from 'src/modules/shipping/countries/countries.entity';
-import { ApiResponse } from '../../interface/admin';
 import { CityId, EditCitiesPayload, NewCity } from './dto/cities.dto';
 
 @Injectable()

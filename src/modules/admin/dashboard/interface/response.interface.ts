@@ -1,5 +1,5 @@
+import { ApiResponse } from 'src/modules/common/interface';
 import { ProductPrice } from 'src/modules/product/product-price.entity';
-import { ApiResponse } from '../../interface/admin';
 
 interface CategoryWiseSales {
   id: number;

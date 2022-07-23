@@ -12,10 +12,10 @@ import { ApiTags } from '@nestjs/swagger';
 
 import { Auth } from '../../../core/decorators/auth.decorator';
 import { TransformInterceptor } from '../../../core/interceptors/transform.interceptor';
-import { ApiResponse } from '../../admin/interface/admin';
 import { OrderService } from './order.service';
 import { NewOrder, SpecificOrder } from './dto/order.dto';
 import { CommonOrderService } from '../../order/order.service';
+import { ApiResponse } from 'src/modules/common/interface';
 
 @Controller('user/order')
 @ApiTags('User order')
