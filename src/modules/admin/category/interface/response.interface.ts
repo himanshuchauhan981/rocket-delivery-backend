@@ -1,4 +1,4 @@
-import { ApiResponse } from '../../dto/interface/admin';
+import { ApiResponse } from '../../interface/admin';
 
 interface CategoriesDetails {
   name: string;

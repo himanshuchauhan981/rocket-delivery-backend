@@ -9,7 +9,7 @@ import {
 import { STATUS_CODE } from 'src/core/constants/status_code';
 import { Countries } from 'src/modules/shipping/countries/countries.entity';
 import { States } from 'src/modules/shipping/states/states.entity';
-import { ApiResponse } from '../../dto/interface/admin';
+import { ApiResponse } from '../../interface/admin';
 import { EditStateParams, EditStatePayload, NewState } from './dto/states.dto';
 
 @Injectable()

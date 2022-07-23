@@ -14,7 +14,7 @@ import { ApiTags } from '@nestjs/swagger';
 
 import { Auth } from '../../../core/decorators/auth.decorator';
 import { TransformInterceptor } from '../../../core/interceptors/transform.interceptor';
-import { ApiResponse } from '../dto/interface/admin';
+import { ApiResponse } from '../interface/admin';
 import { CategoryService } from './category.service';
 import {
   CategoryId,

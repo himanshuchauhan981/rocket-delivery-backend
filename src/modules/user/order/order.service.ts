@@ -19,7 +19,7 @@ import {
   USER_REPOSITORY,
 } from '../../../core/constants/repositories';
 import { STATUS_CODE } from '../../../core/constants/status_code';
-import { ApiResponse } from '../../../modules/admin/dto/interface/admin';
+import { ApiResponse } from '../../admin/interface/admin';
 import { File } from '../../../modules/admin/file/file.entity';
 import { OrderProduct } from '../../../modules/order/order-product.entity';
 import { Order } from '../../../modules/order/order.entity';

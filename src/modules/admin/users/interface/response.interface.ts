@@ -1,7 +1,4 @@
-import {
-  ApiResponse,
-  FileResponse,
-} from 'src/modules/admin/dto/interface/admin';
+import { ApiResponse, FileResponse } from 'src/modules/admin/interface/admin';
 
 interface User {
   id: number;

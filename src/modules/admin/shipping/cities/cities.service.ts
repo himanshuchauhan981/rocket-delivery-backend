@@ -8,7 +8,7 @@ import {
 import { STATUS_CODE } from 'src/core/constants/status_code';
 import { Cities } from 'src/modules/shipping/cities/cities.entity';
 import { Countries } from 'src/modules/shipping/countries/countries.entity';
-import { ApiResponse } from '../../dto/interface/admin';
+import { ApiResponse } from '../../interface/admin';
 import { CityId, EditCitiesPayload, NewCity } from './dto/cities.dto';
 
 @Injectable()

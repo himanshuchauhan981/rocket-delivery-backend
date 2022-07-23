@@ -17,7 +17,7 @@ import {
   UpdateNotificationStatus,
 } from './dto/notification.dto';
 import { NotificationListResponse } from './interface/response.interface';
-import { ApiResponse } from '../dto/interface/admin';
+import { ApiResponse } from '../interface/admin';
 
 @Controller('admin/notification')
 @ApiTags('Admin notifications')

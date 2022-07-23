@@ -17,7 +17,7 @@ import {
 } from '../../../core/constants/repositories';
 import { STATUS_CODE } from '../../../core/constants/status_code';
 import { MESSAGES } from '../../../core/constants/messages';
-import { ApiResponse } from '../../../modules/admin/dto/interface/admin';
+import { ApiResponse } from '../interface/admin';
 import {
   FILE_FILTER_BY,
   FILE_SLUGS,

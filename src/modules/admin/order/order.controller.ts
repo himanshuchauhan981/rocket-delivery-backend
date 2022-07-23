@@ -14,7 +14,7 @@ import { Auth } from '../../../core/decorators/auth.decorator';
 import { TransformInterceptor } from '../../../core/interceptors/transform.interceptor';
 import { OrderListResponse } from '../../../modules/order/dto/order-response.dto';
 import { SpecificOrder } from '../../../modules/user/order/dto/order.dto';
-import { ApiResponse } from '../dto/interface/admin';
+import { ApiResponse } from '../interface/admin';
 import { OrdersList, UpdateOrder } from './dto/admin-orders.entity';
 import { SpecificOrderResponse } from './interface/response.interface';
 import { OrderService } from './order.service';

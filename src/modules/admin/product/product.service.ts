@@ -20,7 +20,7 @@ import { STATUS_CODE } from '../../../core/constants/status_code';
 import { MeasuringUnit } from '../../../modules/measuring-unit/measuring-unit.entity';
 import { MESSAGES } from '../../../core/constants/messages';
 import { ProductService as CommonProductService } from '../../product/product.service';
-import { ApiResponse } from '../dto/interface/admin';
+import { ApiResponse } from '../interface/admin';
 import { ProductDescription } from '../../../modules/product/product-description.entity';
 
 @Injectable()

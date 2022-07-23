@@ -21,7 +21,7 @@ import {
   NewProduct,
   SpecificProduct,
 } from './dto/admin-product.dto';
-import { ApiResponse } from '../dto/interface/admin';
+import { ApiResponse } from '../interface/admin';
 
 @Controller('admin/product')
 @ApiTags('Admin products')

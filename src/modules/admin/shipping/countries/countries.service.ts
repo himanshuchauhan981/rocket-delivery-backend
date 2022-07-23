@@ -4,7 +4,7 @@ import { MESSAGES } from 'src/core/constants/messages';
 import { COUNTRIES_REPOSITORY } from 'src/core/constants/repositories';
 import { STATUS_CODE } from 'src/core/constants/status_code';
 import { Countries } from 'src/modules/shipping/countries/countries.entity';
-import { ApiResponse } from '../../dto/interface/admin';
+import { ApiResponse } from '../../interface/admin';
 import { EditCountry } from './dto/countries.dto';
 
 @Injectable()

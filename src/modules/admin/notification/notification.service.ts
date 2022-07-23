@@ -8,7 +8,7 @@ import { STATUS_CODE } from '../../../core/constants/status_code';
 import { NotificationUser } from '../../../modules/notification/entity/notification-user.entity';
 import { Notification } from '../../../modules/notification/entity/notification.entity';
 import { User } from '../../../modules/user/user.entity';
-import { ApiResponse } from '../dto/interface/admin';
+import { ApiResponse } from '../interface/admin';
 import { NotificationListResponse } from './interface/response.interface';
 
 @Injectable()

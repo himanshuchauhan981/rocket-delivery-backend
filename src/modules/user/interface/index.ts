@@ -1,4 +1,4 @@
-import { ApiResponse } from 'src/modules/admin/dto/interface/admin';
+import { ApiResponse } from 'src/modules/admin/interface/admin';
 
 interface Image {
   id: number;

@@ -21,7 +21,7 @@ import { OrderListResponse } from '../../../modules/order/dto/order-response.dto
 import { OrderProduct } from '../../../modules/order/order-product.entity';
 import { Order } from '../../../modules/order/order.entity';
 import { User } from '../../../modules/user/user.entity';
-import { ApiResponse } from '../dto/interface/admin';
+import { ApiResponse } from '../interface/admin';
 import { OrdersList, UpdateOrder } from './dto/admin-orders.entity';
 import { OrderInvoiceResponse } from './interface/response.interface';
 import { orderInvoice } from '../../../core/utils/invoice';

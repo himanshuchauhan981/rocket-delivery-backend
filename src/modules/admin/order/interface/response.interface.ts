@@ -1,4 +1,4 @@
-import { ApiResponse } from 'src/modules/admin/dto/interface/admin';
+import { ApiResponse } from 'src/modules/admin/interface/admin';
 import { Order } from 'src/modules/order/dto/order-response.dto';
 
 interface User {
@@ -25,7 +25,7 @@ interface OrderAddress {
   // city: string;
   // state: string;
   landmark: string;
-  // country_code: string;
+  // country_code: stsring;
   mobile_number: string;
   pincode: string;
   latitude: number;

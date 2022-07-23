@@ -13,7 +13,7 @@ import { ApiTags } from '@nestjs/swagger';
 
 import { Auth } from '../../../core/decorators/auth.decorator';
 import { TransformInterceptor } from '../../../core/interceptors/transform.interceptor';
-import { ApiResponse } from '../dto/interface/admin';
+import { ApiResponse } from '../interface/admin';
 import { AdminSubcategoryService } from './admin-subcategory.service';
 import {
   SubCategoryId,
@@ -23,7 +23,7 @@ import {
 import {
   AdminSubCategoryListResponse,
   SpecificSubCategoryResponse,
-} from './dto/interface/admin-subcategory';
+} from './interface/admin-subcategory';
 
 @ApiTags('Admin sub category')
 @Controller('admin/subcategories')
