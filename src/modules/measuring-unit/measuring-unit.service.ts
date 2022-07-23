@@ -3,10 +3,11 @@ import { Injectable } from '@nestjs/common';
 import { STATUS_CODE } from '../../core/constants/status_code';
 import { MESSAGES } from '../../core/constants/messages';
 import { MeasuringUnit } from './measuring-unit.entity';
+import { MeasuringUnitListInterface } from './interface/response.interface';
 
 @Injectable()
 export class MeasuringUnitService {
-  async findAll() {
+  async findAll(): Promise<MeasuringUnitListInterface> {
     try {
       const measuringUnitList = await MeasuringUnit.findAll({
         where: { is_deleted: 0 },

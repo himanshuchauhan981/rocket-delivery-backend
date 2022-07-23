@@ -1,11 +1,11 @@
-import { ApiResponse } from 'src/modules/admin/dto/interface/admin';
+import { Address } from 'src/modules/address/interface';
 import {
   OrderProducts,
-  ProductReview,
-  User,
   UserPayment,
-  OrderAddress,
 } from 'src/modules/admin/order/interface/response.interface';
+import { OrderUser } from 'src/modules/admin/users/interface';
+import { ApiResponse } from 'src/modules/common/interface';
+import { ProductReview } from 'src/modules/product-review/interface';
 
 interface Order {
   id: number;
@@ -15,9 +15,9 @@ interface Order {
   payment_method: number;
   created_at: Date;
   payment_status: string;
-  user: User;
+  user: OrderUser;
   order_products: OrderProducts[];
-  address: OrderAddress;
+  address: Address;
   payment: UserPayment;
   product_review: ProductReview[];
 }

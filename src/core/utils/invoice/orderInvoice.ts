@@ -1,6 +1,6 @@
 import * as moment from 'moment';
 
-import { Order } from 'src/modules/order/dto/order-response.dto';
+import { Order } from 'src/modules/order/interface/response.interface';
 
 const orderInvoice = (order: Order) => {
   let orderProductHtml = '';

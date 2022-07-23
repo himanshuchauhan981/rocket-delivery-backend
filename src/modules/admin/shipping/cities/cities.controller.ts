@@ -34,31 +34,31 @@ export class CitiesController {
   @Post('new')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async addNewState(@Body(new ValidationPipe()) payload: NewCity) {
-    return await this.citiesService.create(payload);
+  addNewState(@Body(new ValidationPipe()) payload: NewCity) {
+    return this.citiesService.create(payload);
   }
 
   @Get('list')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async citiesList(@Query(new ValidationPipe()) query: CitiesList) {
-    return await this.commonCitiesService.findAll(query);
+  citiesList(@Query(new ValidationPipe()) query: CitiesList) {
+    return this.commonCitiesService.findAll(query);
   }
 
   @Put(':id')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async updateState(
+  updateState(
     @Param(new ValidationPipe()) params: CityId,
     @Body(new ValidationPipe()) payload: EditCitiesPayload,
   ) {
-    return await this.citiesService.update(params, payload);
+    return this.citiesService.update(params, payload);
   }
 
   @Delete(':id')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async delete(@Param(new ValidationPipe()) params: CityId) {
-    return await this.citiesService.delete(params.id);
+  delete(@Param(new ValidationPipe()) params: CityId) {
+    return this.citiesService.delete(params.id);
   }
 }

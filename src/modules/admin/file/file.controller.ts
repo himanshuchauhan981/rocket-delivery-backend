@@ -34,34 +34,34 @@ export class FileController {
   @Get('list')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async getAll(
+  getAll(
     @Query(new ValidationPipe()) query: FileList,
   ): Promise<GetAllFilesResponse> {
-    return await this.fileService.getAll(query);
+    return this.fileService.getAll(query);
   }
 
   @Get('')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async getBySlug(
+  getBySlug(
     @Query(new ValidationPipe()) query: FileListBySlug,
   ): Promise<GetFilesBySlugResponse> {
-    return await this.fileService.getBySlug(query);
+    return this.fileService.getBySlug(query);
   }
 
   @Post('')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async create(
+  create(
     @Body(new ValidationPipe()) payload: CreateFile,
   ): Promise<CreateFileResponse> {
-    return await this.fileService.create(payload);
+    return this.fileService.create(payload);
   }
 
   @Delete(':id')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async delete(@Param(new ValidationPipe()) params: SpecificFile) {
-    return await this.fileService.delete(params.id);
+  delete(@Param(new ValidationPipe()) params: SpecificFile) {
+    return this.fileService.delete(params.id);
   }
 }

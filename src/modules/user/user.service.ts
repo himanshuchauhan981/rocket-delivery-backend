@@ -5,11 +5,12 @@ import * as otpGenerator from 'otp-generator';
 
 import { MESSAGES } from '../../core/constants/messages';
 import {
+  ADMIN_REPOSITORY,
   CATEGORY_REPOSITORY,
+  ORDER_REPOSITORY,
   USER_REPOSITORY,
 } from '../../core/constants/repositories';
 import { STATUS_CODE } from '../../core/constants/status_code';
-import { ApiResponse } from '../admin/dto/interface/admin';
 import { File } from '../admin/file/file.entity';
 import { Category } from '../category/category.entity';
 import { CommonService } from '../common/common.service';
@@ -19,12 +20,13 @@ import {
   LoginUserResponse,
   NewUserResponse,
   UserDetailsResponse,
-} from './dto/interface';
+} from './interface';
 import {
   VerifyPassword,
   UpdateProfile,
   UserLogin,
   UserSignup,
+  DeliveryCharges,
 } from './dto/user.dto';
 import { User } from './user.entity';
 import {
@@ -33,6 +35,9 @@ import {
 } from '../../core/utils/mail/mail.service';
 import { USER_TYPE } from '../../core/constants/constants';
 import { Address } from '../address/address.entity';
+import { Admin } from '../admin/admin.entity';
+import { Order } from '../order/order.entity';
+import { ApiResponse } from '../common/interface';
 
 @Injectable()
 export class UserService {
@@ -41,6 +46,10 @@ export class UserService {
     @Inject(USER_REPOSITORY) private readonly userRepository: typeof User,
     @Inject(CATEGORY_REPOSITORY)
     private readonly categoryRepository: typeof Category,
+    @Inject(ADMIN_REPOSITORY)
+    private readonly adminRepository: typeof Admin,
+    @Inject(ORDER_REPOSITORY)
+    private readonly orderRepository: typeof Order,
     private readonly mailService: MailService,
   ) {}
 
@@ -48,7 +57,7 @@ export class UserService {
     email: string,
     mobileNumber: string = null,
   ): Promise<User> {
-    return await this.userRepository.findOne({
+    return this.userRepository.findOne({
       where: {
         [sequelize.Op.or]: [
           { email: email },
@@ -79,7 +88,7 @@ export class UserService {
     const otp = this.#generateUserPasswordOTP();
     const otpValidity = moment().add(2, 'minutes');
 
-    return await this.userRepository.update(
+    return this.userRepository.update(
       { otp, otp_validity: otpValidity },
       { where: { email }, returning: true },
     );
@@ -405,6 +414,83 @@ export class UserService {
       return {
         statusCode: STATUS_CODE.SUCCESS,
         message: MESSAGES.ADMIN_PASSWORD_RESET_SUCCESS,
+      };
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  toRad(value: number) {
+    return (value * Math.PI) / 180;
+  }
+
+  calculateDistance(lat1, lon1, lat2, lon2, unit) {
+    if (lat1 == lat2 && lon1 == lon2) {
+      return 0;
+    } else {
+      const radlat1 = (Math.PI * lat1) / 180;
+      const radlat2 = (Math.PI * lat2) / 180;
+      const theta = lon1 - lon2;
+      const radtheta = (Math.PI * theta) / 180;
+      let dist =
+        Math.sin(radlat1) * Math.sin(radlat2) +
+        Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+      if (dist > 1) {
+        dist = 1;
+      }
+      dist = Math.acos(dist);
+      dist = (dist * 180) / Math.PI;
+      dist = dist * 60 * 1.1515;
+      if (unit == 'K') {
+        dist = dist * 1.609344;
+      }
+      if (unit == 'N') {
+        dist = dist * 0.8684;
+      }
+      return dist;
+    }
+  }
+
+  async calculateDeliveryCharges(params: DeliveryCharges, userId: number) {
+    try {
+      const orderCount = await this.orderRepository.count({
+        where: { user_id: userId },
+      });
+
+      const adminDetails = await this.adminRepository.findOne({
+        where: { super_admin: 1 },
+      });
+
+      const finalDistance = this.calculateDistance(
+        params.latitude,
+        params.longitude,
+        adminDetails.latitude,
+        adminDetails.longitude,
+        'K',
+      );
+
+      let deliveryCharges = 0;
+
+      if (finalDistance < 4.5 || orderCount === 0) {
+        deliveryCharges = 0;
+      } else if (finalDistance > 4.5 && finalDistance <= 5.5) {
+        deliveryCharges = 10;
+      } else if (finalDistance > 5.5 && finalDistance <= 6.5) {
+        deliveryCharges = 20;
+      } else if (finalDistance > 6.5 && finalDistance <= 7.5) {
+        deliveryCharges = 30;
+      } else {
+        const leftOverDistance = finalDistance - 7.5;
+        deliveryCharges = 30 + leftOverDistance * 10;
+      }
+      return {
+        statusCode: STATUS_CODE.SUCCESS,
+        message: MESSAGES.SUCCESS,
+        data: {
+          deliveryCharges,
+          finalDistance,
+          firstDelivery: !!orderCount,
+        },
       };
     } catch (err) {
       throw err;

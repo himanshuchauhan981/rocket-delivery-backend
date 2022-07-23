@@ -1,5 +1,6 @@
 import { HttpException, Inject, Injectable } from '@nestjs/common';
 import sequelize from 'sequelize';
+import { ApiResponse } from 'src/modules/common/interface';
 
 import { MESSAGES } from '../../../core/constants/messages';
 import { CATEGORY_REPOSITORY } from '../../../core/constants/repositories';
@@ -7,7 +8,6 @@ import { STATUS_CODE } from '../../../core/constants/status_code';
 import { Category } from '../../../modules/category/category.entity';
 import { ProductService } from '../../../modules/product/product.service';
 import { SubCategoryService } from '../../../modules/sub-category/sub-category.service';
-import { ApiResponse } from '../dto/interface/admin';
 import { File } from '../file/file.entity';
 import { CategoryList, SubmitCategory } from './dto/admin-category.dto';
 import {

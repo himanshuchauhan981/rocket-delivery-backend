@@ -1,4 +1,5 @@
-import { ApiResponse } from 'src/modules/admin/dto/interface/admin';
+import { ApiResponse } from 'src/modules/common/interface';
+import { ProductPrice } from 'src/modules/product/interface';
 
 interface Image {
   id: number;
@@ -8,8 +9,6 @@ interface Image {
 interface Address {
   id: number;
   area: string;
-  // city: string;
-  // state: string;
   full_name: string;
   mobile_number: string;
   pincode: string;
@@ -22,6 +21,25 @@ interface Category {
   name: string;
   is_sub_category: number;
   image: Image;
+}
+
+interface SubCategory {
+  id: number;
+  name: string;
+  category: Category;
+  image: Image;
+}
+
+interface CartProducts {
+  id: number;
+  name: string;
+  is_active: number;
+  max_quantity: number;
+  minimum_cart_quantity: number;
+  maximum_cart_quantity: number;
+  product_price: ProductPrice;
+  file: Image;
+  available_quantity: number;
 }
 
 interface OrderPayment {
@@ -50,6 +68,18 @@ interface LoginUserResponse extends ApiResponse {
 interface ListCategoriesResponse extends ApiResponse {
   data: {
     categoryList: Category[];
+  };
+}
+
+interface ListSubCategoriesResponse extends ApiResponse {
+  data: {
+    subCategories: SubCategory[];
+  };
+}
+
+interface UserCartDetailsResponse extends ApiResponse {
+  data: {
+    cartProductDetails: CartProducts[];
   };
 }
 
@@ -91,4 +121,6 @@ export {
   UserDetailsResponse,
   ForgetPasswordResponse,
   UserOrderTransactions,
+  ListSubCategoriesResponse,
+  UserCartDetailsResponse,
 };

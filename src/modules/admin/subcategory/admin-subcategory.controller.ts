@@ -10,10 +10,10 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { ApiResponse } from 'src/modules/common/interface';
 
 import { Auth } from '../../../core/decorators/auth.decorator';
 import { TransformInterceptor } from '../../../core/interceptors/transform.interceptor';
-import { ApiResponse } from '../dto/interface/admin';
 import { AdminSubcategoryService } from './admin-subcategory.service';
 import {
   SubCategoryId,
@@ -23,7 +23,7 @@ import {
 import {
   AdminSubCategoryListResponse,
   SpecificSubCategoryResponse,
-} from './dto/interface/admin-subcategory';
+} from './interface/admin-subcategory';
 
 @ApiTags('Admin sub category')
 @Controller('admin/subcategories')
@@ -35,44 +35,42 @@ export class AdminSubcategoryController {
   @Get('list')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async findAll(): Promise<AdminSubCategoryListResponse> {
-    return await this.adminSubCategoryService.findAll();
+  findAll(): Promise<AdminSubCategoryListResponse> {
+    return this.adminSubCategoryService.findAll();
   }
 
   @Get('')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async findAllByCategoryId(
-    @Query(new ValidationPipe()) query: SubCategoryList,
-  ) {
-    return await this.adminSubCategoryService.findAllByCategoryId(query);
+  findAllByCategoryId(@Query(new ValidationPipe()) query: SubCategoryList) {
+    return this.adminSubCategoryService.findAllByCategoryId(query);
   }
 
   @Get(':id')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async findOneById(
+  findOneById(
     @Param(new ValidationPipe()) params: SubCategoryId,
   ): Promise<SpecificSubCategoryResponse> {
-    return await this.adminSubCategoryService.findOneById(params.id);
+    return this.adminSubCategoryService.findOneById(params.id);
   }
 
   @Patch(':id')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async update(
+  update(
     @Body(new ValidationPipe()) payload: SubmitSubCategory,
     @Param(new ValidationPipe()) params: SubCategoryId,
   ) {
-    return await this.adminSubCategoryService.update(payload, params.id);
+    return this.adminSubCategoryService.update(payload, params.id);
   }
 
   @Delete(':id')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async delete(
+  delete(
     @Param(new ValidationPipe()) params: SubCategoryId,
   ): Promise<ApiResponse> {
-    return await this.adminSubCategoryService.delete(params.id);
+    return this.adminSubCategoryService.delete(params.id);
   }
 }

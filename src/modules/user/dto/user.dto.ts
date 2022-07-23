@@ -1,7 +1,7 @@
 import { IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class UserSignup {
+class UserSignup {
   @IsNotEmpty()
   @ApiProperty()
   name: string;
@@ -31,7 +31,7 @@ export class UserSignup {
   fcm_token: string;
 }
 
-export class UserLogin {
+class UserLogin {
   @IsNotEmpty()
   @ApiProperty()
   email: string;
@@ -57,7 +57,7 @@ export class UserSubCategoryList {
   category_id: number;
 }
 
-export class UserProducts {
+class UserProducts {
   @ApiProperty({ required: false })
   category_id: number;
 
@@ -73,13 +73,13 @@ export class UserProducts {
   limit: number;
 }
 
-export class SpecificProduct {
+class SpecificProduct {
   @IsNotEmpty()
   @ApiProperty()
   id: number;
 }
 
-export class SimilarProducts {
+class SimilarProducts {
   @IsNotEmpty()
   @ApiProperty()
   category_id: number;
@@ -99,13 +99,13 @@ class Cart {
   quantity: number;
 }
 
-export class UserCart {
+class UserCart {
   @ApiProperty()
   @IsNotEmpty()
   cart_items: Cart[];
 }
 
-export class UpdateProfile {
+class UpdateProfile {
   @ApiProperty({ required: false })
   email: string;
 
@@ -119,12 +119,12 @@ export class UpdateProfile {
   password: string;
 }
 
-export class UserEmail {
+class UserEmail {
   @ApiProperty()
   email: string;
 }
 
-export class VerifyPassword {
+class VerifyPassword {
   @ApiProperty()
   email: string;
 
@@ -132,10 +132,34 @@ export class VerifyPassword {
   otp: string;
 }
 
-export class ResetPassword {
+class ResetPassword {
   @ApiProperty()
   id: number;
 
   @ApiProperty()
   new_password: string;
 }
+
+class DeliveryCharges {
+  @ApiProperty()
+  @IsNotEmpty()
+  latitude: number;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  longitude: number;
+}
+
+export {
+  UserSignup,
+  UserLogin,
+  UserProducts,
+  SpecificProduct,
+  SimilarProducts,
+  UserCart,
+  UpdateProfile,
+  UserEmail,
+  VerifyPassword,
+  ResetPassword,
+  DeliveryCharges,
+};

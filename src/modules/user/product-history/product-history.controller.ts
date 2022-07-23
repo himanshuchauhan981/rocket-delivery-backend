@@ -27,24 +27,24 @@ export class UserProductHistoryController {
   @Post('new')
   @Auth('user')
   @UseInterceptors(TransformInterceptor)
-  async create(
+  create(
     @Body(new ValidationPipe()) payload: NewProductHistory,
     @Req() request,
   ) {
-    return await this.productHistoryService.create(payload, request.userId);
+    return this.productHistoryService.create(payload, request.userId);
   }
 
   @Get('list')
   @Auth('user')
   @UseInterceptors(TransformInterceptor)
-  async list(@Req() request) {
-    return await this.productHistoryService.list(request.userId, false);
+  list(@Req() request) {
+    return this.productHistoryService.list(request.userId, false);
   }
 
   @Delete(':id')
   @Auth('user')
   @UseInterceptors(TransformInterceptor)
-  async delete(@Param(new ValidationPipe()) params: SpecificProductHistory) {
-    return await this.productHistoryService.delete(params.id);
+  delete(@Param(new ValidationPipe()) params: SpecificProductHistory) {
+    return this.productHistoryService.delete(params.id);
   }
 }

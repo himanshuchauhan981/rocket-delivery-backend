@@ -3,6 +3,7 @@ import { HttpException, Inject, Injectable } from '@nestjs/common';
 import { MESSAGES } from '../../core/constants/messages';
 import { ADDRESS_REPOSITORY } from '../../core/constants/repositories';
 import { STATUS_CODE } from '../../core/constants/status_code';
+import { ApiResponse } from '../common/interface';
 import { NewAddress } from '../user/address/dto/address.dto';
 import { Address } from './address.entity';
 
@@ -13,7 +14,7 @@ export class AddressService {
     private readonly addressRepository: typeof Address,
   ) {}
 
-  async update(payload: NewAddress, id: number) {
+  async update(payload: NewAddress, id: number): Promise<ApiResponse> {
     try {
       const addressDetails = await this.addressRepository.findByPk(id);
 

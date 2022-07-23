@@ -15,6 +15,8 @@ import { ProductReview } from '../product-review/product-review.entity';
 import { SubCategory } from '../sub-category/sub-category.entity';
 import { DISCOUNT_TYPE } from 'src/core/constants/constants';
 import { ProductDescription } from './product-description.entity';
+import { UserCartDetailsResponse } from '../user/interface';
+import { ProductDetailResponse } from './interface/response.interface';
 
 @Injectable()
 export class ProductService {
@@ -33,8 +35,8 @@ export class ProductService {
     const currentDate = moment();
     const discountStartDate = moment(start_date);
     const discountEndDate = moment(end_date);
-    let discountStatus;
-    let discountPrice;
+    let discountStatus: boolean;
+    let discountPrice: number;
 
     if (
       discountStartDate.isBefore(currentDate) &&
@@ -78,7 +80,7 @@ export class ProductService {
     );
   }
 
-  async cartItems(payload: UserCart) {
+  async cartItems(payload: UserCart): Promise<UserCartDetailsResponse> {
     const productIds = payload.cart_items.map((items) => items.id);
 
     const productDetails = await this.productRepository.findAll({
@@ -141,7 +143,7 @@ export class ProductService {
     };
   }
 
-  async findOneById(productId: number) {
+  async findOneById(productId: number): Promise<ProductDetailResponse> {
     try {
       const productDetails = await this.productRepository.findByPk(productId, {
         include: [

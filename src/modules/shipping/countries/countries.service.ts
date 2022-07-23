@@ -6,6 +6,7 @@ import { COUNTRIES_REPOSITORY } from 'src/core/constants/repositories';
 import { STATUS_CODE } from 'src/core/constants/status_code';
 import { CountriesList } from 'src/modules/admin/shipping/countries/dto/countries.dto';
 import { Countries } from './countries.entity';
+import { CountriesListResponse } from './interface/response.interface';
 
 @Injectable()
 export class CountriesService {
@@ -14,7 +15,7 @@ export class CountriesService {
     private readonly countriesRepository: typeof Countries,
   ) {}
 
-  async findAll(payload: CountriesList) {
+  async findAll(payload: CountriesList): Promise<CountriesListResponse> {
     try {
       const page = payload.page * payload.limit;
 

@@ -21,7 +21,7 @@ export class UserPaymentController {
   @Post('create')
   @Auth('user')
   @UseInterceptors(TransformInterceptor)
-  async generateRazorpayOrder(
+  generateRazorpayOrder(
     @Body(new ValidationPipe()) payload: NewPaymentOrder,
     @Req() request,
   ) {

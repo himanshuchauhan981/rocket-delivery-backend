@@ -45,7 +45,7 @@ export class NotificationService {
     return notificationBody;
   }
 
-  async createNotification(notificationArgs: NotificationArgs) {
+  async createNotification(notificationArgs: NotificationArgs): Promise<void> {
     const notificationPayload = {
       body: this.#generateNotification(
         notificationArgs.slug,

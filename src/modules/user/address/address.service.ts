@@ -1,7 +1,7 @@
 import { HttpException, Inject, Injectable } from '@nestjs/common';
 import sequelize from 'sequelize';
 
-import { ApiResponse } from 'src/modules/admin/dto/interface/admin';
+import { ApiResponse } from 'src/modules/common/interface';
 import { Cities } from 'src/modules/shipping/cities/cities.entity';
 import { Countries } from 'src/modules/shipping/countries/countries.entity';
 import { States } from 'src/modules/shipping/states/states.entity';

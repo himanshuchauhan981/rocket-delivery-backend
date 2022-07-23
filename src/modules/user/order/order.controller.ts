@@ -12,10 +12,10 @@ import { ApiTags } from '@nestjs/swagger';
 
 import { Auth } from '../../../core/decorators/auth.decorator';
 import { TransformInterceptor } from '../../../core/interceptors/transform.interceptor';
-import { ApiResponse } from '../../../modules/admin/dto/interface/admin';
 import { OrderService } from './order.service';
 import { NewOrder, SpecificOrder } from './dto/order.dto';
 import { CommonOrderService } from '../../order/order.service';
+import { ApiResponse } from 'src/modules/common/interface';
 
 @Controller('user/order')
 @ApiTags('User order')
@@ -28,35 +28,35 @@ export class UserOrderController {
   @Post('new')
   @Auth('user')
   @UseInterceptors(TransformInterceptor)
-  async create(
+  create(
     @Body(new ValidationPipe()) payload: NewOrder,
     @Req() request,
   ): Promise<ApiResponse> {
-    return await this.orderService.create(payload, request.userId);
+    return this.orderService.create(payload, request.userId);
   }
 
   @Get('list')
   @Auth('user')
   @UseInterceptors(TransformInterceptor)
-  async list(@Req() request) {
-    return await this.orderService.list(request.userId);
+  list(@Req() request) {
+    return this.orderService.list(request.userId);
   }
 
   @Get(':id')
   @Auth('user')
   @UseInterceptors(TransformInterceptor)
-  async findOneById(@Param(new ValidationPipe()) params: SpecificOrder) {
-    return await this.commonOrderService.findOneById(params.id);
+  findOneById(@Param(new ValidationPipe()) params: SpecificOrder) {
+    return this.commonOrderService.findOneById(params.id);
   }
 
   @Get(':id/cancel')
   @Auth('user')
   @UseInterceptors(TransformInterceptor)
-  async cancelOrder(
+  cancelOrder(
     @Param(new ValidationPipe()) params: SpecificOrder,
     @Req() request,
   ): Promise<ApiResponse> {
-    return await this.orderService.cancelOrder(
+    return this.orderService.cancelOrder(
       params.id,
       request.userId,
       request.role,

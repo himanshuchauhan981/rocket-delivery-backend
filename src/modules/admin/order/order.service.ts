@@ -17,16 +17,16 @@ import {
 } from '../../../core/constants/repositories';
 import { STATUS_CODE } from '../../../core/constants/status_code';
 import { FcmService } from '../../../core/utils/fcm.service';
-import { OrderListResponse } from '../../../modules/order/dto/order-response.dto';
+import { OrderListResponse } from '../../order/interface/response.interface';
 import { OrderProduct } from '../../../modules/order/order-product.entity';
 import { Order } from '../../../modules/order/order.entity';
 import { User } from '../../../modules/user/user.entity';
-import { ApiResponse } from '../dto/interface/admin';
 import { OrdersList, UpdateOrder } from './dto/admin-orders.entity';
 import { OrderInvoiceResponse } from './interface/response.interface';
 import { orderInvoice } from '../../../core/utils/invoice';
 import { Address } from '../../../modules/address/address.entity';
 import { NotificationTemplate } from '../../../modules/notification/entity/notification-template.entity';
+import { ApiResponse } from 'src/modules/common/interface';
 
 @Injectable()
 export class OrderService {

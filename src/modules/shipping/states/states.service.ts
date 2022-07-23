@@ -9,6 +9,7 @@ import {
 import { STATUS_CODE } from 'src/core/constants/status_code';
 import { StateList } from 'src/modules/admin/shipping/states/dto/states.dto';
 import { Countries } from '../countries/countries.entity';
+import { StatesListResponse } from './interface/response.interface';
 import { States } from './states.entity';
 
 @Injectable()
@@ -20,7 +21,7 @@ export class StatesService {
     private readonly statesRepository: typeof States,
   ) {}
 
-  async findAll(payload: StateList) {
+  async findAll(payload: StateList): Promise<StatesListResponse> {
     try {
       const page = payload.page * payload.limit;
 

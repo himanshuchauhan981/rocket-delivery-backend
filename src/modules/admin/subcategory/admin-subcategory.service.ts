@@ -1,5 +1,6 @@
 import { HttpException, Inject, Injectable } from '@nestjs/common';
 import sequelize from 'sequelize';
+import { ApiResponse } from 'src/modules/common/interface';
 
 import { MESSAGES } from '../../../core/constants/messages';
 import {
@@ -9,7 +10,6 @@ import {
 import { STATUS_CODE } from '../../../core/constants/status_code';
 import { Product } from '../../../modules/product/product.entity';
 import { SubCategory } from '../../../modules/sub-category/sub-category.entity';
-import { ApiResponse } from '../dto/interface/admin';
 import { File } from '../file/file.entity';
 import {
   SubCategoryList,
@@ -18,7 +18,7 @@ import {
 import {
   AdminSubCategoryListResponse,
   SpecificSubCategoryResponse,
-} from './dto/interface/admin-subcategory';
+} from './interface/admin-subcategory';
 
 @Injectable()
 export class AdminSubcategoryService {

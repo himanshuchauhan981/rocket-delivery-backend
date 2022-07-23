@@ -7,9 +7,9 @@ import {
   STATES_REPOSITORY,
 } from 'src/core/constants/repositories';
 import { STATUS_CODE } from 'src/core/constants/status_code';
+import { ApiResponse } from 'src/modules/common/interface';
 import { Countries } from 'src/modules/shipping/countries/countries.entity';
 import { States } from 'src/modules/shipping/states/states.entity';
-import { ApiResponse } from '../../dto/interface/admin';
 import { EditStateParams, EditStatePayload, NewState } from './dto/states.dto';
 
 @Injectable()

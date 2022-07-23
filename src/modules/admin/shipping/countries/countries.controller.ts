@@ -12,7 +12,6 @@ import { ApiTags } from '@nestjs/swagger';
 
 import { Auth } from 'src/core/decorators/auth.decorator';
 import { TransformInterceptor } from 'src/core/interceptors/transform.interceptor';
-import { ApiResponse } from '../../dto/interface/admin';
 import { CountriesService } from './countries.service';
 import { CountriesService as CommonCountriesService } from '../../../shipping/countries/countries.service';
 import {
@@ -21,6 +20,7 @@ import {
   CountryStatus,
   EditCountry,
 } from './dto/countries.dto';
+import { ApiResponse } from 'src/modules/common/interface';
 
 @Controller('admin/shipping/countries')
 @ApiTags('Admin Shipping countries')
@@ -33,27 +33,27 @@ export class CountriesController {
   @Get('list')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async findAll(@Query(new ValidationPipe()) query: CountriesList) {
-    return await this.commonCountryService.findAll(query);
+  findAll(@Query(new ValidationPipe()) query: CountriesList) {
+    return this.commonCountryService.findAll(query);
   }
 
   @Put(':id/status')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async changeStatus(
+  changeStatus(
     @Param() params: CountryId,
     @Body(new ValidationPipe()) payload: CountryStatus,
   ): Promise<ApiResponse> {
-    return await this.countryService.statusUpdate(params.id, payload.status);
+    return this.countryService.statusUpdate(params.id, payload.status);
   }
 
   @Put(':id')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async delete(
+  delete(
     @Param(new ValidationPipe()) params: CountryId,
     @Body(new ValidationPipe()) payload: EditCountry,
   ): Promise<ApiResponse> {
-    return await this.countryService.update(params.id, payload);
+    return this.countryService.update(params.id, payload);
   }
 }

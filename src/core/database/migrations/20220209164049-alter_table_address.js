@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-  async up (queryInterface, Sequelize) {
+  async up(queryInterface, Sequelize) {
     /**
      * Add altering commands here.
      *
@@ -10,20 +10,20 @@ module.exports = {
      */
 
     await queryInterface.changeColumn('address', 'latitude', {
-      type: Sequelize.DECIMAL
+      type: Sequelize.DECIMAL,
     });
 
     await queryInterface.changeColumn('address', 'longitude', {
-      type: Sequelize.DECIMAL
-    })
+      type: Sequelize.DECIMAL,
+    });
   },
 
-  async down (queryInterface, Sequelize) {
+  async down(queryInterface, Sequelize) {
     /**
      * Add reverting commands here.
      *
      * Example:
      * await queryInterface.dropTable('users');
      */
-  }
+  },
 };

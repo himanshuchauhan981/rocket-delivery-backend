@@ -39,6 +39,18 @@ export class Admin extends Model<Admin> {
   })
   super_admin: number;
 
+  @Column({
+    type: DataType.FLOAT,
+    allowNull: false,
+  })
+  latitude: number;
+
+  @Column({
+    type: DataType.FLOAT,
+    allowNull: false,
+  })
+  longitude: number;
+
   @CreatedAt
   created_at: Date;
 

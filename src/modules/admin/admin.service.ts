@@ -6,10 +6,7 @@ import { STATUS_CODE } from '../../core/constants/status_code';
 import { CommonService } from '../common/common.service';
 import { Admin } from './admin.entity';
 import { AdminLogin } from './dto/admin.dto';
-import {
-  AdminDetailsResponse,
-  AdminLoginResponse,
-} from './dto/interface/admin';
+import { AdminDetailsResponse, AdminLoginResponse } from './interface';
 
 @Injectable()
 export class AdminService {
