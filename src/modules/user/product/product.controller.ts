@@ -29,34 +29,32 @@ export class UserProductController {
 
   @Get('list')
   @UseInterceptors(TransformInterceptor)
-  async productList(@Query(new ValidationPipe()) query: UserProducts) {
-    return await this.productService.list(query);
+  productList(@Query(new ValidationPipe()) query: UserProducts) {
+    return this.productService.list(query);
   }
 
   @Get('offers')
   @Auth('user')
   @UseInterceptors(TransformInterceptor)
-  async productOffers(@Req() request) {
-    return await this.productService.productOffers(request.userId);
+  productOffers(@Req() request) {
+    return this.productService.productOffers(request.userId);
   }
 
   @Get('discountOffers')
   @UseInterceptors(TransformInterceptor)
-  async discountOffers() {
-    return await this.productService.discountOffers();
+  discountOffers() {
+    return this.productService.discountOffers();
   }
 
   @Get('similar')
   @UseInterceptors(TransformInterceptor)
-  async findSimilarProducts(
-    @Query(new ValidationPipe()) query: SimilarProducts,
-  ) {
-    return await this.productService.findSimilarProducts(query);
+  findSimilarProducts(@Query(new ValidationPipe()) query: SimilarProducts) {
+    return this.productService.findSimilarProducts(query);
   }
 
   @Get(':id')
   @UseInterceptors(TransformInterceptor)
-  async findOneById(@Param(new ValidationPipe()) params: SpecificProduct) {
-    return await this.commonProductService.findOneById(params.id);
+  findOneById(@Param(new ValidationPipe()) params: SpecificProduct) {
+    return this.commonProductService.findOneById(params.id);
   }
 }

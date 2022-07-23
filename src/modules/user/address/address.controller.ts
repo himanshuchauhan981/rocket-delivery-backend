@@ -28,24 +28,24 @@ export class UserAddressController {
   @Get('list')
   @Auth('user')
   @UseInterceptors(TransformInterceptor)
-  async findByUserId(@Req() req) {
-    return await this.addressService.findAllByUserId(req.userId);
+  findByUserId(@Req() req) {
+    return this.addressService.findAllByUserId(req.userId);
   }
 
   @Post('new')
   @Auth('user')
   @UseInterceptors(TransformInterceptor)
-  async add(@Body(new ValidationPipe()) payload: NewAddress, @Req() req) {
-    return await this.addressService.add(payload, req.userId);
+  add(@Body(new ValidationPipe()) payload: NewAddress, @Req() req) {
+    return this.addressService.add(payload, req.userId);
   }
 
   @Patch(':id')
   @Auth('user')
   @UseInterceptors(TransformInterceptor)
-  async update(
+  update(
     @Body(new ValidationPipe()) payload: NewAddress,
     @Param() params: AddressId,
   ) {
-    return await this.commonAddressService.update(payload, params.id);
+    return this.commonAddressService.update(payload, params.id);
   }
 }

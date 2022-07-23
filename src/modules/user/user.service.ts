@@ -57,7 +57,7 @@ export class UserService {
     email: string,
     mobileNumber: string = null,
   ): Promise<User> {
-    return await this.userRepository.findOne({
+    return this.userRepository.findOne({
       where: {
         [sequelize.Op.or]: [
           { email: email },
@@ -88,7 +88,7 @@ export class UserService {
     const otp = this.#generateUserPasswordOTP();
     const otpValidity = moment().add(2, 'minutes');
 
-    return await this.userRepository.update(
+    return this.userRepository.update(
       { otp, otp_validity: otpValidity },
       { where: { email }, returning: true },
     );

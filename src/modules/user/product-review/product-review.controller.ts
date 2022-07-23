@@ -31,38 +31,34 @@ export class UserProductReviewController {
   @Post('new')
   @Auth('user')
   @UseInterceptors(TransformInterceptor)
-  async create(
+  create(
     @Body(new ValidationPipe()) payload: NewProductReview,
     @Req() request,
   ) {
-    return await this.productReviewService.create(payload, request.userId);
+    return this.productReviewService.create(payload, request.userId);
   }
 
   @Patch('update/:id')
   @Auth('user')
   @UseInterceptors(TransformInterceptor)
-  async update(
+  update(
     @Body(new ValidationPipe()) payload: UpdateProductReview,
     @Req() request,
     @Param(new ValidationPipe()) params: SpecificProductReview,
   ) {
-    return await this.productReviewService.update(
-      payload,
-      request.userId,
-      params.id,
-    );
+    return this.productReviewService.update(payload, request.userId, params.id);
   }
 
   @Delete(':id')
   @Auth('user')
   @UseInterceptors(TransformInterceptor)
-  async delete(@Param(new ValidationPipe()) payload: SpecificProductReview) {
-    return await this.productReviewService.delete(payload.id);
+  delete(@Param(new ValidationPipe()) payload: SpecificProductReview) {
+    return this.productReviewService.delete(payload.id);
   }
 
   @Get('list')
   @UseInterceptors(TransformInterceptor)
-  async list(@Query(new ValidationPipe()) query: ProductReviewList) {
-    return await this.productReviewService.list(query);
+  list(@Query(new ValidationPipe()) query: ProductReviewList) {
+    return this.productReviewService.list(query);
   }
 }

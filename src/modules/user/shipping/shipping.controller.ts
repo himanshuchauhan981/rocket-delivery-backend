@@ -28,21 +28,21 @@ export class UserShippingController {
   @Get('countries/list')
   @Auth('user')
   @UseInterceptors(TransformInterceptor)
-  async findAll(@Query(new ValidationPipe()) query: CountriesList) {
-    return await this.commonCountryService.findAll(query);
+  findAll(@Query(new ValidationPipe()) query: CountriesList) {
+    return this.commonCountryService.findAll(query);
   }
 
   @Get('states/list')
   @Auth('user')
   @UseInterceptors(TransformInterceptor)
-  async stateList(@Query(new ValidationPipe()) query: StateList) {
-    return await this.commonStatesService.findAll(query);
+  stateList(@Query(new ValidationPipe()) query: StateList) {
+    return this.commonStatesService.findAll(query);
   }
 
   @Get('cities/list')
   @Auth('user')
   @UseInterceptors(TransformInterceptor)
-  async citiesList(@Query(new ValidationPipe()) query: CitiesList) {
-    return await this.commonCitiesService.findAll(query);
+  citiesList(@Query(new ValidationPipe()) query: CitiesList) {
+    return this.commonCitiesService.findAll(query);
   }
 }

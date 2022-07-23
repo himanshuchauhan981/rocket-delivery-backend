@@ -38,54 +38,54 @@ export class AdminUsersController {
   @Get('list')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async list(
+  list(
     @Query(new ValidationPipe()) payload: UsersList,
   ): Promise<ListUsersResponse> {
-    return await this.userService.listUsers(payload);
+    return this.userService.listUsers(payload);
   }
 
   @Get('csv')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async downloadUsersCSV(): Promise<DownloadUserCSVResponse> {
-    return await this.userService.downloadUsersCSV();
+  downloadUsersCSV(): Promise<DownloadUserCSVResponse> {
+    return this.userService.downloadUsersCSV();
   }
 
   @Get(':id')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async viewUser(@Param(new ValidationPipe()) params: UserIdParams) {
-    return await this.userCommonService.getUserDetails(params.id);
+  viewUser(@Param(new ValidationPipe()) params: UserIdParams) {
+    return this.userCommonService.getUserDetails(params.id);
   }
 
   @Get(':id/transactions')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async userTransactions(
+  userTransactions(
     @Param(new ValidationPipe()) params: UserIdParams,
     @Query(new ValidationPipe()) payload: UserDetailList,
   ) {
-    return await this.userService.userTransactions(params.id, payload);
+    return this.userService.userTransactions(params.id, payload);
   }
 
   @Get(':id/orders')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async adminUserOrders(
+  adminUserOrders(
     @Param(new ValidationPipe()) params: UserIdParams,
     @Query(new ValidationPipe()) payload: UserDetailList,
   ) {
-    return await this.userService.adminUserOrders(params.id, payload);
+    return this.userService.adminUserOrders(params.id, payload);
   }
 
   @Patch(':id/resetPassword')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async resetPassword(
+  resetPassword(
     @Param(new ValidationPipe()) params: UserIdParams,
     @Body(new ValidationPipe()) payload: NewPassword,
   ): Promise<ApiResponse> {
-    return await this.userCommonService.resetPassword(
+    return this.userCommonService.resetPassword(
       params.id,
       payload.new_password,
     );
@@ -94,13 +94,10 @@ export class AdminUsersController {
   @Patch(':id/status')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async changeUserStatus(
+  changeUserStatus(
     @Param(new ValidationPipe()) params: UserIdParams,
     @Body(new ValidationPipe()) payload: UserStatus,
   ) {
-    return await this.userService.updateUserStatus(
-      params.id,
-      payload.is_active,
-    );
+    return this.userService.updateUserStatus(params.id, payload.is_active);
   }
 }

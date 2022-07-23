@@ -27,16 +27,16 @@ export class NotificationController {
   @Get('list')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async notificationList(
+  notificationList(
     @Query(new ValidationPipe()) query: NotficationList,
   ): Promise<NotificationListResponse> {
-    return await this.notificationService.notificationList(query.pageSize);
+    return this.notificationService.notificationList(query.pageSize);
   }
 
   @Patch('status')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async updateNotificationStatus(
+  updateNotificationStatus(
     @Body(new ValidationPipe()) payload: UpdateNotificationStatus,
   ): Promise<ApiResponse> {
     return this.notificationService.updateNotificationStatus(

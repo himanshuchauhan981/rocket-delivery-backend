@@ -18,21 +18,21 @@ export class DashboardController {
   @Get('sales')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async dashboardSalesDetails(): Promise<AdminDashboardSalesResponse> {
-    return await this.dashboardService.dashboardSalesDetails();
+  dashboardSalesDetails(): Promise<AdminDashboardSalesResponse> {
+    return this.dashboardService.dashboardSalesDetails();
   }
 
   @Get('order')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async dashboardOrderDetails(): Promise<AdminDashboardOrderResponse> {
-    return await this.dashboardService.dashboardOrderDetails();
+  dashboardOrderDetails(): Promise<AdminDashboardOrderResponse> {
+    return this.dashboardService.dashboardOrderDetails();
   }
 
   @Get('products')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async productDetails(): Promise<AdminDashboardProductResponse> {
-    return await this.dashboardService.productDetails();
+  productDetails(): Promise<AdminDashboardProductResponse> {
+    return this.dashboardService.productDetails();
   }
 }

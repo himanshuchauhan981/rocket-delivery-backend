@@ -50,23 +50,19 @@ export class UserController {
 
   @Post('signup')
   @UseInterceptors(TransformInterceptor)
-  async signup(
-    @Body(ValidationPipe) payload: UserSignup,
-  ): Promise<NewUserResponse> {
+  signup(@Body(ValidationPipe) payload: UserSignup): Promise<NewUserResponse> {
     return this.userService.signup(payload);
   }
 
   @Post('login')
   @UseInterceptors(TransformInterceptor)
-  async login(
-    @Body(ValidationPipe) payload: UserLogin,
-  ): Promise<LoginUserResponse> {
+  login(@Body(ValidationPipe) payload: UserLogin): Promise<LoginUserResponse> {
     return this.userService.login(payload);
   }
 
   @Get('categories')
   @UseInterceptors(TransformInterceptor)
-  async listCategories(
+  listCategories(
     @Query(new ValidationPipe()) query: UserCategoryList,
   ): Promise<ListCategoriesResponse> {
     return this.userService.listCategories(query.limit);
@@ -74,7 +70,7 @@ export class UserController {
 
   @Get('subCategory')
   @UseInterceptors(TransformInterceptor)
-  async listSubCategory(
+  listSubCategory(
     @Query(new ValidationPipe()) query: UserSubCategoryList,
   ): Promise<ListSubCategoriesResponse> {
     return this.subCategoryService.list(query.category_id);
@@ -82,7 +78,7 @@ export class UserController {
 
   @Post('cart')
   @UseInterceptors(TransformInterceptor)
-  async cartDetails(
+  cartDetails(
     @Body(new ValidationPipe()) payload: UserCart,
   ): Promise<UserCartDetailsResponse> {
     return this.productService.cartItems(payload);
@@ -91,24 +87,21 @@ export class UserController {
   @Get('deliveryCharges')
   @Auth('user')
   @UseInterceptors(TransformInterceptor)
-  async calculateDeliveryCharges(
-    @Query() params: DeliveryCharges,
-    @Req() request,
-  ) {
+  calculateDeliveryCharges(@Query() params: DeliveryCharges, @Req() request) {
     return this.userService.calculateDeliveryCharges(params, request.userId);
   }
 
   @Get('details')
   @Auth('user')
   @UseInterceptors(TransformInterceptor)
-  async getUserDetails(@Req() request): Promise<UserDetailsResponse> {
+  getUserDetails(@Req() request): Promise<UserDetailsResponse> {
     return this.userService.getUserDetails(request.userId);
   }
 
   @Patch('details')
   @Auth('user')
   @UseInterceptors(TransformInterceptor)
-  async updateUserDetails(
+  updateUserDetails(
     @Body(new ValidationPipe()) payload: UpdateProfile,
     @Req() request,
   ): Promise<ApiResponse> {
@@ -117,7 +110,7 @@ export class UserController {
 
   @Patch('password/forget')
   @UseInterceptors(TransformInterceptor)
-  async forgetPassword(
+  forgetPassword(
     @Body(new ValidationPipe()) payload: UserEmail,
   ): Promise<ForgetPasswordResponse> {
     return this.userService.forgetPassword(payload.email);
@@ -125,7 +118,7 @@ export class UserController {
 
   @Patch('password/verify')
   @UseInterceptors(TransformInterceptor)
-  async verifyPassword(
+  verifyPassword(
     @Body(new ValidationPipe()) payload: VerifyPassword,
   ): Promise<ApiResponse> {
     return this.userService.verifyPassword(payload);
@@ -133,7 +126,7 @@ export class UserController {
 
   @Patch('password/reset')
   @UseInterceptors(TransformInterceptor)
-  async resetPassword(@Body(new ValidationPipe()) payload: ResetPassword) {
+  resetPassword(@Body(new ValidationPipe()) payload: ResetPassword) {
     return this.userService.resetPassword(payload.id, payload.new_password);
   }
 }

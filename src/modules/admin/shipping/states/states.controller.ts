@@ -34,24 +34,24 @@ export class StatesController {
   @Post('new')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async addNewState(@Body(new ValidationPipe()) payload: NewState) {
-    return await this.statesService.create(payload);
+  addNewState(@Body(new ValidationPipe()) payload: NewState) {
+    return this.statesService.create(payload);
   }
 
   @Get('list')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async stateList(@Query(new ValidationPipe()) query: StateList) {
-    return await this.commonStatesService.findAll(query);
+  stateList(@Query(new ValidationPipe()) query: StateList) {
+    return this.commonStatesService.findAll(query);
   }
 
   @Put(':id')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async updateState(
+  updateState(
     @Param(new ValidationPipe()) params: EditStateParams,
     @Body(new ValidationPipe()) payload: EditStatePayload,
   ) {
-    return await this.statesService.updateState(params, payload);
+    return this.statesService.updateState(params, payload);
   }
 }

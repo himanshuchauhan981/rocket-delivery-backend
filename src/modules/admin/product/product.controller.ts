@@ -34,42 +34,42 @@ export class AdminProductController {
   @Get('list')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async findAll(@Query(new ValidationPipe()) payload: AdminProductList) {
-    return await this.productService.findAll(payload);
+  findAll(@Query(new ValidationPipe()) payload: AdminProductList) {
+    return this.productService.findAll(payload);
   }
 
   @Get(':id')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async findOneById(@Param(new ValidationPipe()) params: SpecificProduct) {
-    return await this.commonProductService.findOneById(params.id);
+  findOneById(@Param(new ValidationPipe()) params: SpecificProduct) {
+    return this.commonProductService.findOneById(params.id);
   }
 
   @Put(':id')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async update(
+  update(
     @Param(new ValidationPipe()) params: SpecificProduct,
     @Body(new ValidationPipe()) payload: NewProduct,
   ): Promise<ApiResponse> {
-    return await this.productService.update(payload, params.id);
+    return this.productService.update(payload, params.id);
   }
 
   @Delete(':id')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async delete(
+  delete(
     @Param(new ValidationPipe()) params: SpecificProduct,
   ): Promise<ApiResponse> {
-    return await this.productService.delete(params.id);
+    return this.productService.delete(params.id);
   }
 
   @Post('new')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async createNew(
+  createNew(
     @Body(new ValidationPipe()) payload: NewProduct,
   ): Promise<ApiResponse> {
-    return await this.productService.createNew(payload);
+    return this.productService.createNew(payload);
   }
 }

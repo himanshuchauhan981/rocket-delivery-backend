@@ -24,25 +24,21 @@ export class UserWishlistController {
   @Get('list')
   @Auth('user')
   @UseInterceptors(TransformInterceptor)
-  async findAll(@Req() req) {
-    return await this.wishlistService.findAll(req.userId);
+  findAll(@Req() req) {
+    return this.wishlistService.findAll(req.userId);
   }
 
   @Post('new')
   @Auth('user')
   @UseInterceptors(TransformInterceptor)
-  async create(
-    @Body(new ValidationPipe()) payload: NewWishlistItem,
-    @Req() req,
-  ) {
-    const data = await this.wishlistService.create(payload, req.userId);
-    return data;
+  create(@Body(new ValidationPipe()) payload: NewWishlistItem, @Req() req) {
+    return this.wishlistService.create(payload, req.userId);
   }
 
   @Delete(':id')
   @Auth('user')
   @UseInterceptors(TransformInterceptor)
-  async delete(@Param(new ValidationPipe()) payload: SpecificWishlistItem) {
-    return await this.wishlistService.delete(payload.id);
+  delete(@Param(new ValidationPipe()) payload: SpecificWishlistItem) {
+    return this.wishlistService.delete(payload.id);
   }
 }

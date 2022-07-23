@@ -31,35 +31,35 @@ export class AdminOrdersController {
   @Get('list')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async list(
+  list(
     @Query(new ValidationPipe()) query: OrdersList,
   ): Promise<OrderListResponse> {
-    return await this.orderService.adminOrderList(query);
+    return this.orderService.adminOrderList(query);
   }
 
   @Get(':id')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async findOneById(
+  findOneById(
     @Param(new ValidationPipe()) params: SpecificOrder,
   ): Promise<SpecificOrderResponse> {
-    return await this.commonOrderService.findOneById(params.id);
+    return this.commonOrderService.findOneById(params.id);
   }
 
   @Put(':id/status')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async updateOrder(
+  updateOrder(
     @Body(new ValidationPipe()) payload: UpdateOrder,
     @Param(new ValidationPipe()) params: SpecificOrder,
   ): Promise<ApiResponse> {
-    return await this.orderService.updateOrderStatus(payload, params.id);
+    return this.orderService.updateOrderStatus(payload, params.id);
   }
 
   @Get(':id/invoice')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
-  async downloadInvoice(@Param(new ValidationPipe()) params: SpecificOrder) {
-    return await this.orderService.downloadInvoice(params.id);
+  downloadInvoice(@Param(new ValidationPipe()) params: SpecificOrder) {
+    return this.orderService.downloadInvoice(params.id);
   }
 }
