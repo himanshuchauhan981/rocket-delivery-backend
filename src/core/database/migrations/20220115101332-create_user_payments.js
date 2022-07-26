@@ -27,7 +27,7 @@ module.exports = {
 
         payment_id: {
           type: Sequelize.STRING,
-          allowNull: false,
+          allowNull: true,
         },
 
         status: {
@@ -38,7 +38,7 @@ module.exports = {
 
         card_number: {
           type: Sequelize.STRING,
-          allowNull: false,
+          allowNull: true,
         },
 
         card_type: {

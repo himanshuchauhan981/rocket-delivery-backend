@@ -41,8 +41,8 @@ module.exports = {
         },
 
         payment_method: {
-          type: Sequelize.INTEGER,
-          allowNull: false,
+          type: Sequelize.ENUM,
+          allowNull: ['CASH', 'CREDIT'],
         },
 
         amount: {

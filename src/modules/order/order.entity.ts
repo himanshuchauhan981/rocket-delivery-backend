@@ -66,10 +66,10 @@ export class Order extends Model<Order> {
   delivery_charges: number;
 
   @Column({
-    type: DataType.INTEGER,
+    type: DataType.ENUM,
     allowNull: false,
   })
-  payment_method: number;
+  payment_method: string;
 
   @Column({
     type: DataType.INTEGER,
