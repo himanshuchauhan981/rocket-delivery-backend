@@ -12,7 +12,7 @@ interface Order {
   order_number: string;
   status: string;
   net_amount: number;
-  payment_method: number;
+  payment_method: string;
   created_at: Date;
   payment_status: string;
   user: OrderUser;
