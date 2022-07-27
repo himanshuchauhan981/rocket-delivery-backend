@@ -9,15 +9,24 @@ import {
   UseInterceptors,
   ValidationPipe,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import {
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 
 import { Auth } from '../../core/decorators/auth.decorator';
 import { TransformInterceptor } from '../../core/interceptors/transform.interceptor';
 import { AddressService } from '../address/address.service';
+import { APIResponse } from '../common/dto/common.dto';
 import { AddressId, NewAddress } from '../user/address/dto/address.dto';
 import { AdminService } from './admin.service';
-import { AdminLogin } from './dto/admin.dto';
-import { AdminDetailsResponse, AdminLoginResponse } from './interface';
+import {
+  AdminDetailsResponse,
+  AdminLogin,
+  AdminLoginSuccessResponse,
+} from './dto/admin.dto';
 
 @Controller('admin')
 @ApiTags('Admin')
@@ -29,15 +38,28 @@ export class AdminController {
 
   @Post('login')
   @UseInterceptors(TransformInterceptor)
+  @ApiOkResponse({
+    type: AdminLoginSuccessResponse,
+    description: 'Correct Credentials',
+  })
+  @ApiUnauthorizedResponse({
+    type: APIResponse,
+    description: 'Incorrect Credentials',
+  })
   login(
     @Body(new ValidationPipe()) payload: AdminLogin,
-  ): Promise<AdminLoginResponse> {
+  ): Promise<AdminLoginSuccessResponse | APIResponse> {
     return this.adminService.login(payload);
   }
 
   @Put('address/:id')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
+  @ApiOkResponse({
+    type: APIResponse,
+    description: 'Address Updated successfully',
+  })
+  @ApiNotFoundResponse({ type: APIResponse, description: 'Invalid address ID' })
   updateAddress(
     @Body(new ValidationPipe()) payload: NewAddress,
     @Param(new ValidationPipe()) params: AddressId,
@@ -48,6 +70,7 @@ export class AdminController {
   @Get('details')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
+  @ApiOkResponse({ type: AdminDetailsResponse })
   adminDetails(@Req() request): Promise<AdminDetailsResponse> {
     return this.adminService.adminDetails(request.userId);
   }
