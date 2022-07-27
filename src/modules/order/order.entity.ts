@@ -14,6 +14,7 @@ import {
   ORDER_STATUS,
   ORDER_PAYMENT_STATUS,
   DELIVERY_STATUS,
+  PAYMENT_METHOD,
 } from '../../core/constants/constants';
 import { Address } from '../address/address.entity';
 import { UserPayment } from '../payment/user-payment.entity';
@@ -67,6 +68,7 @@ export class Order extends Model<Order> {
 
   @Column({
     type: DataType.ENUM,
+    values: [PAYMENT_METHOD.CARD, PAYMENT_METHOD.CASH],
     allowNull: false,
   })
   payment_method: string;
