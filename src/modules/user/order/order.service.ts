@@ -9,7 +9,7 @@ import {
   NOTIFICATION_SLUG,
   USER_TYPE,
   NOTIFICATION_TYPE,
-  PAYMENT_STATUS,
+  PAYMENT_METHOD,
 } from '../../../core/constants/constants';
 import { MESSAGES } from '../../../core/constants/messages';
 import {
@@ -124,7 +124,7 @@ export class OrderService {
         }
       }
 
-      if (payload.payment_method == PAYMENT_STATUS.CARD) {
+      if (payload.payment_method == PAYMENT_METHOD.CARD) {
         await this.paymentService.captureOrderPayment(
           payload.payment_id,
           subTotal + payload.delivery_charges,
@@ -225,7 +225,7 @@ export class OrderService {
       );
     }
 
-    if (orderDetails.payment_method === PAYMENT_STATUS.CARD) {
+    if (orderDetails.payment_method === PAYMENT_METHOD.CARD) {
       await this.paymentService.refundOrderPayment(
         orderDetails.user_payment_id,
         orderDetails.net_amount * 100,
