@@ -8,17 +8,17 @@ import {
   Put,
   Body,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiNotFoundResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
 import { Auth } from '../../../core/decorators/auth.decorator';
 import { TransformInterceptor } from '../../../core/interceptors/transform.interceptor';
 import { OrderListResponse } from '../../order/interface/response.interface';
 import { SpecificOrder } from '../../../modules/user/order/dto/order.dto';
 import { OrdersList, UpdateOrder } from './dto/admin-orders.entity';
-import { SpecificOrderResponse } from './interface/response.interface';
 import { OrderService } from './order.service';
 import { CommonOrderService } from '../../order/order.service';
-import { ApiResponse } from 'src/modules/common/interface';
+import { APIResponse } from 'src/modules/common/dto/common.dto';
+import { SpecificOrderResponse } from './dto/admin-orders-response.dto';
 
 @Controller('admin/orders')
 @ApiTags('Admin orders')
@@ -31,6 +31,7 @@ export class AdminOrdersController {
   @Get('list')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
+  @ApiOkResponse({ type: OrderListResponse })
   list(
     @Query(new ValidationPipe()) query: OrdersList,
   ): Promise<OrderListResponse> {
@@ -40,6 +41,11 @@ export class AdminOrdersController {
   @Get(':id')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
+  @ApiOkResponse({ type: SpecificOrderResponse })
+  @ApiNotFoundResponse({
+    type: APIResponse,
+    description: 'Invalid Order ID',
+  })
   findOneById(
     @Param(new ValidationPipe()) params: SpecificOrder,
   ): Promise<SpecificOrderResponse> {
@@ -49,10 +55,15 @@ export class AdminOrdersController {
   @Put(':id/status')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
+  @ApiOkResponse({ type: APIResponse })
+  @ApiNotFoundResponse({
+    type: APIResponse,
+    description: 'Invalid Order ID',
+  })
   updateOrder(
     @Body(new ValidationPipe()) payload: UpdateOrder,
     @Param(new ValidationPipe()) params: SpecificOrder,
-  ): Promise<ApiResponse> {
+  ): Promise<APIResponse> {
     return this.orderService.updateOrderStatus(payload, params.id);
   }
 

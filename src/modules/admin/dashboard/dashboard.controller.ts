@@ -1,5 +1,5 @@
 import { Controller, Get, UseInterceptors } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
 import { Auth } from '../../../core/decorators/auth.decorator';
 import { TransformInterceptor } from '../../../core/interceptors/transform.interceptor';
@@ -8,7 +8,7 @@ import {
   AdminDashboardOrderResponse,
   AdminDashboardProductResponse,
   AdminDashboardSalesResponse,
-} from './interface/response.interface';
+} from './interface/admin-dashboard-response.dto';
 
 @Controller('admin/dashboard')
 @ApiTags('Admin Dashboard')
@@ -18,6 +18,7 @@ export class DashboardController {
   @Get('sales')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
+  @ApiOkResponse({ type: AdminDashboardSalesResponse })
   dashboardSalesDetails(): Promise<AdminDashboardSalesResponse> {
     return this.dashboardService.dashboardSalesDetails();
   }
@@ -25,6 +26,7 @@ export class DashboardController {
   @Get('order')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
+  @ApiOkResponse({ type: AdminDashboardOrderResponse })
   dashboardOrderDetails(): Promise<AdminDashboardOrderResponse> {
     return this.dashboardService.dashboardOrderDetails();
   }
@@ -32,6 +34,7 @@ export class DashboardController {
   @Get('products')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
+  @ApiOkResponse({ type: AdminDashboardProductResponse })
   productDetails(): Promise<AdminDashboardProductResponse> {
     return this.dashboardService.productDetails();
   }
