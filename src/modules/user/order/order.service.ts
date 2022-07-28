@@ -1,5 +1,5 @@
 import { HttpException, Inject, Injectable } from '@nestjs/common';
-import moment from 'moment';
+import * as moment from 'moment';
 import sequelize from 'sequelize';
 import { v4 as uuidv4 } from 'uuid';
 
