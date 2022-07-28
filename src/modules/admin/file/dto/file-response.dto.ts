@@ -1,11 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-class Category {
+class FileResponse {
   @ApiProperty()
   id: number;
 
   @ApiProperty()
-  name: string;
+  url: string;
 }
 
-export { Category };
+export { FileResponse };

@@ -22,6 +22,7 @@ import { MESSAGES } from '../../../core/constants/messages';
 import { ProductService as CommonProductService } from '../../product/product.service';
 import { ProductDescription } from '../../../modules/product/product-description.entity';
 import { ApiResponse } from 'src/modules/common/interface';
+import { AdminProductListResponse } from './dto/admin-product-response.dto';
 
 @Injectable()
 export class ProductService {
@@ -73,7 +74,7 @@ export class ProductService {
     return false;
   }
 
-  async findAll(payload: AdminProductList) {
+  async findAll(payload: AdminProductList): Promise<AdminProductListResponse> {
     try {
       const sortBy = this.#sortProduct(payload.sort) || [];
       const page = payload.page * payload.limit;
@@ -149,6 +150,8 @@ export class ProductService {
       }
 
       return {
+        statusCode: STATUS_CODE.SUCCESS,
+        message: MESSAGES.SUCCESS,
         data: {
           productsList: tempProductData.rows,
           count: tempProductData.count,
@@ -227,17 +230,16 @@ export class ProductService {
     try {
       const productDetails = await this.productRepository.findByPk(id);
 
-      if (productDetails) {
-        await this.productRepository.update(
-          { is_deleted: 1 },
-          { where: { id } },
-        );
-        return {
-          statusCode: STATUS_CODE.SUCCESS,
-          message: MESSAGES.PRODUCT_DELETE_SUCCESSFULL,
-        };
+      if (!productDetails) {
+        throw new HttpException(MESSAGES.INVALID_ID, STATUS_CODE.NOT_FOUND);
       }
-      throw new HttpException(MESSAGES.INVALID_ID, STATUS_CODE.NOT_FOUND);
+
+      await this.productRepository.update({ is_deleted: 1 }, { where: { id } });
+
+      return {
+        statusCode: STATUS_CODE.SUCCESS,
+        message: MESSAGES.PRODUCT_DELETE_SUCCESSFULL,
+      };
     } catch (err) {
       throw err;
     }

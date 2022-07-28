@@ -4,9 +4,13 @@ import { MESSAGES } from '../../core/constants/messages';
 import { ADMIN_REPOSITORY } from '../../core/constants/repositories';
 import { STATUS_CODE } from '../../core/constants/status_code';
 import { CommonService } from '../common/common.service';
+import { APIResponse } from '../common/dto/common.dto';
 import { Admin } from './admin.entity';
-import { AdminLogin } from './dto/admin.dto';
-import { AdminDetailsResponse, AdminLoginResponse } from './interface';
+import {
+  AdminDetailsResponse,
+  AdminLogin,
+  AdminLoginSuccessResponse,
+} from './dto/admin.dto';
 
 @Injectable()
 export class AdminService {
@@ -15,7 +19,9 @@ export class AdminService {
     private readonly commonService: CommonService,
   ) {}
 
-  async login(payload: AdminLogin): Promise<AdminLoginResponse> {
+  async login(
+    payload: AdminLogin,
+  ): Promise<AdminLoginSuccessResponse | APIResponse> {
     const adminDetails = await this.adminRepository.findOne({
       where: { email: payload.email },
     });

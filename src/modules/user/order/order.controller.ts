@@ -15,7 +15,7 @@ import { TransformInterceptor } from '../../../core/interceptors/transform.inter
 import { OrderService } from './order.service';
 import { NewOrder, SpecificOrder } from './dto/order.dto';
 import { CommonOrderService } from '../../order/order.service';
-import { ApiResponse } from 'src/modules/common/interface';
+import { APIResponse } from 'src/modules/common/dto/common.dto';
 
 @Controller('user/order')
 @ApiTags('User order')
@@ -28,10 +28,8 @@ export class UserOrderController {
   @Post('new')
   @Auth('user')
   @UseInterceptors(TransformInterceptor)
-  create(
-    @Body(new ValidationPipe()) payload: NewOrder,
-    @Req() request,
-  ): Promise<ApiResponse> {
+  // @ApiResponse({ type: APIREsponse })
+  create(@Body(new ValidationPipe()) payload: NewOrder, @Req() request) {
     return this.orderService.create(payload, request.userId);
   }
 
@@ -55,7 +53,7 @@ export class UserOrderController {
   cancelOrder(
     @Param(new ValidationPipe()) params: SpecificOrder,
     @Req() request,
-  ): Promise<ApiResponse> {
+  ): Promise<APIResponse> {
     return this.orderService.cancelOrder(
       params.id,
       request.userId,

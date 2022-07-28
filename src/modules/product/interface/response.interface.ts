@@ -1,10 +1,16 @@
-import { ApiResponse } from 'src/modules/common/interface';
+import { ApiProperty } from '@nestjs/swagger';
+
+import { APIResponse } from 'src/modules/common/dto/common.dto';
 import { ProductDetail } from '.';
 
-interface ProductDetailResponse extends ApiResponse {
-  data: {
-    product_details: ProductDetail;
-  };
+class ProductDetails {
+  @ApiProperty()
+  product_details: ProductDetail;
+}
+
+class ProductDetailResponse extends APIResponse {
+  @ApiProperty()
+  data: ProductDetails;
 }
 
 export { ProductDetailResponse };

@@ -1,21 +1,44 @@
-interface ReviewImages {
+import { ApiProperty } from '@nestjs/swagger';
+
+class ReviewImages {
+  @ApiProperty()
   id: number;
+
+  @ApiProperty()
   url: string;
 }
 
-interface ProductReview {
+class ProductReview {
+  @ApiProperty()
   id: number;
+
+  @ApiProperty()
   headline: string;
+
+  @ApiProperty()
   opinion: string;
+
+  @ApiProperty()
   ratings: number;
+
+  @ApiProperty()
   product_id: number;
+
+  @ApiProperty()
   review_images: ReviewImages[];
 }
 
-interface ProductDescriptionReview {
+class ProductDescriptionReview {
+  @ApiProperty()
   id: number;
+
+  @ApiProperty()
   headline: string;
+
+  @ApiProperty()
   opinion: string;
+
+  @ApiProperty()
   created_at: Date;
 }
 

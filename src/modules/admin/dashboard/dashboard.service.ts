@@ -13,15 +13,15 @@ import { OrderProduct } from '../../../modules/order/order-product.entity';
 import { Order } from '../../../modules/order/order.entity';
 import { Product } from '../../../modules/product/product.entity';
 import { User } from '../../../modules/user/user.entity';
+import { ProductPrice } from '../../../modules/product/product-price.entity';
+import { File } from '../file/file.entity';
 import {
   AdminDashboardOrderResponse,
   AdminDashboardProductResponse,
   AdminDashboardSalesResponse,
-} from './interface/response.interface';
+} from './interface/admin-dashboard-response.dto';
 import { STATUS_CODE } from '../../../core/constants/status_code';
 import { MESSAGES } from '../../../core/constants/messages';
-import { ProductPrice } from '../../../modules/product/product-price.entity';
-import { File } from '../file/file.entity';
 
 @Injectable()
 export class DashboardService {

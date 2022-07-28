@@ -22,11 +22,11 @@ import { OrderProduct } from '../../../modules/order/order-product.entity';
 import { Order } from '../../../modules/order/order.entity';
 import { User } from '../../../modules/user/user.entity';
 import { OrdersList, UpdateOrder } from './dto/admin-orders.entity';
-import { OrderInvoiceResponse } from './interface/response.interface';
 import { orderInvoice } from '../../../core/utils/invoice';
 import { Address } from '../../../modules/address/address.entity';
 import { NotificationTemplate } from '../../../modules/notification/entity/notification-template.entity';
-import { ApiResponse } from 'src/modules/common/interface';
+import { OrderInvoiceResponse } from './dto/admin-orders-response.dto';
+import { APIResponse } from 'src/modules/common/dto/common.dto';
 
 @Injectable()
 export class OrderService {
@@ -145,7 +145,7 @@ export class OrderService {
   async updateOrderStatus(
     payload: UpdateOrder,
     id: number,
-  ): Promise<ApiResponse> {
+  ): Promise<APIResponse> {
     try {
       const uploadPayload = { ...payload };
 

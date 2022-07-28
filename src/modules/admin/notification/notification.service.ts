@@ -1,7 +1,7 @@
 import { HttpException, Inject, Injectable } from '@nestjs/common';
 import sequelize from 'sequelize';
-import { ApiResponse } from 'src/modules/common/interface';
 
+import { APIResponse } from 'src/modules/common/dto/common.dto';
 import { USER_TYPE } from '../../../core/constants/constants';
 import { MESSAGES } from '../../../core/constants/messages';
 import { NOTIFICATION_USER_REPOSITORY } from '../../../core/constants/repositories';
@@ -9,7 +9,7 @@ import { STATUS_CODE } from '../../../core/constants/status_code';
 import { NotificationUser } from '../../../modules/notification/entity/notification-user.entity';
 import { Notification } from '../../../modules/notification/entity/notification.entity';
 import { User } from '../../../modules/user/user.entity';
-import { NotificationListResponse } from './interface/response.interface';
+import { NotificationListResponse } from './dto/notification-response.dto';
 
 @Injectable()
 export class NotificationService {
@@ -49,7 +49,7 @@ export class NotificationService {
   async updateNotificationStatus(
     id: number,
     all_read_status: boolean,
-  ): Promise<ApiResponse> {
+  ): Promise<APIResponse> {
     try {
       if (all_read_status) {
         await this.notificationUserRepository.update(

@@ -1,36 +1,77 @@
+import { ApiProperty } from '@nestjs/swagger';
+
 import { MeasuringUnit } from 'src/modules/measuring-unit/interface';
 import { ProductDescriptionReview } from 'src/modules/product-review/interface';
 import { SubCategory } from 'src/modules/sub-category/interface';
 import { File } from 'src/modules/admin/file/interface';
 import { Category } from 'src/modules/category/interface';
 
-interface ProductPrice {
+class ProductPrice {
+  @ApiProperty()
   actual_price: number;
 }
 
-interface ProductDescription {
+class ProductDescription {
+  @ApiProperty()
   id: number;
+
+  @ApiProperty()
   benefits: string[];
+
+  @ApiProperty()
   ingredients: string;
+
+  @ApiProperty()
   features: string[];
+
+  @ApiProperty()
   description: string;
 }
 
-interface ProductDetail {
+class ProductDetail {
+  @ApiProperty()
   id: number;
+
+  @ApiProperty()
   name: string;
+
+  @ApiProperty()
   max_quantity: number;
+
+  @ApiProperty()
   minimum_cart_quantity: number;
+
+  @ApiProperty()
   maximum_cart_quantity: number;
+
+  @ApiProperty()
   payment_method: string;
+
+  @ApiProperty()
   stock_visibility: string;
+
+  @ApiProperty()
   product_price: ProductPrice;
+
+  @ApiProperty()
   file: File;
+
+  @ApiProperty()
   category: Category;
+
+  @ApiProperty()
   subCategory: SubCategory;
+
+  @ApiProperty()
   measurementUnit: MeasuringUnit;
+
+  @ApiProperty()
   product_description: ProductDescription;
+
+  @ApiProperty({ type: () => [ProductDescriptionReview] })
   product_review: ProductDescriptionReview[];
+
+  @ApiProperty()
   average_ratings: number;
 }
 

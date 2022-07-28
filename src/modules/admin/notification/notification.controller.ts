@@ -7,7 +7,7 @@ import {
   Patch,
   Body,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
 import { Auth } from '../../../core/decorators/auth.decorator';
 import { TransformInterceptor } from '../../../core/interceptors/transform.interceptor';
@@ -16,8 +16,8 @@ import {
   NotficationList,
   UpdateNotificationStatus,
 } from './dto/notification.dto';
-import { NotificationListResponse } from './interface/response.interface';
-import { ApiResponse } from 'src/modules/common/interface';
+import { APIResponse } from 'src/modules/common/dto/common.dto';
+import { NotificationListResponse } from './dto/notification-response.dto';
 
 @Controller('admin/notification')
 @ApiTags('Admin notifications')
@@ -27,6 +27,7 @@ export class NotificationController {
   @Get('list')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
+  @ApiOkResponse({ type: NotificationListResponse })
   notificationList(
     @Query(new ValidationPipe()) query: NotficationList,
   ): Promise<NotificationListResponse> {
@@ -36,9 +37,10 @@ export class NotificationController {
   @Patch('status')
   @Auth('admin')
   @UseInterceptors(TransformInterceptor)
+  @ApiOkResponse({ type: APIResponse })
   updateNotificationStatus(
     @Body(new ValidationPipe()) payload: UpdateNotificationStatus,
-  ): Promise<ApiResponse> {
+  ): Promise<APIResponse> {
     return this.notificationService.updateNotificationStatus(
       payload.id,
       payload.all_read,

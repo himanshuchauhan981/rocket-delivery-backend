@@ -1,6 +1,6 @@
 import { HttpException, Inject, Injectable } from '@nestjs/common';
 import sequelize from 'sequelize';
-import { ApiResponse } from 'src/modules/common/interface';
+import { APIResponse } from 'src/modules/common/dto/common.dto';
 
 import { MESSAGES } from '../../../core/constants/messages';
 import { CATEGORY_REPOSITORY } from '../../../core/constants/repositories';
@@ -9,11 +9,11 @@ import { Category } from '../../../modules/category/category.entity';
 import { ProductService } from '../../../modules/product/product.service';
 import { SubCategoryService } from '../../../modules/sub-category/sub-category.service';
 import { File } from '../file/file.entity';
-import { CategoryList, SubmitCategory } from './dto/admin-category.dto';
 import {
-  CategoriesListResponse,
+  CategoryListResponse,
   SpecificCategoryResponse,
-} from './interface/response.interface';
+} from './dto/admin-category-response.dto';
+import { CategoryList, SubmitCategory } from './dto/admin-category.dto';
 
 @Injectable()
 export class CategoryService {
@@ -24,7 +24,7 @@ export class CategoryService {
     private readonly productService: ProductService,
   ) {}
 
-  async create(payload: SubmitCategory): Promise<ApiResponse> {
+  async create(payload: SubmitCategory): Promise<APIResponse> {
     try {
       const existingCategory = await this.categoryRepository.findOne({
         where: { name: payload.name },
@@ -51,7 +51,7 @@ export class CategoryService {
     }
   }
 
-  async list(payload: CategoryList): Promise<CategoriesListResponse> {
+  async list(payload: CategoryList): Promise<CategoryListResponse> {
     try {
       const page = payload.page * payload.limit;
 
@@ -110,7 +110,7 @@ export class CategoryService {
   async update(
     payload: SubmitCategory,
     categoryId: number,
-  ): Promise<ApiResponse> {
+  ): Promise<APIResponse> {
     try {
       const categoryDetails = await this.categoryRepository.findByPk(
         categoryId,
@@ -139,7 +139,7 @@ export class CategoryService {
   async statusUpdate(
     status: number,
     category_id: number,
-  ): Promise<ApiResponse> {
+  ): Promise<APIResponse> {
     try {
       const response = await this.categoryRepository.update(
         { is_active: status },
@@ -162,7 +162,7 @@ export class CategoryService {
     }
   }
 
-  async delete(categoryIdList: number[]): Promise<ApiResponse> {
+  async delete(categoryIdList: number[]): Promise<APIResponse> {
     try {
       const categoryDetails = await this.categoryRepository.findAll({
         where: { id: { [sequelize.Op.in]: categoryIdList } },
