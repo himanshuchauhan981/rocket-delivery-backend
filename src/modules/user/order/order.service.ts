@@ -142,9 +142,10 @@ export class OrderService {
         user_address: payload.order_address,
         user_id,
         user_payment_id: payload.user_payment_id,
-        payment_status: payload.payment_method
-          ? ORDER_PAYMENT_STATUS.PAID
-          : ORDER_PAYMENT_STATUS.UNPAID,
+        payment_status:
+          payload.payment_method === PAYMENT_METHOD.CASH
+            ? ORDER_PAYMENT_STATUS.PAID
+            : ORDER_PAYMENT_STATUS.UNPAID,
       });
 
       orderProducts = orderProducts.map((item) => ({
