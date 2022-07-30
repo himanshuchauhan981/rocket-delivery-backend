@@ -33,7 +33,7 @@ module.exports = {
         notification_type: {
           type: Sequelize.ENUM,
           allowNull: false,
-          values: ['order_request', 'order_confirm', 'order_cancel'],
+          values: ['ORDER_REQUEST', 'ORDER_CONFIRM', 'ORDER_CANCEL'],
         },
 
         user_type: {

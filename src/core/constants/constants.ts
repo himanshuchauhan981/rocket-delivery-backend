@@ -51,14 +51,14 @@ const NOTIFICATION_SLUG = {
 };
 
 const USER_TYPE = {
-  ADMIN: 'admin',
-  USER: 'user',
+  ADMIN: 'ADMIN',
+  USER: 'USER',
 };
 
 const NOTIFICATION_TYPE = {
-  ORDER_REQUEST: 'order_request',
-  ORDER_CONFIRM: 'order_confirm',
-  ORDER_CANCEL: 'order_cancel',
+  ORDER_REQUEST: 'ORDER_REQUEST',
+  ORDER_CONFIRM: 'ORDER_CONFIRM',
+  ORDER_CANCEL: 'ORDER_CANCEL',
 };
 
 const RESPONSE_TYPE = {

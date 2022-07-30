@@ -8,7 +8,7 @@ import {
 } from 'sequelize-typescript';
 
 @Table({
-  tableName: 'ADMIN',
+  tableName: 'admin',
 })
 export class Admin extends Model<Admin> {
   @Column({
