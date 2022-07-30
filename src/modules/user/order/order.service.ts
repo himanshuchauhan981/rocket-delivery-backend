@@ -143,7 +143,7 @@ export class OrderService {
         user_id,
         user_payment_id: payload.user_payment_id,
         payment_status:
-          payload.payment_method === PAYMENT_METHOD.CASH
+          payload.payment_method === PAYMENT_METHOD.CARD
             ? ORDER_PAYMENT_STATUS.PAID
             : ORDER_PAYMENT_STATUS.UNPAID,
       });
