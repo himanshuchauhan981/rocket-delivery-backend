@@ -124,7 +124,7 @@ export class UserService {
 
       const token = this.commonService.generateJWTToken({
         id: newUser.id,
-        role: 'user',
+        role: 'USER',
         email: payload.email,
       });
 

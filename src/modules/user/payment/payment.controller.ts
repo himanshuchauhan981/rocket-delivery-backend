@@ -19,7 +19,7 @@ export class UserPaymentController {
   constructor(private readonly paymentService: PaymentService) {}
 
   @Post('create')
-  @Auth('user')
+  @Auth('USER')
   @UseInterceptors(TransformInterceptor)
   generateRazorpayOrder(
     @Body(new ValidationPipe()) payload: NewPaymentOrder,

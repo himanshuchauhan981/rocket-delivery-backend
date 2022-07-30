@@ -12,6 +12,9 @@ import { ProductReview } from '../product-review/product-review.entity';
 import { User } from '../user/user.entity';
 import { OrderProduct } from './order-product.entity';
 import { SpecificOrderResponse } from '../admin/order/dto/admin-orders-response.dto';
+import { Countries } from '../shipping/countries/countries.entity';
+import { States } from '../shipping/states/states.entity';
+import { Cities } from '../shipping/cities/cities.entity';
 
 @Injectable()
 export class CommonOrderService {
@@ -30,13 +33,16 @@ export class CommonOrderService {
               'full_name',
               'house_no',
               'area',
-              'city_id',
-              'state_id',
               'landmark',
               'mobile_number',
               'pincode',
               'latitude',
               'longitude',
+            ],
+            include: [
+              { model: Countries, attributes: ['id', 'name'] },
+              { model: States, attributes: ['id', 'name'] },
+              { model: Cities, attributes: ['id', 'name'] },
             ],
           },
           {

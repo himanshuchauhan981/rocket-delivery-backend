@@ -32,7 +32,7 @@ export class FileController {
   constructor(private fileService: FileService) {}
 
   @Get('list')
-  @Auth('admin')
+  @Auth('ADMIN')
   @UseInterceptors(TransformInterceptor)
   getAll(
     @Query(new ValidationPipe()) query: FileList,
@@ -41,7 +41,7 @@ export class FileController {
   }
 
   @Get('')
-  @Auth('admin')
+  @Auth('ADMIN')
   @UseInterceptors(TransformInterceptor)
   getBySlug(
     @Query(new ValidationPipe()) query: FileListBySlug,
@@ -50,7 +50,7 @@ export class FileController {
   }
 
   @Post('')
-  @Auth('admin')
+  @Auth('ADMIN')
   @UseInterceptors(TransformInterceptor)
   create(
     @Body(new ValidationPipe()) payload: CreateFile,
@@ -59,7 +59,7 @@ export class FileController {
   }
 
   @Delete(':id')
-  @Auth('admin')
+  @Auth('ADMIN')
   @UseInterceptors(TransformInterceptor)
   delete(@Param(new ValidationPipe()) params: SpecificFile) {
     return this.fileService.delete(params.id);

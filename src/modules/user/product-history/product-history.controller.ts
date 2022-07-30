@@ -25,7 +25,7 @@ export class UserProductHistoryController {
   constructor(private readonly productHistoryService: ProductHistoryService) {}
 
   @Post('new')
-  @Auth('user')
+  @Auth('USER')
   @UseInterceptors(TransformInterceptor)
   create(
     @Body(new ValidationPipe()) payload: NewProductHistory,
@@ -35,14 +35,14 @@ export class UserProductHistoryController {
   }
 
   @Get('list')
-  @Auth('user')
+  @Auth('USER')
   @UseInterceptors(TransformInterceptor)
   list(@Req() request) {
     return this.productHistoryService.list(request.userId, false);
   }
 
   @Delete(':id')
-  @Auth('user')
+  @Auth('USER')
   @UseInterceptors(TransformInterceptor)
   delete(@Param(new ValidationPipe()) params: SpecificProductHistory) {
     return this.productHistoryService.delete(params.id);

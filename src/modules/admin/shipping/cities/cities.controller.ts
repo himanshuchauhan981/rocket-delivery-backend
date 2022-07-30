@@ -32,21 +32,21 @@ export class CitiesController {
   ) {}
 
   @Post('new')
-  @Auth('admin')
+  @Auth('ADMIN')
   @UseInterceptors(TransformInterceptor)
   addNewState(@Body(new ValidationPipe()) payload: NewCity) {
     return this.citiesService.create(payload);
   }
 
   @Get('list')
-  @Auth('admin')
+  @Auth('ADMIN')
   @UseInterceptors(TransformInterceptor)
   citiesList(@Query(new ValidationPipe()) query: CitiesList) {
     return this.commonCitiesService.findAll(query);
   }
 
   @Put(':id')
-  @Auth('admin')
+  @Auth('ADMIN')
   @UseInterceptors(TransformInterceptor)
   updateState(
     @Param(new ValidationPipe()) params: CityId,
@@ -56,7 +56,7 @@ export class CitiesController {
   }
 
   @Delete(':id')
-  @Auth('admin')
+  @Auth('ADMIN')
   @UseInterceptors(TransformInterceptor)
   delete(@Param(new ValidationPipe()) params: CityId) {
     return this.citiesService.delete(params.id);

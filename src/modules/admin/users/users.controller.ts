@@ -36,7 +36,7 @@ export class AdminUsersController {
   ) {}
 
   @Get('list')
-  @Auth('admin')
+  @Auth('ADMIN')
   @UseInterceptors(TransformInterceptor)
   list(
     @Query(new ValidationPipe()) payload: UsersList,
@@ -45,21 +45,21 @@ export class AdminUsersController {
   }
 
   @Get('csv')
-  @Auth('admin')
+  @Auth('ADMIN')
   @UseInterceptors(TransformInterceptor)
   downloadUsersCSV(): Promise<DownloadUserCSVResponse> {
     return this.userService.downloadUsersCSV();
   }
 
   @Get(':id')
-  @Auth('admin')
+  @Auth('ADMIN')
   @UseInterceptors(TransformInterceptor)
   viewUser(@Param(new ValidationPipe()) params: UserIdParams) {
     return this.userCommonService.getUserDetails(params.id);
   }
 
   @Get(':id/transactions')
-  @Auth('admin')
+  @Auth('ADMIN')
   @UseInterceptors(TransformInterceptor)
   userTransactions(
     @Param(new ValidationPipe()) params: UserIdParams,
@@ -69,7 +69,7 @@ export class AdminUsersController {
   }
 
   @Get(':id/orders')
-  @Auth('admin')
+  @Auth('ADMIN')
   @UseInterceptors(TransformInterceptor)
   adminUserOrders(
     @Param(new ValidationPipe()) params: UserIdParams,
@@ -79,7 +79,7 @@ export class AdminUsersController {
   }
 
   @Patch(':id/resetPassword')
-  @Auth('admin')
+  @Auth('ADMIN')
   @UseInterceptors(TransformInterceptor)
   resetPassword(
     @Param(new ValidationPipe()) params: UserIdParams,
@@ -92,7 +92,7 @@ export class AdminUsersController {
   }
 
   @Patch(':id/status')
-  @Auth('admin')
+  @Auth('ADMIN')
   @UseInterceptors(TransformInterceptor)
   changeUserStatus(
     @Param(new ValidationPipe()) params: UserIdParams,

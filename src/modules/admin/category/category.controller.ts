@@ -35,7 +35,7 @@ export class AdminCategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @Post('')
-  @Auth('admin')
+  @Auth('ADMIN')
   @UseInterceptors(TransformInterceptor)
   create(
     @Body(new ValidationPipe()) payload: SubmitCategory,
@@ -44,7 +44,7 @@ export class AdminCategoryController {
   }
 
   @Get('list')
-  @Auth('admin')
+  @Auth('ADMIN')
   @UseInterceptors(TransformInterceptor)
   @ApiOkResponse({ type: CategoryListResponse, description: 'Category List' })
   list(@Query() query: CategoryList): Promise<CategoryListResponse> {
@@ -52,7 +52,7 @@ export class AdminCategoryController {
   }
 
   @Get(':id')
-  @Auth('admin')
+  @Auth('ADMIN')
   @UseInterceptors(TransformInterceptor)
   categoryDetails(
     @Param() params: CategoryId,
@@ -61,7 +61,7 @@ export class AdminCategoryController {
   }
 
   @Put(':id')
-  @Auth('admin')
+  @Auth('ADMIN')
   @UseInterceptors(TransformInterceptor)
   @ApiOkResponse({ type: APIResponse, description: 'Update Category Details' })
   @ApiNotFoundResponse({
@@ -76,7 +76,7 @@ export class AdminCategoryController {
   }
 
   @Put(':id/status')
-  @Auth('admin')
+  @Auth('ADMIN')
   @UseInterceptors(TransformInterceptor)
   @ApiOkResponse({ type: APIResponse, description: 'Update category status' })
   @ApiNotFoundResponse({
@@ -91,7 +91,7 @@ export class AdminCategoryController {
   }
 
   @Delete('bulkDelete')
-  @Auth('admin')
+  @Auth('ADMIN')
   @UseInterceptors(TransformInterceptor)
   @ApiOkResponse({
     type: APIResponse,

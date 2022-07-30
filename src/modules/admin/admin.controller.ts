@@ -28,7 +28,7 @@ import {
   AdminLoginSuccessResponse,
 } from './dto/admin.dto';
 
-@Controller('admin')
+@Controller('ADMIN')
 @ApiTags('Admin')
 export class AdminController {
   constructor(
@@ -53,7 +53,7 @@ export class AdminController {
   }
 
   @Put('address/:id')
-  @Auth('admin')
+  @Auth('ADMIN')
   @UseInterceptors(TransformInterceptor)
   @ApiOkResponse({
     type: APIResponse,
@@ -68,7 +68,7 @@ export class AdminController {
   }
 
   @Get('details')
-  @Auth('admin')
+  @Auth('ADMIN')
   @UseInterceptors(TransformInterceptor)
   @ApiOkResponse({ type: AdminDetailsResponse })
   adminDetails(@Req() request): Promise<AdminDetailsResponse> {

@@ -31,14 +31,14 @@ export class CountriesController {
   ) {}
 
   @Get('list')
-  @Auth('admin')
+  @Auth('ADMIN')
   @UseInterceptors(TransformInterceptor)
   findAll(@Query(new ValidationPipe()) query: CountriesList) {
     return this.commonCountryService.findAll(query);
   }
 
   @Put(':id/status')
-  @Auth('admin')
+  @Auth('ADMIN')
   @UseInterceptors(TransformInterceptor)
   changeStatus(
     @Param() params: CountryId,
@@ -48,7 +48,7 @@ export class CountriesController {
   }
 
   @Put(':id')
-  @Auth('admin')
+  @Auth('ADMIN')
   @UseInterceptors(TransformInterceptor)
   delete(
     @Param(new ValidationPipe()) params: CountryId,

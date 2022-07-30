@@ -34,7 +34,7 @@ export class UserProductController {
   }
 
   @Get('offers')
-  @Auth('user')
+  @Auth('USER')
   @UseInterceptors(TransformInterceptor)
   productOffers(@Req() request) {
     return this.productService.productOffers(request.userId);

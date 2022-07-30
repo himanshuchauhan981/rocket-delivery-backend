@@ -51,23 +51,23 @@ module.exports = {
       if (item.status == 'REQUESTED') {
         notificationBody = `${userDetails.name} had placed an order with order number ${item.order_number}`;
         createdBy = item.user_id;
-        userType = 'user';
+        userType = 'USER';
         receiverId = adminDetails.id;
-        receiverType = 'admin';
+        receiverType = 'ADMIN';
         notificationType = 'order_request';
       } else if (item.status == 'CONFIRMED') {
         notificationBody = `Admin had confirmed your order with order number ${item.order_number}`;
         createdBy = adminDetails.id;
-        userType = 'admin';
+        userType = 'ADMIN';
         receiverId = item.user_id;
-        receiverType = 'user';
+        receiverType = 'USER';
         notificationType = 'order_confirm';
       } else if (item.status === 'CANCELLED') {
         notificationBody = `${userDetails.name} had cancelled order with order number ${item.order_number}`;
         createdBy = item.user_id;
-        userType = 'user';
+        userType = 'USER';
         receiverId = adminDetails.id;
-        receiverType = 'admin';
+        receiverType = 'ADMIN';
         notificationType = 'order_cancel';
       }
 
