@@ -51,7 +51,19 @@ export class OrderService {
     private readonly notificationService: NotificationService,
   ) {}
 
-  async create(payload: NewOrder, user_id: number): Promise<ApiResponse> {
+  #findSuperAdmin = (): Promise<Admin> => {
+    return this.adminRepository.findOne({ where: { super_admin: 1 } });
+  };
+
+  #findUserDetails = (id: number) => {
+    return this.userRepository.findByPk(id);
+  };
+
+  async create(
+    payload: NewOrder,
+    user_id: number,
+    user_role: string,
+  ): Promise<ApiResponse> {
     try {
       let subTotal = 0;
       let orderProducts = [];
@@ -171,6 +183,31 @@ export class OrderService {
         });
       }
 
+      const adminDetails = await this.#findSuperAdmin();
+      const customerDetails = await this.#findUserDetails(user_id);
+
+      const notificationArgs = {
+        notification_type: NOTIFICATION_TYPE.ORDER_REQUEST,
+        sender_id: user_id,
+        user_role,
+        slug: NOTIFICATION_SLUG.ORDER_REQUESTED,
+        receivers: [
+          {
+            user_id: adminDetails.id,
+            user_type: USER_TYPE.ADMIN,
+          },
+        ],
+        payload: {
+          order_number: newOrder.order_number,
+          customer_name: customerDetails.name,
+        },
+        metadata: {
+          order_id: newOrder.id,
+        },
+      };
+
+      await this.notificationService.createNotification(notificationArgs);
+
       return { statusCode: STATUS_CODE.SUCCESS, message: MESSAGES.SUCCESS };
     } catch (err) {
       throw err;
@@ -238,13 +275,9 @@ export class OrderService {
       { where: { id: order_id }, returning: true },
     );
 
-    const customerDetails = await this.userRepository.findByPk(
-      orderDetail.user_id,
-    );
+    const customerDetails = await this.#findUserDetails(orderDetail.user_id);
 
-    const adminDetails = await this.adminRepository.findOne({
-      where: { super_admin: 1 },
-    });
+    const adminDetails = await this.#findSuperAdmin();
 
     const notificationArgs = {
       notification_type: NOTIFICATION_TYPE.ORDER_CANCEL,
