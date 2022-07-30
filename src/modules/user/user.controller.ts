@@ -39,7 +39,7 @@ import {
 import { UserService } from './user.service';
 import { ApiResponse } from '../common/interface';
 
-@Controller('user')
+@Controller('USER')
 @ApiTags('User')
 export class UserController {
   constructor(
@@ -85,21 +85,21 @@ export class UserController {
   }
 
   @Get('deliveryCharges')
-  @Auth('user')
+  @Auth('USER')
   @UseInterceptors(TransformInterceptor)
   calculateDeliveryCharges(@Query() params: DeliveryCharges, @Req() request) {
     return this.userService.calculateDeliveryCharges(params, request.userId);
   }
 
   @Get('details')
-  @Auth('user')
+  @Auth('USER')
   @UseInterceptors(TransformInterceptor)
   getUserDetails(@Req() request): Promise<UserDetailsResponse> {
     return this.userService.getUserDetails(request.userId);
   }
 
   @Patch('details')
-  @Auth('user')
+  @Auth('USER')
   @UseInterceptors(TransformInterceptor)
   updateUserDetails(
     @Body(new ValidationPipe()) payload: UpdateProfile,

@@ -26,29 +26,29 @@ export class UserOrderController {
   ) {}
 
   @Post('new')
-  @Auth('user')
+  @Auth('USER')
   @UseInterceptors(TransformInterceptor)
   // @ApiResponse({ type: APIREsponse })
   create(@Body(new ValidationPipe()) payload: NewOrder, @Req() request) {
-    return this.orderService.create(payload, request.userId);
+    return this.orderService.create(payload, request.userId, request.role);
   }
 
   @Get('list')
-  @Auth('user')
+  @Auth('USER')
   @UseInterceptors(TransformInterceptor)
   list(@Req() request) {
     return this.orderService.list(request.userId);
   }
 
   @Get(':id')
-  @Auth('user')
+  @Auth('USER')
   @UseInterceptors(TransformInterceptor)
   findOneById(@Param(new ValidationPipe()) params: SpecificOrder) {
     return this.commonOrderService.findOneById(params.id);
   }
 
   @Get(':id/cancel')
-  @Auth('user')
+  @Auth('USER')
   @UseInterceptors(TransformInterceptor)
   cancelOrder(
     @Param(new ValidationPipe()) params: SpecificOrder,

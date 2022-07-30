@@ -32,21 +32,21 @@ export class StatesController {
   ) {}
 
   @Post('new')
-  @Auth('admin')
+  @Auth('ADMIN')
   @UseInterceptors(TransformInterceptor)
   addNewState(@Body(new ValidationPipe()) payload: NewState) {
     return this.statesService.create(payload);
   }
 
   @Get('list')
-  @Auth('admin')
+  @Auth('ADMIN')
   @UseInterceptors(TransformInterceptor)
   stateList(@Query(new ValidationPipe()) query: StateList) {
     return this.commonStatesService.findAll(query);
   }
 
   @Put(':id')
-  @Auth('admin')
+  @Auth('ADMIN')
   @UseInterceptors(TransformInterceptor)
   updateState(
     @Param(new ValidationPipe()) params: EditStateParams,

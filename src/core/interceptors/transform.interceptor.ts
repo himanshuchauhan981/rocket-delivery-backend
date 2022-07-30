@@ -35,7 +35,7 @@ export class TransformInterceptor<T> implements NestInterceptor<T, any> {
 
           apiResponse.setHeader('Content-Type', 'text/csv');
           apiResponse.status(STATUS_CODE.SUCCESS).end(response.data.csv);
-        } else if (apiRequest.role == 'admin') {
+        } else if (apiRequest.role == 'ADMIN') {
           return {
             statusCode: apiResponse.statusCode,
             message: response.message,

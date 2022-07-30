@@ -41,7 +41,7 @@ export class AdminService {
 
     const token = this.commonService.generateJWTToken({
       id: adminDetails.id,
-      role: 'admin',
+      role: 'ADMIN',
       email: payload.email,
     });
 

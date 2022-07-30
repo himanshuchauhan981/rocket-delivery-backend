@@ -26,21 +26,21 @@ export class UserShippingController {
   ) {}
 
   @Get('countries/list')
-  @Auth('user')
+  @Auth('USER')
   @UseInterceptors(TransformInterceptor)
   findAll(@Query(new ValidationPipe()) query: CountriesList) {
     return this.commonCountryService.findAll(query);
   }
 
   @Get('states/list')
-  @Auth('user')
+  @Auth('USER')
   @UseInterceptors(TransformInterceptor)
   stateList(@Query(new ValidationPipe()) query: StateList) {
     return this.commonStatesService.findAll(query);
   }
 
   @Get('cities/list')
-  @Auth('user')
+  @Auth('USER')
   @UseInterceptors(TransformInterceptor)
   citiesList(@Query(new ValidationPipe()) query: CitiesList) {
     return this.commonCitiesService.findAll(query);

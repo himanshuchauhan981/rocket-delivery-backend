@@ -25,7 +25,7 @@ export class NotificationController {
   constructor(private readonly notificationService: NotificationService) {}
 
   @Get('list')
-  @Auth('admin')
+  @Auth('ADMIN')
   @UseInterceptors(TransformInterceptor)
   @ApiOkResponse({ type: NotificationListResponse })
   notificationList(
@@ -35,7 +35,7 @@ export class NotificationController {
   }
 
   @Patch('status')
-  @Auth('admin')
+  @Auth('ADMIN')
   @UseInterceptors(TransformInterceptor)
   @ApiOkResponse({ type: APIResponse })
   updateNotificationStatus(

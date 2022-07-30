@@ -16,7 +16,7 @@ export class DashboardController {
   constructor(private readonly dashboardService: DashboardService) {}
 
   @Get('sales')
-  @Auth('admin')
+  @Auth('ADMIN')
   @UseInterceptors(TransformInterceptor)
   @ApiOkResponse({ type: AdminDashboardSalesResponse })
   dashboardSalesDetails(): Promise<AdminDashboardSalesResponse> {
@@ -24,7 +24,7 @@ export class DashboardController {
   }
 
   @Get('order')
-  @Auth('admin')
+  @Auth('ADMIN')
   @UseInterceptors(TransformInterceptor)
   @ApiOkResponse({ type: AdminDashboardOrderResponse })
   dashboardOrderDetails(): Promise<AdminDashboardOrderResponse> {
@@ -32,7 +32,7 @@ export class DashboardController {
   }
 
   @Get('products')
-  @Auth('admin')
+  @Auth('ADMIN')
   @UseInterceptors(TransformInterceptor)
   @ApiOkResponse({ type: AdminDashboardProductResponse })
   productDetails(): Promise<AdminDashboardProductResponse> {

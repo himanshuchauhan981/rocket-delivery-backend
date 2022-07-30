@@ -32,7 +32,7 @@ module.exports = {
         user_type: {
           type: Sequelize.ENUM,
           allowNull: false,
-          values: ['user', 'admin'],
+          values: ['USER', 'ADMIN'],
         },
 
         is_read: {

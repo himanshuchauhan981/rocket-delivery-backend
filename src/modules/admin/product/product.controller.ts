@@ -34,7 +34,7 @@ export class AdminProductController {
   ) {}
 
   @Get('list')
-  @Auth('admin')
+  @Auth('ADMIN')
   @UseInterceptors(TransformInterceptor)
   @ApiOkResponse({ type: AdminProductListResponse })
   findAll(
@@ -44,7 +44,7 @@ export class AdminProductController {
   }
 
   @Get(':id')
-  @Auth('admin')
+  @Auth('ADMIN')
   @UseInterceptors(TransformInterceptor)
   @ApiOkResponse({ type: ProductDetailResponse })
   findOneById(
@@ -54,7 +54,7 @@ export class AdminProductController {
   }
 
   @Put(':id')
-  @Auth('admin')
+  @Auth('ADMIN')
   @UseInterceptors(TransformInterceptor)
   @ApiOkResponse({ type: APIResponse })
   @ApiNotFoundResponse({
@@ -69,7 +69,7 @@ export class AdminProductController {
   }
 
   @Delete(':id')
-  @Auth('admin')
+  @Auth('ADMIN')
   @UseInterceptors(TransformInterceptor)
   @ApiOkResponse({ type: APIResponse })
   @ApiNotFoundResponse({
@@ -83,7 +83,7 @@ export class AdminProductController {
   }
 
   @Post('new')
-  @Auth('admin')
+  @Auth('ADMIN')
   @ApiOkResponse({ type: APIResponse })
   @UseInterceptors(TransformInterceptor)
   createNew(

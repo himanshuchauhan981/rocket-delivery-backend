@@ -33,21 +33,21 @@ export class AdminSubcategoryController {
   ) {}
 
   @Get('list')
-  @Auth('admin')
+  @Auth('ADMIN')
   @UseInterceptors(TransformInterceptor)
   findAll(): Promise<AdminSubCategoryListResponse> {
     return this.adminSubCategoryService.findAll();
   }
 
   @Get('')
-  @Auth('admin')
+  @Auth('ADMIN')
   @UseInterceptors(TransformInterceptor)
   findAllByCategoryId(@Query(new ValidationPipe()) query: SubCategoryList) {
     return this.adminSubCategoryService.findAllByCategoryId(query);
   }
 
   @Get(':id')
-  @Auth('admin')
+  @Auth('ADMIN')
   @UseInterceptors(TransformInterceptor)
   findOneById(
     @Param(new ValidationPipe()) params: SubCategoryId,
@@ -56,7 +56,7 @@ export class AdminSubcategoryController {
   }
 
   @Patch(':id')
-  @Auth('admin')
+  @Auth('ADMIN')
   @UseInterceptors(TransformInterceptor)
   update(
     @Body(new ValidationPipe()) payload: SubmitSubCategory,
@@ -66,7 +66,7 @@ export class AdminSubcategoryController {
   }
 
   @Delete(':id')
-  @Auth('admin')
+  @Auth('ADMIN')
   @UseInterceptors(TransformInterceptor)
   delete(
     @Param(new ValidationPipe()) params: SubCategoryId,

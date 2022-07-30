@@ -26,21 +26,21 @@ export class UserAddressController {
   ) {}
 
   @Get('list')
-  @Auth('user')
+  @Auth('USER')
   @UseInterceptors(TransformInterceptor)
   findByUserId(@Req() req) {
     return this.addressService.findAllByUserId(req.userId);
   }
 
   @Post('new')
-  @Auth('user')
+  @Auth('USER')
   @UseInterceptors(TransformInterceptor)
   add(@Body(new ValidationPipe()) payload: NewAddress, @Req() req) {
     return this.addressService.add(payload, req.userId);
   }
 
   @Patch(':id')
-  @Auth('user')
+  @Auth('USER')
   @UseInterceptors(TransformInterceptor)
   update(
     @Body(new ValidationPipe()) payload: NewAddress,

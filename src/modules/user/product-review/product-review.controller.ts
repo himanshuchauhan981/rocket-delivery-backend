@@ -29,7 +29,7 @@ export class UserProductReviewController {
   constructor(private readonly productReviewService: ProductReviewService) {}
 
   @Post('new')
-  @Auth('user')
+  @Auth('USER')
   @UseInterceptors(TransformInterceptor)
   create(
     @Body(new ValidationPipe()) payload: NewProductReview,
@@ -39,7 +39,7 @@ export class UserProductReviewController {
   }
 
   @Patch('update/:id')
-  @Auth('user')
+  @Auth('USER')
   @UseInterceptors(TransformInterceptor)
   update(
     @Body(new ValidationPipe()) payload: UpdateProductReview,
@@ -50,7 +50,7 @@ export class UserProductReviewController {
   }
 
   @Delete(':id')
-  @Auth('user')
+  @Auth('USER')
   @UseInterceptors(TransformInterceptor)
   delete(@Param(new ValidationPipe()) payload: SpecificProductReview) {
     return this.productReviewService.delete(payload.id);

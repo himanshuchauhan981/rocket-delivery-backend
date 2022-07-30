@@ -29,7 +29,7 @@ export class AdminOrdersController {
   ) {}
 
   @Get('list')
-  @Auth('admin')
+  @Auth('ADMIN')
   @UseInterceptors(TransformInterceptor)
   @ApiOkResponse({ type: OrderListResponse })
   list(
@@ -39,7 +39,7 @@ export class AdminOrdersController {
   }
 
   @Get(':id')
-  @Auth('admin')
+  @Auth('ADMIN')
   @UseInterceptors(TransformInterceptor)
   @ApiOkResponse({ type: SpecificOrderResponse })
   @ApiNotFoundResponse({
@@ -53,7 +53,7 @@ export class AdminOrdersController {
   }
 
   @Put(':id/status')
-  @Auth('admin')
+  @Auth('ADMIN')
   @UseInterceptors(TransformInterceptor)
   @ApiOkResponse({ type: APIResponse })
   @ApiNotFoundResponse({
@@ -68,7 +68,7 @@ export class AdminOrdersController {
   }
 
   @Get(':id/invoice')
-  @Auth('admin')
+  @Auth('ADMIN')
   @UseInterceptors(TransformInterceptor)
   downloadInvoice(@Param(new ValidationPipe()) params: SpecificOrder) {
     return this.orderService.downloadInvoice(params.id);
