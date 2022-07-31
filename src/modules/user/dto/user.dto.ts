@@ -119,27 +119,6 @@ class UpdateProfile {
   password: string;
 }
 
-class UserEmail {
-  @ApiProperty()
-  email: string;
-}
-
-class VerifyPassword {
-  @ApiProperty()
-  email: string;
-
-  @ApiProperty()
-  otp: string;
-}
-
-class ResetPassword {
-  @ApiProperty()
-  id: number;
-
-  @ApiProperty()
-  new_password: string;
-}
-
 class DeliveryCharges {
   @ApiProperty()
   @IsNotEmpty()
@@ -158,8 +137,5 @@ export {
   SimilarProducts,
   UserCart,
   UpdateProfile,
-  UserEmail,
-  VerifyPassword,
-  ResetPassword,
   DeliveryCharges,
 };

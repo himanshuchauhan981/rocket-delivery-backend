@@ -28,7 +28,7 @@ import {
   AdminLoginSuccessResponse,
 } from './dto/admin.dto';
 
-@Controller('ADMIN')
+@Controller('admin')
 @ApiTags('Admin')
 export class AdminController {
   constructor(

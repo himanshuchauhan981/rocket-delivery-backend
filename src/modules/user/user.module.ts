@@ -16,6 +16,7 @@ import { UserProductHistoryModule } from './product-history/product-history.modu
 import { UserProductReviewModule } from './product-review/product-review.module';
 import { UserWishlistModule } from './wishlist/wishlist.module';
 import { UserShippingModule } from './shipping/shipping.module';
+import { UserPasswordModule } from './password/password.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { UserShippingModule } from './shipping/shipping.module';
     UserProductReviewModule,
     UserWishlistModule,
     UserShippingModule,
+    UserPasswordModule,
   ],
   controllers: [UserController],
   providers: [
