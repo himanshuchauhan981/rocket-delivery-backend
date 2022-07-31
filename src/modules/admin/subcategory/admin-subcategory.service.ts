@@ -12,13 +12,13 @@ import { Product } from '../../../modules/product/product.entity';
 import { SubCategory } from '../../../modules/sub-category/sub-category.entity';
 import { File } from '../file/file.entity';
 import {
+  AdminSubCategoryListResponse,
+  SpecificSubCategoryResponse,
+} from './dto/admin-subcategory-response.dto';
+import {
   SubCategoryList,
   SubmitSubCategory,
 } from './dto/admin-subcategory.dto';
-import {
-  AdminSubCategoryListResponse,
-  SpecificSubCategoryResponse,
-} from './interface/admin-subcategory';
 
 @Injectable()
 export class AdminSubcategoryService {

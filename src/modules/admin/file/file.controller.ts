@@ -9,15 +9,10 @@ import {
   UseInterceptors,
   ValidationPipe,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
 import { Auth } from '../../../core/decorators/auth.decorator';
 import { TransformInterceptor } from '../../../core/interceptors/transform.interceptor';
-import {
-  CreateFileResponse,
-  GetAllFilesResponse,
-  GetFilesBySlugResponse,
-} from './interface/response.interface';
 import {
   CreateFile,
   FileList,
@@ -25,6 +20,11 @@ import {
   SpecificFile,
 } from './dto/file.dto';
 import { FileService } from './file.service';
+import {
+  CreateFileResponse,
+  GetAllFilesResponse,
+  GetFilesBySlugResponse,
+} from './dto/file-response.dto';
 
 @Controller('admin/file')
 @ApiTags('File')
@@ -52,6 +52,7 @@ export class FileController {
   @Post('')
   @Auth('ADMIN')
   @UseInterceptors(TransformInterceptor)
+  @ApiOkResponse({ type: CreateFileResponse })
   create(
     @Body(new ValidationPipe()) payload: CreateFile,
   ): Promise<CreateFileResponse> {

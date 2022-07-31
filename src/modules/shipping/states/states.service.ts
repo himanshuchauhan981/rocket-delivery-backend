@@ -7,9 +7,9 @@ import {
   STATES_REPOSITORY,
 } from 'src/core/constants/repositories';
 import { STATUS_CODE } from 'src/core/constants/status_code';
+import { StatesListResponse } from 'src/modules/admin/shipping/states/dto/states-response.dto';
 import { StateList } from 'src/modules/admin/shipping/states/dto/states.dto';
 import { Countries } from '../countries/countries.entity';
-import { StatesListResponse } from './interface/response.interface';
 import { States } from './states.entity';
 
 @Injectable()

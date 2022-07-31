@@ -16,14 +16,14 @@ import { Auth } from '../../../core/decorators/auth.decorator';
 import { TransformInterceptor } from '../../../core/interceptors/transform.interceptor';
 import { AdminSubcategoryService } from './admin-subcategory.service';
 import {
+  AdminSubCategoryListResponse,
+  SpecificSubCategoryResponse,
+} from './dto/admin-subcategory-response.dto';
+import {
   SubCategoryId,
   SubCategoryList,
   SubmitSubCategory,
 } from './dto/admin-subcategory.dto';
-import {
-  AdminSubCategoryListResponse,
-  SpecificSubCategoryResponse,
-} from './interface/admin-subcategory';
 
 @ApiTags('Admin sub category')
 @Controller('admin/subcategories')

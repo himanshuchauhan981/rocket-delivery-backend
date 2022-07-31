@@ -15,6 +15,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { USER_TYPE } from 'src/core/constants/constants';
 
 import { Auth } from '../../core/decorators/auth.decorator';
 import { TransformInterceptor } from '../../core/interceptors/transform.interceptor';
@@ -53,7 +54,7 @@ export class AdminController {
   }
 
   @Put('address/:id')
-  @Auth('ADMIN')
+  @Auth(USER_TYPE.ADMIN)
   @UseInterceptors(TransformInterceptor)
   @ApiOkResponse({
     type: APIResponse,
@@ -68,7 +69,7 @@ export class AdminController {
   }
 
   @Get('details')
-  @Auth('ADMIN')
+  @Auth(USER_TYPE.ADMIN)
   @UseInterceptors(TransformInterceptor)
   @ApiOkResponse({ type: AdminDetailsResponse })
   adminDetails(@Req() request): Promise<AdminDetailsResponse> {

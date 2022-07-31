@@ -10,10 +10,15 @@ import {
   UseInterceptors,
   ValidationPipe,
 } from '@nestjs/common';
-import { ApiNotFoundResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { APIResponse } from 'src/modules/common/dto/common.dto';
-import { ApiResponse } from 'src/modules/common/interface';
+import {
+  ApiConflictResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { USER_TYPE } from 'src/core/constants/constants';
 
+import { APIResponse } from 'src/modules/common/dto/common.dto';
 import { Auth } from '../../../core/decorators/auth.decorator';
 import { TransformInterceptor } from '../../../core/interceptors/transform.interceptor';
 import { CategoryService } from './category.service';
@@ -35,16 +40,18 @@ export class AdminCategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @Post('')
-  @Auth('ADMIN')
+  @Auth(USER_TYPE.ADMIN)
   @UseInterceptors(TransformInterceptor)
+  @ApiOkResponse({ type: APIResponse })
+  @ApiConflictResponse({ type: APIResponse })
   create(
     @Body(new ValidationPipe()) payload: SubmitCategory,
-  ): Promise<ApiResponse> {
+  ): Promise<APIResponse> {
     return this.categoryService.create(payload);
   }
 
   @Get('list')
-  @Auth('ADMIN')
+  @Auth(USER_TYPE.ADMIN)
   @UseInterceptors(TransformInterceptor)
   @ApiOkResponse({ type: CategoryListResponse, description: 'Category List' })
   list(@Query() query: CategoryList): Promise<CategoryListResponse> {
@@ -52,8 +59,13 @@ export class AdminCategoryController {
   }
 
   @Get(':id')
-  @Auth('ADMIN')
+  @Auth(USER_TYPE.ADMIN)
   @UseInterceptors(TransformInterceptor)
+  @ApiOkResponse({ type: SpecificCategoryResponse })
+  @ApiNotFoundResponse({
+    type: APIResponse,
+    description: 'Invalid Category ID',
+  })
   categoryDetails(
     @Param() params: CategoryId,
   ): Promise<SpecificCategoryResponse> {
@@ -61,7 +73,7 @@ export class AdminCategoryController {
   }
 
   @Put(':id')
-  @Auth('ADMIN')
+  @Auth(USER_TYPE.ADMIN)
   @UseInterceptors(TransformInterceptor)
   @ApiOkResponse({ type: APIResponse, description: 'Update Category Details' })
   @ApiNotFoundResponse({
@@ -76,7 +88,7 @@ export class AdminCategoryController {
   }
 
   @Put(':id/status')
-  @Auth('ADMIN')
+  @Auth(USER_TYPE.ADMIN)
   @UseInterceptors(TransformInterceptor)
   @ApiOkResponse({ type: APIResponse, description: 'Update category status' })
   @ApiNotFoundResponse({
@@ -91,7 +103,7 @@ export class AdminCategoryController {
   }
 
   @Delete('bulkDelete')
-  @Auth('ADMIN')
+  @Auth(USER_TYPE.ADMIN)
   @UseInterceptors(TransformInterceptor)
   @ApiOkResponse({
     type: APIResponse,

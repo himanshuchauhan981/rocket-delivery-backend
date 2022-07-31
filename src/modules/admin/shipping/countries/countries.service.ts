@@ -3,7 +3,7 @@ import { HttpException, Inject, Injectable } from '@nestjs/common';
 import { MESSAGES } from 'src/core/constants/messages';
 import { COUNTRIES_REPOSITORY } from 'src/core/constants/repositories';
 import { STATUS_CODE } from 'src/core/constants/status_code';
-import { ApiResponse } from 'src/modules/common/interface';
+import { APIResponse } from 'src/modules/common/dto/common.dto';
 import { Countries } from 'src/modules/shipping/countries/countries.entity';
 import { EditCountry } from './dto/countries.dto';
 
@@ -14,7 +14,7 @@ export class CountriesService {
     private readonly countriesRepository: typeof Countries,
   ) {}
 
-  async statusUpdate(country_id: number, status: number): Promise<ApiResponse> {
+  async statusUpdate(country_id: number, status: number): Promise<APIResponse> {
     try {
       const [updateStatus] = await this.countriesRepository.update(
         { is_active: status },
@@ -37,7 +37,7 @@ export class CountriesService {
     }
   }
 
-  async update(id: number, payload: EditCountry): Promise<ApiResponse> {
+  async update(id: number, payload: EditCountry): Promise<APIResponse> {
     try {
       const updatePayload: any = {};
 

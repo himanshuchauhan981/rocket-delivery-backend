@@ -6,7 +6,7 @@ import {
   STATES_REPOSITORY,
 } from 'src/core/constants/repositories';
 import { STATUS_CODE } from 'src/core/constants/status_code';
-import { ApiResponse } from 'src/modules/common/interface';
+import { APIResponse } from 'src/modules/common/dto/common.dto';
 import { Cities } from 'src/modules/shipping/cities/cities.entity';
 import { Countries } from 'src/modules/shipping/countries/countries.entity';
 import { CityId, EditCitiesPayload, NewCity } from './dto/cities.dto';
@@ -20,7 +20,7 @@ export class CitiesService {
     private readonly statesRepository: typeof Countries,
   ) {}
 
-  async create(payload: NewCity): Promise<ApiResponse> {
+  async create(payload: NewCity): Promise<APIResponse> {
     try {
       const existingState = await this.statesRepository.findByPk(
         payload.state_id,
@@ -50,7 +50,7 @@ export class CitiesService {
   async update(
     params: CityId,
     payload: EditCitiesPayload,
-  ): Promise<ApiResponse> {
+  ): Promise<APIResponse> {
     try {
       const updatePayload: any = {};
 
@@ -77,7 +77,7 @@ export class CitiesService {
     }
   }
 
-  async delete(id: number) {
+  async delete(id: number): Promise<APIResponse> {
     try {
       const [updateStatus] = await this.citiesRepository.update(
         { is_deleted: 1 },

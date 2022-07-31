@@ -1,26 +1,55 @@
-import { ApiResponse, FileResponse } from 'src/modules/common/interface';
+import { ApiProperty } from '@nestjs/swagger';
 
-interface User {
+import { APIResponse } from 'src/modules/common/dto/common.dto';
+
+class User {
+  @ApiProperty()
   id: number;
+
+  @ApiProperty()
   name: string;
+
+  @ApiProperty()
   email: string;
+
+  @ApiProperty()
   created_at: Date;
+
+  @ApiProperty()
   mobile_number: string;
+
+  @ApiProperty()
   is_active: number;
+
+  @ApiProperty()
   profile_image: string;
 }
 
-interface ListUsersResponse extends ApiResponse {
-  data: {
-    userList: User[];
-    count: number;
-  };
+class ListUsers {
+  @ApiProperty({ type: () => [User] })
+  userList: User[];
+
+  @ApiProperty()
+  count: number;
 }
 
-interface DownloadUserCSVResponse extends FileResponse {
-  data: {
-    csv: string;
-  };
+class ListUsersResponse extends APIResponse {
+  @ApiProperty()
+  data: ListUsers;
+}
+
+class DownloadUserCSVResponse {
+  @ApiProperty()
+  data: { csv: string };
+
+  @ApiProperty()
+  responseType: string;
+
+  @ApiProperty()
+  statusCode: number;
+
+  @ApiProperty()
+  message: string;
 }
 
 export { ListUsersResponse, DownloadUserCSVResponse };

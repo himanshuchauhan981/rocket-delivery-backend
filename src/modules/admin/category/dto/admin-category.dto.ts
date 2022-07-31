@@ -34,7 +34,7 @@ export class CategoryId {
 
 export class CategoryIdList {
   @IsNotEmpty()
-  @ApiProperty()
+  @ApiProperty({ type: () => [Number] })
   category_ids: number[];
 }
 

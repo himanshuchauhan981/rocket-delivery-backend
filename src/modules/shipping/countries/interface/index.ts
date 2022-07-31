@@ -1,13 +1,11 @@
-interface Country {
-  id: number;
-  name: string;
-  iso_code: string;
-  is_active: number;
-}
+import { ApiProperty } from '@nestjs/swagger';
 
-interface StateListCountry {
+class StateListCountry {
+  @ApiProperty()
   id: number;
+
+  @ApiProperty()
   name: string;
 }
 
-export { Country, StateListCountry };
+export { StateListCountry };

@@ -4,12 +4,6 @@ import sequelize from 'sequelize';
 import { CreateFile, FileList, FileListBySlug } from './dto/file.dto';
 import { File } from './file.entity';
 import {
-  CreateFileResponse,
-  GetAllFilesResponse,
-  GetFilesBySlugResponse,
-  ImageList,
-} from './interface/response.interface';
-import {
   CATEGORY_REPOSITORY,
   FILE_REPOSITORY,
   PRODUCT_REPOSITORY,
@@ -26,6 +20,12 @@ import { Category } from '../../../modules/category/category.entity';
 import { SubCategory } from '../../../modules/sub-category/sub-category.entity';
 import { Product } from '../../../modules/product/product.entity';
 import { ApiResponse } from 'src/modules/common/interface';
+import {
+  CreateFileResponse,
+  GetAllFilesResponse,
+  GetFilesBySlugResponse,
+  ImageList,
+} from './dto/file-response.dto';
 
 @Injectable()
 export class FileService {
