@@ -9,7 +9,7 @@ import {
   UseInterceptors,
   ValidationPipe,
 } from '@nestjs/common';
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiNotFoundResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
 import { Auth } from '../../../core/decorators/auth.decorator';
 import { TransformInterceptor } from '../../../core/interceptors/transform.interceptor';
@@ -25,6 +25,8 @@ import {
   GetAllFilesResponse,
   GetFilesBySlugResponse,
 } from './dto/file-response.dto';
+import { USER_TYPE } from 'src/core/constants/constants';
+import { APIResponse } from 'src/modules/common/dto/common.dto';
 
 @Controller('admin/file')
 @ApiTags('File')
@@ -32,8 +34,9 @@ export class FileController {
   constructor(private fileService: FileService) {}
 
   @Get('list')
-  @Auth('ADMIN')
+  @Auth(USER_TYPE.ADMIN)
   @UseInterceptors(TransformInterceptor)
+  @ApiOkResponse({ type: GetAllFilesResponse })
   getAll(
     @Query(new ValidationPipe()) query: FileList,
   ): Promise<GetAllFilesResponse> {
@@ -41,8 +44,9 @@ export class FileController {
   }
 
   @Get('')
-  @Auth('ADMIN')
+  @Auth(USER_TYPE.ADMIN)
   @UseInterceptors(TransformInterceptor)
+  @ApiOkResponse({ type: GetFilesBySlugResponse })
   getBySlug(
     @Query(new ValidationPipe()) query: FileListBySlug,
   ): Promise<GetFilesBySlugResponse> {
@@ -50,7 +54,7 @@ export class FileController {
   }
 
   @Post('')
-  @Auth('ADMIN')
+  @Auth(USER_TYPE.ADMIN)
   @UseInterceptors(TransformInterceptor)
   @ApiOkResponse({ type: CreateFileResponse })
   create(
@@ -60,9 +64,16 @@ export class FileController {
   }
 
   @Delete(':id')
-  @Auth('ADMIN')
+  @Auth(USER_TYPE.ADMIN)
   @UseInterceptors(TransformInterceptor)
-  delete(@Param(new ValidationPipe()) params: SpecificFile) {
+  @ApiOkResponse({
+    type: APIResponse,
+    description: 'File deleted successfully',
+  })
+  @ApiNotFoundResponse({ type: APIResponse, description: 'Invalid File ID' })
+  delete(
+    @Param(new ValidationPipe()) params: SpecificFile,
+  ): Promise<APIResponse> {
     return this.fileService.delete(params.id);
   }
 }

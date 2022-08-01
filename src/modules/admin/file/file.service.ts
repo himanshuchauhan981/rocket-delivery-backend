@@ -19,13 +19,13 @@ import {
 import { Category } from '../../../modules/category/category.entity';
 import { SubCategory } from '../../../modules/sub-category/sub-category.entity';
 import { Product } from '../../../modules/product/product.entity';
-import { ApiResponse } from 'src/modules/common/interface';
 import {
   CreateFileResponse,
   GetAllFilesResponse,
   GetFilesBySlugResponse,
   ImageList,
 } from './dto/file-response.dto';
+import { APIResponse } from 'src/modules/common/dto/common.dto';
 
 @Injectable()
 export class FileService {
@@ -125,7 +125,7 @@ export class FileService {
     }
   }
 
-  async delete(id: number): Promise<ApiResponse> {
+  async delete(id: number): Promise<APIResponse> {
     try {
       const [, [file]] = await this.fileRepository.update(
         { is_deleted: 1 },
