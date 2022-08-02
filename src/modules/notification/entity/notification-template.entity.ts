@@ -7,7 +7,10 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript';
 
-import { NOTIFICATION_TEMPLATE_SLUG } from '../../../core/constants/constants';
+import {
+  NOTIFICATION_TEMPLATE_SLUG,
+  USER_TYPE,
+} from '../../../core/constants/constants';
 
 @Table({
   tableName: 'notification_template',
@@ -38,6 +41,13 @@ export class NotificationTemplate extends Model<NotificationTemplate> {
     allowNull: false,
   })
   title: string;
+
+  @Column({
+    type: DataType.ENUM,
+    allowNull: false,
+    values: [USER_TYPE.ADMIN, USER_TYPE.USER],
+  })
+  type: string;
 
   @Column({
     type: DataType.STRING,
