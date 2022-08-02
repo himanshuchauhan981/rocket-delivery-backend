@@ -1,6 +1,7 @@
 import { HttpException, Inject, Injectable } from '@nestjs/common';
 import sequelize from 'sequelize';
 import * as htmlPDF from 'html-pdf';
+import * as moment from 'moment';
 
 import {
   CONSTANTS,
@@ -28,6 +29,10 @@ import { Address } from '../../../modules/address/address.entity';
 import { NotificationTemplate } from '../../../modules/notification/entity/notification-template.entity';
 import { OrderInvoiceResponse } from './dto/admin-orders-response.dto';
 import { APIResponse } from 'src/modules/common/dto/common.dto';
+import {
+  MailService,
+  MailServiceInput,
+} from 'src/core/utils/mail/mail.service';
 
 @Injectable()
 export class OrderService {
@@ -38,6 +43,7 @@ export class OrderService {
     private readonly fcmService: FcmService,
     @Inject(NOTIFICATION_TEMPLATE_REPOSITORY)
     private readonly notificationTemplateRepository: typeof NotificationTemplate,
+    private readonly mailService: MailService,
   ) {}
 
   async #generateOrderNotifications(
@@ -88,6 +94,37 @@ export class OrderService {
     return this.notificationTemplateRepository.findOne({
       where: { [sequelize.Op.and]: [{ slug }, { type: user_role }] },
     });
+  }
+
+  async #sendEmailToUser(status: string, email: string, order: Order) {
+    try {
+      if (status === ORDER_STATUS.CANCELLED) {
+        const cancelledOrderEmailObj: MailServiceInput = {
+          subject: 'Order Cancelled',
+          receivers: [email],
+          template: 'orderCancellation',
+          templateContext: {
+            order_number: order.order_number,
+            order_date: moment(order.created_at).format(
+              'DD-MM-YYYY HH:mm:ss a',
+            ),
+            order_reason: 'Cancelled by Admin',
+            order_products: order.order_products.map((item) => ({
+              name: item.product_name,
+              quantity: item.quantity,
+              price: item.price,
+            })),
+            sub_total: order.amount.toFixed(2),
+            delivery_charges: order.delivery_charges.toFixed(2),
+            total_amount: order.net_amount.toFixed(2),
+          },
+        };
+
+        return this.mailService.sendMail(cancelledOrderEmailObj);
+      }
+    } catch (err) {
+      throw err;
+    }
   }
 
   async adminOrderList(query: OrdersList): Promise<OrderListResponse> {
@@ -148,7 +185,7 @@ export class OrderService {
 
   async updateOrderStatus(
     payload: UpdateOrder,
-    id: number,
+    order_id: number,
   ): Promise<APIResponse> {
     try {
       const uploadPayload = { ...payload };
@@ -160,13 +197,11 @@ export class OrderService {
         uploadPayload.status = DELIVERY_STATUS.DELIVERED;
       }
 
-      const [status, [orderDetails]] = await this.orderRepository.update<Order>(
-        uploadPayload,
-        {
-          where: { id },
+      const [status, [updatedOrderDetails]] =
+        await this.orderRepository.update<Order>(uploadPayload, {
+          where: { id: order_id },
           returning: true,
-        },
-      );
+        });
 
       if (!status) {
         throw new HttpException(
@@ -181,7 +216,7 @@ export class OrderService {
         const [payloadStatus] = Object.values(uploadPayload);
 
         const userDetails = await this.userRepository.findByPk(
-          orderDetails.user_id,
+          updatedOrderDetails.user_id,
         );
 
         const notificationTemplateDetails =
@@ -205,6 +240,25 @@ export class OrderService {
           notificationPayload,
           false,
         );
+
+        const orderDetails = await this.orderRepository.findByPk(order_id, {
+          include: [
+            {
+              model: OrderProduct,
+              attributes: ['product_name', 'quantity', 'price'],
+            },
+          ],
+          attributes: [
+            'id',
+            'order_number',
+            'amount',
+            'net_amount',
+            'created_at',
+            'delivery_charges',
+          ],
+        });
+
+        this.#sendEmailToUser(payloadStatus, userDetails.email, orderDetails);
       }
 
       if (CONSTANTS.ORDER_STATUS in payload) {
