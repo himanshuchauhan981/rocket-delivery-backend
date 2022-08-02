@@ -19,6 +19,7 @@ import { OrderService } from './order.service';
 import { CommonOrderService } from '../../order/order.service';
 import { APIResponse } from 'src/modules/common/dto/common.dto';
 import { SpecificOrderResponse } from './dto/admin-orders-response.dto';
+import { USER_TYPE } from 'src/core/constants/constants';
 
 @Controller('admin/orders')
 @ApiTags('Admin orders')
@@ -29,7 +30,7 @@ export class AdminOrdersController {
   ) {}
 
   @Get('list')
-  @Auth('ADMIN')
+  @Auth(USER_TYPE.ADMIN)
   @UseInterceptors(TransformInterceptor)
   @ApiOkResponse({ type: OrderListResponse })
   list(
@@ -39,7 +40,7 @@ export class AdminOrdersController {
   }
 
   @Get(':id')
-  @Auth('ADMIN')
+  @Auth(USER_TYPE.ADMIN)
   @UseInterceptors(TransformInterceptor)
   @ApiOkResponse({ type: SpecificOrderResponse })
   @ApiNotFoundResponse({
@@ -53,7 +54,7 @@ export class AdminOrdersController {
   }
 
   @Put(':id/status')
-  @Auth('ADMIN')
+  @Auth(USER_TYPE.ADMIN)
   @UseInterceptors(TransformInterceptor)
   @ApiOkResponse({ type: APIResponse })
   @ApiNotFoundResponse({
@@ -68,7 +69,7 @@ export class AdminOrdersController {
   }
 
   @Get(':id/invoice')
-  @Auth('ADMIN')
+  @Auth(USER_TYPE.ADMIN)
   @UseInterceptors(TransformInterceptor)
   downloadInvoice(@Param(new ValidationPipe()) params: SpecificOrder) {
     return this.orderService.downloadInvoice(params.id);

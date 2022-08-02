@@ -35,7 +35,7 @@ import {
 import { UserService } from './user.service';
 import { ApiResponse } from '../common/interface';
 
-@Controller('USER')
+@Controller('user')
 @ApiTags('User')
 export class UserController {
   constructor(

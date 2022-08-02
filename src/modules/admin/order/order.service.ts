@@ -8,6 +8,7 @@ import {
   NOTIFICATION_TEMPLATE_SLUG,
   ORDER_STATUS,
   RESPONSE_TYPE,
+  USER_TYPE,
 } from '../../../core/constants/constants';
 import { MESSAGES } from '../../../core/constants/messages';
 import {
@@ -42,6 +43,7 @@ export class OrderService {
   async #generateOrderNotifications(
     key: string,
     status: string,
+    user_role: string,
   ): Promise<NotificationTemplate> {
     let slug: string;
 
@@ -83,7 +85,9 @@ export class OrderService {
       }
     }
 
-    return this.notificationTemplateRepository.findOne({ where: { slug } });
+    return this.notificationTemplateRepository.findOne({
+      where: { [sequelize.Op.and]: [{ slug }, { type: user_role }] },
+    });
   }
 
   async adminOrderList(query: OrdersList): Promise<OrderListResponse> {
@@ -181,7 +185,11 @@ export class OrderService {
         );
 
         const notificationTemplateDetails =
-          await this.#generateOrderNotifications(key, payloadStatus);
+          await this.#generateOrderNotifications(
+            key,
+            payloadStatus,
+            USER_TYPE.USER,
+          );
 
         const deviceIds = [userDetails.fcm_token];
 

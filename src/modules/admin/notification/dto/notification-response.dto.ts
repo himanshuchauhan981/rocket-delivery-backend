@@ -7,12 +7,6 @@ class Notification {
   id: number;
 
   @ApiProperty()
-  body: string;
-
-  @ApiProperty()
-  notification_type: string;
-
-  @ApiProperty()
   metadata: any;
 }
 

@@ -25,11 +25,11 @@ module.exports = {
           allowNull: false,
         },
 
-        notification_type: {
-          type: Sequelize.ENUM,
-          allowNull: false,
-          values: ['ORDER_REQUEST', 'ORDER_CONFIRM', 'ORDER_CANCEL'],
-        },
+        // notification_type: {
+        //   type: Sequelize.ENUM,
+        //   allowNull: false,
+        //   values: ['ORDER_REQUEST', 'ORDER_CONFIRM', 'ORDER_CANCEL'],
+        // },
 
         user_type: {
           type: Sequelize.ENUM,
