@@ -21,16 +21,7 @@ module.exports = {
         },
 
         slug: {
-          type: Sequelize.ENUM(
-            'ORDER_REQUESTED',
-            'ORDER_CONFIRMED',
-            'ORDER_DELIVERED',
-            'ORDER_CANCELLED',
-            'DELIVERY_CONFIRMED',
-            'DELIVERY_PICKED',
-            'DELIVERY_ON_THE_WAY',
-            'DELIVERY_COMPLETED',
-          ),
+          type: Sequelize.TEXT,
           allowNull: false,
         },
 
@@ -41,6 +32,15 @@ module.exports = {
 
         body: {
           type: Sequelize.STRING,
+          allowNull: false,
+        },
+
+        metadata: {
+          type: Sequelize.JSON,
+        },
+
+        type: {
+          type: Sequelize.TEXT,
           allowNull: false,
         },
 
@@ -75,6 +75,23 @@ module.exports = {
         },
       },
     );
+
+    await queryInterface.changeColumn('notification_template', 'slug', {
+      type: Sequelize.ENUM(
+        'ORDER_REQUESTED',
+        'ORDER_CONFIRMED',
+        'ORDER_DELIVERED',
+        'ORDER_CANCELLED',
+        'DELIVERY_CONFIRMED',
+        'DELIVERY_PICKED',
+        'DELIVERY_ON_THE_WAY',
+        'DELIVERY_COMPLETED',
+      ),
+    });
+
+    await queryInterface.changeColumn('notification_template', 'type', {
+      type: Sequelize.ENUM('ADMIN', 'USER'),
+    });
   },
 
   async down(queryInterface) {
