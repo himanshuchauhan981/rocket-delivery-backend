@@ -7,10 +7,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript';
 
-import {
-  NOTIFICATION_TYPE,
-  USER_TYPE,
-} from '../../../core/constants/constants';
+import { USER_TYPE } from '../../../core/constants/constants';
 
 @Table({
   tableName: 'notification',
@@ -25,27 +22,10 @@ export class Notification extends Model<Notification> {
   id: number;
 
   @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  body: string;
-
-  @Column({
     type: DataType.INTEGER,
     allowNull: false,
   })
   user_id: number;
-
-  @Column({
-    type: DataType.ENUM,
-    values: [
-      NOTIFICATION_TYPE.ORDER_REQUEST,
-      NOTIFICATION_TYPE.ORDER_CONFIRM,
-      NOTIFICATION_TYPE.ORDER_CANCEL,
-    ],
-    allowNull: false,
-  })
-  notification_type: string;
 
   @Column({
     type: DataType.ENUM,

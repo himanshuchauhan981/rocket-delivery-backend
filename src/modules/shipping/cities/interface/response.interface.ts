@@ -1,11 +1,18 @@
-import { ApiResponse } from 'src/modules/common/interface';
+import { ApiProperty } from '@nestjs/swagger';
+import { APIResponse } from 'src/modules/common/dto/common.dto';
 import { City } from '.';
 
-interface CitiesListResponse extends ApiResponse {
-  data: {
-    cities: City[];
-    count: number;
-  };
+class CitiesList {
+  @ApiProperty({ type: () => [City] })
+  cities: City[];
+
+  @ApiProperty()
+  count: number;
+}
+
+class CitiesListResponse extends APIResponse {
+  @ApiProperty()
+  data: CitiesList;
 }
 
 export { CitiesListResponse };

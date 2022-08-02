@@ -32,8 +32,8 @@ export class CategoryService {
 
       if (existingCategory) {
         throw new HttpException(
-          MESSAGES.CATEGORY_ADD_SUCCESS,
-          STATUS_CODE.SUCCESS,
+          MESSAGES.CATEGORY_EXISTED,
+          STATUS_CODE.CONFLICT,
         );
       }
 
@@ -44,7 +44,7 @@ export class CategoryService {
 
       return {
         statusCode: STATUS_CODE.SUCCESS,
-        message: MESSAGES.CATEGORY_EXISTED,
+        message: MESSAGES.CATEGORY_ADD_SUCCESS,
       };
     } catch (err) {
       throw err;

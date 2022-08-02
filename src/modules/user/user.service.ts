@@ -15,24 +15,19 @@ import { File } from '../admin/file/file.entity';
 import { Category } from '../category/category.entity';
 import { CommonService } from '../common/common.service';
 import {
-  ForgetPasswordResponse,
   ListCategoriesResponse,
   LoginUserResponse,
   NewUserResponse,
   UserDetailsResponse,
 } from './interface';
 import {
-  VerifyPassword,
   UpdateProfile,
   UserLogin,
   UserSignup,
   DeliveryCharges,
 } from './dto/user.dto';
 import { User } from './user.entity';
-import {
-  MailService,
-  MailServiceInput,
-} from '../../core/utils/mail/mail.service';
+import { MailService } from '../../core/utils/mail/mail.service';
 import { USER_TYPE } from '../../core/constants/constants';
 import { Address } from '../address/address.entity';
 import { Admin } from '../admin/admin.entity';
@@ -283,104 +278,6 @@ export class UserService {
       return {
         statusCode: STATUS_CODE.SUCCESS,
         message: MESSAGES.USER_PROFILE_UPDATE_SUCCESS,
-      };
-    } catch (err) {
-      throw err;
-    }
-  }
-
-  async forgetPassword(email: string): Promise<ForgetPasswordResponse> {
-    try {
-      const userDetails = await this.userRepository.findOne({
-        where: { email },
-      });
-
-      if (!userDetails) {
-        throw new HttpException(
-          MESSAGES.NON_EXISTED_EMAIL,
-          STATUS_CODE.NOT_FOUND,
-        );
-      }
-
-      const forgetPasswordEmailObj: MailServiceInput = {
-        subject: 'Forget password email',
-        receivers: [userDetails.email],
-        template: 'resetPassword',
-        templateContext: {
-          username: userDetails.name,
-          otp: '',
-        },
-      };
-
-      if (userDetails.otp && userDetails.otp_validity) {
-        let otpValidity: string;
-
-        const currentDate = moment().toISOString();
-
-        const validityStatus = moment(userDetails.otp_validity).isBefore(
-          currentDate,
-        );
-
-        if (validityStatus) {
-          const otpDetails = await this.#updateUserOTP(email);
-
-          forgetPasswordEmailObj.templateContext.otp = otpDetails[1][0].otp;
-
-          await this.mailService.sendMail(forgetPasswordEmailObj);
-
-          otpValidity = otpDetails[1][0].otp_validity;
-        } else {
-          otpValidity = userDetails.otp_validity;
-        }
-
-        return {
-          statusCode: STATUS_CODE.SUCCESS,
-          message: MESSAGES.FORGET_PASSWORD_SUCCESS,
-          data: { otpValidity, id: userDetails.id },
-        };
-      }
-
-      const otpDetails = await this.#updateUserOTP(email);
-
-      forgetPasswordEmailObj.templateContext.otp = otpDetails[1][0].otp;
-
-      await this.mailService.sendMail(forgetPasswordEmailObj);
-
-      return {
-        statusCode: STATUS_CODE.SUCCESS,
-        message: MESSAGES.FORGET_PASSWORD_SUCCESS,
-        data: {
-          otpValidity: otpDetails[1][0].otp_validity,
-          id: userDetails.id,
-        },
-      };
-    } catch (err) {
-      throw err;
-    }
-  }
-
-  async verifyPassword(payload: VerifyPassword): Promise<ApiResponse> {
-    try {
-      const userDetails = await this.userRepository.findOne({
-        where: { email: payload.email },
-      });
-
-      if (userDetails) {
-        if (payload.otp === userDetails.otp) {
-          return {
-            statusCode: STATUS_CODE.SUCCESS,
-            message: MESSAGES.RESET_PASSWORD_SUCCESS,
-          };
-        }
-        return {
-          statusCode: STATUS_CODE.BAD_REQUEST,
-          message: MESSAGES.INCORRECT_OTP,
-        };
-      }
-
-      return {
-        statusCode: STATUS_CODE.NOT_FOUND,
-        message: MESSAGES.INVALID_EMAIL,
       };
     } catch (err) {
       throw err;

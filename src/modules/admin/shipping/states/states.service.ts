@@ -7,7 +7,7 @@ import {
   STATES_REPOSITORY,
 } from 'src/core/constants/repositories';
 import { STATUS_CODE } from 'src/core/constants/status_code';
-import { ApiResponse } from 'src/modules/common/interface';
+import { APIResponse } from 'src/modules/common/dto/common.dto';
 import { Countries } from 'src/modules/shipping/countries/countries.entity';
 import { States } from 'src/modules/shipping/states/states.entity';
 import { EditStateParams, EditStatePayload, NewState } from './dto/states.dto';
@@ -21,7 +21,7 @@ export class StatesService {
     private readonly statesRepository: typeof States,
   ) {}
 
-  async create(payload: NewState): Promise<ApiResponse> {
+  async create(payload: NewState): Promise<APIResponse> {
     try {
       const existingCountry = await this.countriesRepository.findByPk(
         payload.country_id,
@@ -61,7 +61,7 @@ export class StatesService {
   async updateState(
     params: EditStateParams,
     payload: EditStatePayload,
-  ): Promise<ApiResponse> {
+  ): Promise<APIResponse> {
     try {
       const updatePayload: any = {};
 

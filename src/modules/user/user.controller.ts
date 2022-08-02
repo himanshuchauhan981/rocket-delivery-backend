@@ -16,7 +16,6 @@ import { TransformInterceptor } from '../../core/interceptors/transform.intercep
 import { ProductService } from '../product/product.service';
 import { SubCategoryService } from '../sub-category/sub-category.service';
 import {
-  ForgetPasswordResponse,
   ListCategoriesResponse,
   ListSubCategoriesResponse,
   LoginUserResponse,
@@ -31,15 +30,12 @@ import {
   UserSubCategoryList,
   UserCart,
   UpdateProfile,
-  UserEmail,
-  VerifyPassword,
-  ResetPassword,
   DeliveryCharges,
 } from './dto/user.dto';
 import { UserService } from './user.service';
 import { ApiResponse } from '../common/interface';
 
-@Controller('USER')
+@Controller('user')
 @ApiTags('User')
 export class UserController {
   constructor(
@@ -106,27 +102,5 @@ export class UserController {
     @Req() request,
   ): Promise<ApiResponse> {
     return this.userService.updateUserDetails(payload, request.userId);
-  }
-
-  @Patch('password/forget')
-  @UseInterceptors(TransformInterceptor)
-  forgetPassword(
-    @Body(new ValidationPipe()) payload: UserEmail,
-  ): Promise<ForgetPasswordResponse> {
-    return this.userService.forgetPassword(payload.email);
-  }
-
-  @Patch('password/verify')
-  @UseInterceptors(TransformInterceptor)
-  verifyPassword(
-    @Body(new ValidationPipe()) payload: VerifyPassword,
-  ): Promise<ApiResponse> {
-    return this.userService.verifyPassword(payload);
-  }
-
-  @Patch('password/reset')
-  @UseInterceptors(TransformInterceptor)
-  resetPassword(@Body(new ValidationPipe()) payload: ResetPassword) {
-    return this.userService.resetPassword(payload.id, payload.new_password);
   }
 }

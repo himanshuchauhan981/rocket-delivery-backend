@@ -3,8 +3,8 @@ import { ApiProperty } from '@nestjs/swagger';
 import { MeasuringUnit } from 'src/modules/measuring-unit/interface';
 import { ProductDescriptionReview } from 'src/modules/product-review/interface';
 import { SubCategory } from 'src/modules/sub-category/interface';
-import { File } from 'src/modules/admin/file/interface';
 import { Category } from 'src/modules/category/interface';
+import { FileResponse } from 'src/modules/admin/file/dto/file-response.dto';
 
 class ProductPrice {
   @ApiProperty()
@@ -54,7 +54,7 @@ class ProductDetail {
   product_price: ProductPrice;
 
   @ApiProperty()
-  file: File;
+  file: FileResponse;
 
   @ApiProperty()
   category: Category;

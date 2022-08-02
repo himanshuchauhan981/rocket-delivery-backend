@@ -27,7 +27,7 @@ class CategoryList {
   @ApiProperty()
   count: number;
 
-  @ApiProperty()
+  @ApiProperty({ type: () => [CategoryDetails] })
   categoriesDetails: CategoryDetails[];
 }
 

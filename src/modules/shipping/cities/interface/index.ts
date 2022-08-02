@@ -1,10 +1,21 @@
+import { ApiProperty } from '@nestjs/swagger';
+
 import { CountryListState } from '../../states/interface';
 
-interface City {
+class City {
+  @ApiProperty()
   id: number;
+
+  @ApiProperty()
   name: string;
+
+  @ApiProperty()
   is_active: number;
+
+  @ApiProperty()
   created_at: Date;
+
+  @ApiProperty()
   state: CountryListState;
 }
 
