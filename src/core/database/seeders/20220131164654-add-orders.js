@@ -60,7 +60,7 @@ module.exports = {
               user_id: userItem.id,
               status: 'REQUESTED',
               delivery_charges: 10,
-              payment_method: 0,
+              payment_method: 'CASH',
               amount: 0,
               net_amount: 0,
               user_address: userAddress[0].id,
