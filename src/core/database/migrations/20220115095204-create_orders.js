@@ -31,8 +31,12 @@ module.exports = {
         },
 
         status: {
-          type: Sequelize.ENUM,
-          values: ['REQUESTED', 'CONFIRMED', 'DELIVERED', 'CANCELLED'],
+          type: Sequelize.ENUM(
+            'REQUESTED',
+            'CONFIRMED',
+            'DELIVERED',
+            'CANCELLED',
+          ),
         },
 
         delivery_charges: {
@@ -41,8 +45,7 @@ module.exports = {
         },
 
         payment_method: {
-          type: Sequelize.ENUM,
-          allowNull: ['CASH', 'CREDIT'],
+          type: Sequelize.ENUM('CASH', 'CREDIT'),
         },
 
         amount: {
