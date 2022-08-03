@@ -11,9 +11,8 @@ export interface NotificationPayload {
 export interface NotificationArgs {
   sender_id: number;
   user_role: string;
-  slug: string;
   receivers: Receivers[];
+  body: string;
+  notification_template_id: number;
   metadata: any;
-  notification_type: string;
-  payload: NotificationPayload;
 }

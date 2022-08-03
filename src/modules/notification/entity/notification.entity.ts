@@ -47,6 +47,18 @@ export class Notification extends Model<Notification> {
   })
   metadata: any;
 
+  @Column({
+    type: DataType.TEXT,
+    allowNull: false,
+  })
+  body: any;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  notification_template_id: number;
+
   @CreatedAt
   created_at: Date;
 

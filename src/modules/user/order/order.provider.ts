@@ -1,6 +1,7 @@
 import {
   ADMIN_REPOSITORY,
   NOTIFICATION_REPOSITORY,
+  NOTIFICATION_TEMPLATE_REPOSITORY,
   NOTIFICATION_USER_REPOSITORY,
   ORDER_PRODUCT_REPOSITORY,
   ORDER_REPOSITORY,
@@ -18,6 +19,7 @@ import { UserPayment } from '../../../modules/payment/user-payment.entity';
 import { Product } from '../../../modules/product/product.entity';
 import { ProductReview } from 'src/modules/product-review/product-review.entity';
 import { User } from '../user.entity';
+import { NotificationTemplate } from 'src/modules/notification/entity/notification-template.entity';
 
 export const UserOrderProvider = [
   { provide: ORDER_REPOSITORY, useValue: Order },
@@ -29,4 +31,5 @@ export const UserOrderProvider = [
   { provide: NOTIFICATION_USER_REPOSITORY, useValue: NotificationUser },
   { provide: ADMIN_REPOSITORY, useValue: Admin },
   { provide: PRODUCT_REVIEW_REPOSITORY, useValue: ProductReview },
+  { provide: NOTIFICATION_TEMPLATE_REPOSITORY, useValue: NotificationTemplate },
 ];

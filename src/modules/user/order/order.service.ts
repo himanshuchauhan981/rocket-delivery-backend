@@ -2,18 +2,19 @@ import { HttpException, Inject, Injectable } from '@nestjs/common';
 import * as moment from 'moment';
 import sequelize from 'sequelize';
 import { v4 as uuidv4 } from 'uuid';
+import Handlebar from 'handlebars';
 
 import {
   ORDER_STATUS,
   ORDER_PAYMENT_STATUS,
-  NOTIFICATION_SLUG,
   USER_TYPE,
-  NOTIFICATION_TYPE,
   PAYMENT_METHOD,
+  NOTIFICATION_TEMPLATE_SLUG,
 } from '../../../core/constants/constants';
 import { MESSAGES } from '../../../core/constants/messages';
 import {
   ADMIN_REPOSITORY,
+  NOTIFICATION_TEMPLATE_REPOSITORY,
   ORDER_PRODUCT_REPOSITORY,
   ORDER_REPOSITORY,
   PRODUCT_REPOSITORY,
@@ -33,6 +34,7 @@ import { User } from '../user.entity';
 import { NotificationService } from '../../../modules/notification/notification.service';
 import { OrderListResponse } from '../../order/interface/response.interface';
 import { ApiResponse } from 'src/modules/common/interface';
+import { NotificationTemplate } from 'src/modules/notification/entity/notification-template.entity';
 
 @Injectable()
 export class OrderService {
@@ -46,6 +48,8 @@ export class OrderService {
     private readonly adminRepository: typeof Admin,
     @Inject(USER_REPOSITORY)
     private readonly userRepository: typeof User,
+    @Inject(NOTIFICATION_TEMPLATE_REPOSITORY)
+    private readonly notificationTemplateRepository: typeof NotificationTemplate,
     private readonly paymentService: PaymentService,
     private readonly commonProductService: CommonProductService,
     private readonly notificationService: NotificationService,
@@ -186,24 +190,36 @@ export class OrderService {
       const adminDetails = await this.#findSuperAdmin();
       const customerDetails = await this.#findUserDetails(user_id);
 
+      const notificationTemplateDetails =
+        await this.notificationTemplateRepository.findOne({
+          where: {
+            [sequelize.Op.and]: [
+              { type: USER_TYPE.ADMIN },
+              { slug: NOTIFICATION_TEMPLATE_SLUG.ORDER_REQUESTED },
+            ],
+          },
+        });
+
+      const bodyTemplate = Handlebar.compile(notificationTemplateDetails.body);
+      const body = bodyTemplate({
+        name: customerDetails.name,
+        orderNumber: newOrder.order_number,
+      });
+
       const notificationArgs = {
-        notification_type: NOTIFICATION_TYPE.ORDER_REQUEST,
+        notification_template_id: notificationTemplateDetails.id,
         sender_id: user_id,
         user_role,
-        slug: NOTIFICATION_SLUG.ORDER_REQUESTED,
         receivers: [
           {
             user_id: adminDetails.id,
             user_type: USER_TYPE.ADMIN,
           },
         ],
-        payload: {
-          order_number: newOrder.order_number,
-          customer_name: customerDetails.name,
-        },
         metadata: {
           order_id: newOrder.id,
         },
+        body,
       };
 
       await this.notificationService.createNotification(notificationArgs);
@@ -279,25 +295,36 @@ export class OrderService {
 
     const adminDetails = await this.#findSuperAdmin();
 
+    const notificationTemplateDetails =
+      await this.notificationTemplateRepository.findOne({
+        where: {
+          [sequelize.Op.and]: [
+            { type: USER_TYPE.ADMIN },
+            { slug: NOTIFICATION_TEMPLATE_SLUG.ORDER_CANCELLED },
+          ],
+        },
+      });
+
+    const bodyTemplate = Handlebar.compile(notificationTemplateDetails.body);
+    const body = bodyTemplate({
+      name: customerDetails.name,
+      orderNumber: orderDetail.order_number,
+    });
+
     const notificationArgs = {
-      notification_type: NOTIFICATION_TYPE.ORDER_CANCEL,
+      notification_template_id: notificationTemplateDetails.id,
       sender_id: user_id,
       user_role,
-      slug: NOTIFICATION_SLUG.ORDER_CANCELLED,
       receivers: [
         {
           user_id: adminDetails.id,
-          user_type:
-            user_role === USER_TYPE.USER ? USER_TYPE.ADMIN : USER_TYPE.USER,
+          user_type: USER_TYPE.ADMIN,
         },
       ],
-      payload: {
-        order_number: orderDetail.order_number,
-        customer_name: customerDetails.name,
-      },
       metadata: {
-        order_id,
+        order_id: orderDetail.id,
       },
+      body: body,
     };
 
     await this.notificationService.createNotification(notificationArgs);
