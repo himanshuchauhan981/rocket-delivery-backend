@@ -60,7 +60,7 @@ export class NotificationService {
           include: [
             {
               model: Notification,
-              attributes: ['id', 'body', 'metadata', 'notification_type'],
+              attributes: ['id', 'body', 'metadata'],
             },
             { model: User, attributes: ['id', 'profile_image'] },
           ],
