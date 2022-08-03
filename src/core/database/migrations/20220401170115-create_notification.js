@@ -43,6 +43,11 @@ module.exports = {
           defaultValue: 0,
         },
 
+        body: {
+          type: Sequelize.STRING,
+          allowNull: false,
+        },
+
         metadata: {
           type: Sequelize.JSON,
           allowNull: true,

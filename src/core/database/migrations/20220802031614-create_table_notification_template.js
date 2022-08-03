@@ -40,7 +40,7 @@ module.exports = {
         },
 
         type: {
-          type: Sequelize.TEXT,
+          type: Sequelize.ENUM('ADMIN', 'USER'),
           allowNull: false,
         },
 
