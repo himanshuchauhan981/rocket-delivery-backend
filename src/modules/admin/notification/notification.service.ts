@@ -2,6 +2,7 @@ import { HttpException, Inject, Injectable } from '@nestjs/common';
 import sequelize from 'sequelize';
 
 import { APIResponse } from 'src/modules/common/dto/common.dto';
+import { NotificationTemplate } from 'src/modules/notification/entity/notification-template.entity';
 import { USER_TYPE } from '../../../core/constants/constants';
 import { MESSAGES } from '../../../core/constants/messages';
 import { NOTIFICATION_USER_REPOSITORY } from '../../../core/constants/repositories';
@@ -27,9 +28,13 @@ export class NotificationService {
         include: [
           {
             model: Notification,
-            attributes: ['id', 'body', 'metadata', 'notification_type'],
+            attributes: ['id', 'body', 'metadata'],
+            include: [{ model: NotificationTemplate, attributes: ['title'] }],
           },
-          { model: User, attributes: ['id', 'profile_image'] },
+          {
+            model: User,
+            attributes: ['id', 'profile_image'],
+          },
         ],
         attributes: ['id', 'is_read', 'is_sent', 'created_at'],
         limit,

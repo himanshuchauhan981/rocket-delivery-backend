@@ -18,6 +18,7 @@ import {
 } from './dto/notification.dto';
 import { APIResponse } from 'src/modules/common/dto/common.dto';
 import { NotificationListResponse } from './dto/notification-response.dto';
+import { USER_TYPE } from 'src/core/constants/constants';
 
 @Controller('admin/notification')
 @ApiTags('Admin notifications')
@@ -25,7 +26,7 @@ export class NotificationController {
   constructor(private readonly notificationService: NotificationService) {}
 
   @Get('list')
-  @Auth('ADMIN')
+  @Auth(USER_TYPE.ADMIN)
   @UseInterceptors(TransformInterceptor)
   @ApiOkResponse({ type: NotificationListResponse })
   notificationList(
@@ -35,7 +36,7 @@ export class NotificationController {
   }
 
   @Patch('status')
-  @Auth('ADMIN')
+  @Auth(USER_TYPE.ADMIN)
   @UseInterceptors(TransformInterceptor)
   @ApiOkResponse({ type: APIResponse })
   updateNotificationStatus(
