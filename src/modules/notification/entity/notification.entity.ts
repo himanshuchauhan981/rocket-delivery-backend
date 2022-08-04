@@ -5,9 +5,12 @@ import {
   DataType,
   CreatedAt,
   UpdatedAt,
+  ForeignKey,
+  BelongsTo,
 } from 'sequelize-typescript';
 
 import { USER_TYPE } from '../../../core/constants/constants';
+import { NotificationTemplate } from './notification-template.entity';
 
 @Table({
   tableName: 'notification',
@@ -57,6 +60,7 @@ export class Notification extends Model<Notification> {
     type: DataType.INTEGER,
     allowNull: false,
   })
+  @ForeignKey(() => NotificationTemplate)
   notification_template_id: number;
 
   @CreatedAt
@@ -64,4 +68,7 @@ export class Notification extends Model<Notification> {
 
   @UpdatedAt
   updated_at: Date;
+
+  @BelongsTo(() => NotificationTemplate)
+  notificationTemplate: NotificationTemplate;
 }
