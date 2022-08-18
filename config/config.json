@@ -18,6 +18,12 @@
         "host": "127.0.0.1",
         "dialect": "postgres",
         "password": "admin",
-        "username":"postgres"
+        "username":"postgres",
+        "dialectOptions": {
+            "ssl": {
+                "require": true,
+                "rejectUnauthorized": false
+            }
+        }
     }
 }

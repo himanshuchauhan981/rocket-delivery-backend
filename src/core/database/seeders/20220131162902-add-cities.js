@@ -59,15 +59,19 @@ module.exports = {
     );
 
     for (const item of stateDetails) {
-      const cities = citiesList.filter((item) => item.state === item.name);
+      const cities = citiesList.filter(
+        (cityItem) => cityItem.state === item.name,
+      );
 
-      const newCities = cities.map((v) => ({
-        name: v.name,
-        is_active: 1,
-        state_id: item.id,
-      }));
+      if (cities.length) {
+        const newCities = cities.map((v) => ({
+          name: v.name,
+          is_active: 1,
+          state_id: item.id,
+        }));
 
-      await queryInterface.bulkInsert('cities', newCities);
+        await queryInterface.bulkInsert('cities', newCities);
+      }
     }
   },
 
