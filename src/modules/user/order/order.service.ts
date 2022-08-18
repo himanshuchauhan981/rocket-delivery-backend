@@ -151,10 +151,10 @@ export class OrderService {
       const newOrder = await this.orderRepository.create<any>({
         order_number: uuidv4(),
         status: ORDER_STATUS.REQUESTED,
-        delivery_charges: 10,
+        delivery_charges: payload.delivery_charges,
         payment_method: payload.payment_method,
         amount: subTotal,
-        net_amount: subTotal + 10,
+        net_amount: subTotal + payload.delivery_charges,
         user_address: payload.order_address,
         user_id,
         user_payment_id: payload.user_payment_id,

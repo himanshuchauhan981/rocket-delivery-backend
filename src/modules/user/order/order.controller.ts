@@ -28,7 +28,6 @@ export class UserOrderController {
   @Post('new')
   @Auth('USER')
   @UseInterceptors(TransformInterceptor)
-  // @ApiResponse({ type: APIREsponse })
   create(@Body(new ValidationPipe()) payload: NewOrder, @Req() request) {
     return this.orderService.create(payload, request.userId, request.role);
   }
