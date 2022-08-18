@@ -1,11 +1,10 @@
 import * as moment from 'moment';
 
-import { Order } from 'src/modules/order/interface/response.interface';
+import { Order } from 'src/modules/order/order.entity';
 
 const orderInvoice = (order: Order) => {
   let orderProductHtml = '';
   let subTotal = 0;
-  const deliveryCharges = 10;
 
   for (const product of order.order_products) {
     subTotal = subTotal + product.price * product.quantity;
@@ -85,7 +84,11 @@ const orderInvoice = (order: Order) => {
         </td>
       </tr>
       <tr>
-        <td style="font-size: 10px;"></td>
+        <td style="font-size: 10px;">
+          ${order.address.city.name} ${order.address.state.name} ${
+    order.address.country.name
+  }
+        </td>
       </tr>
       <tr>
         <td style="font-size: 10px; padding-bottom: 15px;">
@@ -117,14 +120,14 @@ const orderInvoice = (order: Order) => {
           <td style="width: 60%;"></td>
           <td style="font-family: 'Raleway'; font-size: 11px; width: 20%; letter-spacing: 0.7px;" align="left">Delivery Charges</td>
           <td style="font-family: 'Raleway'; font-size: 10px; width: 20%; padding-right: 10px;" align="right">
-            &#8377; ${deliveryCharges.toFixed(2)}
+            &#8377; ${order.delivery_charges.toFixed(2)}
           </td>
         </tr>
         <tr>
           <td style="width: 60%;"></td>
           <td style="font-family: 'Raleway'; font-size: 11px; width: 20%; letter-spacing: 0.7px;" align="left">Total</td>
           <td style="font-family: 'Raleway'; font-size: 10px; width: 20%; padding-right: 10px;" align="right">
-            &#8377; ${(subTotal + deliveryCharges).toFixed(2)}
+            &#8377; ${order.net_amount.toFixed(2)}
           </td>
         </tr>
       </tbody>

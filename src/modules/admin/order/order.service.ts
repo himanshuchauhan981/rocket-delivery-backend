@@ -33,6 +33,9 @@ import {
   MailService,
   MailServiceInput,
 } from 'src/core/utils/mail/mail.service';
+import { Countries } from 'src/modules/shipping/countries/countries.entity';
+import { States } from 'src/modules/shipping/states/states.entity';
+import { Cities } from 'src/modules/shipping/cities/cities.entity';
 
 @Injectable()
 export class OrderService {
@@ -298,10 +301,13 @@ export class OrderService {
             'pincode',
             'house_no',
             'area',
-            // 'city',
-            // 'state',
             'landmark',
             'mobile_number',
+          ],
+          include: [
+            { model: Countries, attributes: ['name'] },
+            { model: States, attributes: ['name'] },
+            { model: Cities, attributes: ['name'] },
           ],
         },
         {
