@@ -338,7 +338,7 @@ export class ProductService {
           {
             model: ProductReview,
             attributes: [],
-            required: true,
+            // required: true,
           },
           { model: File, attributes: ['id', 'url'] },
           {
