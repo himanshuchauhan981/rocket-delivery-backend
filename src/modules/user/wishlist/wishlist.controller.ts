@@ -41,4 +41,14 @@ export class UserWishlistController {
   delete(@Param(new ValidationPipe()) payload: SpecificWishlistItem) {
     return this.wishlistService.delete(payload.id);
   }
+
+  @Get(':id')
+  @Auth('USER')
+  @UseInterceptors(TransformInterceptor)
+  getSpecificWishlist(
+    @Param(new ValidationPipe()) payload: SpecificWishlistItem,
+    @Req() request,
+  ) {
+    return this.wishlistService.findOne(payload.id, request.userId);
+  }
 }
