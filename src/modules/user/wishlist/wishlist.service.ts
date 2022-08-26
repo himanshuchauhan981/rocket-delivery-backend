@@ -130,7 +130,7 @@ export class WishlistService {
       const wishlistItem = await this.wishlistRepository.findOne({
         where: {
           [sequelize.Op.and]: [
-            { id: wishlistId },
+            { product_id: wishlistId },
             { user_id: userId },
             { is_deleted: 0 },
           ],
