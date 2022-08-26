@@ -124,4 +124,28 @@ export class WishlistService {
       throw err;
     }
   }
+
+  async findOne(wishlistId: number, userId: number) {
+    try {
+      const wishlistItem = await this.wishlistRepository.findOne({
+        where: {
+          [sequelize.Op.and]: [
+            { id: wishlistId },
+            { user_id: userId },
+            { is_deleted: 0 },
+          ],
+        },
+      });
+
+      return {
+        statusCode: STATUS_CODE.SUCCESS,
+        message: MESSAGES.SUCCESS,
+        data: {
+          wishlist: wishlistItem,
+        },
+      };
+    } catch (err) {
+      throw err;
+    }
+  }
 }
